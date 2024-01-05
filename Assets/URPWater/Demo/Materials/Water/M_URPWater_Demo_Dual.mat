@@ -15,11 +15,11 @@ Material:
   - _ADD_FOAM_ON
   - _CAUSTICSMODE_3D
   - _COLORMODE_COLORS
-  - _DISPLACEMENTMODE_GERSTNER
   - _FOAM_ON
   - _NORMALSMODE_SINGLE
   - _REFLECTIONMODE_PROBES
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _DISPLACEMENTMODE_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -152,11 +152,11 @@ Material:
     - _CutOff: 0.5
     - _Cutoff: 0.5
     - _DepthEnd: 6.4
-    - _DepthStart: 6.78
+    - _DepthStart: -2.08
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DispMask: 0
-    - _DisplacementMode: 1
+    - _DisplacementMode: 0
     - _Distortion: 0
     - _DoubleSided: 0
     - _DstBlend: 0

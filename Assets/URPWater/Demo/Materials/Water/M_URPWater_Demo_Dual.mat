@@ -12,13 +12,14 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _ADD_FOAM_ON
   - _CAUSTICSMODE_3D
   - _COLORMODE_COLORS
-  - _FOAM_RIPPLE_ON
-  - _NORMALSMODE_DUAL
+  - _DISPLACEMENTMODE_GERSTNER
+  - _FOAM_ON
+  - _NORMALSMODE_SINGLE
   - _REFLECTIONMODE_PROBES
-  m_InvalidKeywords:
-  - _DISPLACEMENTMODE_OFF
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -70,7 +71,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FoamTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 854558bed495af54db3907955bb3c573, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -102,7 +103,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RefractionColor:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: b34c1460a04063c4792bf4073cc6cc41, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -124,7 +125,7 @@ Material:
     m_Ints: []
     m_Floats:
     - BOOLEAN_FB194AC780E943B8B8264B11BC92FB70: 0
-    - _AddFoam: 0
+    - _AddFoam: 1
     - _AlphaClip: 0
     - _AlphaMask: 0
     - _Blend: 0
@@ -150,34 +151,34 @@ Material:
     - _CullMode: 2
     - _CutOff: 0.5
     - _Cutoff: 0.5
-    - _DepthEnd: 6
-    - _DepthStart: -38.26
+    - _DepthEnd: 6.4
+    - _DepthStart: 6.78
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DispMask: 0
-    - _DisplacementMode: 0
+    - _DisplacementMode: 1
     - _Distortion: 0
     - _DoubleSided: 0
     - _DstBlend: 0
     - _DynamicDisplacement: 1
     - _DynamicEffects: 0
-    - _DynamicFoam: 1
-    - _DynamicNormal: 1
+    - _DynamicFoam: 0.091
+    - _DynamicNormal: 0.92
     - _EdgeFade: 0
-    - _EdgeSize: -21.69
+    - _EdgeSize: 0
     - _EnvironmentReflections: 1
     - _FlowIntensity: 0.12
     - _FlowSpeed: 10
-    - _Foam: 0
+    - _Foam: 1
     - _FoamCapsIntensity: 1
     - _FoamCapsRangeMax: 1
     - _FoamCapsRangeMin: 0
-    - _FoamDistortion: 0.17
-    - _FoamRippleDistance: 1
-    - _FoamRippleSize: 1.5
-    - _FoamRippleSpeed: -0.33
-    - _FoamRipples: 1
-    - _FoamSize: 0.74
+    - _FoamDistortion: 0.07
+    - _FoamRippleDistance: 1.45
+    - _FoamRippleSize: 2.4
+    - _FoamRippleSpeed: -0.2
+    - _FoamRipples: 0
+    - _FoamSize: 0.66
     - _FoamWhiteCaps: 0
     - _GerstnerSpeedA: 1
     - _GerstnerSpeedB: 1
@@ -192,7 +193,7 @@ Material:
     - _NormalMapAIntensity: 1
     - _NormalMapBIntensity: 1
     - _NormalMapFarIntensity: 1
-    - _NormalsMode: 1
+    - _NormalsMode: 0
     - _OcclusionStrength: 1
     - _Orthographic: 0
     - _Parallax: 0.005
@@ -201,28 +202,28 @@ Material:
     - _ReflectionDistortion: 0.256
     - _ReflectionFresnel: 4
     - _ReflectionFresnelNormal: 0.264
-    - _ReflectionIntensity: 1
+    - _ReflectionIntensity: 0.311
     - _ReflectionMode: 2
     - _ReflectionRoughness: 0.1
     - _Scattering: 0
     - _ScatteringIntensity: 1
     - _ScatteringRangeMax: 2
     - _ScatteringRangeMin: 0.4131296
-    - _Smoothness: 0.675
+    - _Smoothness: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SpeedMul: 0
     - _SrcBlend: 1
     - _Surface: 0
-    - _WaveAmplitude: 1
+    - _WaveAmplitude: 0.211
     - _WaveCount: 1
     - _WaveEffectsBoost: 0
     - _WaveEndDistance: 1000
     - _WaveLength: 8
     - _WaveNormal: 0.49
-    - _WaveSpeed: 10
+    - _WaveSpeed: 11.91
     - _WaveStartDistance: 0
-    - _WaveSteepness: 0.5
+    - _WaveSteepness: 0.46
     - _WorkflowMode: 1
     - _WorldUV: 0
     - _ZWrite: 1
@@ -237,8 +238,8 @@ Material:
     - _DepthColor: {r: 0, g: 0.25999996, b: 0.39999998, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FlowTiling: {r: 1, g: 1, b: 0, a: 0}
-    - _FoamColor: {r: 0.29076183, g: 0.50195795, b: 0.6226415, a: 1}
-    - _FoamTiling: {r: 1, g: 1, b: 1, a: 1}
+    - _FoamColor: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 1}
+    - _FoamTiling: {r: 5, g: 5, b: 1, a: 1}
     - _GerstnerWaveA: {r: 0.84712195, g: -0.53139853, b: 0.66, a: 6.55}
     - _GerstnerWaveB: {r: 0, g: 1, b: 0.05, a: 4}
     - _GerstnerWaveC: {r: 1, g: 0, b: 0.05, a: 4}
@@ -249,8 +250,8 @@ Material:
     - _NormalMapBTilings: {r: 1, g: 1, b: 1, a: 1}
     - _NormalMapFarSpeeds: {r: 1, g: 1, b: 1, a: 1}
     - _NormalMapFarTilings: {r: 1, g: 1, b: 0.5, a: 0.5}
-    - _RefractionKey1: {r: -1, g: -1, b: -1, a: -1}
-    - _RefractionKey2: {r: -1, g: -1, b: -1, a: -1}
+    - _RefractionKey1: {r: 0.34420612, g: 0.43884304, b: 0.8018868, a: 0}
+    - _RefractionKey2: {r: 0.46764863, g: 0.5857176, b: 0.8773585, a: 1}
     - _RefractionKey3: {r: -1, g: -1, b: -1, a: -1}
     - _RefractionKey4: {r: -1, g: -1, b: -1, a: -1}
     - _RefractionKey5: {r: -1, g: -1, b: -1, a: -1}

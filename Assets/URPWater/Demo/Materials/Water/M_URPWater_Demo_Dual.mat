@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_URPWater_Demo_Dual
-  m_Shader: {fileID: 4800000, guid: 206e4b0fd7976c742b851eef70622872, type: 3}
+  m_Shader: {fileID: 4800000, guid: b2457a866357f9a4fbb0720aef891a21, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -125,6 +125,10 @@ Material:
     m_Ints: []
     m_Floats:
     - BOOLEAN_FB194AC780E943B8B8264B11BC92FB70: 0
+    - ENUM_D8A4CFA96FE44D639A1C5E84B66C9AF6: 0
+    - Vector1_5154cab406d240aaaf19785a33a659fb: 0
+    - Vector1_6c73e5b4ea1c45dc924ed57c6ff6c61e: 1
+    - Vector1_9f1748f250814dfaadab20a8561cd02d: 0
     - _AddFoam: 1
     - _AlphaClip: 0
     - _AlphaMask: 0
@@ -158,6 +162,8 @@ Material:
     - _DispMask: 0
     - _DisplacementMode: 0
     - _Distortion: 0
+    - _DistortionFar: 32
+    - _DistortionNear: 64
     - _DoubleSided: 0
     - _DstBlend: 0
     - _DynamicDisplacement: 1
@@ -190,13 +196,14 @@ Material:
     - _Metallic: 0
     - _NormalFar: 0
     - _NormalFarDistance: 100
-    - _NormalMapAIntensity: 1
+    - _NormalMapAIntensity: 0.5
     - _NormalMapBIntensity: 1
     - _NormalMapFarIntensity: 1
     - _NormalsMode: 0
     - _OcclusionStrength: 1
     - _Orthographic: 0
     - _Parallax: 0.005
+    - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _ReflectionDistortion: 0.256
@@ -215,6 +222,7 @@ Material:
     - _SpeedMul: 0
     - _SrcBlend: 1
     - _Surface: 0
+    - _Tess: 1
     - _WaveAmplitude: 0.211
     - _WaveCount: 1
     - _WaveEffectsBoost: 0

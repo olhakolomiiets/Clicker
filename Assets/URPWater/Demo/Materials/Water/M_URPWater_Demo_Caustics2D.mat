@@ -13,9 +13,7 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _CAUSTICSMODE_2D
-  - _CAUSTICS_ON
   - _COLORMODE_COLORS
-  - _EDGEFADE_ON
   - _NORMALSMODE_SINGLE
   - _REFLECTIONMODE_PROBES
   m_InvalidKeywords:
@@ -37,11 +35,18 @@ Material:
     m_Ints: []
     m_Floats:
     - _AddFoam: 0
+    - _Caustics: 0
     - _CausticsEnd: 4
     - _CausticsIntensity: 8
     - _CausticsMode: 0
     - _CausticsTiling3D: 0.5
+    - _DepthEnd: -7.9
+    - _DepthStart: 11.05
     - _DisplacementMode: 0
+    - _Distortion: 128
+    - _EdgeFade: 0
+    - _ReflectionIntensity: 0
+    - _Smoothness: 0.446
     - _WaveSteepness: 0.152
     m_Colors: []
   m_BuildTextureStacks: []

@@ -2,21 +2,32 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_URPWater_Demo_FoamRipples
   m_Shader: {fileID: 4800000, guid: 206e4b0fd7976c742b851eef70622872, type: 3}
-  m_ShaderKeywords: _CAUSTICSMODE_2D _COLORMODE_COLORS _DISPLACEMENTMODE_GERSTNER
-    _EDGEFADE_ON _FOAM_ON _FOAM_RIPPLE_ON _NORMALSMODE_SINGLE _REFLECTIONMODE_PROBES
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _CAUSTICSMODE_2D
+  - _CAUSTICS_DIRECTION_ON
+  - _CAUSTICS_ON
+  - _COLORMODE_COLORS
+  - _DISPLACEMENTMODE_GERSTNER
+  - _FOAM_RIPPLE_ON
+  - _NORMALSMODE_SINGLE
+  - _REFLECTIONMODE_PROBES
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -112,6 +123,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - BOOLEAN_FB194AC780E943B8B8264B11BC92FB70: 0
     - _AddFoam: 0
@@ -124,12 +136,12 @@ Material:
     - _CapsScatteringIntensity: 1
     - _CapsScatteringRangeMax: 1
     - _CapsScatteringRangeMin: 0
-    - _Caustics: 0
+    - _Caustics: 1
     - _CausticsAngleMask: 0
-    - _CausticsDirectionMask: 0
+    - _CausticsDirectionMask: 1
     - _CausticsDistortion: 0.351
     - _CausticsEnd: 4
-    - _CausticsIntensity: 8
+    - _CausticsIntensity: 2.48
     - _CausticsMode: 0
     - _CausticsStart: 0
     - _CausticsTiling3D: 0.5
@@ -146,28 +158,28 @@ Material:
     - _DetailNormalMapScale: 1
     - _DispMask: 0
     - _DisplacementMode: 1
-    - _Distortion: 32
+    - _Distortion: 128
     - _DoubleSided: 0
     - _DstBlend: 0
-    - _DynamicDisplacement: 1
+    - _DynamicDisplacement: -0.07
     - _DynamicEffects: 0
-    - _DynamicFoam: 1
-    - _DynamicNormal: 1
-    - _EdgeFade: 1
-    - _EdgeSize: 0.2
+    - _DynamicFoam: 0.531
+    - _DynamicNormal: 0.92
+    - _EdgeFade: 0
+    - _EdgeSize: -11.73
     - _EnvironmentReflections: 1
     - _FlowIntensity: 0.12
     - _FlowSpeed: 10
-    - _Foam: 1
+    - _Foam: 0
     - _FoamCapsIntensity: 1
     - _FoamCapsRangeMax: 1
     - _FoamCapsRangeMin: 0
-    - _FoamDistortion: 0
-    - _FoamRippleDistance: 0.6
-    - _FoamRippleSize: 2.75
-    - _FoamRippleSpeed: 0.5
+    - _FoamDistortion: -1.8
+    - _FoamRippleDistance: 0.88
+    - _FoamRippleSize: 2.74
+    - _FoamRippleSpeed: 3.77
     - _FoamRipples: 1
-    - _FoamSize: 0.27
+    - _FoamSize: -0.17
     - _FoamWhiteCaps: 0
     - _GerstnerSpeedA: 1
     - _GerstnerSpeedB: 1
@@ -179,7 +191,7 @@ Material:
     - _Metallic: 0
     - _NormalFar: 0
     - _NormalFarDistance: 100
-    - _NormalMapAIntensity: 0.497
+    - _NormalMapAIntensity: 0.413
     - _NormalMapBIntensity: 1
     - _NormalMapFarIntensity: 1
     - _NormalsMode: 0
@@ -189,30 +201,30 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _ReflectionDistortion: 0.256
-    - _ReflectionFresnel: 4
+    - _ReflectionFresnel: 16
     - _ReflectionFresnelNormal: 0.264
     - _ReflectionIntensity: 1
     - _ReflectionMode: 2
     - _ReflectionRoughness: 0.1
     - _Scattering: 0
     - _ScatteringIntensity: 1
-    - _ScatteringRangeMax: 2
-    - _ScatteringRangeMin: 0.4131296
-    - _Smoothness: 0.675
+    - _ScatteringRangeMax: 1.5868704
+    - _ScatteringRangeMin: 0
+    - _Smoothness: 0.452
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SpeedMul: 0
     - _SrcBlend: 1
     - _Surface: 0
     - _WaveAmplitude: 1
-    - _WaveCount: 10
+    - _WaveCount: 1
     - _WaveEffectsBoost: 0
     - _WaveEndDistance: 1000
     - _WaveLength: 1
-    - _WaveNormal: 0.49
-    - _WaveSpeed: 20
+    - _WaveNormal: 0.381
+    - _WaveSpeed: 20.11
     - _WaveStartDistance: 0
-    - _WaveSteepness: 0.094
+    - _WaveSteepness: 0.074
     - _WorkflowMode: 1
     - _WorldUV: 0
     - _ZWrite: 1
@@ -223,7 +235,7 @@ Material:
     - _CausticsSpeed: {r: 1, g: 1, b: -0.2, a: -0.33}
     - _CausticsSpeed3D: {r: 1, g: 1, b: 1, a: 1}
     - _CausticsTiling: {r: 0.2, g: 0.2, b: 0.3, a: 0.3}
-    - _Color: {r: 0.25490195, g: 0.98039216, b: 0.6740629, a: 1}
+    - _Color: {r: 0.4503382, g: 0.6961239, b: 0.8301887, a: 1}
     - _DepthColor: {r: 0, g: 0.25999996, b: 0.39999998, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FlowTiling: {r: 1, g: 1, b: 0, a: 0}

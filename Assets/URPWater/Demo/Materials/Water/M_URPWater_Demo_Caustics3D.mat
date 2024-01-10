@@ -12,15 +12,12 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ADD_FOAM_ON
   - _CAUSTICSMODE_3D
-  - _CAUSTICS_ON
   - _COLORMODE_COLORS
   - _DISPLACEMENTMODE_GERSTNER
-  - _EDGEFADE_ON
   - _NORMALSMODE_SINGLE
-  - _REFLECTIONMODE_PROBES
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _REFLECTIONMODE_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -126,7 +123,7 @@ Material:
     m_Ints: []
     m_Floats:
     - BOOLEAN_FB194AC780E943B8B8264B11BC92FB70: 0
-    - _AddFoam: 1
+    - _AddFoam: 0
     - _AlphaClip: 0
     - _AlphaMask: 0
     - _Blend: 0
@@ -136,7 +133,7 @@ Material:
     - _CapsScatteringIntensity: 1
     - _CapsScatteringRangeMax: 1
     - _CapsScatteringRangeMin: 0
-    - _Caustics: 1
+    - _Caustics: 0
     - _CausticsAngleMask: 0
     - _CausticsDirectionMask: 0
     - _CausticsDistortion: 0.351
@@ -153,19 +150,19 @@ Material:
     - _CutOff: 0.5
     - _Cutoff: 0.5
     - _DepthEnd: 6
-    - _DepthStart: -2
+    - _DepthStart: -4.04
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DispMask: 0
     - _DisplacementMode: 1
-    - _Distortion: 32
+    - _Distortion: 128
     - _DoubleSided: 0
     - _DstBlend: 0
     - _DynamicDisplacement: 1
     - _DynamicEffects: 0
     - _DynamicFoam: 1
     - _DynamicNormal: 1
-    - _EdgeFade: 1
+    - _EdgeFade: 0
     - _EdgeSize: 0.2
     - _EnvironmentReflections: 1
     - _FlowIntensity: 0.12
@@ -191,7 +188,7 @@ Material:
     - _Metallic: 0
     - _NormalFar: 0
     - _NormalFarDistance: 100
-    - _NormalMapAIntensity: 0.497
+    - _NormalMapAIntensity: 0.236
     - _NormalMapBIntensity: 1
     - _NormalMapFarIntensity: 1
     - _NormalsMode: 0
@@ -204,19 +201,19 @@ Material:
     - _ReflectionFresnel: 4
     - _ReflectionFresnelNormal: 0.264
     - _ReflectionIntensity: 1
-    - _ReflectionMode: 2
+    - _ReflectionMode: 0
     - _ReflectionRoughness: 0.1
     - _Scattering: 0
     - _ScatteringIntensity: 1
     - _ScatteringRangeMax: 2
     - _ScatteringRangeMin: 0.4131296
-    - _Smoothness: 0.675
+    - _Smoothness: 0.355
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SpeedMul: 0
     - _SrcBlend: 1
     - _Surface: 0
-    - _WaveAmplitude: 1
+    - _WaveAmplitude: 0
     - _WaveCount: 1
     - _WaveEffectsBoost: 0
     - _WaveEndDistance: 1000

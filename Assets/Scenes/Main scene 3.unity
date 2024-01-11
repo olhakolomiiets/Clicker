@@ -16672,11 +16672,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 877408596}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf43b3b97f3c479469731bdac94e9852, type: 3}
+  m_Script: {fileID: 11500000, guid: 087ff7edcbaa1f942a99084fa3d278c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xSensitivity: 50
-  ySensitivity: 50
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  rotationRate: 3
+  xRotation: 1
+  yRotation: 1
+  invertX: 0
+  invertY: 1
+  touchAnywhere: 1
 --- !u!4 &878607925 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4941262587450442, guid: 3afc18436889b854ab9a548ee3e323c8, type: 3}

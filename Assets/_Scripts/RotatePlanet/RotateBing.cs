@@ -35,7 +35,7 @@ public class RotateBing : MonoBehaviour
                 {
                     var rotationVector = new Vector3(_fingerUpPosition.y - _fingerDownPosition.y, _fingerDownPosition.x - _fingerUpPosition.x, 0);
                     transform.rotation *= Quaternion.AngleAxis(rotationVector.magnitude * _rotationSpeed * _speedRotation, rotationVector.normalized);
-                    transform.rotation = Quaternion.Inverse(transform.rotation);
+                    //transform.rotation = Quaternion.Inverse(transform.rotation);
                 }
             }
         }

@@ -14,6 +14,7 @@ public class GameUI : MonoBehaviour
     [SerializeField]
     private UIManagerController _managersController;
     private List<ItemController> _uiItemsList = new();
+    [SerializeField] private List<ObjectActivator> _objectActivator = new(); 
     [SerializeField]
     private ScorePanel _scorePanel;
 
@@ -28,6 +29,7 @@ public class GameUI : MonoBehaviour
                 = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();
             itemController.Prepare(data[i].ItemImage);
             _uiItemsList.Add(itemController);
+            _objectActivator[i].itemController = itemController;
             _managersController.AddButton(i, data[i].ManagerPrice);
             ConnectEvents(i, itemController);
         }

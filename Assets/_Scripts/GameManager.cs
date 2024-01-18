@@ -33,7 +33,8 @@ public class GameManager : MonoBehaviour
 
         //Visuals (soldiers / shooting) are optional and depends on GameData
         //GameRules or game data does NOT depend on visuals.
-        _visualsController.InitializeVisual(_gameData);
+
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   _visualsController.InitializeVisual(_gameData);
 
         //We load the saved game data if we have any
         LoadSavedData();
@@ -102,7 +103,7 @@ public class GameManager : MonoBehaviour
         if (data.Count > 0)
         {
             _gameRules.LoadGame(data[0]);
-            _visualsController.LoadData(data[1]);
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! _visualsController.LoadData(data[1]);
         }
     }
 

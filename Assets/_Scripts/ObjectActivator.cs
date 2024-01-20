@@ -49,14 +49,12 @@ public class ObjectActivator : MonoBehaviour
         {
             sfx.transform.parent = null;
             sfx.transform.localScale = new Vector3(1, 1, 1);
-            sfx.transform.SetParent(parentObject.transform);
-            
-            sfx.transform.SetParent(parentObject.transform);
+            sfx.transform.SetParent(parentObject.transform);           
             
             sfx.transform.localPosition = Vector3.zero;
             sfx.transform.localEulerAngles = Vector3.zero;          
             sfx.SetActive(true);
-           //StartCoroutine(DisableSFX(sfx));
+           StartCoroutine(DisableSFX(sfx));
         }
     }
 

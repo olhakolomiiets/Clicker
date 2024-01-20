@@ -24,6 +24,7 @@ public class ObjectActivator : MonoBehaviour
         // Ensure that the index is within the bounds of the list
         if (currentIndex < objectsToActivate.Count)
         {
+            MakeSFX(objectsToActivate[currentIndex]);
             // Activate the current object
             objectsToActivate[currentIndex].SetActive(true);
 
@@ -39,6 +40,30 @@ public class ObjectActivator : MonoBehaviour
     void OnDisable()
     {
         itemController.OnBuyButtonClicked -= OnByButtonClicked;
+    }
+
+    private void MakeSFX(GameObject parentObject) 
+    {
+        GameObject sfx = ObjectPooler.SharedInstance.GetPooledObject("SFX");
+        if (sfx != null)
+        {
+            sfx.transform.parent = null;
+            sfx.transform.localScale = new Vector3(1, 1, 1);
+            sfx.transform.SetParent(parentObject.transform);
+            
+            sfx.transform.SetParent(parentObject.transform);
+            
+            sfx.transform.localPosition = Vector3.zero;
+            sfx.transform.localEulerAngles = Vector3.zero;          
+            sfx.SetActive(true);
+           //StartCoroutine(DisableSFX(sfx));
+        }
+    }
+
+    private IEnumerator DisableSFX(GameObject sfx)
+    {
+        yield return new WaitForSeconds(1.5f);
+        sfx.SetActive(false);
     }
 
 }

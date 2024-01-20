@@ -9,6 +9,15 @@ public class ObjectActivator : MonoBehaviour
     public List<GameObject> objectsToActivate = new List<GameObject>();
     private int currentIndex = 0;
 
+    public SFXType _sfx;
+    public enum SFXType
+    {
+        Ray,
+        Lightning 
+    };
+
+   
+
     void Start()
     {
         itemController.OnBuyButtonClicked += OnByButtonClicked;
@@ -44,7 +53,22 @@ public class ObjectActivator : MonoBehaviour
 
     private void MakeSFX(GameObject parentObject) 
     {
-        GameObject sfx = ObjectPooler.SharedInstance.GetPooledObject("SFX");
+        GameObject sfx;
+        switch (_sfx)
+        {
+            case SFXType.Ray:
+                 sfx = ObjectPooler.SharedInstance.GetPooledObject("SFX");
+                break;
+            case SFXType.Lightning:
+                 sfx = ObjectPooler.SharedInstance.GetPooledObject("SFX2");
+                break;
+
+            default:
+                 sfx = ObjectPooler.SharedInstance.GetPooledObject("SFX");
+                break;
+        }
+
+        //GameObject sfx = ObjectPooler.SharedInstance.GetPooledObject("SFX");
         if (sfx != null)
         {
             sfx.transform.parent = null;

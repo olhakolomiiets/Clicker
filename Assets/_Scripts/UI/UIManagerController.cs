@@ -22,6 +22,13 @@ public class UIManagerController : MonoBehaviour
 
     private void Awake()
     {
+        _buyManagersPanel = GameObject.FindGameObjectWithTag("ManagersPanel");
+
+        _managersLayoutGroup = _buyManagersPanel.GetComponent<VerticalLayoutGroup>();
+    }
+
+    private void Start()
+    {
         _buyManagersPanel.SetActive(false);
     }
     public void AddButton(int index, float price)

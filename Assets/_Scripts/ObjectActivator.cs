@@ -6,16 +6,9 @@ using UnityEngine;
 public class ObjectActivator : MonoBehaviour
 {
     public ItemController itemController;
-    public List<GameObject> objectsToActivate = new List<GameObject>();
+    public List<PlanetObject> objectsToActivate = new List<PlanetObject>();
     private int currentIndex = 0;
-
-    public SFXType _sfx;
-    public enum SFXType
-    {
-        Ray,
-        Lightning 
-    };
-
+    [SerializeField] private ObjectPlaceRotator objectPlaceRotator;
    
 
     void Start()
@@ -33,9 +26,7 @@ public class ObjectActivator : MonoBehaviour
         // Ensure that the index is within the bounds of the list
         if (currentIndex < objectsToActivate.Count)
         {
-            MakeSFX(objectsToActivate[currentIndex]);
-            // Activate the current object
-            objectsToActivate[currentIndex].SetActive(true);
+            objectPlaceRotator.AddToNeedToShowList(objectsToActivate[currentIndex]);
 
             // Increment the index for the next call
             currentIndex++;
@@ -49,43 +40,6 @@ public class ObjectActivator : MonoBehaviour
     void OnDisable()
     {
         itemController.OnBuyButtonClicked -= OnByButtonClicked;
-    }
-
-    private void MakeSFX(GameObject parentObject) 
-    {
-        GameObject sfx;
-        switch (_sfx)
-        {
-            case SFXType.Ray:
-                 sfx = ObjectPooler.SharedInstance.GetPooledObject("SFX");
-                break;
-            case SFXType.Lightning:
-                 sfx = ObjectPooler.SharedInstance.GetPooledObject("SFX2");
-                break;
-
-            default:
-                 sfx = ObjectPooler.SharedInstance.GetPooledObject("SFX");
-                break;
-        }
-
-        //GameObject sfx = ObjectPooler.SharedInstance.GetPooledObject("SFX");
-        if (sfx != null)
-        {
-            sfx.transform.parent = null;
-            sfx.transform.localScale = new Vector3(1, 1, 1);
-            sfx.transform.SetParent(parentObject.transform);           
-            
-            sfx.transform.localPosition = Vector3.zero;
-            sfx.transform.localEulerAngles = Vector3.zero;          
-            sfx.SetActive(true);
-           StartCoroutine(DisableSFX(sfx));
-        }
-    }
-
-    private IEnumerator DisableSFX(GameObject sfx)
-    {
-        yield return new WaitForSeconds(1.5f);
-        sfx.SetActive(false);
     }
 
 }

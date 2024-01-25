@@ -11,29 +11,48 @@ public class GameUI : MonoBehaviour
     private GameObject _uiItemPrefab;
     [SerializeField]
     private Transform _uiItemParent;
-    [SerializeField]
-    private UIManagerController _managersController;
-    private List<ItemController> _uiItemsList = new();
+    
+    private UIManagerController _managerController;
+
+    [SerializeField] private List<UIManagerController> _managerControllers = new();
+
+    [SerializeField] private List<ItemController> _uiItemsList = new();
+
+
     [SerializeField] private List<ObjectActivator> _objectActivator = new(); 
     [SerializeField]
     private ScorePanel _scorePanel;
+
+    [SerializeField] private RectTransform _scrollItemGroup;
+    private float _scrollItemGroupHeight;
 
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnBuyButonClicked, OnPurchaseItemFirstTime, OnManagerPurchased;
 
     public void PrepareUI(List<ItemData> data)
     {
         _uiItemsList.Clear();
+        _managerControllers.Clear();
         for (int i = 0; i < data.Count; i++)
         {
             ItemController itemController
-                = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();
+                = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();            
             itemController.Prepare(data[i].ItemImage);
             _uiItemsList.Add(itemController);
+
+            _managerController = itemController.GetComponent<UIManagerController>();
+            _managerControllers.Add(_managerController);
+
             _objectActivator[i].itemController = itemController;
-            _managersController.AddButton(i, data[i].ManagerPrice);
+
+            _managerControllers[i].AddButton(i, data[i].ManagerPrice);
+
             ConnectEvents(i, itemController);
-        }
-        _managersController.OnManagerPurchased += PurchaseManager;
+
+            _scrollItemGroupHeight = 220 * data.Count;
+            _scrollItemGroup.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
+
+            _managerControllers[i].OnManagerPurchased += PurchaseManager;
+        }        
     }
 
     private void PurchaseManager(int index)
@@ -52,7 +71,7 @@ public class GameUI : MonoBehaviour
 
     public void UpdateManagerAvailability(int index, bool val)
     {
-        _managersController.ToggleButton(index, val);
+        _managerControllers[index].ToggleButton(index, val);
     }
 
     public void StartWorkOnItem(int index, float delay)
@@ -67,7 +86,9 @@ public class GameUI : MonoBehaviour
 
     public void UpdateUI(int index, GameData gameData)
     {
-        _managersController.SetButtonPurchased(index, gameData.Managers[index]);
+        _managerControllers[index].SetButtonPurchased(index, gameData.Managers[index]);
+       
+
         _uiItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]));
         _uiItemsList[index].SetBuyPrice(gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
         _uiItemsList[index].SetItemCount(gameData.ItemCount[index], gameData.ItemDataList[index].MaxCount(gameData.ItemBonusMultiplayer[index], gameData.ItemMaxCountHelper[index]));

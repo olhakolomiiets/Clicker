@@ -11,6 +11,7 @@ public class ProgressButon : MonoBehaviour
         {
             _isEnabled = value;
             _button.interactable = _isEnabled;
+            _itemButton.interactable = _isEnabled;
         }
         get { return _isEnabled; }
     }
@@ -20,7 +21,9 @@ public class ProgressButon : MonoBehaviour
     [SerializeField]
     private Sprite _inactiveSprite, _purchaseSprite, _defaultSprite;
     [SerializeField]
-    private Button _button;  
+    private Button _button;
+    [SerializeField]
+    private Button _itemButton;  
 
 
     public UnityEvent OnButtonClicked;

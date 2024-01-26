@@ -6,10 +6,14 @@ using UnityEngine;
 public class ObjectPlaceRotator : MonoBehaviour
 {
     public Transform cameraTransform;
-
+    private DragRotateGPT dragRotateGPT;
     private List<PlanetObject> needToShowList = new List<PlanetObject>();
     private bool isRotating = false;
 
+    private void Start()
+    {
+        dragRotateGPT = GetComponent<DragRotateGPT>();
+    }
 
     public void AddToNeedToShowList(PlanetObject planetObject)
     {
@@ -26,9 +30,11 @@ public class ObjectPlaceRotator : MonoBehaviour
     {
         if (!isRotating && needToShowList.Count > 0)
         {
+            dragRotateGPT.enabled = false;
             StartCoroutine(RotateObjects(() =>
             {
                 isRotating = false; // Reset the flag after the rotation is complete
+                dragRotateGPT.enabled = true;
             }));
         }
     }

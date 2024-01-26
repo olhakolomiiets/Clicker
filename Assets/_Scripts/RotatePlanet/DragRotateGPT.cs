@@ -11,6 +11,12 @@ public class DragRotateGPT : MonoBehaviour
     private float currentAutoRotationSpeed = 0f;
     private Vector2 lastDragDirection;
 
+    void Start()
+    {
+        // Set an initial auto-rotation speed on start
+        currentAutoRotationSpeed = autoRotateSpeed;
+    }
+
     void Update()
     {
         if (Input.touchCount > 0)

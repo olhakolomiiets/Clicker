@@ -5,17 +5,22 @@ using UnityEngine;
 public class ItemData : ScriptableObject
 {
     public double ItemIncome(int itemCount, int bonusMultiplier) => ItemBaseIncome * itemCount * bonusMultiplier;
+    public int DiamondsIncome(int itemCount, int bonusMultiplier) => ItemDiamondsIncome * itemCount * bonusMultiplier;
     //A way to set the base price of purchasing item and the upgrade cost in one method
     public double ItemUpgradePrice(int itemCount)
         => itemCount switch
         {
             0 => ItemStartCost,
             _ => ItemStartCost * Math.Pow(ItemCostMultiFactor, (itemCount + 1))
-        };
+        };    
+  
 
     //Those parameters are editable though the inspector. Originally i have planed to load this data from a file (for example xls)
     [field: SerializeField]
     public double ItemBaseIncome { get; set; } = 1.67;
+
+    [field: SerializeField]
+    public int ItemDiamondsIncome { get; set; } = 1;
     
     [field: SerializeField]
     public double ItemStartCost { get; private set; } = 3.738;

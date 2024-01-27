@@ -6,36 +6,81 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    [SerializeField] private RectTransform _controlButton;
-
-    [SerializeField] private RectTransform _upgradeStorePanel;
+    [Header("Shop Panel")]
+    [SerializeField] private RectTransform _toggleButton;
+    [SerializeField] private RectTransform _shopPanel;
     [SerializeField] private float _panelTopPosY, _panelMiddlePosY;
     [SerializeField] private float _tweenDuration;
 
-    private bool isDisplayed;
+    [Header("Creation")]
+    [SerializeField] private RectTransform _creationItemsParent;
+    [SerializeField] private Button _creationButton;
 
-    private void Start()
-    {
-       
-    }
+    [Header("Upgrade")]
+    [SerializeField] private RectTransform _upgradeItemsParent;
+    [SerializeField] private Button _upgradeButton;
+
+    [Header("Shop")]
+    [SerializeField] private RectTransform _shopItemsParent;
+    [SerializeField] private Button _shopButton;
+
+    private bool isDisplayed;
 
     public void ToggleUpgradeStorePanel()
     {
         if(isDisplayed)
         {
-            _upgradeStorePanel.DOAnchorPosY(_panelMiddlePosY, _tweenDuration);
-            _controlButton.DORotate(new Vector3(0, 0, 0), _tweenDuration);
+            _shopPanel.DOAnchorPosY(_panelMiddlePosY, _tweenDuration);
+            _toggleButton.DORotate(new Vector3(0, 0, 0), _tweenDuration);
             isDisplayed = false;
+            SetStartPos();
         }
         else
         {
-            _upgradeStorePanel.DOAnchorPosY(_panelTopPosY, _tweenDuration);
-            _controlButton.DORotate(new Vector3(0, 0, 180), _tweenDuration);
+            _creationItemsParent.DOAnchorPos(new Vector3(0, -350, 0), 0.25f);
+            _creationButton.Select();
+
+            _shopPanel.DOAnchorPosY(_panelTopPosY, _tweenDuration);
+            _toggleButton.DORotate(new Vector3(0, 0, 180), _tweenDuration);
             isDisplayed = true;
         }
-
-
     }
 
+    public void ShopsToggle(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                _creationItemsParent.DOAnchorPos(new Vector3(0, -350, 0), 0.25f);
+
+                _upgradeItemsParent.DOAnchorPos(new Vector3(0, -1110, 0), 0.25f);
+                _shopItemsParent.DOAnchorPos(new Vector3(1090, -350, 0), 0.25f);
+
+                break;
+
+            case 1:
+                _upgradeItemsParent.DOAnchorPos(new Vector3(0, -350, 0), 0.25f);
+
+                _creationItemsParent.DOAnchorPos(new Vector3(-1090, -350, 0), 0.25f);
+                _shopItemsParent.DOAnchorPos(new Vector3(1090, -350, 0), 0.25f);
+
+                break;
+
+            case 2:
+                _shopItemsParent.DOAnchorPos(new Vector3(0, -350, 0), 0.25f);
+
+                _creationItemsParent.DOAnchorPos(new Vector3(-1090, -350, 0), 0.25f);
+                _upgradeItemsParent.DOAnchorPos(new Vector3(0, -1110, 0), 0.25f);
+
+                break;
+        }
+    }
+
+    private void SetStartPos()
+    {
+        _creationItemsParent.DOAnchorPos(new Vector3(-1090, -350, 0), 0.25f);
+        _upgradeItemsParent.DOAnchorPos(new Vector3(1090, -350, 0), 0.25f);
+        _shopItemsParent.DOAnchorPos(new Vector3(1090, -350, 0), 0.25f);
+    }
 
 }

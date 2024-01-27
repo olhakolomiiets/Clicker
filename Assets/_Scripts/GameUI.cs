@@ -7,39 +7,37 @@ using UnityEngine;
 /// </summary>
 public class GameUI : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject _uiItemPrefab;
-    [SerializeField]
-    private Transform _uiItemParent;
-    
-    private UIManagerController _managerController;
+    [Header("Score Panel")]
+    [SerializeField] private ScorePanel _coins;
+    [SerializeField] private ScorePanel _diamonds;
 
-    [SerializeField] private List<UIManagerController> _managerControllers = new();
+    [Header("Creation Store")]
+    [SerializeField] private GameObject _uiItemPrefab;
+    [SerializeField] private RectTransform _uiItemParent;
+    [SerializeField] private List<ObjectActivator> _objectActivator = new();        
+    private List<UIManagerController> _managerControllers = new();
+    private List<ItemController> _uiCreationItemsList = new();
 
-    [SerializeField] private List<ItemController> _uiItemsList = new();
+    //[Header("Upgrade Store")]
+
+    //[Header("Shop")]
 
 
-    [SerializeField] private List<ObjectActivator> _objectActivator = new(); 
-    [SerializeField]
-    private ScorePanel _scorePanel;
-
-    [SerializeField] private RectTransform _scrollItemGroup;
-    private float _scrollItemGroupHeight;
+    //private UIManagerController _managerController;
 
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnBuyButonClicked, OnPurchaseItemFirstTime, OnManagerPurchased;
 
     public void PrepareUI(List<ItemData> data)
     {
-        _uiItemsList.Clear();
+        _uiCreationItemsList.Clear();
         _managerControllers.Clear();
         for (int i = 0; i < data.Count; i++)
         {
-            ItemController itemController
-                = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();            
+            ItemController itemController = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();            
             itemController.Prepare(data[i].ItemImage);
-            _uiItemsList.Add(itemController);
+            _uiCreationItemsList.Add(itemController);
 
-            _managerController = itemController.GetComponent<UIManagerController>();
+            UIManagerController _managerController = itemController.GetComponent<UIManagerController>();
             _managerControllers.Add(_managerController);
 
             _objectActivator[i].itemController = itemController;
@@ -48,8 +46,8 @@ public class GameUI : MonoBehaviour
 
             ConnectEvents(i, itemController);
 
-            _scrollItemGroupHeight = 220 * data.Count;
-            _scrollItemGroup.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
+            float _scrollItemGroupHeight = 250 * data.Count;
+            _uiItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
 
             _managerControllers[i].OnManagerPurchased += PurchaseManager;
         }        
@@ -76,28 +74,30 @@ public class GameUI : MonoBehaviour
 
     public void StartWorkOnItem(int index, float delay)
     {
-        _uiItemsList[index].StartWork(delay);
+        _uiCreationItemsList[index].StartWork(delay);
     }
 
     public void ToggleItemActiveState(int index, bool val)
     {
-        _uiItemsList[index].ToggleActivation(val);
+        _uiCreationItemsList[index].ToggleActivation(val);
     }
 
     public void UpdateUI(int index, GameData gameData)
     {
         _managerControllers[index].SetButtonPurchased(index, gameData.Managers[index]);
-       
+        _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]));
+        _uiCreationItemsList[index].SetBuyPrice(gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
 
-        _uiItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]));
-        _uiItemsList[index].SetBuyPrice(gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
-        _uiItemsList[index].SetItemCount(gameData.ItemCount[index], gameData.ItemDataList[index].MaxCount(gameData.ItemBonusMultiplayer[index], gameData.ItemMaxCountHelper[index]));
-        _scorePanel.SetScore(gameData.Money);
-        _uiItemsList[index].ToggleBuyButton(gameData.Money >= gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
+        _uiCreationItemsList[index].SetItemCount(gameData.ItemCount[index], gameData.ItemDataList[index].MaxCount(gameData.ItemBonusMultiplayer[index], gameData.ItemMaxCountHelper[index]));
+        _coins.SetScore(gameData.Money);
+
+        _diamonds.SetDiamondsScore(gameData.Diamonds);
+
+        _uiCreationItemsList[index].ToggleBuyButton(gameData.Money >= gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
     }
 
     internal void ActivateItem(int index)
     {
-        _uiItemsList[index].ActivateButton();
+        _uiCreationItemsList[index].ActivateButton();
     }
 }

@@ -5,24 +5,15 @@ using UnityEngine.UI;
 
 public class ItemController : MonoBehaviour
 {
-    [SerializeField]
-    private ProgressBar _progressBar;
-    [SerializeField]
-    private ProgressButon _progressButton;
-    [SerializeField]
-    private TextMeshProUGUI _itemScore;
-    [SerializeField]
-    private Button _buyButton;
-    [SerializeField]
-    private TextMeshProUGUI _buyButtonText;
-    [SerializeField]
-    private TextMeshProUGUI _itemCount;
-    [SerializeField]
-    private Image _itemImage;
-    [SerializeField]
-    private UIPurchaseInfo _purchaseInfo;
-    [SerializeField]
-    private GameObject _buyPanel;
+    [SerializeField] private ProgressBar _progressBar;
+    [SerializeField] private ProgressButon _progressButton;
+    [SerializeField] private TextMeshProUGUI _itemScore;
+    [SerializeField] private Button _buyButton;
+    [SerializeField] private TextMeshProUGUI _buyButtonText;
+    [SerializeField] private TextMeshProUGUI _itemCount;
+    [SerializeField] private Image _itemImage;
+    [SerializeField] private UIPurchaseInfo _purchaseInfo;
+    [SerializeField] private GameObject _buyPanel;
 
     public event Action OnProgressButtonClicked, OnWorkFinished, OnBuyButtonClicked, OnFirstActivation;
 

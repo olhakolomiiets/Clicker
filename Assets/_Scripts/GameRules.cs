@@ -88,6 +88,8 @@ public class GameRules : MonoBehaviour
     public void IncreaseScore(int index)
     {
         _currentGameData.Money += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
+
+        _currentGameData.Diamonds += _currentGameData.ItemDataList[index].DiamondsIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
         SendDataUpdate();
     }
 

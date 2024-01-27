@@ -9,6 +9,7 @@ public class GameData
 {
     //Money representation should handle a lot but at some point it will get reset to 0
     public double Money { get; set;}
+    public int Diamonds { get; set;}
 
     //Bonus multiplier allows us to better balance the incremental game
     //https://www.gamedeveloper.com/design/the-math-of-idle-games-part-i
@@ -25,6 +26,7 @@ public class GameData
             return;
         GameDataSave data = JsonUtility.FromJson<GameDataSave>(dataString);
         Money = data.Money;
+        Diamonds = data.Diamonds;
         ItemCount = data.ItemCount;
         Managers = data.Managers;
         ItemBonusMultiplayer = data.ItemBonusMultiplayer;
@@ -35,6 +37,7 @@ public class GameData
         => JsonUtility.ToJson(new GameDataSave
         {
             Money = Money,
+            Diamonds = Diamonds,
             ItemCount = ItemCount,
             Managers = Managers,
             ItemBonusMultiplayer = ItemBonusMultiplayer,
@@ -46,6 +49,7 @@ public class GameData
 public struct GameDataSave
 {
     public double Money;
+    public int Diamonds;
     public List<int> ItemCount;
     public List<bool> Managers;
     public List<int> ItemBonusMultiplayer;

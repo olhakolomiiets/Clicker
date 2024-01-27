@@ -7,18 +7,13 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
-    [SerializeField]
-    private GameUI _gameUI;
+    [SerializeField] private GameUI _gameUI;
     private GameData _gameData;
-    [SerializeField]
-    private GameRules _gameRules;
-    [SerializeField]
-    private SaveSystem _saveSystem;
-    [SerializeField]
-    private VisualsController _visualsController;
+    [SerializeField] private GameRules _gameRules;
+    [SerializeField] private SaveSystem _saveSystem;
+    [SerializeField] private VisualsController _visualsController;
 
-    [SerializeField]
-    private List<ItemData> _itemsDataList;
+    [SerializeField] private List<ItemData> _creationItemsDataList;
 
     /// <summary>
     /// All the setup happens here
@@ -61,7 +56,7 @@ public class GameManager : MonoBehaviour
     private void PrepareGameData()
     {
         _gameData = new();
-        _gameData.ItemDataList = _itemsDataList;
+        _gameData.ItemDataList = _creationItemsDataList;
     }
 
     /// <summary>
@@ -69,7 +64,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void PrepareUI()
     {
-        _gameUI.PrepareUI(_itemsDataList);
+        _gameUI.PrepareUI(_creationItemsDataList);
 
         _gameUI.OnProgressButtonClicked += _gameRules.HandleStartItemProgress;
         _gameUI.OnWorkFinished += _gameRules.IncreaseScore;

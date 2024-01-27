@@ -12,6 +12,7 @@ public class ItemController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _buyButtonText;
     [SerializeField] private TextMeshProUGUI _itemCount;
     [SerializeField] private Image _itemImage;
+    [SerializeField] private GameObject _luxImage;
     [SerializeField] private UIPurchaseInfo _purchaseInfo;
     [SerializeField] private GameObject _buyPanel;
 
@@ -29,9 +30,12 @@ public class ItemController : MonoBehaviour
         _progressButton.SwapSpriteToInactive();
     }
 
-    public void Prepare(Sprite icon)
+    public void Prepare(Sprite icon, bool isLux)
     {
         _itemImage.sprite = icon;
+
+        if (isLux)
+            _luxImage.SetActive(true);
     }
 
     public void ActivateButton()

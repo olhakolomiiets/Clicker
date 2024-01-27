@@ -34,7 +34,7 @@ public class GameUI : MonoBehaviour
         for (int i = 0; i < data.Count; i++)
         {
             ItemController itemController = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();            
-            itemController.Prepare(data[i].ItemImage);
+            itemController.Prepare(data[i].ItemImage, data[i].isLux);
             _uiCreationItemsList.Add(itemController);
 
             UIManagerController _managerController = itemController.GetComponent<UIManagerController>();
@@ -46,7 +46,7 @@ public class GameUI : MonoBehaviour
 
             ConnectEvents(i, itemController);
 
-            float _scrollItemGroupHeight = 250 * data.Count;
+            float _scrollItemGroupHeight = 220 * data.Count;
             _uiItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
 
             _managerControllers[i].OnManagerPurchased += PurchaseManager;

@@ -47,4 +47,6 @@ public class ItemData : ScriptableObject
     public float ManagerPrice { get; set; } = 1000;
     [field: SerializeField]
     public Sprite ItemImage { get; set; }
+    [field: SerializeField] 
+    public bool isLux { get; set; }
 }

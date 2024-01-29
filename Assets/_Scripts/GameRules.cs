@@ -10,9 +10,11 @@ public class GameRules : MonoBehaviour
 
     // I want to use events to keep the classes unaware of each other
     public event Action<int, bool> OnModifyManagerAvailability, OnToggleItemActivationState;
-    public event Action<int, float> OnStartWorkOnItem;
-    public event Action<int> OnActivateItem, OnAutomateItem;
+    public event Action<int, float> OnStartWorkOnItem, OnStartWorkOnUpgradeItem;
+    public event Action<int> OnActivateItem, OnActivateUpgradeItem, OnAutomateItem;
     public event Action<int, GameData> OnUpdateData, OnPerformAction;
+
+    public event Action<int, GameData> OnUpdateUpgradeData, OnUpdatePerformAction;
 
     /// <summary>
     /// Handles clicking of the Manager purchas button per each Item (index)
@@ -48,15 +50,21 @@ public class GameRules : MonoBehaviour
         {
             AutomateTask(index);
         }
+    }    
+
+    public void HandleUpgradeManager(int index)
+    {
+        IncreaseDiamondsScore(index);
+        HandleStartUpgradeItemProgress(index);
     }
 
-    /// <summary>
-    /// Performs the work of "clicking the button" automatically
-    /// </summary>
-    /// <param name="index"></param>
+        /// <summary>
+        /// Performs the work of "clicking the button" automatically
+        /// </summary>
+        /// <param name="index"></param>
     private void AutomateTask(int index)
     {
-        IncreaseScore(index);
+        //IncreaseScore(index);
         HandleStartItemProgress(index);
     }
 
@@ -87,9 +95,17 @@ public class GameRules : MonoBehaviour
     /// <param name="index"></param>
     public void IncreaseScore(int index)
     {
-        _currentGameData.Money += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
+        if (_currentGameData.ItemDataList[index].IsLux)
+            _currentGameData.Diamonds += _currentGameData.ItemDataList[index].DiamondsIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
+        else
+            _currentGameData.Money += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
 
-        _currentGameData.Diamonds += _currentGameData.ItemDataList[index].DiamondsIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
+        SendDataUpdate();
+    }
+
+    public void IncreaseDiamondsScore(int index)
+    {       
+        _currentGameData.Diamonds += _currentGameData.UpgradeItemDataList[index].ItemIncome(_currentGameData.UpgradeItemCount[index]); 
         SendDataUpdate();
     }
 
@@ -101,6 +117,12 @@ public class GameRules : MonoBehaviour
     {
         OnPerformAction?.Invoke(index, _currentGameData);
         OnStartWorkOnItem?.Invoke(index,_currentGameData.ItemDataList[index].Delay);
+    }    
+    
+    public void HandleStartUpgradeItemProgress(int index)
+    {
+        OnUpdatePerformAction?.Invoke(index, _currentGameData);
+        OnStartWorkOnUpgradeItem?.Invoke(index,_currentGameData.UpgradeItemDataList[index].Delay);
     }
 
     /// <summary>
@@ -112,7 +134,12 @@ public class GameRules : MonoBehaviour
         _currentGameData.Money -= _currentGameData.ItemDataList[index].ItemUpgradePrice(_currentGameData.ItemCount[index]);
         _currentGameData.ItemCount[index] += 1;
         SendDataUpdate();
-
+    }    
+    public void HandleDiamondsUpgrade(int index)
+    {
+        _currentGameData.Diamonds -= _currentGameData.UpgradeItemDataList[index].ItemCost;
+        _currentGameData.UpgradeItemCount[index] += 1;
+        SendDataUpdate();
     }
 
     /// <summary>
@@ -133,6 +160,7 @@ public class GameRules : MonoBehaviour
             if (_currentGameData.Managers[i])
                 ActivateManagerFor(i);
         }
+
         SendDataUpdate();
     }
 
@@ -150,6 +178,10 @@ public class GameRules : MonoBehaviour
             _currentGameData.ItemMaxCountHelper.Add(0);
             _currentGameData.Managers.Add(false);
         }
+        for (int i = 0; i < gameData.UpgradeItemDataList.Count; i++)
+        {
+            _currentGameData.UpgradeItemCount.Add(i == 0 ? 1 : 0);
+        }
         SendDataUpdate();
         OnActivateItem?.Invoke(0);
     }
@@ -165,6 +197,11 @@ public class GameRules : MonoBehaviour
             UnlockManagers(i);
             CheckBonusMultiplier(i);
             OnUpdateData?.Invoke(i, _currentGameData);
+        }
+
+        for (int i = 0; i <  _currentGameData.UpgradeItemDataList.Count; i++)
+        {
+            OnUpdateUpgradeData?.Invoke(i, _currentGameData);
         }
     }
 

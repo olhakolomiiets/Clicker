@@ -8,11 +8,11 @@ public class ScorePanel : MonoBehaviour
 
     public void SetScore(double score)
     {
-        coreText.text = $"{score.ToString("F2")}";
+        coreText.text = $"{score.ToString("N0")}";
     }    
     public void SetDiamondsScore(double score)
     {
-        coreText.text = $"{score.ToString("F0")}";
+        coreText.text = $"{score.ToString("N0")}";
     }
 }
 

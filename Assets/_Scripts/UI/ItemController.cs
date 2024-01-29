@@ -7,6 +7,7 @@ public class ItemController : MonoBehaviour
 {
     [SerializeField] private ProgressBar _progressBar;
     [SerializeField] private ProgressButon _progressButton;
+    [SerializeField] private TextMeshProUGUI _itemTitle;
     [SerializeField] private TextMeshProUGUI _itemScore;
     [SerializeField] private Button _buyButton;
     [SerializeField] private TextMeshProUGUI _buyButtonText;
@@ -15,8 +16,9 @@ public class ItemController : MonoBehaviour
     [SerializeField] private GameObject _luxImage;
     [SerializeField] private UIPurchaseInfo _purchaseInfo;
     [SerializeField] private GameObject _buyPanel;
+    [SerializeField] private GameObject _managerButton;
 
-    public event Action OnProgressButtonClicked, OnWorkFinished, OnBuyButtonClicked, OnFirstActivation;
+    public event Action OnProgressButtonClicked, OnWorkFinished, OnLuxItemWorkFinished, OnBuyButtonClicked, OnFirstActivation;
 
     public bool isWorking => _progressButton.IsEnabled == false;
     private void Awake()
@@ -45,6 +47,7 @@ public class ItemController : MonoBehaviour
         _progressBar.gameObject.SetActive(true);
         _buyPanel.SetActive(true);
         _progressButton.IsEnabled = true;
+        _managerButton.SetActive(true);
         _progressButton.SwapSpriteToDefault();
         _progressButton.OnButtonClicked.RemoveAllListeners();
         _progressButton.OnButtonClicked.AddListener(HandleProgressButtonClick);
@@ -101,10 +104,10 @@ public class ItemController : MonoBehaviour
     {
         if (_purchaseInfo.isActiveAndEnabled)
         {
-            _purchaseInfo.SetPrice($"{price.ToString("F2")} $");
+            _purchaseInfo.SetPrice($"{price.ToString("N0")}");
             return;
         }
-        _buyButtonText.text = $"{price.ToString("F2")} $";
+        _buyButtonText.text = $"{price.ToString("N0")}";
     }
 
     public void SetItemCount(int count, int maxCount)
@@ -124,7 +127,7 @@ public class ItemController : MonoBehaviour
         => _itemScore.gameObject.SetActive(val);
     public void SetIncome(double score)
     {
-        _itemScore.text = $"{score.ToString("F2")} $";
+        _itemScore.text = $"{score.ToString("N0")}";
     }
 
     private void HandleProgressBarFinished()

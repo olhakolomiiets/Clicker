@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private List<ItemData> _creationItemsDataList;
 
+    [SerializeField] private List<UpgradeItemData> _upgradeItemsDataList;
+
     /// <summary>
     /// All the setup happens here
     /// </summary>
@@ -43,9 +45,15 @@ public class GameManager : MonoBehaviour
     {
         _gameRules.OnModifyManagerAvailability += _gameUI.UpdateManagerAvailability;
         _gameRules.OnActivateItem += _gameUI.ActivateItem;
+
         _gameRules.OnStartWorkOnItem += _gameUI.StartWorkOnItem;
+        _gameRules.OnStartWorkOnUpgradeItem += _gameUI.StartWorkOnUpgradeItem;
+
         _gameRules.OnToggleItemActivationState += _gameUI.ToggleItemActiveState;
+
         _gameRules.OnUpdateData += _gameUI.UpdateUI;
+        _gameRules.OnUpdateUpgradeData += _gameUI.UpdateUpgradeUI;
+
         _gameRules.OnUpdateData += _visualsController.UpdateVisuals;
         _gameRules.OnPerformAction += _visualsController.PerformAction;
     }
@@ -57,6 +65,7 @@ public class GameManager : MonoBehaviour
     {
         _gameData = new();
         _gameData.ItemDataList = _creationItemsDataList;
+        _gameData.UpgradeItemDataList = _upgradeItemsDataList;
     }
 
     /// <summary>
@@ -64,12 +73,21 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void PrepareUI()
     {
-        _gameUI.PrepareUI(_creationItemsDataList);
+        _gameUI.PrepareCreationUI(_creationItemsDataList);
+
+        _gameUI.PrepareUpgradeUI(_upgradeItemsDataList);
 
         _gameUI.OnProgressButtonClicked += _gameRules.HandleStartItemProgress;
+       
         _gameUI.OnWorkFinished += _gameRules.IncreaseScore;
         _gameUI.OnWorkFinished += _gameRules.HandleManager;
+
+        _gameUI.OnUpgradeItemPurchased += _gameRules.HandleStartUpgradeItemProgress;
+        _gameUI.OnUpdateWorkFinished += _gameRules.HandleUpgradeManager;
+        _gameUI.OnUpgradeItemPurchased += _gameRules.HandleDiamondsUpgrade;
+
         _gameUI.OnBuyButonClicked += _gameRules.HandleUpgrade;
+
         _gameUI.OnPurchaseItemFirstTime += _gameRules.PurchaseItemFirstTime;
         _gameUI.OnManagerPurchased += _gameRules.HandleManagerPurchased;
     }

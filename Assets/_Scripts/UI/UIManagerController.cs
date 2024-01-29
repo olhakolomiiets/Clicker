@@ -5,18 +5,12 @@ using UnityEngine.UI;
 
 public class UIManagerController : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject _managerButton;    
-    
-    [SerializeField]
-    private GameObject _buyManagersPanel;
-    [SerializeField]
-    private GameObject _buyManagerButtonPrefab;
-
+    [SerializeField] private GameObject _managerButton;       
+    [SerializeField] private GameObject _buyManagersPanel;
+    [SerializeField] private GameObject _buyManagerButtonPrefab;
     [SerializeField] private UISquadLeadersButton _buyButton;
 
     public event Action<int> OnManagerPurchased;
-
 
     private void Awake()
     {

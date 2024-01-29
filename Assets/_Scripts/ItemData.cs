@@ -48,5 +48,6 @@ public class ItemData : ScriptableObject
     [field: SerializeField]
     public Sprite ItemImage { get; set; }
     [field: SerializeField] 
-    public bool isLux { get; set; }
+    public bool IsLux { get; set; }    
+    
 }

@@ -14,11 +14,16 @@ public class GameData
     //Bonus multiplier allows us to better balance the incremental game
     //https://www.gamedeveloper.com/design/the-math-of-idle-games-part-i
     public List<int> ItemCount = new();
+    public List<int> UpgradeItemCount = new();
     public List<bool> Managers = new();
     public List<int> ItemBonusMultiplayer = new();
     public List<int> ItemMaxCountHelper = new();
 
     public List<ItemData> ItemDataList = new();
+
+    public List<UpgradeItemData> UpgradeItemDataList = new();
+
+    public bool IsLux { get; set; }
 
     public void SetData(string dataString)
     {
@@ -28,9 +33,11 @@ public class GameData
         Money = data.Money;
         Diamonds = data.Diamonds;
         ItemCount = data.ItemCount;
+        UpgradeItemCount = data.UpgradeItemCount;
         Managers = data.Managers;
         ItemBonusMultiplayer = data.ItemBonusMultiplayer;
         ItemMaxCountHelper = data.ItemMaxCountHelper;
+        IsLux = data.IsLux;
     }
 
     public string GetSaveData()
@@ -39,9 +46,11 @@ public class GameData
             Money = Money,
             Diamonds = Diamonds,
             ItemCount = ItemCount,
+            UpgradeItemCount = UpgradeItemCount,
             Managers = Managers,
             ItemBonusMultiplayer = ItemBonusMultiplayer,
-            ItemMaxCountHelper = ItemMaxCountHelper
+            ItemMaxCountHelper = ItemMaxCountHelper,
+            IsLux = IsLux
         });
 }
 
@@ -51,8 +60,10 @@ public struct GameDataSave
     public double Money;
     public int Diamonds;
     public List<int> ItemCount;
+    public List<int> UpgradeItemCount;
     public List<bool> Managers;
     public List<int> ItemBonusMultiplayer;
     public List<int> ItemMaxCountHelper;
+    public bool IsLux;
 }
 

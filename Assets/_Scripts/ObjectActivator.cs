@@ -6,6 +6,7 @@ using UnityEngine;
 public class ObjectActivator : MonoBehaviour
 {
     public ItemController itemController;
+    public UpgradeItemController upgradeItemController;
     public List<PlanetObject> objectsToActivate = new List<PlanetObject>();
     private int currentIndex = 0;
     [SerializeField] private ObjectPlaceRotator objectPlaceRotator;
@@ -13,7 +14,10 @@ public class ObjectActivator : MonoBehaviour
 
     void Start()
     {
-        itemController.OnBuyButtonClicked += OnByButtonClicked;
+        if(itemController != null)
+            itemController.OnBuyButtonClicked += OnByButtonClicked;
+        if (upgradeItemController != null)
+            upgradeItemController.OnUpgradeItemBuyButtonClicked += OnByButtonClicked;
     }
 
     private void OnByButtonClicked()
@@ -39,7 +43,10 @@ public class ObjectActivator : MonoBehaviour
     }
     void OnDisable()
     {
-        itemController.OnBuyButtonClicked -= OnByButtonClicked;
+        if (itemController != null)
+            itemController.OnBuyButtonClicked -= OnByButtonClicked;
+        if (upgradeItemController != null)
+            upgradeItemController.OnUpgradeItemBuyButtonClicked -= OnByButtonClicked;
     }
 
 }

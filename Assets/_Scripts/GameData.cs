@@ -9,7 +9,7 @@ public class GameData
 {
     //Money representation should handle a lot but at some point it will get reset to 0
     public double Money { get; set;}
-    public int Diamonds { get; set;}
+    public double Diamonds { get; set;}
 
     //Bonus multiplier allows us to better balance the incremental game
     //https://www.gamedeveloper.com/design/the-math-of-idle-games-part-i
@@ -23,7 +23,7 @@ public class GameData
 
     public List<UpgradeItemData> UpgradeItemDataList = new();
 
-    public bool IsLux { get; set; }
+    public bool IsPremium { get; set; }
 
     public void SetData(string dataString)
     {
@@ -37,7 +37,7 @@ public class GameData
         Managers = data.Managers;
         ItemBonusMultiplayer = data.ItemBonusMultiplayer;
         ItemMaxCountHelper = data.ItemMaxCountHelper;
-        IsLux = data.IsLux;
+        IsPremium = data.IsPremium;
     }
 
     public string GetSaveData()
@@ -50,7 +50,7 @@ public class GameData
             Managers = Managers,
             ItemBonusMultiplayer = ItemBonusMultiplayer,
             ItemMaxCountHelper = ItemMaxCountHelper,
-            IsLux = IsLux
+            IsPremium = IsPremium
         });
 }
 
@@ -58,12 +58,12 @@ public class GameData
 public struct GameDataSave
 {
     public double Money;
-    public int Diamonds;
+    public double Diamonds;
     public List<int> ItemCount;
     public List<int> UpgradeItemCount;
     public List<bool> Managers;
     public List<int> ItemBonusMultiplayer;
     public List<int> ItemMaxCountHelper;
-    public bool IsLux;
+    public bool IsPremium;
 }
 

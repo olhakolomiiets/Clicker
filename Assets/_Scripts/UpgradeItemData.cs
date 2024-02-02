@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class UpgradeItemData : ScriptableObject
 {
-    public int ItemIncome(int itemCount) => ItemBaseIncome * itemCount;
+    public double ItemIncome(int itemCount) => ItemBaseIncome * itemCount;
 
     [field: SerializeField]
-    public int ItemBaseIncome { get; set; } = 1;
+    public double ItemBaseIncome { get; set; } = 1;
 
     [field: SerializeField]
-    public int ItemCost { get; private set; } = 3;
+    public double ItemCost { get; private set; } = 3;
 
     [field: SerializeField]
     public float Delay { get; set; } = 0.6f;

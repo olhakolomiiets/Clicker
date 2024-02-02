@@ -95,8 +95,8 @@ public class GameRules : MonoBehaviour
     /// <param name="index"></param>
     public void IncreaseScore(int index)
     {
-        if (_currentGameData.ItemDataList[index].IsLux)
-            _currentGameData.Diamonds += _currentGameData.ItemDataList[index].DiamondsIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
+        if (_currentGameData.ItemDataList[index].IsPremium)
+            _currentGameData.Diamonds += _currentGameData.ItemDataList[index].DiamondsIncome(_currentGameData.ItemCount[index]);
         else
             _currentGameData.Money += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
 
@@ -213,8 +213,7 @@ public class GameRules : MonoBehaviour
     {
         if (_currentGameData.Managers[index] == false)
         {
-            bool val =
-                _currentGameData.ItemDataList[index].ManagerPrice < _currentGameData.Money;
+            bool val = _currentGameData.ItemDataList[index].ManagerPrice < _currentGameData.Money;
             OnModifyManagerAvailability?.Invoke(index, val);
         }
     }
@@ -227,9 +226,7 @@ public class GameRules : MonoBehaviour
     {
         if (_currentGameData.ItemCount[index] == 0)
         {
-            bool val =
-                _currentGameData.ItemDataList[index].ItemUpgradePrice(_currentGameData.ItemCount[index])
-                < _currentGameData.Money;
+            bool val = _currentGameData.ItemDataList[index].ItemUpgradePrice(_currentGameData.ItemCount[index]) < _currentGameData.Money;
             OnToggleItemActivationState?.Invoke(index, val);
         }
     }
@@ -241,12 +238,11 @@ public class GameRules : MonoBehaviour
     /// <param name="index"></param>
     private void CheckBonusMultiplier(int index)
     {
-        if (_currentGameData.ItemCount[index]
-                    >= _currentGameData.ItemDataList[index].MaxCount(_currentGameData.ItemBonusMultiplayer[index], _currentGameData.ItemMaxCountHelper[index]))
+        if (_currentGameData.ItemCount[index] >= _currentGameData.ItemDataList[index].MaxCount(_currentGameData.ItemBonusMultiplayer[index], _currentGameData.ItemMaxCountHelper[index]) && _currentGameData.ItemCount[index] < _currentGameData.ItemDataList[index].MaxCountIncrement)
         {
             _currentGameData.ItemBonusMultiplayer[index] *= 2;
             if (_currentGameData.ItemBonusMultiplayer[index] >= _currentGameData.ItemDataList[index].BonusMaxCountThreshold)
-                _currentGameData.ItemMaxCountHelper[index] += _currentGameData.ItemDataList[index].MaxCountIncrement;
+                _currentGameData.ItemMaxCountHelper[index] = _currentGameData.ItemDataList[index].MaxCountIncrement;
         }
     }
 }

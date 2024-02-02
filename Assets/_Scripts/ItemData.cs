@@ -5,15 +5,14 @@ using UnityEngine;
 public class ItemData : ScriptableObject
 {
     public double ItemIncome(int itemCount, int bonusMultiplier) => ItemBaseIncome * itemCount * bonusMultiplier;
-    public int DiamondsIncome(int itemCount, int bonusMultiplier) => ItemDiamondsIncome * itemCount * bonusMultiplier;
+    public double DiamondsIncome(int itemCount) => ItemDiamondsIncome * itemCount;
     //A way to set the base price of purchasing item and the upgrade cost in one method
     public double ItemUpgradePrice(int itemCount)
         => itemCount switch
         {
             0 => ItemStartCost,
             _ => ItemStartCost * Math.Pow(ItemCostMultiFactor, (itemCount + 1))
-        };    
-  
+        };
 
     //Those parameters are editable though the inspector. Originally i have planed to load this data from a file (for example xls)
     [field: SerializeField]
@@ -26,20 +25,24 @@ public class ItemData : ScriptableObject
     public double ItemStartCost { get; private set; } = 3.738;
     [field: SerializeField]
     public double ItemCostMultiFactor { get; private set; } = 1.07;
-    
+
     //We set the max count as a limit before we increase the bonus multplier for the score
-    public int MaxCount(int bonusMultiplier, int maxCountHelper) =>
-        bonusMultiplier switch
-        {
-            1 => 25,
-            2 => 50,
-            _ => maxCountHelper
-        };
+       public int MaxCount(int bonusMultiplier, int maxCountHelper) =>
+            bonusMultiplier switch
+            {
+                1 when MaxCountIncrement > 10 => MaxCountIncrement / 5,
+                2 when MaxCountIncrement > 5 => MaxCountIncrement / 2,
+                _ => maxCountHelper
+            };
+
+    //public int MaxCount(int maxCountHelper) => maxCountHelper;
+
 
     //Parameter used to caluclate if we should increase the bonus multiplier
     public int BonusMaxCountThreshold => 4;
     //Parameter used to caluclate if we should increase the bonus multiplier
-    public int MaxCountIncrement => 100;
+
+    [SerializeField] public int MaxCountIncrement;
     
     [field: SerializeField]
     public float Delay { get; set; } = 0.6f;
@@ -48,6 +51,6 @@ public class ItemData : ScriptableObject
     [field: SerializeField]
     public Sprite ItemImage { get; set; }
     [field: SerializeField] 
-    public bool IsLux { get; set; }    
-    
+    public bool IsPremium { get; set; }
+
 }

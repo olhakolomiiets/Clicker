@@ -31,7 +31,7 @@ public class GameUI : MonoBehaviour
 
     private bool _isLux;
 
-    public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnLuxItemWorkFinished, OnUpdateWorkFinished, OnBuyButonClicked, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;
+    public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnPremiumItemWorkFinished, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;
 
     public void PrepareCreationUI(List<ItemData> data)
     {
@@ -40,7 +40,7 @@ public class GameUI : MonoBehaviour
         for (int i = 0; i < data.Count; i++)
         {
             ItemController itemController = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();            
-            itemController.Prepare(data[i].ItemImage, data[i].IsLux);
+            itemController.Prepare(data[i].ItemImage, data[i].IsPremium);
             _uiCreationItemsList.Add(itemController);
 
             UIManagerController _managerController = itemController.GetComponent<UIManagerController>();
@@ -54,7 +54,7 @@ public class GameUI : MonoBehaviour
             float _scrollItemGroupHeight = 220 * data.Count;
             _uiItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
 
-            _isLux = data[i].IsLux;
+            _isLux = data[i].IsPremium;
 
             _managerControllers[i].OnManagerPurchased += PurchaseManager;
         }        
@@ -87,7 +87,7 @@ public class GameUI : MonoBehaviour
     {
         itemController.OnProgressButtonClicked += () => OnProgressButtonClicked?.Invoke(i);
         itemController.OnWorkFinished += () => OnWorkFinished?.Invoke(i);
-        itemController.OnLuxItemWorkFinished += () => OnLuxItemWorkFinished?.Invoke(i);
+        itemController.OnPremiumItemWorkFinished += () => OnPremiumItemWorkFinished?.Invoke(i);
         itemController.OnBuyButtonClicked += () => OnBuyButonClicked?.Invoke(i);
         itemController.OnFirstActivation += () => OnPurchaseItemFirstTime?.Invoke(i);
     }
@@ -121,14 +121,19 @@ public class GameUI : MonoBehaviour
     {
         _managerControllers[index].SetButtonPurchased(index, gameData.Managers[index]);
 
-        _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].DiamondsIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]));
-        _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]));
-        
+        if(gameData.ItemDataList[index].IsPremium)
+        {
+            _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].DiamondsIncome(gameData.ItemCount[index]));
+            _diamonds.SetDiamondsScore(gameData.Diamonds);
+        }          
+        else
+        {
+            _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]));
+            _coins.SetScore(gameData.Money);
+        }                   
         _uiCreationItemsList[index].SetBuyPrice(gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
-        _uiCreationItemsList[index].SetItemCount(gameData.ItemCount[index], gameData.ItemDataList[index].MaxCount(gameData.ItemBonusMultiplayer[index], gameData.ItemMaxCountHelper[index]));
-        _coins.SetScore(gameData.Money);
-        _diamonds.SetDiamondsScore(gameData.Diamonds);
-        _uiCreationItemsList[index].ToggleBuyButton(gameData.Money >= gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
+        _uiCreationItemsList[index].SetItemCount(gameData.ItemCount[index], gameData.ItemDataList[index].MaxCount(gameData.ItemBonusMultiplayer[index], gameData.ItemMaxCountHelper[index]));      
+        _uiCreationItemsList[index].ToggleBuyButton(gameData.Money >= gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]) && gameData.ItemCount[index] < gameData.ItemDataList[index].MaxCountIncrement);
     }
 
     public void UpdateUpgradeUI(int index, GameData gameData)

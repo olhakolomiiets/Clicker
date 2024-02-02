@@ -87,6 +87,7 @@ public class GameManager : MonoBehaviour
         _gameUI.OnUpgradeItemPurchased += _gameRules.HandleDiamondsUpgrade;
 
         _gameUI.OnBuyButonClicked += _gameRules.HandleUpgrade;
+        _gameUI.OnActivationPremium += _gameRules.HandleUpgrade;
 
         _gameUI.OnPurchaseItemFirstTime += _gameRules.PurchaseItemFirstTime;
         _gameUI.OnManagerPurchased += _gameRules.HandleManagerPurchased;

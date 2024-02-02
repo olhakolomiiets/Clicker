@@ -13,12 +13,14 @@ public class ItemController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _buyButtonText;
     [SerializeField] private TextMeshProUGUI _itemCount;
     [SerializeField] private Image _itemImage;
-    [SerializeField] private GameObject _luxImage;
+    [SerializeField] private GameObject _premiumImage;
     [SerializeField] private UIPurchaseInfo _purchaseInfo;
     [SerializeField] private GameObject _buyPanel;
     [SerializeField] private GameObject _managerButton;
 
-    public event Action OnProgressButtonClicked, OnWorkFinished, OnLuxItemWorkFinished, OnBuyButtonClicked, OnFirstActivation;
+    private bool _isPremium;
+
+    public event Action OnProgressButtonClicked, OnWorkFinished, OnPremiumItemWorkFinished, OnBuyButtonClicked, OnActivationPremium, OnFirstActivation;
 
     public bool isWorking => _progressButton.IsEnabled == false;
     private void Awake()
@@ -32,22 +34,27 @@ public class ItemController : MonoBehaviour
         _progressButton.SwapSpriteToInactive();
     }
 
-    public void Prepare(Sprite icon, bool isLux)
-    {
+    public void Prepare(Sprite icon, bool isPremium)
+    {       
         _itemImage.sprite = icon;
 
-        if (isLux)
-            _luxImage.SetActive(true);
+        if (isPremium)
+            _premiumImage.SetActive(true);
+
+        _isPremium = isPremium;
     }
 
     public void ActivateButton()
     {
         ToggleIncome(true);
         _purchaseInfo.gameObject.SetActive(false);
-        _progressBar.gameObject.SetActive(true);
-        _buyPanel.SetActive(true);
+        _progressBar.gameObject.SetActive(true);       
         _progressButton.IsEnabled = true;
-        _managerButton.SetActive(true);
+        if(!_isPremium)
+        {
+            _buyPanel.SetActive(true);
+            _managerButton.SetActive(true);
+        }          
         _progressButton.SwapSpriteToDefault();
         _progressButton.OnButtonClicked.RemoveAllListeners();
         _progressButton.OnButtonClicked.AddListener(HandleProgressButtonClick);
@@ -89,6 +96,10 @@ public class ItemController : MonoBehaviour
     private void HandleFirstClick()
     {
         OnFirstActivation?.Invoke();
+
+        if(_isPremium)
+            OnActivationPremium?.Invoke();
+
         ActivateButton();
     }
 
@@ -107,6 +118,7 @@ public class ItemController : MonoBehaviour
             _purchaseInfo.SetPrice($"{price.ToString("N0")}");
             return;
         }
+
         _buyButtonText.text = $"{price.ToString("N0")}";
     }
 
@@ -133,7 +145,7 @@ public class ItemController : MonoBehaviour
     private void HandleProgressBarFinished()
     {
         _progressButton.IsEnabled = true;
-        _progressButton.SwapSpriteToDefault();
+        _progressButton.SwapSpriteToDefault();        
         OnWorkFinished?.Invoke();
     }
 
@@ -143,4 +155,5 @@ public class ItemController : MonoBehaviour
         _progressBar.OnProgressBarFinished.RemoveListener(HandleProgressBarFinished);
         _buyButton.onClick.RemoveListener(HandleBuyButton);
     }
+
 }

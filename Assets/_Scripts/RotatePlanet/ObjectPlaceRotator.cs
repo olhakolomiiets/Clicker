@@ -66,37 +66,70 @@ public class ObjectPlaceRotator : MonoBehaviour
 
     private IEnumerator RotateToTargetRotation(Transform targetObjectTransform)
     {
-        // Vector from the center of the sphere to the camera
         Vector3 a = cameraTransform.position - transform.position;
-
-        // Vector from the center of the sphere to the object
         Vector3 b = targetObjectTransform.position - transform.position;
 
         // Calculate the rotation needed to align vector b with vector a
         Quaternion targetRotation = Quaternion.FromToRotation(b, a) * transform.rotation;
 
-        // Time taken to rotate to target rotation
+        // Add degrees rotation on the axises
+        targetRotation *= Quaternion.Euler(0f, -30f, 0f);
+
         float duration = 1f;
         float elapsed = 0f;
 
         while (elapsed < duration)
         {
-            // Interpolate between the current rotation and the target rotation
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, elapsed / duration);
+            float interpolationFactor = Mathf.Clamp01(elapsed / duration);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, interpolationFactor);
 
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        // Ensure final rotation is exactly the target rotation
         transform.rotation = targetRotation;
 
         targetObjectTransform.gameObject.SetActive(true);
         targetObjectTransform.GetComponent<PlanetObject>().MakeSFX();
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSecondsRealtime(1f);
 
-        // Coroutine is finished at this point
         Debug.Log("Rotation completed!");
     }
+
+    //private IEnumerator RotateToTargetRotation(Transform targetObjectTransform)
+    //{
+    //    // Vector from the center of the sphere to the camera
+    //    Vector3 a = cameraTransform.position - transform.position;
+
+    //    // Vector from the center of the sphere to the object
+    //    Vector3 b = targetObjectTransform.position - transform.position;
+
+    //    // Calculate the rotation needed to align vector b with vector a
+    //    Quaternion targetRotation = Quaternion.FromToRotation(b, a) * transform.rotation;
+
+    //    // Time taken to rotate to target rotation
+    //    float duration = 1f;
+    //    float elapsed = 0f;
+
+    //    while (elapsed < duration)
+    //    {
+    //        // Interpolate between the current rotation and the target rotation
+    //        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, elapsed / duration);
+
+    //        elapsed += Time.deltaTime;
+    //        yield return null;
+    //    }
+
+    //    // Ensure final rotation is exactly the target rotation
+    //    transform.rotation = targetRotation;
+
+    //    targetObjectTransform.gameObject.SetActive(true);
+    //    targetObjectTransform.GetComponent<PlanetObject>().MakeSFX();
+
+    //    yield return new WaitForSeconds(1f);
+
+    //    // Coroutine is finished at this point
+    //    Debug.Log("Rotation completed!");
+    //}
 }

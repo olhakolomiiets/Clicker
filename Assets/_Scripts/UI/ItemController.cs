@@ -15,10 +15,12 @@ public class ItemController : MonoBehaviour
     [SerializeField] private Image _itemImage;
     [SerializeField] private GameObject _premiumImage;
     [SerializeField] private UIPurchaseInfo _purchaseInfo;
+    [SerializeField] private TextMeshProUGUI _purchaseInfoText;
     [SerializeField] private GameObject _buyPanel;
     [SerializeField] private GameObject _managerButton;
 
     private bool _isPremium;
+    private string _translationText;
 
     public event Action OnProgressButtonClicked, OnWorkFinished, OnPremiumItemWorkFinished, OnBuyButtonClicked, OnActivationPremium, OnFirstActivation;
 
@@ -31,12 +33,17 @@ public class ItemController : MonoBehaviour
         ToggleBuyButton(false);
         _progressButton.IsEnabled = false;
         ToggleIncome(false);
-        _progressButton.SwapSpriteToInactive();
     }
 
-    public void Prepare(Sprite icon, bool isPremium)
-    {       
+    public void Prepare(Sprite icon, bool isPremium, string translationText)
+    {
+        _translationText = translationText;
         _itemImage.sprite = icon;
+
+        if (_purchaseInfo.isActiveAndEnabled)
+        {
+            _purchaseInfoText.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Unlock")} {Lean.Localization.LeanLocalization.GetTranslationText(_translationText)}";
+        }
 
         if (isPremium)
             _premiumImage.SetActive(true);
@@ -48,14 +55,16 @@ public class ItemController : MonoBehaviour
     {
         ToggleIncome(true);
         _purchaseInfo.gameObject.SetActive(false);
-        _progressBar.gameObject.SetActive(true);       
+        _progressBar.gameObject.SetActive(true);
+
+        _itemTitle.text = Lean.Localization.LeanLocalization.GetTranslationText(_translationText);
+
         _progressButton.IsEnabled = true;
         if(!_isPremium)
         {
             _buyPanel.SetActive(true);
             _managerButton.SetActive(true);
         }          
-        _progressButton.SwapSpriteToDefault();
         _progressButton.OnButtonClicked.RemoveAllListeners();
         _progressButton.OnButtonClicked.AddListener(HandleProgressButtonClick);
     }
@@ -73,13 +82,11 @@ public class ItemController : MonoBehaviour
         if (val)
         {
             _progressButton.IsEnabled = true;
-            _progressButton.SwapSpriteToPrchasable();
             _purchaseInfo.SwapImageReady();
         }
         else
         {
             _progressButton.IsEnabled = false;
-            _progressButton.SwapSpriteToInactive();
             _purchaseInfo.SwapImageNotReady();
         }
         
@@ -89,7 +96,6 @@ public class ItemController : MonoBehaviour
     {
         _progressButton.IsEnabled = false;
         OnWorkFinished = null;
-        _progressButton.SwapSpriteToDefault();
         _progressBar.ResetProgress();
     }
 
@@ -137,7 +143,6 @@ public class ItemController : MonoBehaviour
     public void StartWork(float delay)
     {
         _progressButton.IsEnabled = false;
-        _progressButton.SwapSpriteToInactive();
         _progressBar.RunProgressBar(delay);
     }
 
@@ -153,8 +158,7 @@ public class ItemController : MonoBehaviour
 
     private void HandleProgressBarFinished()
     {
-        _progressButton.IsEnabled = true;
-        _progressButton.SwapSpriteToDefault();        
+        _progressButton.IsEnabled = true;    
         OnWorkFinished?.Invoke();
     }
 

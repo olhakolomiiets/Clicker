@@ -51,6 +51,9 @@ public class ItemData : ScriptableObject
     [field: SerializeField]
     public Sprite ItemImage { get; set; }
     [field: SerializeField] 
-    public bool IsPremium { get; set; }
+    public bool IsPremium { get; set; }    
+    
+    [field: SerializeField] 
+    public string TranslationText { get; set; }
 
 }

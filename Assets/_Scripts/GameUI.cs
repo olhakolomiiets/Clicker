@@ -40,7 +40,7 @@ public class GameUI : MonoBehaviour
         for (int i = 0; i < data.Count; i++)
         {
             ItemController itemController = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();            
-            itemController.Prepare(data[i].ItemImage, data[i].IsPremium);
+            itemController.Prepare(data[i].ItemImage, data[i].IsPremium, data[i].TranslationText);
             _uiCreationItemsList.Add(itemController);
 
             UIManagerController _managerController = itemController.GetComponent<UIManagerController>();

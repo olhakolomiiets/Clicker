@@ -16,15 +16,10 @@ public class ProgressButon : MonoBehaviour
         get { return _isEnabled; }
     }
 
-    [SerializeField]
-    private Image _panelImage;
-    [SerializeField]
-    private Sprite _inactiveSprite, _purchaseSprite, _defaultSprite;
-    [SerializeField]
-    private Button _button;
-    [SerializeField]
-    private Button _itemButton;  
-
+    //[SerializeField] private Image _panelImage;
+    //[SerializeField] private Sprite _inactiveSprite, _purchaseSprite, _defaultSprite;
+    [SerializeField] private Button _button;
+    [SerializeField] private Button _itemButton;  
 
     public UnityEvent OnButtonClicked;
 
@@ -35,10 +30,10 @@ public class ProgressButon : MonoBehaviour
         OnButtonClicked?.Invoke();
     }
 
-    public void SwapSpriteToInactive()
+/*    public void SwapSpriteToInactive()
         => _panelImage.sprite = _inactiveSprite;
     public void SwapSpriteToDefault()
         => _panelImage.sprite = _defaultSprite;
     public void SwapSpriteToPrchasable()
-        => _panelImage.sprite = _purchaseSprite;
+        => _panelImage.sprite = _purchaseSprite;*/
 }

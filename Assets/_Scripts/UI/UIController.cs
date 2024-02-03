@@ -26,6 +26,15 @@ public class UIController : MonoBehaviour
 
     private bool isDisplayed;
 
+    [SerializeField] private GameObject _planet;
+
+    private DragRotateGPT _planetRotator;
+
+    private void Start()
+    {
+        _planetRotator = _planet.GetComponent<DragRotateGPT>();
+    }
+
     public void ToggleUpgradeStorePanel()
     {
         if(isDisplayed)
@@ -34,6 +43,7 @@ public class UIController : MonoBehaviour
             _toggleButton.DORotate(new Vector3(0, 0, 0), _tweenDuration);
             isDisplayed = false;
             SetStartPos();
+            _planetRotator.enabled = true;
         }
         else
         {
@@ -43,6 +53,8 @@ public class UIController : MonoBehaviour
             _shopPanel.DOAnchorPosY(_panelTopPosY, _tweenDuration);
             _toggleButton.DORotate(new Vector3(0, 0, 180), _tweenDuration);
             isDisplayed = true;
+
+            _planetRotator.enabled = false;
         }
     }
 

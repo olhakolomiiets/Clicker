@@ -115,11 +115,17 @@ public class ItemController : MonoBehaviour
     {
         if (_purchaseInfo.isActiveAndEnabled)
         {
-            _purchaseInfo.SetPrice($"{price.ToString("N0")}");
+            if (price > 1000)
+                _purchaseInfo.SetPrice(AbbreviateNumber(price));
+            else
+                _purchaseInfo.SetPrice($"{price.ToString("N0")}");
+
             return;
         }
-
-        _buyButtonText.text = $"{price.ToString("N0")}";
+        if (price > 1000)
+            _buyButtonText.text = AbbreviateNumber(price);
+        else
+            _buyButtonText.text = $"{price.ToString("N0")}";
     }
 
     public void SetItemCount(int count, int maxCount)
@@ -139,7 +145,10 @@ public class ItemController : MonoBehaviour
         => _itemScore.gameObject.SetActive(val);
     public void SetIncome(double score)
     {
-        _itemScore.text = $"{score.ToString("N0")}";
+        if (score > 1000)
+            _itemScore.text = AbbreviateNumber(score);
+        else
+            _itemScore.text = $"{score.ToString("N0")}";
     }
 
     private void HandleProgressBarFinished()
@@ -147,6 +156,20 @@ public class ItemController : MonoBehaviour
         _progressButton.IsEnabled = true;
         _progressButton.SwapSpriteToDefault();        
         OnWorkFinished?.Invoke();
+    }
+
+    string AbbreviateNumber(double number)
+    {
+        string[] suffixes = { "", "K", "M", "B", "T" };
+        int suffixIndex = 0;
+
+        while (number >= 1000 && suffixIndex < suffixes.Length - 1)
+        {
+            number /= 1000;
+            suffixIndex++;
+        }
+
+        return string.Format("{0:0.##} {1}", number, suffixes[suffixIndex]).Replace(',', '.');
     }
 
     private void OnDisable()

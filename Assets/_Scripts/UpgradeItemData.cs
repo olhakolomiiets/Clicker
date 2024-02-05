@@ -19,5 +19,6 @@ public class UpgradeItemData : ScriptableObject
     [field: SerializeField]
     public Sprite ItemImage { get; set; }
 
-
+    [field: SerializeField]
+    public string TranslationText { get; set; }
 }

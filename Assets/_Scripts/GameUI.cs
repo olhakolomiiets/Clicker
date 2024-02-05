@@ -63,7 +63,7 @@ public class GameUI : MonoBehaviour
         for (int i = 0; i < data.Count; i++)
         {
             UpgradeItemController upgradeItemController = Instantiate(_upgradeItemPrefab, _upgradeItemParent).GetComponent<UpgradeItemController>();
-            upgradeItemController.Prepare(data[i].ItemImage);
+            upgradeItemController.Prepare(data[i].ItemImage, data[i].TranslationText);
             _uiUpgradeItemsList.Add(upgradeItemController);
 
             _objectActivator[i].upgradeItemController = upgradeItemController;
@@ -141,9 +141,17 @@ public class GameUI : MonoBehaviour
         _diamonds.SetDiamondsScore(gameData.Diamonds);
     }
 
-    public void UpdateUILanguage(int index)
+    public void UpdateUILanguage()
     {
-        _uiCreationItemsList[index].UpdateLanguage();
+        for (int i = 0; i < _uiCreationItemsList.Count; i++)
+        {
+            _uiCreationItemsList[i].UpdateLanguage();
+        }
+
+        for (int i = 0; i < _uiUpgradeItemsList.Count; i++)
+        {
+            _uiUpgradeItemsList[i].UpdateLanguage();
+        }
     }
 
     internal void ActivateItem(int index)

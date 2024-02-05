@@ -1,3 +1,4 @@
+using Lean.Localization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ public class UpgradeItemController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _buyButtonText;
     [SerializeField] private Image _itemImage;
 
+    private string _translationText;
+
     public event Action OnUpgradeItemBuyButtonClicked, OnUpdateWorkFinished;
 
     private void Awake()
@@ -21,9 +24,11 @@ public class UpgradeItemController : MonoBehaviour
         ToggleBuyButton(false);
     }
 
-    public void Prepare(Sprite icon)
+    public void Prepare(Sprite icon, string translationText)
     {
         _itemImage.sprite = icon;
+        _translationText = translationText;
+        _itemTitle.text = LeanLocalization.GetTranslationText(_translationText);
     }
 
     private void HandleBuyButton()
@@ -63,6 +68,11 @@ public class UpgradeItemController : MonoBehaviour
     public void ResetProgress()
     {
         StopAllCoroutines();
+    }
+
+    public void UpdateLanguage()
+    {
+        _itemTitle.text = LeanLocalization.GetTranslationText(_translationText);
     }
 
     private void OnDisable()

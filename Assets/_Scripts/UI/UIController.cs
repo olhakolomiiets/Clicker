@@ -60,33 +60,33 @@ public class UIController : MonoBehaviour
 
     public void ShopsToggle(int index)
     {
-        switch (index)
-        {
-            case 0:
-                _creationItemsParent.DOAnchorPos(new Vector3(0, -350, 0), 0.25f);
+        Vector3 creationPos = new Vector3(0, -350, 0);
+        Vector3 upgradePos = new Vector3(0, -1110, 0);
+        Vector3 shopPos = new Vector3(1090, -350, 0);
 
-                _upgradeItemsParent.DOAnchorPos(new Vector3(0, -1110, 0), 0.25f);
-                _shopItemsParent.DOAnchorPos(new Vector3(1090, -350, 0), 0.25f);
+        _creationItemsParent.DOAnchorPos(index == 0 ? creationPos : new Vector3(-1090, -350, 0), 0.25f);
+        _upgradeItemsParent.DOAnchorPos(index == 1 ? creationPos : upgradePos, 0.25f);
+        _shopItemsParent.DOAnchorPos(index == 2 ? creationPos : shopPos, 0.25f);
 
-                break;
-
-            case 1:
-                _upgradeItemsParent.DOAnchorPos(new Vector3(0, -350, 0), 0.25f);
-
-                _creationItemsParent.DOAnchorPos(new Vector3(-1090, -350, 0), 0.25f);
-                _shopItemsParent.DOAnchorPos(new Vector3(1090, -350, 0), 0.25f);
-
-                break;
-
-            case 2:
-                _shopItemsParent.DOAnchorPos(new Vector3(0, -350, 0), 0.25f);
-
-                _creationItemsParent.DOAnchorPos(new Vector3(-1090, -350, 0), 0.25f);
-                _upgradeItemsParent.DOAnchorPos(new Vector3(0, -1110, 0), 0.25f);
-
-                break;
-        }
+        ColorToggle(index);
     }
+
+
+    private void ColorToggle(int i)
+    {
+        ColorBlock creationColors = _creationButton.colors;
+        ColorBlock upgradeColors = _upgradeButton.colors;
+        ColorBlock shopColors = _shopButton.colors;
+
+        creationColors.normalColor = (i == 0) ? new Color(0.12f, 0.45f, 1f, 0.5f) : Color.white;
+        upgradeColors.normalColor = (i == 1) ? new Color(0.12f, 0.45f, 1f, 0.5f) : Color.white;
+        shopColors.normalColor = (i == 2) ? new Color(0.12f, 0.45f, 1f, 0.5f) : Color.white;
+
+        _creationButton.colors = creationColors;
+        _upgradeButton.colors = upgradeColors;
+        _shopButton.colors = shopColors;
+    }
+
 
     private void SetStartPos()
     {

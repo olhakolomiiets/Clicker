@@ -1,3 +1,4 @@
+using Lean.Localization;
 using System;
 using TMPro;
 using UnityEngine;
@@ -39,32 +40,29 @@ public class ItemController : MonoBehaviour
     {
         _translationText = translationText;
         _itemImage.sprite = icon;
+        _isPremium = isPremium;
+
+        if (_isPremium)
+            _premiumImage.SetActive(true);       
 
         if (_purchaseInfo.isActiveAndEnabled)
         {
-            _purchaseInfoText.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Unlock")} {Lean.Localization.LeanLocalization.GetTranslationText(_translationText)}";
+            _purchaseInfoText.text = $"{LeanLocalization.GetTranslationText("Unlock")} {LeanLocalization.GetTranslationText(_translationText)}";
         }
-
-        if (isPremium)
-            _premiumImage.SetActive(true);
-
-        _isPremium = isPremium;
     }
 
     public void ActivateButton()
     {
         ToggleIncome(true);
         _purchaseInfo.gameObject.SetActive(false);
-        _progressBar.gameObject.SetActive(true);
-
-        _itemTitle.text = Lean.Localization.LeanLocalization.GetTranslationText(_translationText);
-
+        _progressBar.gameObject.SetActive(true);        
         _progressButton.IsEnabled = true;
-        if(!_isPremium)
+        _itemTitle.text = LeanLocalization.GetTranslationText(_translationText);
+        if (!_isPremium)
         {
             _buyPanel.SetActive(true);
             _managerButton.SetActive(true);
-        }          
+        }        
         _progressButton.OnButtonClicked.RemoveAllListeners();
         _progressButton.OnButtonClicked.AddListener(HandleProgressButtonClick);
     }
@@ -88,8 +86,7 @@ public class ItemController : MonoBehaviour
         {
             _progressButton.IsEnabled = false;
             _purchaseInfo.SwapImageNotReady();
-        }
-        
+        }        
     }
 
     public void AutomateButton()
@@ -166,14 +163,21 @@ public class ItemController : MonoBehaviour
     {
         string[] suffixes = { "", "K", "M", "B", "T" };
         int suffixIndex = 0;
-
         while (number >= 1000 && suffixIndex < suffixes.Length - 1)
         {
             number /= 1000;
             suffixIndex++;
         }
-
         return string.Format("{0:0.##} {1}", number, suffixes[suffixIndex]).Replace(',', '.');
+    }
+
+    public void UpdateLanguage()
+    {
+        if (_purchaseInfo.isActiveAndEnabled)
+        {
+            _purchaseInfoText.text = $"{LeanLocalization.GetTranslationText("Unlock")} {LeanLocalization.GetTranslationText(_translationText)}";
+        }
+        _itemTitle.text = LeanLocalization.GetTranslationText(_translationText);
     }
 
     private void OnDisable()

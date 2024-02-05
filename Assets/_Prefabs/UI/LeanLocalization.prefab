@@ -281,6 +281,64 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u041A\u043E\u043C\u0435\u0442\u0430"
     Object: {fileID: 0}
+--- !u!1 &2028968580451748316
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2958620493864219035}
+  - component: {fileID: 4017349069852630332}
+  m_Layer: 0
+  m_Name: Buy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2958620493864219035
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2028968580451748316}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4017349069852630332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2028968580451748316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: BUY
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u041A\u0423\u041F\u0418\u0422\u042C"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: COMPRAR
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041A\u0423\u041F\u0418\u0422\u0418"
+    Object: {fileID: 0}
 --- !u!1 &2347163544817267261
 GameObject:
   m_ObjectHideFlags: 0
@@ -1323,6 +1381,7 @@ Transform:
   - {fileID: 6981931719985970374}
   - {fileID: 1686968148558137235}
   - {fileID: 885532727152549457}
+  - {fileID: 2958620493864219035}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4487452411359540208

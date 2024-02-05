@@ -29,8 +29,6 @@ public class GameUI : MonoBehaviour
 
     //private UIManagerController _managerController;
 
-    private bool _isLux;
-
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnPremiumItemWorkFinished, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;
 
     public void PrepareCreationUI(List<ItemData> data)
@@ -40,12 +38,13 @@ public class GameUI : MonoBehaviour
         for (int i = 0; i < data.Count; i++)
         {
             ItemController itemController = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();            
-            itemController.Prepare(data[i].ItemImage, data[i].IsPremium, data[i].TranslationText);
+            
             _uiCreationItemsList.Add(itemController);
+            itemController.Prepare(data[i].ItemImage, data[i].IsPremium, data[i].TranslationText);
 
             UIManagerController _managerController = itemController.GetComponent<UIManagerController>();
             _managerControllers.Add(_managerController);
-            _managerControllers[i].AddButton(i, data[i].ManagerPrice);
+            _managerControllers[i].AddButton(i, data[i].ManagerPrice, data[i].TranslationText);
 
             _objectActivator[i].itemController = itemController;
           
@@ -53,8 +52,6 @@ public class GameUI : MonoBehaviour
 
             float _scrollItemGroupHeight = 220 * data.Count;
             _uiItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
-
-            _isLux = data[i].IsPremium;
 
             _managerControllers[i].OnManagerPurchased += PurchaseManager;
         }        
@@ -142,6 +139,11 @@ public class GameUI : MonoBehaviour
         _uiUpgradeItemsList[index].SetBuyPrice(gameData.UpgradeItemDataList[index].ItemCost);
         _uiUpgradeItemsList[index].ToggleBuyButton(gameData.Diamonds >= gameData.UpgradeItemDataList[index].ItemCost);
         _diamonds.SetDiamondsScore(gameData.Diamonds);
+    }
+
+    public void UpdateUILanguage(int index)
+    {
+        _uiCreationItemsList[index].UpdateLanguage();
     }
 
     internal void ActivateItem(int index)

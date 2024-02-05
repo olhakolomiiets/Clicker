@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// All the setup happens here
     /// </summary>
-    private void Awake()
+    private void Start()
     {
         PrepareGameData();
         PrepareUI();

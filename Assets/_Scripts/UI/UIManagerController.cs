@@ -17,12 +17,12 @@ public class UIManagerController : MonoBehaviour
         _buyManagersPanel = GameObject.FindGameObjectWithTag("ManagersPanel");
     }
 
-    public void AddButton(int index, float price)
+    public void AddButton(int index, float price, string translationText)
     {
         GameObject buttonObject = Instantiate(_buyManagerButtonPrefab, _buyManagersPanel.transform);
         _buyButton = buttonObject.GetComponent<UISquadLeadersButton>();
 
-        _buyButton.SetValue(price.ToString());
+        _buyButton.SetValue(price.ToString(), translationText);
         int i = index;
         _buyButton.OnClicked += () => OnManagerPurchased?.Invoke(i);
         _buyButton.ToggleActive(false);

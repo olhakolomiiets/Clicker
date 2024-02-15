@@ -88,6 +88,13 @@ namespace Exoa.Cameras
                 anyInteraction = true;
             }
 
+            if (IsInputMatching(InputMapFingerPinch.ZoomInCenter))
+            {
+                zoomRatio = CameraInputs.pinchRatio;
+                worldPointFingersCenter = ClampInCameraBoundaries(HeightScreenDepth.Convert(screenCenter), out IsInBoundaries);
+                anyInteraction = true;
+            }
+
             if (IsInputMatching(InputMapScrollWheel.ZoomInCenter))
             {
                 zoomRatio = CameraInputs.GetScroll();

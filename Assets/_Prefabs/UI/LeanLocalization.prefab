@@ -107,6 +107,64 @@ MonoBehaviour:
   - uk
   - uk_UA
   - ukr
+--- !u!1 &808827963840648767
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7486379621374817873}
+  - component: {fileID: 2774189499163501176}
+  m_Layer: 0
+  m_Name: Loading
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7486379621374817873
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 808827963840648767}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2774189499163501176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 808827963840648767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Loading...
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430..."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Cargando...
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0417\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F..."
+    Object: {fileID: 0}
 --- !u!1 &1088254770149877917
 GameObject:
   m_ObjectHideFlags: 0
@@ -222,6 +280,65 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u041A\u043E\u0441\u043C\u0456\u0447\u043D\u0430 \u0441\u0442\u0430\u043D\u0446\u0456\u044F"
+    Object: {fileID: 0}
+--- !u!1 &1216503781262344531
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 592708173286451529}
+  - component: {fileID: 7194018142103476498}
+  m_Layer: 0
+  m_Name: RewardedAdError
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &592708173286451529
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1216503781262344531}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7194018142103476498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1216503781262344531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Oops! Something went wrong...
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u0423\u043F\u0441! \u0427\u0442\u043E-\u0442\u043E \u043F\u043E\u0448\u043B\u043E
+      \u043D\u0435 \u0442\u0430\u043A..."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Huy! Algo sali\xF3 mal..."
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0423\u043F\u0441! \u0429\u043E\u0441\u044C \u0441\u0442\u0430\u043B\u043E\u0441\u044F..."
     Object: {fileID: 0}
 --- !u!1 &1392997476736435551
 GameObject:
@@ -1382,6 +1499,8 @@ Transform:
   - {fileID: 1686968148558137235}
   - {fileID: 885532727152549457}
   - {fileID: 2958620493864219035}
+  - {fileID: 7486379621374817873}
+  - {fileID: 592708173286451529}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4487452411359540208
@@ -1396,7 +1515,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 806f0696300aeac44a0e17efee222854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentLanguage: Ukrainian
+  currentLanguage: English
   detectLanguage: 0
   defaultLanguage: English
   saveLoad: 1

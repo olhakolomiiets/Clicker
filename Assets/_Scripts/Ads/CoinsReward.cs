@@ -7,17 +7,21 @@ using GoogleMobileAds.Api;
 using GoogleMobileAds.Common;
 using UnityEngine.Events;
 using Firebase.Analytics;
+using TMPro;
 
 public class CoinsReward : MonoBehaviour
 {
     #region EDITOR FIELDS
 
     GameData _currentGameData;
+    [SerializeField] private ScorePanel _coins;
 
     [SerializeField] private Button buttonReward;
     [SerializeField] private GameObject getCoinsForAdsWindow;
 
-    [SerializeField] private int coinsReward;
+    [SerializeField] private double _coinsReward;
+    [SerializeField] private TextMeshProUGUI _coinsRewardTxt;
+    [SerializeField] private double coinsMultiplicator;
     [SerializeField] CoinsRewardTimer rewardTimer;
 
     [SerializeField] private GoogleMobileAds.Sample.RewardedAdController _adController;
@@ -45,12 +49,17 @@ public class CoinsReward : MonoBehaviour
         _adController.OnUserEarnedRewardEvent.AddListener(UserEarnedReward);
         _adController.RewardedAdLoadedEvent.AddListener(ShowRewardedAd);
         _adController.RewardedAdLoadedWithErrorEvent.AddListener(RewardedAdWithError);
+
+        _coinsReward = _currentGameData.Money * coinsMultiplicator;
+        _coinsRewardTxt.text = $"{_coinsReward.ToString("N0")}";
     }
 
     public void UserEarnedReward()
-    {
-        _currentGameData.Money += coinsReward;
-        //rewardTimer.AdViewed();
+    {       
+        _currentGameData.Money += _coinsReward;
+
+
+        rewardTimer.isAdvertisingActive = false;
 
         FirebaseAnalytics.LogEvent(name: "coins_for_ads");
 

@@ -53,7 +53,7 @@ public class UIController : MonoBehaviour
             _shopPanel.DOAnchorPosY(_panelTopPosY, _tweenDuration);
             _toggleButton.DORotate(new Vector3(0, 0, 180), _tweenDuration);
             isDisplayed = true;
-
+            ColorToggle(0);
             _planetRotator.enabled = false;
         }
     }

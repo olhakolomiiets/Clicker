@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private GameUI _gameUI;
+    [SerializeField] private GameUI _gameUI;    
     private GameData _gameData;
     [SerializeField] private GameRules _gameRules;
     [SerializeField] private SaveSystem _saveSystem;
@@ -17,9 +17,18 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private List<UpgradeItemData> _upgradeItemsDataList;
 
+    [SerializeField] private CoinsRewardTimer _rewardTimer;
+    [SerializeField] private CoinsReward _coinsReward;
+
+    [SerializeField] private PurchaseManager _purchaseManager;
+
     /// <summary>
     /// All the setup happens here
     /// </summary>
+    private void OnEnable()
+    {
+        _rewardTimer.OnActivatedRewardButton.AddListener(ActivatedRewardButton);
+    }
     private void Start()
     {
         PrepareGameData();
@@ -27,6 +36,7 @@ public class GameManager : MonoBehaviour
         ConnectGameRulesToUI();
 
         _gameRules.PrepareGameData(_gameData);
+        _purchaseManager.PrepareGameData(_gameData);
 
         //Visuals (soldiers / shooting) are optional and depends on GameData
         //GameRules or game data does NOT depend on visuals.
@@ -34,7 +44,12 @@ public class GameManager : MonoBehaviour
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   _visualsController.InitializeVisual(_gameData);
 
         //We load the saved game data if we have any
-        LoadSavedData();
+        LoadSavedData();    
+    }
+
+    private void ActivatedRewardButton()
+    {
+        _coinsReward.PrepareRewardData(_gameData);
     }
 
     /// <summary>
@@ -128,5 +143,16 @@ public class GameManager : MonoBehaviour
     {
         _saveSystem.ResetData();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+
+    private void OnDisable()
+    {
+        _rewardTimer.OnActivatedRewardButton.RemoveListener(ActivatedRewardButton);
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveGame();
     }
 }

@@ -56,4 +56,13 @@ public class ItemData : ScriptableObject
     [field: SerializeField] 
     public string TranslationText { get; set; }
 
+    public void DivideDelayBy2()
+    {
+        Delay /= 2f;
+    }
+
+    public void MultiplyItemBaseIncomeBy2()
+    {
+        ItemBaseIncome *= 2;
+    }    
 }

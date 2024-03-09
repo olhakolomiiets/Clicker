@@ -13,7 +13,7 @@ public class CoinsReward : MonoBehaviour
 {
     #region EDITOR FIELDS
 
-    GameData _currentGameData;
+    
     [SerializeField] private ScorePanel _coins;
 
     [SerializeField] private Button buttonReward;
@@ -38,8 +38,10 @@ public class CoinsReward : MonoBehaviour
 
     #region PRIVATE FIELDS
 
+    GameData _currentGameData;
     private bool _rewardedAdUsed;
     private int TotalScore;
+
 
     #endregion
 
@@ -50,6 +52,11 @@ public class CoinsReward : MonoBehaviour
         _adController.RewardedAdLoadedEvent.AddListener(ShowRewardedAd);
         _adController.RewardedAdLoadedWithErrorEvent.AddListener(RewardedAdWithError);
 
+    }
+
+    public void PrepareRewardData(GameData gameData)
+    {
+        _currentGameData = gameData;
         _coinsReward = _currentGameData.Money * coinsMultiplicator;
         _coinsRewardTxt.text = $"{_coinsReward.ToString("N0")}";
     }
@@ -57,8 +64,7 @@ public class CoinsReward : MonoBehaviour
     public void UserEarnedReward()
     {       
         _currentGameData.Money += _coinsReward;
-
-
+        _coins.SetScore(_currentGameData.Money);
         rewardTimer.isAdvertisingActive = false;
 
         FirebaseAnalytics.LogEvent(name: "coins_for_ads");
@@ -71,7 +77,7 @@ public class CoinsReward : MonoBehaviour
     public void GetCoins()
     {
         buttonReward.interactable = false;
-        buttonReward.GetComponentInChildren<Text>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
+        //buttonReward.GetComponentInChildren<Text>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
         _adController.LoadAd();
     }
@@ -83,7 +89,7 @@ public class CoinsReward : MonoBehaviour
 
     public void RewardedAdWithError()
     {
-        buttonReward.GetComponentInChildren<Text>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("RewardedAdError")}";
+        //buttonReward.GetComponentInChildren<Text>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("RewardedAdError")}";
     }
 
     private void OnDisable()

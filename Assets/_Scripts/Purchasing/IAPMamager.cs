@@ -1,3 +1,4 @@
+using Firebase.Analytics;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -7,18 +8,26 @@ public class IAPManager : MonoBehaviour, IStoreListener
 {
     public static IAPManager instance = null;
 
-    private int TotalScore;
-
     private static IStoreController _storeController;
     private static IExtensionProvider _extensionProvider;
 
-    private string noAds = "com.idleplanetclicker.noads";
-    private string moneyPack5K = "com.idleplanetclicker.moneypack5k";
+    private string noAds = "com.planetclicker.noads";
+    private string starterPack = "com.planetclicker.starterpack";
+    private string specialOffer = "com.planetclicker.specialoffer";
+    private string coinsBooster = "com.planetclicker.coinsbooster";
+    private string diamondsPack50 = "com.planetclicker.diamondspack50";
+    private string diamondsPack100 = "com.planetclicker.diamondspack100";
+    private string diamondsPack300 = "com.planetclicker.diamondspack300";
 
 
     [HideInInspector] public UnityEvent PurchasedProductNoAds;
+    [HideInInspector] public UnityEvent PurchasedProductStarterPack;
+    [HideInInspector] public UnityEvent PurchasedProductSpecialOffer;
+    [HideInInspector] public UnityEvent PurchasedProductCoinsBooster;
+    [HideInInspector] public UnityEvent PurchasedProductDiamondsPack50;
+    [HideInInspector] public UnityEvent PurchasedProductDiamondsPack100;
+    [HideInInspector] public UnityEvent PurchasedProductDiamondsPack300;
 
-    [HideInInspector] public UnityEvent PurchasedProductMoneyPack5K;
 
 
     void Awake()
@@ -52,7 +61,12 @@ public class IAPManager : MonoBehaviour, IStoreListener
         var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
 
         builder.AddProduct(noAds, ProductType.NonConsumable);
-        builder.AddProduct(moneyPack5K, ProductType.Consumable);
+        builder.AddProduct(starterPack, ProductType.Consumable);
+        builder.AddProduct(specialOffer, ProductType.Consumable);
+        builder.AddProduct(coinsBooster, ProductType.Consumable);
+        builder.AddProduct(diamondsPack50, ProductType.Consumable);
+        builder.AddProduct(diamondsPack100, ProductType.Consumable);
+        builder.AddProduct(diamondsPack300, ProductType.Consumable);
 
         UnityPurchasing.Initialize(this, builder);
 
@@ -94,16 +108,56 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
             NoAds();
 
-            //FirebaseAnalytics.LogEvent(name: "no_ads_purchased");
+            FirebaseAnalytics.LogEvent(name: "no_ads_purchased");
         }
-        else if (String.Equals(product.definition.id, moneyPack5K, StringComparison.Ordinal))
+        else if (String.Equals(product.definition.id, starterPack, StringComparison.Ordinal))
         {
             Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", product.definition.id));
 
-            PurchasedProductMoneyPack5K.Invoke();
+            PurchasedProductStarterPack.Invoke();
 
-            //FirebaseAnalytics.LogEvent(name: "money_pack_2k_purchased");
-        }        
+            FirebaseAnalytics.LogEvent(name: "money_starterPack_purchased");
+        }
+        else if (String.Equals(product.definition.id, specialOffer, StringComparison.Ordinal))
+        {
+            Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", product.definition.id));
+
+            PurchasedProductSpecialOffer.Invoke();
+
+            FirebaseAnalytics.LogEvent(name: "money_specialOffer_purchased");
+        }
+        else if (String.Equals(product.definition.id, coinsBooster, StringComparison.Ordinal))
+        {
+            Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", product.definition.id));
+
+            PurchasedProductCoinsBooster.Invoke();
+
+            FirebaseAnalytics.LogEvent(name: "money_coinsBooster_purchased");
+        }
+        else if (String.Equals(product.definition.id, diamondsPack50, StringComparison.Ordinal))
+        {
+            Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", product.definition.id));
+
+            PurchasedProductDiamondsPack50.Invoke();
+
+            FirebaseAnalytics.LogEvent(name: "money_diamondsPack50_purchased");
+        }
+        else if (String.Equals(product.definition.id, diamondsPack100, StringComparison.Ordinal))
+        {
+            Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", product.definition.id));
+
+            PurchasedProductDiamondsPack100.Invoke();
+
+            FirebaseAnalytics.LogEvent(name: "money_diamondsPack100_purchased");
+        }
+        else if (String.Equals(product.definition.id, diamondsPack300, StringComparison.Ordinal))
+        {
+            Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", product.definition.id));
+
+            PurchasedProductDiamondsPack300.Invoke();
+
+            FirebaseAnalytics.LogEvent(name: "money_diamondsPack300_purchased");
+        }
         else
         {
             Debug.Log(string.Format("ProcessPurchase: FAIL. Unrecognized product: '{0}'", product.definition.id));

@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CoinsRewardTimer : MonoBehaviour
 {
     [SerializeField] private GameObject advertisingObject;
     [SerializeField] private float activationInterval;
     public bool isAdvertisingActive;
+
+    [HideInInspector] public UnityEvent OnActivatedRewardButton;
 
     void Start()
     {
@@ -26,6 +29,7 @@ public class CoinsRewardTimer : MonoBehaviour
     }
     void ActivateAdvertisingObject()
     {
+        OnActivatedRewardButton?.Invoke();
         advertisingObject.SetActive(true);
         isAdvertisingActive = true;
     }

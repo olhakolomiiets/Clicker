@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 [CreateAssetMenu]
@@ -56,13 +57,14 @@ public class ItemData : ScriptableObject
     [field: SerializeField] 
     public string TranslationText { get; set; }
 
-    public void DivideDelayBy2()
+    public void DivideItemBaseIncomeBy2()
     {
-        Delay /= 2f;
+        ItemBaseIncome /= 2f;
     }
 
     public void MultiplyItemBaseIncomeBy2()
     {
         ItemBaseIncome *= 2;
-    }    
+    }
+
 }

@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using GoogleMobileAds;
-using GoogleMobileAds.Api;
-using GoogleMobileAds.Common;
 using UnityEngine.Events;
 using Firebase.Analytics;
 using TMPro;
@@ -12,36 +7,34 @@ using TMPro;
 public class CoinsReward : MonoBehaviour
 {
     #region EDITOR FIELDS
-
     
-    [SerializeField] private ScorePanel _coins;
+    [SerializeField] private ScorePanel _score;
 
+    [Space(10)]
     [SerializeField] private Button buttonReward;
     [SerializeField] private GameObject getCoinsForAdsWindow;
-
-    [SerializeField] private double _coinsReward;
     [SerializeField] private TextMeshProUGUI _coinsRewardTxt;
-    [SerializeField] private double coinsMultiplicator;
-    [SerializeField] CoinsRewardTimer rewardTimer;
 
+    [Space(10)]
+    [SerializeField] private double coinsMultiplicator;
+
+    [Space(10)]
+    [SerializeField] RewardTimers rewardTimer;
     [SerializeField] private GoogleMobileAds.Sample.RewardedAdController _adController;
 
     #endregion
 
     #region UNITY EVENTS
 
-    [HideInInspector] public UnityEvent OnUserEarnedRewardEvent;
-    [HideInInspector] public UnityEvent RewardedAdLoadedEvent;
-    [HideInInspector] public UnityEvent RewardedAdLoadedWithErrorEvent;
+    [HideInInspector] public UnityEvent OnUserEarnedRewardEvent, RewardedAdLoadedEvent, RewardedAdLoadedWithErrorEvent, OnCoinsRewardReceived;
 
     #endregion
 
     #region PRIVATE FIELDS
 
     GameData _currentGameData;
+    private double _coinsReward;
     private bool _rewardedAdUsed;
-    private int TotalScore;
-
 
     #endregion
 
@@ -64,8 +57,8 @@ public class CoinsReward : MonoBehaviour
     public void UserEarnedReward()
     {       
         _currentGameData.Money += _coinsReward;
-        _coins.SetScore(_currentGameData.Money);
-        rewardTimer.isAdvertisingActive = false;
+        _score.SetScore(_currentGameData.Money);
+        OnCoinsRewardReceived?.Invoke();
 
         FirebaseAnalytics.LogEvent(name: "coins_for_ads");
 

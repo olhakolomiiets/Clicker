@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private List<UpgradeItemData> _upgradeItemsDataList;
 
-    [SerializeField] private CoinsRewardTimer _rewardTimer;
+    [SerializeField] private RewardTimers _rewardTimer;
     [SerializeField] private CoinsReward _coinsReward;
 
     [SerializeField] private PurchaseManager _purchaseManager;
@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void OnEnable()
     {
-        _rewardTimer.OnActivatedRewardButton.AddListener(ActivatedRewardButton);
+        _rewardTimer.OnActivatedCoinsRewardButton.AddListener(ActivatedRewardButton);
     }
     private void Start()
     {
@@ -148,7 +148,7 @@ public class GameManager : MonoBehaviour
 
     private void OnDisable()
     {
-        _rewardTimer.OnActivatedRewardButton.RemoveListener(ActivatedRewardButton);
+        _rewardTimer.OnActivatedCoinsRewardButton.RemoveListener(ActivatedRewardButton);
     }
 
     private void OnApplicationQuit()

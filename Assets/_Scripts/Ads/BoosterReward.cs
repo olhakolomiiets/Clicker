@@ -35,7 +35,7 @@ public class BoosterReward : MonoBehaviour
 
     #region UNITY EVENTS
 
-    [HideInInspector] public UnityEvent OnUserEarnedRewardEvent, RewardedAdLoadedEvent, RewardedAdLoadedWithErrorEvent, OnBoosterRewardReceived;
+    [HideInInspector] public UnityEvent OnUserEarnedRewardEvent, RewardedAdLoadedEvent, RewardedAdLoadedWithErrorEvent, OnBoosterRewardEarned, OnBoosterRewardReceived;
 
     #endregion
 
@@ -62,7 +62,7 @@ public class BoosterReward : MonoBehaviour
         {
             _creationItemsDataList[i].MultiplyItemBaseIncomeBy2();
         }
-
+        OnBoosterRewardEarned?.Invoke();
         SetBoosterTimer();
         _button.SetActive(false);
         _boosterTimer.SetActive(true);
@@ -108,11 +108,11 @@ public class BoosterReward : MonoBehaviour
 
     private void DisableCoinsBooster()
     {
-        OnBoosterRewardReceived?.Invoke();
         for (int i = 0; i < _creationItemsDataList.Count; i++)
         {
             _creationItemsDataList[i].DivideItemBaseIncomeBy2();
         }
+        OnBoosterRewardReceived?.Invoke();
         _boosterTimer.SetActive(false);
         this.gameObject.SetActive(false);
     }

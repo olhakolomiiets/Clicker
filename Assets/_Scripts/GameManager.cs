@@ -13,13 +13,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] private SaveSystem _saveSystem;
     [SerializeField] private VisualsController _visualsController;
 
+    [Space(10)]
     [SerializeField] private List<ItemData> _creationItemsDataList;
 
+    [Space(10)]
     [SerializeField] private List<UpgradeItemData> _upgradeItemsDataList;
 
+    [Space(10)]
     [SerializeField] private RewardTimers _rewardTimer;
     [SerializeField] private CoinsReward _coinsReward;
+    [SerializeField] private BoosterReward _boosterReward;
 
+    [Space(10)]
     [SerializeField] private PurchaseManager _purchaseManager;
 
     /// <summary>
@@ -28,6 +33,9 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         _rewardTimer.OnActivatedCoinsRewardButton.AddListener(ActivatedRewardButton);
+
+        _boosterReward.OnBoosterRewardEarned.AddListener(_gameRules.SendDataUpdate);
+        _boosterReward.OnBoosterRewardReceived.AddListener(_gameRules.SendDataUpdate);
     }
     private void Start()
     {
@@ -149,6 +157,9 @@ public class GameManager : MonoBehaviour
     private void OnDisable()
     {
         _rewardTimer.OnActivatedCoinsRewardButton.RemoveListener(ActivatedRewardButton);
+
+        _boosterReward.OnBoosterRewardEarned.RemoveListener(_gameRules.SendDataUpdate);
+        _boosterReward.OnBoosterRewardReceived.RemoveListener(_gameRules.SendDataUpdate);
     }
 
     private void OnApplicationQuit()

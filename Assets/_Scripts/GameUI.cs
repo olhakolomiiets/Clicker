@@ -26,7 +26,6 @@ public class GameUI : MonoBehaviour
 
     //[Header("Shop")]
 
-
     //private UIManagerController _managerController;
 
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnPremiumItemWorkFinished, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;

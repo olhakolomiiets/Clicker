@@ -189,7 +189,7 @@ public class GameRules : MonoBehaviour
     /// <summary>
     /// Sends update about data changes as an event
     /// </summary>
-    private void SendDataUpdate()
+    public void SendDataUpdate()
     {
         for (int i = 0; i < _currentGameData.ItemDataList.Count; i++)
         {

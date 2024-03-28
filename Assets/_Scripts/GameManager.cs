@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
 
     [Space(10)]
     [SerializeField] private PurchaseManager _purchaseManager;
+    [SerializeField] private Leaderboard _leaderboard;
 
     /// <summary>
     /// All the setup happens here
@@ -33,6 +34,7 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         _rewardTimer.OnActivatedCoinsRewardButton.AddListener(ActivatedRewardButton);
+        _leaderboard.OnPressLeaderboardButton.AddListener(ActivatedLeaderboard);
 
         _boosterReward.OnBoosterRewardEarned.AddListener(_gameRules.SendDataUpdate);
         _boosterReward.OnBoosterRewardReceived.AddListener(_gameRules.SendDataUpdate);
@@ -58,6 +60,11 @@ public class GameManager : MonoBehaviour
     private void ActivatedRewardButton()
     {
         _coinsReward.PrepareRewardData(_gameData);
+    }
+
+    private void ActivatedLeaderboard()
+    {
+        _leaderboard.PrepareRewardData(_gameData);
     }
 
     /// <summary>
@@ -157,6 +164,8 @@ public class GameManager : MonoBehaviour
     private void OnDisable()
     {
         _rewardTimer.OnActivatedCoinsRewardButton.RemoveListener(ActivatedRewardButton);
+
+        _leaderboard.OnPressLeaderboardButton.RemoveListener(ActivatedLeaderboard);
 
         _boosterReward.OnBoosterRewardEarned.RemoveListener(_gameRules.SendDataUpdate);
         _boosterReward.OnBoosterRewardReceived.RemoveListener(_gameRules.SendDataUpdate);

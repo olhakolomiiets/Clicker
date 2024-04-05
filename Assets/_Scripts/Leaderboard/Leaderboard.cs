@@ -6,17 +6,37 @@ using UnityEngine.SocialPlatforms;
 using System.Collections.Generic;
 using GooglePlayGames.BasicApi;
 using GooglePlayGames.BasicApi.SavedGame;
+using DG.Tweening;
+using System.Linq;
+using System.Collections;
 
 public class Leaderboard : MonoBehaviour
 {
-    [SerializeField] private Text logText;
+    [SerializeField] private GameObject leaderboardEntryPrefab;
+    [SerializeField] private RectTransform leaderboardContainer;
+
+    [Space(10)]
+    [SerializeField] private RectTransform leaderboardPanel;
+    [SerializeField] private float panelTopPosY, panelMiddlePosY;
+    [SerializeField] private float tweenDuration;
+
+    #region PRIVATE FIELDS
 
     GameData _currentGameData;
     private double _score;
-
     private bool mStandby = false;
     private string mStandbyMessage = string.Empty;
     private string _mStatus = "Ready";
+
+    private string mStatus;
+    private string logText;
+    private bool isDisplayed;
+
+    private List<LeaderboardEntry> leaderboardEntryList = new();
+
+    Texture2D userImg;
+
+    #endregion
 
     [HideInInspector] public UnityEvent OnPressLeaderboardButton, OnShowLeaderboard;
 
@@ -37,19 +57,16 @@ public class Leaderboard : MonoBehaviour
         _currentGameData = gameData;
         _score = _currentGameData.Money;
         LeaderboardPostBtn();
-        Debug.Log("!!!!!!!!!!!--------- 2 PrepareRewardData Leaderboard ---------!!!!!!!!!!!");
     }
 
     public void LoadLeaderboard()
     {
         OnPressLeaderboardButton?.Invoke();
-        Debug.Log("!!!!!!!!!!!--------- 1 Invoke OnPressLeaderboardButton Leaderboard ---------!!!!!!!!!!!");
     }
 
     public void ShowLeaderboard()
     {
         Social.ShowLeaderboardUI();
-        Debug.Log("!!!!!!!!!!!--------- 5 ShowLeaderboard Leaderboard ---------!!!!!!!!!!!");
     }
 
     public void DoLeaderboardPost(int _score)
@@ -59,23 +76,23 @@ public class Leaderboard : MonoBehaviour
             {
                 if (success)
                 {
-                    logText.text = "Score Posted of: " + _score;
+                    logText = "Score Posted of: " + _score;
 
                 }
                 else
                 {
-                    logText.text = "Score Failed to Post";
+                    logText = "Score Failed to Post";
                 }
             });
 
-        OnShowLeaderboard?.Invoke();
-        Debug.Log("!!!!!!!!!!!--------- 4 DoLeaderboardPost Leaderboard ---------!!!!!!!!!!!");
+        //OnShowLeaderboard?.Invoke();
+
+        DoLoadLeaderboard();
     }
 
     public void LeaderboardPostBtn()
     {
         DoLeaderboardPost((int)_score);
-        Debug.Log("!!!!!!!!!!!--------- 3 LeaderboardPostBtn Leaderboard ---------!!!!!!!!!!!");
     }
 
     internal void SetStandBy(string message)
@@ -106,8 +123,99 @@ public class Leaderboard : MonoBehaviour
         {
             Status = "*** Failed to authenticate with " + signInStatus;
         }
+    }
 
-        //ShowEffect(signInStatus == SignInStatus.Success);
+    internal void DoLoadLeaderboard()
+    {
+        ILeaderboard lb = PlayGamesPlatform.Instance.CreateLeaderboard();
+        lb.id = GPGSIds.leaderboard_planet_builder_leaderboard;
+        lb.LoadScores(ok =>
+        {
+            if (ok)
+            {
+                LoadUsersAndDisplay(lb);
+            }
+            else
+            {
+                mStatus = "Leaderboard loading: " + lb.title + " ok = " + ok;
+            }
+        });
+    }
+
+    internal void LoadUsersAndDisplay(ILeaderboard lb)
+    {
+        List<string> userIds = new();       
+
+        foreach (IScore score in lb.scores)
+        {
+            userIds.Add(score.userID);
+        }
+
+        Social.LoadUsers(userIds.ToArray(), (users) =>
+        {
+            mStatus = "Leaderboard loading: " + lb.title + " count = " +
+                      lb.scores.Length;
+
+            foreach (IScore score in lb.scores)
+            {
+                IUserProfile user = FindUser(users, score.userID);
+
+                StartCoroutine(GetImg(user.image));
+
+                mStatus += "\n" + score.formattedValue + " by " +
+                           (string)(
+                               (user != null) ? user.userName : "**unk_" + score.userID + "**");
+               
+                LeaderboardEntry entry = Instantiate(leaderboardEntryPrefab, leaderboardContainer).GetComponent<LeaderboardEntry>();
+                entry.SetData(score.rank, user.userName, userImg, score.userID, score.value);
+                leaderboardEntryList.Add(entry);                               
+
+                float _scrollHeight = 220 * lb.scores.Length;
+                leaderboardContainer.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollHeight);
+
+                Debug.Log("!!!!!----- Leaderboard Status -----!!!!!" + " Username: " + user.userName + " User ID: " + score.userID + " Score Value: " + score.value + " Score Formatted Value: " + score.formattedValue);                
+            }
+        });
+
+        ToggleLeaderboardPanel();
+    }
+
+    IEnumerator GetImg(Texture2D userTexture)
+    {
+        while (userTexture == null)
+        {            
+            yield return null;
+        }
+
+        yield return userImg;
+    }
+
+    private IUserProfile FindUser(IUserProfile[] users, string userid)
+    {
+        foreach (IUserProfile user in users)
+        {
+            if (user.id == userid)
+            {
+                return user;
+            }
+        }
+
+        return null;
+    }
+
+    public void ToggleLeaderboardPanel()
+    {
+        if (isDisplayed)
+        {
+            leaderboardPanel.DOAnchorPosY(panelMiddlePosY, tweenDuration);
+            isDisplayed = false;
+            leaderboardEntryList.Clear();
+        }
+        else
+        {
+            leaderboardPanel.DOAnchorPosY(panelTopPosY, tweenDuration);
+            isDisplayed = true;
+        }
     }
 
     private void OnDisable()

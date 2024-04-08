@@ -1,29 +1,15 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ObjectActivator : MonoBehaviour
 {
     public ItemController itemController;
     public UpgradeItemController upgradeItemController;
-    public List<PlanetObject> objectsToActivate = new List<PlanetObject>();
-    private int currentIndex = 0;
+    public List<PlanetObject> objectsToActivate = new();
+    [SerializeField] private int currentIndex = 0;
     [SerializeField] private ObjectPlaceRotator objectPlaceRotator;
-   
-
-    void Start()
-    {
-        if(itemController != null)
-            itemController.OnBuyButtonClicked += OnByButtonClicked;
-        if (upgradeItemController != null)
-            upgradeItemController.OnUpgradeItemBuyButtonClicked += OnByButtonClicked;
-    }
-
-    private void OnByButtonClicked()
-    {
-        ActivateNextObject();
-    }
 
     public void ActivateNextObject()
     {
@@ -40,13 +26,19 @@ public class ObjectActivator : MonoBehaviour
             // If the end of the list is reached, reset the index to restart the sequence
             currentIndex = 0;
         }
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! ObjectActivator /// ActivateNextObject");
     }
-    void OnDisable()
+
+    public void ActivatePurchasedObject(int itemCount)
     {
-        if (itemController != null)
-            itemController.OnBuyButtonClicked -= OnByButtonClicked;
-        if (upgradeItemController != null)
-            upgradeItemController.OnUpgradeItemBuyButtonClicked -= OnByButtonClicked;
+        for (int i = 0; i < itemCount; i++)
+        {
+            objectsToActivate[i].gameObject.GetComponent<Animator>().enabled = false;
+            objectsToActivate[i].gameObject.SetActive(true);
+        }
+
+        currentIndex = itemCount;
     }
 
 }

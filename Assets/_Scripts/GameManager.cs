@@ -15,9 +15,11 @@ public class GameManager : MonoBehaviour
 
     [Space(10)]
     [SerializeField] private List<ItemData> _creationItemsDataList;
+    [SerializeField] private List<int> _creationItemsCount = new();
 
     [Space(10)]
     [SerializeField] private List<UpgradeItemData> _upgradeItemsDataList;
+    [SerializeField] private List<int> _upgradeItemCount = new();
 
     [Space(10)]
     [SerializeField] private RewardTimers _rewardTimer;
@@ -54,7 +56,12 @@ public class GameManager : MonoBehaviour
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   _visualsController.InitializeVisual(_gameData);
 
         //We load the saved game data if we have any
-        LoadSavedData();    
+        LoadSavedData();
+        
+        _creationItemsCount = _gameData.ItemCount;
+        _upgradeItemCount = _gameData.UpgradeItemCount;
+        _gameUI.ActivatePurchasedCreationObject(_creationItemsCount);
+        _gameUI.ActivatePurchasedUpgradeObject(_upgradeItemCount);
     }
 
     private void ActivatedRewardButton()
@@ -95,7 +102,7 @@ public class GameManager : MonoBehaviour
     {
         _gameData = new();
         _gameData.ItemDataList = _creationItemsDataList;
-        _gameData.UpgradeItemDataList = _upgradeItemsDataList;
+        _gameData.UpgradeItemDataList = _upgradeItemsDataList;        
     }
 
     /// <summary>
@@ -164,11 +171,11 @@ public class GameManager : MonoBehaviour
     private void OnDisable()
     {
         _rewardTimer.OnActivatedCoinsRewardButton.RemoveListener(ActivatedRewardButton);
-
         _leaderboard.OnPressLeaderboardButton.RemoveListener(ActivatedLeaderboard);
-
         _boosterReward.OnBoosterRewardEarned.RemoveListener(_gameRules.SendDataUpdate);
         _boosterReward.OnBoosterRewardReceived.RemoveListener(_gameRules.SendDataUpdate);
+
+        //SaveGame();
     }
 
     private void OnApplicationQuit()

@@ -89,6 +89,12 @@ public class GameRules : MonoBehaviour
         SendDataUpdate();
     }
 
+    private void ActivateUpgradeItem(int i)
+    {
+        OnActivateUpgradeItem?.Invoke(i);
+        SendDataUpdate();
+    }
+
     /// <summary>
     /// Adds money to the data and sends the update event
     /// </summary>
@@ -151,14 +157,24 @@ public class GameRules : MonoBehaviour
         if (String.IsNullOrEmpty(gameDataSave))
             return;
         _currentGameData.SetData(gameDataSave);
+
         for (int i = 0; i < _currentGameData.ItemDataList.Count; i++)
         {
+            //_currentGameData.ItemDataList[i].ItemCount = _currentGameData.ItemCount[i];
             if (_currentGameData.ItemCount[i] > 0)
             {
                 ActivateItem(i);
             }
             if (_currentGameData.Managers[i])
                 ActivateManagerFor(i);
+        }
+
+        for (int i = 0; i < _currentGameData.UpgradeItemDataList.Count; i++)
+        {
+            if (_currentGameData.UpgradeItemCount[i] > 0)
+            {
+                ActivateUpgradeItem(i);
+            }
         }
 
         SendDataUpdate();
@@ -180,7 +196,7 @@ public class GameRules : MonoBehaviour
         }
         for (int i = 0; i < gameData.UpgradeItemDataList.Count; i++)
         {
-            _currentGameData.UpgradeItemCount.Add(i == 0 ? 1 : 0);
+            _currentGameData.UpgradeItemCount.Add(i == 0 ? 0 : 0);
         }
         SendDataUpdate();
         OnActivateItem?.Invoke(0);

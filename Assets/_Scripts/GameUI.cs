@@ -30,10 +30,13 @@ public class GameUI : MonoBehaviour
 
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnPremiumItemWorkFinished, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;
 
+
+
     public void PrepareCreationUI(List<ItemData> data)
     {
         _uiCreationItemsList.Clear();
         _managerControllers.Clear();
+
         for (int i = 0; i < data.Count; i++)
         {
             ItemController itemController = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();            
@@ -46,14 +49,29 @@ public class GameUI : MonoBehaviour
             _managerControllers[i].AddButton(i, data[i].ManagerPrice, data[i].TranslationText);
 
             _objectActivator[i].itemController = itemController;
-          
+
             ConnectEvents(i, itemController);
 
             float _scrollItemGroupHeight = 220 * data.Count;
             _uiItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
 
-            _managerControllers[i].OnManagerPurchased += PurchaseManager;
-        }        
+            _managerControllers[i].OnManagerPurchased += PurchaseManager;           
+        }
+
+        OnBuyButonClicked += ActivateNextCreationObject;
+    }
+
+    public void ActivatePurchasedCreationObject(List<int> itemCount)
+    {
+        for (int i = 0; i < itemCount.Count; i++)
+        {
+            _objectActivator[i].ActivatePurchasedObject(itemCount[i]);
+        }
+    }
+
+    public void ActivateNextCreationObject(int i)
+    {
+        _objectActivator[i].ActivateNextObject();
     }
 
     public void PrepareUpgradeUI(List<UpgradeItemData> data)
@@ -65,13 +83,28 @@ public class GameUI : MonoBehaviour
             upgradeItemController.Prepare(data[i].ItemImage, data[i].TranslationText);
             _uiUpgradeItemsList.Add(upgradeItemController);
 
-            _objectActivator[i].upgradeItemController = upgradeItemController;
+            _upgradeObjectActivator[i].upgradeItemController = upgradeItemController;
 
             ConnectEvents(i, upgradeItemController);
 
             float _scrollItemGroupHeight = 220 * data.Count;
             _upgradeItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
         }
+
+        OnUpgradeItemPurchased += ActivateNextUpgradeObject;
+    }
+
+    public void ActivatePurchasedUpgradeObject(List<int> itemCount)
+    {
+        for (int i = 0; i < itemCount.Count; i++)
+        {
+            _upgradeObjectActivator[i].ActivatePurchasedObject(itemCount[i]);
+        }
+    }
+
+    public void ActivateNextUpgradeObject(int i)
+    {
+        _upgradeObjectActivator[i].ActivateNextObject();
     }
 
     private void PurchaseManager(int index)

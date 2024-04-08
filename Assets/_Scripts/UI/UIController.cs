@@ -29,10 +29,12 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameObject _planet;
 
     private DragRotateGPT _planetRotator;
+    private ObjectPlaceRotator _objectPlaceRotator; 
 
     private void Start()
     {
         _planetRotator = _planet.GetComponent<DragRotateGPT>();
+        _objectPlaceRotator = _planet.GetComponent<ObjectPlaceRotator>();
     }
 
     public void ToggleUpgradeStorePanel()
@@ -43,7 +45,10 @@ public class UIController : MonoBehaviour
             _toggleButton.DORotate(new Vector3(0, 0, 0), _tweenDuration);
             isDisplayed = false;
             SetStartPos();
-            _planetRotator.enabled = true;
+            if (!_objectPlaceRotator.isRotating)
+            {
+                _planetRotator.enabled = true;
+            }          
         }
         else
         {

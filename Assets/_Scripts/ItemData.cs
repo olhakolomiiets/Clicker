@@ -21,9 +21,6 @@ public class ItemData : ScriptableObject
 
     [field: SerializeField]
     public int ItemDiamondsIncome { get; set; } = 1;
-
-    [field: SerializeField]
-    public int ItemCount { get; set; }
     
     [field: SerializeField]
     public double ItemStartCost { get; private set; } = 3.738;

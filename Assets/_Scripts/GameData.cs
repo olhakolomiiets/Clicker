@@ -23,8 +23,6 @@ public class GameData
 
     public List<UpgradeItemData> UpgradeItemDataList = new();
 
-    public bool IsPremium { get; set; }
-
     public void SetData(string dataString)
     {
         if (String.IsNullOrEmpty(dataString))
@@ -37,7 +35,8 @@ public class GameData
         Managers = data.Managers;
         ItemBonusMultiplayer = data.ItemBonusMultiplayer;
         ItemMaxCountHelper = data.ItemMaxCountHelper;
-        IsPremium = data.IsPremium;
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameData /// SetData " + dataString);
     }
 
     public string GetSaveData()
@@ -50,7 +49,6 @@ public class GameData
             Managers = Managers,
             ItemBonusMultiplayer = ItemBonusMultiplayer,
             ItemMaxCountHelper = ItemMaxCountHelper,
-            IsPremium = IsPremium
         });
 }
 
@@ -64,6 +62,5 @@ public struct GameDataSave
     public List<bool> Managers;
     public List<int> ItemBonusMultiplayer;
     public List<int> ItemMaxCountHelper;
-    public bool IsPremium;
 }
 

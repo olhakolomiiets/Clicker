@@ -24,7 +24,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private RectTransform _shopItemsParent;
     [SerializeField] private Button _shopButton;
 
-    private bool isDisplayed;
+    [HideInInspector] public bool isDisplayed;
 
     [SerializeField] private GameObject _planet;
 

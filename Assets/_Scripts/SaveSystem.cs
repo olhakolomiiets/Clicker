@@ -21,18 +21,16 @@ public class SaveSystem : MonoBehaviour
         Debug.Log("Game Saved");
     }
 
-    public List<string>  LoadGame()
+    public List<string> LoadGame()
     {
         if (PlayerPrefs.HasKey(_saveKeyName) == false)
             return new();
         SavedData data = JsonUtility.FromJson<SavedData>(PlayerPrefs.GetString(_saveKeyName));
-        return data.savedData;
-        
+        return data.savedData;       
     }
 
     public void ResetData()
         => PlayerPrefs.DeleteKey(_saveKeyName);
-
 
 
     [Serializable]

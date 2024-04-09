@@ -28,7 +28,7 @@ public class GameUI : MonoBehaviour
 
     //private UIManagerController _managerController;
 
-    public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnPremiumItemWorkFinished, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;
+    public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;
 
 
 
@@ -59,6 +59,8 @@ public class GameUI : MonoBehaviour
         }
 
         OnBuyButonClicked += ActivateNextCreationObject;
+        //OnActivationPremium += ActivateNextCreationObject;
+        OnPurchaseItemFirstTime += ActivateNextCreationObject;
     }
 
     public void ActivatePurchasedCreationObject(List<int> itemCount)
@@ -116,7 +118,7 @@ public class GameUI : MonoBehaviour
     {
         itemController.OnProgressButtonClicked += () => OnProgressButtonClicked?.Invoke(i);
         itemController.OnWorkFinished += () => OnWorkFinished?.Invoke(i);
-        itemController.OnPremiumItemWorkFinished += () => OnPremiumItemWorkFinished?.Invoke(i);
+        itemController.OnActivationPremium += () => OnActivationPremium?.Invoke(i);
         itemController.OnBuyButtonClicked += () => OnBuyButonClicked?.Invoke(i);
         itemController.OnFirstActivation += () => OnPurchaseItemFirstTime?.Invoke(i);
     }

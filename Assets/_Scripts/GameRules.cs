@@ -30,6 +30,15 @@ public class GameRules : MonoBehaviour
         ActivateManagerFor(index);
     }
 
+    public void HandlePremiumManager(int index)
+    {
+        if (_currentGameData.Managers[index])
+            return;
+
+        _currentGameData.Managers[index] = true;
+        ActivateManagerFor(index);
+    }
+
     /// <summary>
     /// Activates the automation of clicking the button - to implement managers
     /// </summary>
@@ -112,6 +121,13 @@ public class GameRules : MonoBehaviour
     public void IncreaseDiamondsScore(int index)
     {       
         _currentGameData.Diamonds += _currentGameData.UpgradeItemDataList[index].ItemIncome(_currentGameData.UpgradeItemCount[index]); 
+        SendDataUpdate();
+    }
+
+    public void GetMoney()
+    {
+        _currentGameData.Money += 1000000;
+        _currentGameData.Diamonds += 200;
         SendDataUpdate();
     }
 

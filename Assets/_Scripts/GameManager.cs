@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     private GameData _gameData;
     [SerializeField] private GameRules _gameRules;
     [SerializeField] private SaveSystem _saveSystem;
-    [SerializeField] private VisualsController _visualsController;
+    //[SerializeField] private VisualsController _visualsController;
 
     [Space(10)]
     [SerializeField] private List<ItemData> _creationItemsDataList;
@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PurchaseManager _purchaseManager;
     [SerializeField] private Leaderboard _leaderboard;
 
+    private bool isGameSaved = false;
+
     /// <summary>
     /// All the setup happens here
     /// </summary>
@@ -37,27 +39,22 @@ public class GameManager : MonoBehaviour
     {
         _rewardTimer.OnActivatedCoinsRewardButton.AddListener(ActivatedRewardButton);
         _leaderboard.OnPressLeaderboardButton.AddListener(ActivatedLeaderboard);
-
         _boosterReward.OnBoosterRewardEarned.AddListener(_gameRules.SendDataUpdate);
         _boosterReward.OnBoosterRewardReceived.AddListener(_gameRules.SendDataUpdate);
-    }
-    private void Start()
-    {
+
         PrepareGameData();
         PrepareUI();
         ConnectGameRulesToUI();
 
         _gameRules.PrepareGameData(_gameData);
-        _purchaseManager.PrepareGameData(_gameData);
-
-        //Visuals (soldiers / shooting) are optional and depends on GameData
-        //GameRules or game data does NOT depend on visuals.
-
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   _visualsController.InitializeVisual(_gameData);
+        _purchaseManager.PrepareGameData(_gameData);       
+    }
 
-        //We load the saved game data if we have any
+    private void Start()
+    {
         LoadSavedData();
-        
+
         _creationItemsCount = _gameData.ItemCount;
         _upgradeItemCount = _gameData.UpgradeItemCount;
         _gameUI.ActivatePurchasedCreationObject(_creationItemsCount);
@@ -91,8 +88,8 @@ public class GameManager : MonoBehaviour
         _gameRules.OnUpdateData += _gameUI.UpdateUI;
         _gameRules.OnUpdateUpgradeData += _gameUI.UpdateUpgradeUI;
 
-        _gameRules.OnUpdateData += _visualsController.UpdateVisuals;
-        _gameRules.OnPerformAction += _visualsController.PerformAction;
+        //_gameRules.OnUpdateData += _visualsController.UpdateVisuals;
+        //_gameRules.OnPerformAction += _visualsController.PerformAction;
     }
 
     /// <summary>
@@ -124,7 +121,8 @@ public class GameManager : MonoBehaviour
         _gameUI.OnUpgradeItemPurchased += _gameRules.HandleDiamondsUpgrade;
 
         _gameUI.OnBuyButonClicked += _gameRules.HandleUpgrade;
-        _gameUI.OnActivationPremium += _gameRules.HandleUpgrade;
+
+        _gameUI.OnActivationPremium += _gameRules.HandlePremiumManager;
 
         _gameUI.OnPurchaseItemFirstTime += _gameRules.PurchaseItemFirstTime;
         _gameUI.OnManagerPurchased += _gameRules.HandleManagerPurchased;
@@ -139,9 +137,13 @@ public class GameManager : MonoBehaviour
         List<string> dataToSave = new()
         {
             _gameData.GetSaveData(),
-            _visualsController.GetSaveData()
+            //_visualsController.GetSaveData()
         };
         _saveSystem.SaveTheGame(dataToSave);
+
+        isGameSaved = true;
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// SaveGame " + dataToSave);
     }
 
     /// <summary>
@@ -156,6 +158,8 @@ public class GameManager : MonoBehaviour
             _gameRules.LoadGame(data[0]);
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! _visualsController.LoadData(data[1]);
         }
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// LoadSavedData");
     }
 
     /// <summary>
@@ -167,6 +171,41 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    private void OnApplicationFocus(bool focusStatus)
+    {
+        if (focusStatus)
+        {
+            if (isGameSaved)
+            {
+                LoadSavedData();
+
+                Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// OnApplicationFocus /// LoadSavedData");
+            }
+        }
+    }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus)
+        {
+            SaveGame();
+            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// OnApplicationPause /// SaveGame");
+        }
+        else
+        {
+            if (isGameSaved)
+            {
+                LoadSavedData();
+                Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// OnApplicationPause /// LoadSavedData");
+            }
+        }
+    }
+
+    private void OnApplicationQuit()
+    {       
+        if (!isGameSaved)
+            SaveGame();
+    }
 
     private void OnDisable()
     {
@@ -175,11 +214,13 @@ public class GameManager : MonoBehaviour
         _boosterReward.OnBoosterRewardEarned.RemoveListener(_gameRules.SendDataUpdate);
         _boosterReward.OnBoosterRewardReceived.RemoveListener(_gameRules.SendDataUpdate);
 
-        //SaveGame();
+        if (!isGameSaved)
+            SaveGame();
     }
 
-    private void OnApplicationQuit()
+    private void OnDestroy()
     {
-        SaveGame();
+        if (!isGameSaved)
+            SaveGame();
     }
 }

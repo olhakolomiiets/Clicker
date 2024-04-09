@@ -34,7 +34,11 @@ public class ObjectActivator : MonoBehaviour
     {
         for (int i = 0; i < itemCount; i++)
         {
-            objectsToActivate[i].gameObject.GetComponent<Animator>().enabled = false;
+            Animator animator = objectsToActivate[i].gameObject.GetComponent<Animator>();
+            if (animator != null)
+            {
+                animator.enabled = false;
+            }
             objectsToActivate[i].gameObject.SetActive(true);
         }
 

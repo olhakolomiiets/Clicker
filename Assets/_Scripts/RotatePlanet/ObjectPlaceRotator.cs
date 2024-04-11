@@ -7,7 +7,7 @@ public class ObjectPlaceRotator : MonoBehaviour
 {
     public Transform cameraTransform;
     private DragRotateGPT dragRotateGPT;
-    private List<PlanetObject> needToShowList = new List<PlanetObject>();
+    [SerializeField] private List<PlanetObject> needToShowList = new();
     public bool isRotating = false;
     [SerializeField] private UIController _uiController;
 
@@ -34,11 +34,10 @@ public class ObjectPlaceRotator : MonoBehaviour
             dragRotateGPT.enabled = false;
             StartCoroutine(RotateObjects(() =>
             {
+                isRotating = false; // Reset the flag after the rotation is complete
+
                 if (!_uiController.isDisplayed)
-                {
-                    isRotating = false; // Reset the flag after the rotation is complete
                     dragRotateGPT.enabled = true;
-                }
             }));
         }
     }

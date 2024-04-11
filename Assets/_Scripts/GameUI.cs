@@ -24,13 +24,7 @@ public class GameUI : MonoBehaviour
     [SerializeField] private List<ObjectActivator> _upgradeObjectActivator = new();
     private List<UpgradeItemController> _uiUpgradeItemsList = new();
 
-    //[Header("Shop")]
-
-    //private UIManagerController _managerController;
-
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;
-
-
 
     public void PrepareCreationUI(List<ItemData> data)
     {
@@ -59,7 +53,6 @@ public class GameUI : MonoBehaviour
         }
 
         OnBuyButonClicked += ActivateNextCreationObject;
-        //OnActivationPremium += ActivateNextCreationObject;
         OnPurchaseItemFirstTime += ActivateNextCreationObject;
     }
 

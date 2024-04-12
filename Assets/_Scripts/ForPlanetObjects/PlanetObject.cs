@@ -8,7 +8,8 @@ public class PlanetObject : MonoBehaviour
     public enum SFXType
     {
         Ray,
-        Lightning
+        BigRay,
+        Lightning 
     };
 
     public void MakeSFX()
@@ -17,14 +18,17 @@ public class PlanetObject : MonoBehaviour
         switch (_sfx)
         {
             case SFXType.Ray:
-                sfx = ObjectPooler.SharedInstance.GetPooledObject("SFX");
+                sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX1");
+                break;
+            case SFXType.BigRay:
+                sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX2");
                 break;
             case SFXType.Lightning:
-                sfx = ObjectPooler.SharedInstance.GetPooledObject("SFX2");
+                sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX3");
                 break;
 
             default:
-                sfx = ObjectPooler.SharedInstance.GetPooledObject("SFX");
+                sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX1");
                 break;
         }
 

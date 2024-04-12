@@ -147,12 +147,16 @@ public class GameUI : MonoBehaviour
 
         if(gameData.ItemDataList[index].IsPremium)
         {
-            _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].DiamondsIncome(gameData.ItemCount[index]));
+            _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].DiamondsIncome(gameData.ItemCount[index]), "");
             _diamonds.SetDiamondsScore(gameData.Diamonds);
         }          
         else
         {
-            _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]));
+            if(gameData.Managers[index])
+                _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncomePerSec(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]), " / sec");
+            else
+                _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]), "");
+
             _coins.SetScore(gameData.Money);
         }                   
         _uiCreationItemsList[index].SetBuyPrice(gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));

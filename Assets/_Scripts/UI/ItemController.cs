@@ -145,12 +145,13 @@ public class ItemController : MonoBehaviour
 
     public void ToggleIncome(bool val)
         => _itemScore.gameObject.SetActive(val);
-    public void SetIncome(double score)
+    
+    public void SetIncome(double score, string sec)
     {
         if (score > 1000)
-            _itemScore.text = AbbreviateNumber(score);
+            _itemScore.text = $"{AbbreviateNumber(score) + sec}";
         else
-            _itemScore.text = $"{score.ToString("N0")}";
+            _itemScore.text = $"{score.ToString("N0") + sec}";
     }
 
     private void HandleProgressBarFinished()

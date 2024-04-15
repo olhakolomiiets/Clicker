@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 /// <summary>
@@ -24,7 +25,18 @@ public class GameUI : MonoBehaviour
     [SerializeField] private List<ObjectActivator> _upgradeObjectActivator = new();
     private List<UpgradeItemController> _uiUpgradeItemsList = new();
 
+    [Header("Passive Income")]
+    [SerializeField] private GameObject _passiveIncomeWind;
+    [SerializeField] private TextMeshProUGUI _timeAwayTxt;
+    [SerializeField] private TextMeshProUGUI _passiveIncomeTxt;
+    [SerializeField] private TextMeshProUGUI _maxTimeAwayTxt;
+    [SerializeField] private TextMeshProUGUI _2xPassiveIncomeTxt;
+    [SerializeField] private TextMeshProUGUI _3xPassiveIncomeTxt;
+    private double passiveIncome;
+
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;
+
+    public event Action<double> OnEarningPassiveIncome;
 
     public void PrepareCreationUI(List<ItemData> data)
     {
@@ -105,6 +117,33 @@ public class GameUI : MonoBehaviour
     private void PurchaseManager(int index)
     {
         OnManagerPurchased?.Invoke(index);
+    }
+
+    public void ActivatePassiveIncome(int secAfterExit, GameData gameData)
+    {
+        passiveIncome = Math.Min(secAfterExit, gameData.PassiveIncomeTime) * gameData.MoneyPerSec;
+
+        int _2xPassiveIncome = (int)passiveIncome * 2;
+        int _3xPassiveIncome = (int)passiveIncome * 3;
+
+        _passiveIncomeWind.SetActive(true);
+
+        TimeSpan timeAway = TimeSpan.FromSeconds(secAfterExit);
+        _timeAwayTxt.text = $"{timeAway.Hours} h {timeAway.Minutes} m {timeAway.Seconds} s";
+
+        TimeSpan passiveIncomeTime = TimeSpan.FromSeconds(gameData.PassiveIncomeTime);
+        _maxTimeAwayTxt.text = $"{passiveIncomeTime.Hours} h {passiveIncomeTime.Minutes} m {passiveIncomeTime.Seconds} s";
+
+        _passiveIncomeTxt.text = $"{passiveIncome:N0}";
+
+        _2xPassiveIncomeTxt.text = _2xPassiveIncome.ToString();
+        _3xPassiveIncomeTxt.text = _3xPassiveIncome.ToString();
+    }
+
+    public void EarningPassiveIncome()
+    {
+        OnEarningPassiveIncome?.Invoke(passiveIncome);
+        _passiveIncomeWind.SetActive(false);
     }
 
     private void ConnectEvents(int i, ItemController itemController)

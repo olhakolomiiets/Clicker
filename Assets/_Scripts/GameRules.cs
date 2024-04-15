@@ -14,7 +14,11 @@ public class GameRules : MonoBehaviour
     public event Action<int> OnActivateItem, OnActivateUpgradeItem, OnAutomateItem;
     public event Action<int, GameData> OnUpdateData, OnPerformAction;
 
-    public event Action<int, GameData> OnUpdateUpgradeData, OnUpdatePerformAction;
+    public event Action<int, GameData> OnUpdateUpgradeData, OnUpdatePerformAction, OnActivatePassiveIncome;
+
+    [Header("Passive Income")]
+    [SerializeField] private int _extraTime;
+    private int secAfterExit;
 
     /// <summary>
     /// Handles clicking of the Manager purchas button per each Item (index)
@@ -111,9 +115,14 @@ public class GameRules : MonoBehaviour
     public void IncreaseScore(int index)
     {
         if (_currentGameData.ItemDataList[index].IsPremium)
+        {
             _currentGameData.Diamonds += _currentGameData.ItemDataList[index].DiamondsIncome(_currentGameData.ItemCount[index]);
+        }
         else
+        {
             _currentGameData.Money += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
+            _currentGameData.MoneyPerSec = _currentGameData.ItemDataList[index].ItemIncomePerSec(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
+        }
 
         SendDataUpdate();
     }
@@ -128,6 +137,21 @@ public class GameRules : MonoBehaviour
     {
         _currentGameData.Money += 1000000;
         _currentGameData.Diamonds += 200;
+
+        _currentGameData.PassiveIncomeTime += 30;
+        SendDataUpdate();
+    }
+
+    public void GetPassiveIncome(double passiveIncome)
+    {
+        _currentGameData.Money += passiveIncome;
+        SendDataUpdate();
+    }
+
+    public void UpdatePassiveIncomeTime()
+    {
+        _currentGameData.Diamonds -= 10;
+        _currentGameData.PassiveIncomeTime += _extraTime;
         SendDataUpdate();
     }
 
@@ -176,7 +200,6 @@ public class GameRules : MonoBehaviour
 
         for (int i = 0; i < _currentGameData.ItemDataList.Count; i++)
         {
-            //_currentGameData.ItemDataList[i].ItemCount = _currentGameData.ItemCount[i];
             if (_currentGameData.ItemCount[i] > 0)
             {
                 ActivateItem(i);
@@ -191,6 +214,19 @@ public class GameRules : MonoBehaviour
             {
                 ActivateUpgradeItem(i);
             }
+        }
+
+        if (_currentGameData.ExitTime != null)
+        {
+            long tempExitTime = Convert.ToInt64(_currentGameData.ExitTime);
+
+            var exitTime = DateTime.FromBinary(tempExitTime);
+            var currentTime = DateTime.Now;
+            var difference = currentTime.Subtract(exitTime);
+            var rawTime = (float)difference.TotalSeconds;
+            secAfterExit = (int)rawTime;
+
+            OnActivatePassiveIncome?.Invoke(secAfterExit, _currentGameData);
         }
 
         SendDataUpdate();

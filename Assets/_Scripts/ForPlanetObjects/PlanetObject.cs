@@ -9,7 +9,12 @@ public class PlanetObject : MonoBehaviour
     {
         Ray,
         BigRay,
-        Lightning 
+        ColorfulRay,
+        TrailsRay,
+        Lightning,
+        TrailGreen,
+        TrailBlue,
+        FogRed
     };
 
     public void MakeSFX()
@@ -25,6 +30,21 @@ public class PlanetObject : MonoBehaviour
                 break;
             case SFXType.Lightning:
                 sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX3");
+                break;
+            case SFXType.TrailGreen:
+                sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX4");
+                break;
+            case SFXType.TrailBlue:
+                sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX5");
+                break;
+            case SFXType.ColorfulRay:
+                sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX6");
+                break;
+            case SFXType.TrailsRay:
+                sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX7");
+                break;
+            case SFXType.FogRed:
+                sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX8");
                 break;
 
             default:

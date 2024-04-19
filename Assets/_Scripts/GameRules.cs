@@ -18,7 +18,7 @@ public class GameRules : MonoBehaviour
 
     [Header("Passive Income")]
     [SerializeField] private int _extraTime;
-    private int secAfterExit;
+    private int timeAfterExit;
 
     /// <summary>
     /// Handles clicking of the Manager purchas button per each Item (index)
@@ -224,9 +224,9 @@ public class GameRules : MonoBehaviour
             var currentTime = DateTime.Now;
             var difference = currentTime.Subtract(exitTime);
             var rawTime = (float)difference.TotalSeconds;
-            secAfterExit = (int)rawTime;
+            timeAfterExit = (int)rawTime;
 
-            OnActivatePassiveIncome?.Invoke(secAfterExit, _currentGameData);
+            OnActivatePassiveIncome?.Invoke(timeAfterExit, _currentGameData);
         }
 
         SendDataUpdate();

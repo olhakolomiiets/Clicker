@@ -11,13 +11,13 @@ public class GameRules : MonoBehaviour
     // I want to use events to keep the classes unaware of each other
     public event Action<int, bool> OnModifyManagerAvailability, OnToggleItemActivationState;
     public event Action<int, float> OnStartWorkOnItem, OnStartWorkOnUpgradeItem;
-    public event Action<int> OnActivateItem, OnActivateUpgradeItem, OnAutomateItem;
+    public event Action<int> OnActivateItem, OnActivateUpgradeItem, OnAutomateItem, OnActivatePassiveIncome;
     public event Action<int, GameData> OnUpdateData, OnPerformAction;
 
-    public event Action<int, GameData> OnUpdateUpgradeData, OnUpdatePerformAction, OnActivatePassiveIncome;
+    public event Action<int, GameData> OnUpdateUpgradeData, OnUpdatePerformAction;
 
-    [Header("Passive Income")]
-    [SerializeField] private int _extraTime;
+    public event Action<GameData> OnUpdateGameData;
+
     private int timeAfterExit;
 
     /// <summary>
@@ -138,7 +138,6 @@ public class GameRules : MonoBehaviour
         _currentGameData.Money += 1000000;
         _currentGameData.Diamonds += 200;
 
-        _currentGameData.PassiveIncomeTime += 30;
         SendDataUpdate();
     }
 
@@ -148,10 +147,10 @@ public class GameRules : MonoBehaviour
         SendDataUpdate();
     }
 
-    public void UpdatePassiveIncomeTime()
+    public void UpdatePassiveIncomeTime(double diamonds, int extraTime)
     {
-        _currentGameData.Diamonds -= 10;
-        _currentGameData.PassiveIncomeTime += _extraTime;
+        _currentGameData.Diamonds -= diamonds;
+        _currentGameData.PassiveIncomeTime += extraTime;
         SendDataUpdate();
     }
 
@@ -216,6 +215,8 @@ public class GameRules : MonoBehaviour
             }
         }
 
+        OnUpdateGameData?.Invoke(_currentGameData);
+
         if (_currentGameData.ExitTime != null)
         {
             long tempExitTime = Convert.ToInt64(_currentGameData.ExitTime);
@@ -226,8 +227,9 @@ public class GameRules : MonoBehaviour
             var rawTime = (float)difference.TotalSeconds;
             timeAfterExit = (int)rawTime;
 
-            OnActivatePassiveIncome?.Invoke(timeAfterExit, _currentGameData);
+            OnActivatePassiveIncome?.Invoke(timeAfterExit);
         }
+            
 
         SendDataUpdate();
     }
@@ -271,6 +273,8 @@ public class GameRules : MonoBehaviour
         {
             OnUpdateUpgradeData?.Invoke(i, _currentGameData);
         }
+
+        OnUpdateGameData?.Invoke(_currentGameData);
     }
 
     /// <summary>

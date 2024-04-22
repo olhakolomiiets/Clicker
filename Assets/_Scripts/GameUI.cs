@@ -25,13 +25,10 @@ public class GameUI : MonoBehaviour
     [SerializeField] private List<ObjectActivator> _upgradeObjectActivator = new();
     private List<UpgradeItemController> _uiUpgradeItemsList = new();
 
-    [Header("Passive Income")]
-    [SerializeField] private PassiveIncomeMultiplierReward _passiveIncomeMultiplier;
-    private double passiveIncome;
+    [SerializeField] private GameObject _water;
+    private bool isDisplayed;
 
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;
-
-    public event Action<double> OnEarningPassiveIncome;
 
     public void PrepareCreationUI(List<ItemData> data)
     {
@@ -89,7 +86,7 @@ public class GameUI : MonoBehaviour
 
             ConnectEvents(i, upgradeItemController);
 
-            float _scrollItemGroupHeight = 220 * data.Count;
+            float _scrollItemGroupHeight = 220 * (data.Count + 1);
             _upgradeItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
         }
 
@@ -112,21 +109,6 @@ public class GameUI : MonoBehaviour
     private void PurchaseManager(int index)
     {
         OnManagerPurchased?.Invoke(index);
-    }
-
-    public void ActivatePassiveIncome(int timeAfterExit, GameData gameData)
-    {
-        if (!_passiveIncomeMultiplier.RewardReceived && timeAfterExit > _passiveIncomeMultiplier.DelayTime)
-        {
-            passiveIncome = Math.Min(timeAfterExit, gameData.PassiveIncomeTime) * gameData.MoneyPerSec;
-            _passiveIncomeMultiplier.PreparePassiveIncome(gameData, timeAfterExit, passiveIncome);
-        }         
-    }
-
-    public void EarningPassiveIncome()
-    {
-        OnEarningPassiveIncome?.Invoke(passiveIncome);
-        _passiveIncomeMultiplier.passiveIncomeWind.SetActive(false);
     }
 
     private void ConnectEvents(int i, ItemController itemController)
@@ -211,4 +193,24 @@ public class GameUI : MonoBehaviour
     {
         _uiCreationItemsList[index].ActivateButton();
     }    
+
+    public void PlanetObjectsToggle()
+    {
+        foreach (var obj in _objectActivator)
+        {
+            obj.PlanetObjectsToggle();
+        }
+
+        foreach (var obj in _upgradeObjectActivator)
+        {
+            obj.PlanetObjectsToggle();
+        }
+    }
+
+    public void WaterToggle()
+    {
+        _water.SetActive(!isDisplayed);
+
+        isDisplayed = !isDisplayed;
+    }
 }

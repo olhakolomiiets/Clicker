@@ -12,7 +12,7 @@ public class GameData
     public double MoneyPerSec { get; set;}
     public double Diamonds { get; set;}
     public string ExitTime { get; set;}
-    public int PassiveIncomeTime { get; set;}
+    public int PassiveIncomeTime { get; set;} = 180;
 
     //Bonus multiplier allows us to better balance the incremental game
     //https://www.gamedeveloper.com/design/the-math-of-idle-games-part-i

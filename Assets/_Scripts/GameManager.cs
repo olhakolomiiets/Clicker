@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
 
     [Space(10)]
     [SerializeField] private PurchaseManager _purchaseManager;
+    [SerializeField] private PassiveIncome _passiveIncome;
     [SerializeField] private Leaderboard _leaderboard;
 
     private bool isGameSaved = false;
@@ -88,7 +89,8 @@ public class GameManager : MonoBehaviour
         _gameRules.OnUpdateData += _gameUI.UpdateUI;
         _gameRules.OnUpdateUpgradeData += _gameUI.UpdateUpgradeUI;
 
-        _gameRules.OnActivatePassiveIncome += _gameUI.ActivatePassiveIncome;
+        _gameRules.OnUpdateGameData += _passiveIncome.PrepareGameData;
+        _gameRules.OnActivatePassiveIncome += _passiveIncome.ActivatePassiveIncome;
 
         //_gameRules.OnUpdateData += _visualsController.UpdateVisuals;
         //_gameRules.OnPerformAction += _visualsController.PerformAction;
@@ -129,7 +131,7 @@ public class GameManager : MonoBehaviour
         _gameUI.OnPurchaseItemFirstTime += _gameRules.PurchaseItemFirstTime;
         _gameUI.OnManagerPurchased += _gameRules.HandleManagerPurchased;
 
-        _gameUI.OnEarningPassiveIncome += _gameRules.GetPassiveIncome;
+        _passiveIncome.OnEarningPassiveIncome += _gameRules.GetPassiveIncome;
     }
 
     /// <summary>

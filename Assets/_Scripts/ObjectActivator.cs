@@ -11,6 +11,8 @@ public class ObjectActivator : MonoBehaviour
     [SerializeField] private int currentIndex = 0;
     [SerializeField] private ObjectPlaceRotator objectPlaceRotator;
 
+    private bool isDisplayed;
+
     public void ActivateNextObject()
     {
         // Ensure that the index is within the bounds of the list
@@ -43,6 +45,15 @@ public class ObjectActivator : MonoBehaviour
         }
 
         currentIndex = itemCount;
+    }
+
+    public void PlanetObjectsToggle()
+    {
+        foreach (var obj in objectsToActivate)
+        {
+            obj.gameObject.SetActive(!isDisplayed);
+        }
+        isDisplayed = !isDisplayed;
     }
 
 }

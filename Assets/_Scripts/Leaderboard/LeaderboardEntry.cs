@@ -1,29 +1,25 @@
-using UnityEngine;
-using UnityEngine.SocialPlatforms;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using Dan.Models;
 
-public class LeaderboardEntry : MonoBehaviour
+namespace Dan.Demo
 {
-    public TextMeshProUGUI playerNameText;
-    public RawImage playerImg;
-    public TextMeshProUGUI rankText;    
-    public TextMeshProUGUI scoreText;
-
-    public string url;
-
-    private Texture2D userTexture;
-
-    public void SetData(int rank, string userName, Texture2D image, string userID, long value)
+    public class LeaderboardEntry : MonoBehaviour
     {
-        rankText.text = rank.ToString();
-        playerNameText.text = userName;
-        scoreText.text = value.ToString();
+        [SerializeField] private TextMeshProUGUI _rankText, _usernameText, _scoreText;
 
-        playerImg.texture = image;
+        public void SetEntry(Entry entry)
+        {
+            _rankText.text = entry.Rank.ToString();
+            _usernameText.text = entry.Username;
+            _scoreText.text = entry.Score.ToString();
 
-        Debug.Log("!!!!!----- LeaderboardEntry SetData: Rank" + rank + " Player Name " + userName + " User ID " + userID + " Score " + value + " -----!!!!!");
+/*            var dateTime = new System.DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dateTime = dateTime.AddSeconds(entry.Date);
+            _timeText.text = $"{dateTime.Hour:00}:{dateTime.Minute:00}:{dateTime.Second:00} (UTC)\n{dateTime:dd/MM/yyyy}";*/
+
+            GetComponent<Image>().color = entry.IsMine() ? Color.yellow : Color.white;
+        }
     }
-
 }

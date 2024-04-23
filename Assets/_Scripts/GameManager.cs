@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
     [Space(10)]
     [SerializeField] private PurchaseManager _purchaseManager;
     [SerializeField] private PassiveIncome _passiveIncome;
-    [SerializeField] private Leaderboard _leaderboard;
+    //[SerializeField] private Leaderboard _leaderboard;
 
     private bool isGameSaved = false;
 
@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         _rewardTimer.OnActivatedCoinsRewardButton.AddListener(ActivatedRewardButton);
-        _leaderboard.OnPressLeaderboardButton.AddListener(ActivatedLeaderboard);
+        //_leaderboard.OnPressLeaderboardButton.AddListener(ActivatedLeaderboard);
         _boosterReward.OnBoosterRewardEarned.AddListener(_gameRules.SendDataUpdate);
         _boosterReward.OnBoosterRewardReceived.AddListener(_gameRules.SendDataUpdate);
 
@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
 
     private void ActivatedLeaderboard()
     {
-        _leaderboard.PrepareRewardData(_gameData);
+        //_leaderboard.PrepareRewardData(_gameData);
     }
 
     /// <summary>
@@ -216,7 +216,7 @@ public class GameManager : MonoBehaviour
     private void OnDisable()
     {
         _rewardTimer.OnActivatedCoinsRewardButton.RemoveListener(ActivatedRewardButton);
-        _leaderboard.OnPressLeaderboardButton.RemoveListener(ActivatedLeaderboard);
+        //_leaderboard.OnPressLeaderboardButton.RemoveListener(ActivatedLeaderboard);
         _boosterReward.OnBoosterRewardEarned.RemoveListener(_gameRules.SendDataUpdate);
         _boosterReward.OnBoosterRewardReceived.RemoveListener(_gameRules.SendDataUpdate);
 

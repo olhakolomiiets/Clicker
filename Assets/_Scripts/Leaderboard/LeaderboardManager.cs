@@ -62,7 +62,7 @@ namespace Dan.Demo
             _pageInput.image.color = Color.white;
             _entriesToTakeInput.image.color = Color.white;
 
-            Leaderboards.DemoSceneLeaderboard.GetEntries(searchQuery, OnLeaderboardLoaded, ErrorCallback);
+            Leaderboards.Planet_Builder_Leaderboard.GetEntries(searchQuery, OnLeaderboardLoaded, ErrorCallback);
             ToggleLoadingPanel(true);
         }
 
@@ -154,12 +154,17 @@ namespace Dan.Demo
 
         public void Submit()
         {
-            Leaderboards.DemoSceneLeaderboard.UploadNewEntry(_playerUsernameInput.text, _playerScore, Callback, ErrorCallback);
+            Leaderboards.Planet_Builder_Leaderboard.UploadNewEntry(_playerUsernameInput.text, _playerScore, Callback, ErrorCallback);
+        }
+
+        public void Submit(int playerScore)
+        {
+            Leaderboards.Planet_Builder_Leaderboard.UploadNewEntry(_playerUsernameInput.text, playerScore, Callback, ErrorCallback);
         }
 
         public void DeleteEntry()
         {
-            Leaderboards.DemoSceneLeaderboard.DeleteEntry(Callback, ErrorCallback);
+            Leaderboards.Planet_Builder_Leaderboard.DeleteEntry(Callback, ErrorCallback);
         }
 
         public void ResetPlayer()
@@ -169,7 +174,7 @@ namespace Dan.Demo
 
         public void GetPersonalEntry()
         {
-            Leaderboards.DemoSceneLeaderboard.GetPersonalEntry(OnPersonalEntryLoaded, ErrorCallback);
+            Leaderboards.Planet_Builder_Leaderboard.GetPersonalEntry(OnPersonalEntryLoaded, ErrorCallback);
         }
 
         private void OnPersonalEntryLoaded(Entry entry)

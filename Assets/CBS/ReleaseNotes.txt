@@ -1,0 +1,362 @@
+Version 1.1.0
+
+New
+- Added automatic battle pass reward on end of season
+- Added force add to friends method
+- Added new solution for new player check
+- Added new solution for "Lootbox"
+- Added "DeleteMasterPlayerAccount" method
+
+Fixes
+- Fixed wrong date format for "Events" module UI
+- Fixed notification badge
+- Fixed error when loading empty store
+- Fixed profile data cache
+- Fixed editor items scrolling offset
+- Ignoring .sln when deploying azure function
+- Fixed "SpendCount" method for CBSInventoryItem
+
+Version 1.0.9
+
+Fixes
+- Fixed missing matchmaking prefab
+- Fixed bug with auto generate nickname
+- Fixed not generated custom data when send notification to profile
+- Fixed scrolling for "CBS Items editor "
+- Fixed access to blob container client
+- Fixed functionality for "dontInscreaseIndexWhileMissCheckIn" property for calendar module
+
+New
+- Added new Auth method - "LoginWithUsernameAndPassword"
+
+Version 1.0.8
+
+Fixes
+- Fixed CBS compatibility with the latest version of PlayFab SDK
+
+Version 1.0.7
+
+New
+- Added ability to get match members from Matchmaking API
+- Added scroll view rect for "Title data" keys for CBS editor
+- Added new property for calenar instance - "Don't increment index when skipping"
+
+Fixes
+- Fixed store items sorting
+- Fixed profile tasks update behavior
+- Fixed profile tasks reset date (Weekly)
+- Fixed bug related to reseting store limit 
+- Fixed wrong "ResetDate" in "DailyTasks"
+- Fixed "InAppPurchase" initialization items ids array
+- Fixed level detail cache updating
+- Fixed method "GetCurrenciesPacksByTag"
+- Fixed ability to ban player by "Master player account ID"
+
+
+Version 1.0.6
+
+New
+- Added new profile event - "Convert Statistic to exp"
+- Added scrolling to "CBSTitleDataConfigurator"
+- Added possibility to set external path for registering azure functions
+- Added possibility to change azure project path
+- Added possibility to update several profile data at once
+- Added check for uppercase for battle pass id
+- Added possibility to send notifications between players
+- Added profanity check for profile display name
+- Added profanity check for profile clan name
+- Added login with Playstation method
+- Added possibility to duplicate "Recipe" and "Upgrades" for items
+
+Fixes
+- Fix "GetProfileAvatarID" method
+- Fix roulette wrong position in UI
+- Fix wrong return error type for method - "RevokeInventoryItemsFromProfileAsync"
+- Fix updating currency cache for methods : "AddCurrency", "SubtractCurrency"
+- Fix item duplicate function.
+
+Version 1.0.5
+
+New
+- Added posibility to change Azure project location
+
+Fixes
+- Fix script missing with fresh plugin install
+
+Version 1.0.4
+
+New
+- Added posibility to reward all members of clan
+- Added posibility to call events for all members of clan
+- Added ability to auto register external azure functions 
+- Added new cbs method CBSProfileModule.GetProfileDetailByDisplayName
+
+Fixes
+- Fix bug with relogin with cbs
+- Fix  bug related to events with cron expression
+- Fix wrong value for calendar "CurrentIndex"
+
+Version 1.0.3
+
+New
+- Auto disband clan when there are no more members
+- Add grant avatar property to profile events
+- Add grant avatar method
+- Auto load clan "RoleID" after login
+
+Fixes
+- Fix ability to modify custom data list in "CustomData"
+- Fix IAP custom ids drawer
+- Minor Editor fixes
+- Fix adding expirience as reward at registration reward
+- Fix display name when register with mail and password
+
+Version 1.0.2
+
+Fixes
+- Fix ability to add new items to store
+- Fix modify sticker sprite bug
+- Fix stop durable events
+- Minor UI fixes
+- Minor CBS configurator fixes
+- Fix IAP bug with new Unity version
+- Color change bug for chat and clan from cbs editor
+
+Version 1.0.1
+
+Fixes
+- Minor bug fixes with UI
+- Fix grammar errors
+- Add coroutine for matchmaking loop
+
+New
+- Add AddMultiplicityTasksPoint method
+- Add GetMatch method
+
+Version 1.0.0
+
+Fixes
+- Fully refactoring all modules
+
+New
+- Add account linking
+- Add craft system
+- Add item upgrade system
+- Add IAP
+- Events module
+- Store module
+- Notification module
+
+Version 0.7.2
+
+
+Fixes
+
+- Fix new playfab sdk compatibility
+
+
+New
+
+- Add matchmaking server allocation
+
+
+Version 0.7.1
+
+
+Fixes
+
+- Fix object custom drawer for Battle Pass
+
+
+Version 0.7.0
+
+
+New
+
+- Add new module. Battle Pass.
+
+- Add Apple login method
+
+
+Fixes
+
+- Fix chat messages sorting
+
+
+Version 0.6.2
+
+
+Fixes
+
+- Fix bug with Daily Task and Achievements when levels/exp have not been configured
+
+- Fix pack and loot box null reference error in CBS configurator
+
+- Fix StatisticAggregationMethod description
+
+- Fix bug with Playfab "ENABLE_PLAYFABSERVER_API" when switch to another platform
+
+- Fix warning "Unable not find style"
+
+- Fix a bug related to the fact that when a player has an item, but the item was deleted and the database
+
+- Fix warning "CBS.Scriptable. must be instantiated using the ScriptableObject.CreateInstance method instead of new "
+
+- Fix bug when canvas tag not added properly
+
+
+Version 0.6.1
+
+
+Fixes
+
+- Fix clan members count bug
+
+
+Version 0.6.0
+
+
+New
+
+- Add editor for leaderboards
+
+- Ability to create leaderboard from editor
+
+- Ability to reset leaderboard from editor
+
+- Add GetLeaderboardARoundPlayer method
+
+- Add ResetUserStatistics method
+
+
+Fixes
+
+- Fix GrantCurrencyPack method
+
+- Fix login login with deviceID (Android)
+
+
+Version 0.5.3
+
+
+Fixes
+
+- Fix GrantItems method
+
+
+Version 0.5.2
+
+
+Fixes
+
+- Fix deserialize error in currency module
+
+
+Version 0.5.1
+
+
+Fixes
+
+- Removed .csproj dependency from Azure Project
+
+
+Version 0.5.0
+
+
+New
+
+- Add daily tasks module
+
+- Tournamnets. Return reward for player position
+
+- Add duplicate items in custom Editor
+
+- Add OnAvatarUpdated event
+
+
+Fixes
+
+- Add AvatarDrawer to user panel info
+
+- Fix upload azure functions method
+
+
+Version 0.4.0
+
+
+New
+
+- Migration from deprecated Cloud Script to Azure Functions (.NET 6, C#)
+
+- add asmdef for CBS scripts
+
+
+Version 0.3.1
+
+
+Fixes
+
+- Fix id login error on webGL
+
+- Fix editor achievement error
+
+
+Version 0.3.0
+
+
+Fixes
+
+- Fix add reward to level in editor
+
+- Fix GetInventoryItem method from API
+
+
+New
+
+- Added achievements module
+
+- Added autologin method
+
+
+Version 0.2.2
+
+
+Fixes
+
+- Fix "CanvasMain" tag missing error
+
+- Fix upload cloud scripts error
+
+
+Version 0.2.1
+
+
+Fixes
+
+- Fix UnityWebRequest error for version 2020.2 or higher
+
+- Fix cache avatar texture for version 2020.2 or higher
+
+- Fix TimeZone error for version 2020.2 or higher
+
+
+Version 0.2
+
+
+Fixes
+
+- Fix visual bug
+
+- Fix canvas null reference
+
+
+New
+
+- Added matchmaking module
+
+- Added ability to write custom cloud script
+
+
+Version 0.1
+
+- First release

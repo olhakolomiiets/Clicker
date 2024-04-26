@@ -1,0 +1,11 @@
+{
+  "azureFunctions.deploySubpath": "bin/Release/net6.0/win-x86",
+  "azureFunctions.projectLanguage": "C#",
+  "azureFunctions.projectRuntime": "~4",
+  "debug.internalConsoleOptions": "neverOpen",
+  "azureFunctions.preDeployTask": "publish (functions)",
+  "appService.zipIgnorePattern" : [
+    "node_modules{,/**}",
+    ".vscode{,/**}"
+  ]
+}

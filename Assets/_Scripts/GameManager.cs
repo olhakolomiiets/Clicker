@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PurchaseManager _purchaseManager;
     [SerializeField] private PassiveIncome _passiveIncome;
     //[SerializeField] private Leaderboard _leaderboard;
+    [SerializeField] private Dan.Demo.LeaderboardManager _leaderboardManager;
 
     private bool isGameSaved = false;
 
@@ -130,6 +131,8 @@ public class GameManager : MonoBehaviour
 
         _gameUI.OnPurchaseItemFirstTime += _gameRules.PurchaseItemFirstTime;
         _gameUI.OnManagerPurchased += _gameRules.HandleManagerPurchased;
+
+        _gameUI.OnUpdateScore += _leaderboardManager.Submit;
 
         _passiveIncome.OnEarningPassiveIncome += _gameRules.GetPassiveIncome;
     }

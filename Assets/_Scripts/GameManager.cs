@@ -29,8 +29,7 @@ public class GameManager : MonoBehaviour
     [Space(10)]
     [SerializeField] private PurchaseManager _purchaseManager;
     [SerializeField] private PassiveIncome _passiveIncome;
-    //[SerializeField] private Leaderboard _leaderboard;
-    [SerializeField] private Dan.Demo.LeaderboardManager _leaderboardManager;
+    [SerializeField] private FirebaseManager _leaderboard;
 
     private bool isGameSaved = false;
 
@@ -40,7 +39,6 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         _rewardTimer.OnActivatedCoinsRewardButton.AddListener(ActivatedRewardButton);
-        //_leaderboard.OnPressLeaderboardButton.AddListener(ActivatedLeaderboard);
         _boosterReward.OnBoosterRewardEarned.AddListener(_gameRules.SendDataUpdate);
         _boosterReward.OnBoosterRewardReceived.AddListener(_gameRules.SendDataUpdate);
 
@@ -68,11 +66,6 @@ public class GameManager : MonoBehaviour
         _coinsReward.PrepareRewardData(_gameData);
     }
 
-    private void ActivatedLeaderboard()
-    {
-        //_leaderboard.PrepareRewardData(_gameData);
-    }
-
     /// <summary>
     /// Connecting Game Rule events to Ui so we can click buttons, progress the game and get a visual response in the UI and
     /// a Visualization
@@ -92,6 +85,8 @@ public class GameManager : MonoBehaviour
 
         _gameRules.OnUpdateGameData += _passiveIncome.PrepareGameData;
         _gameRules.OnActivatePassiveIncome += _passiveIncome.ActivatePassiveIncome;
+
+        _gameRules.OnUpdateGameData += _leaderboard.PrepareGameData;
 
         //_gameRules.OnUpdateData += _visualsController.UpdateVisuals;
         //_gameRules.OnPerformAction += _visualsController.PerformAction;
@@ -132,9 +127,9 @@ public class GameManager : MonoBehaviour
         _gameUI.OnPurchaseItemFirstTime += _gameRules.PurchaseItemFirstTime;
         _gameUI.OnManagerPurchased += _gameRules.HandleManagerPurchased;
 
-        _gameUI.OnUpdateScore += _leaderboardManager.Submit;
-
         _passiveIncome.OnEarningPassiveIncome += _gameRules.GetPassiveIncome;
+
+        _gameUI.OnUpdateScoreForLeaderboard += _leaderboard.UpdateUserRank;
     }
 
     /// <summary>

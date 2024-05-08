@@ -1,6 +1,6 @@
+//using CBS.Scriptable;
+//using CBS.UI;
 using DG.Tweening;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,6 +27,7 @@ public class UIController : MonoBehaviour
     [HideInInspector] public bool isDisplayed;
 
     [SerializeField] private GameObject _planet;
+    [SerializeField] private GameObject _leaderboardUI;
 
     private DragRotateGPT _planetRotator;
     private ObjectPlaceRotator _objectPlaceRotator; 
@@ -98,6 +99,23 @@ public class UIController : MonoBehaviour
         _creationItemsParent.DOAnchorPos(new Vector3(-1090, -350, 0), 0.25f);
         _upgradeItemsParent.DOAnchorPos(new Vector3(1090, -350, 0), 0.25f);
         _shopItemsParent.DOAnchorPos(new Vector3(1090, -350, 0), 0.25f);
+    }
+
+    // public void ShowLeaderboards()
+    // {
+    //     var prefabs = CBSScriptable.Get<LeaderboardPrefabs>();
+    //     var leaderboardsPrefab = prefabs.LeaderboardsWindow;
+    //     UIView.ShowWindow(leaderboardsPrefab);
+    // }
+
+    public void ClearScreen() //Turn off all screens
+    {
+        _leaderboardUI.SetActive(false);
+    }
+    public void LeaderboardScreen() //Scoreboard button
+    {
+        ClearScreen();
+        _leaderboardUI.SetActive(true);
     }
 
 }

@@ -1,25 +1,54 @@
-using TMPro;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using Dan.Models;
+using TMPro;
 
-namespace Dan.Demo
+public class LeaderboardEntry : MonoBehaviour
 {
-    public class LeaderboardEntry : MonoBehaviour
+    [SerializeField] private TMP_Text rankText;
+    [SerializeField] private TMP_Text usernameText;
+    [SerializeField] private TMP_Text moneyText;
+    public string UserName { get; set; }
+    public double UserMoney { get; set; }
+    public int Rank { get; set; }
+    public void NewElement(int _rank, string _username, double _money)
     {
-        [SerializeField] private TextMeshProUGUI _rankText, _usernameText, _scoreText;
+        usernameText.text = _username;
+        rankText.text = _rank.ToString();
+        
+        UserName = _username;
+        UserMoney = _money;
+        Rank = _rank;
 
-        public void SetEntry(Entry entry)
-        {
-            _rankText.text = entry.Rank.ToString();
-            _usernameText.text = entry.Username;
-            _scoreText.text = entry.Score.ToString();
-
-/*            var dateTime = new System.DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(entry.Date);
-            _timeText.text = $"{dateTime.Hour:00}:{dateTime.Minute:00}:{dateTime.Second:00} (UTC)\n{dateTime:dd/MM/yyyy}";*/
-
-            GetComponent<Image>().color = entry.IsMine() ? Color.yellow : Color.white;
-        }
+        if (_money > 1000)
+            moneyText.text = AbbreviateNumber(_money);
+        else
+            moneyText.text = $"{_money.ToString("N0")}";
     }
+
+
+    string AbbreviateNumber(double number)
+    {
+        string[] suffixes = { "", "K", "M", "B", "T" };
+        int suffixIndex = 0;
+
+        while (number >= 1000 && suffixIndex < suffixes.Length - 1)
+        {
+            number /= 1000;
+            suffixIndex++;
+        }
+
+        return string.Format("{0:0.##} {1}", number, suffixes[suffixIndex]).Replace(',', '.');
+    }
+
+    public void UpdateLeaderboardRank(double _money)
+    {
+        rankText.text = Rank.ToString();
+
+        if (_money > 1000)
+            moneyText.text = AbbreviateNumber(_money);
+        else
+            moneyText.text = $"{_money.ToString("N0")}";
+    }
+
 }

@@ -30,7 +30,7 @@ public class GameUI : MonoBehaviour
 
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;
 
-    public event Action<int> OnUpdateScore;
+    public event Action OnUpdateScoreForLeaderboard;
 
     public void PrepareCreationUI(List<ItemData> data)
     {
@@ -164,7 +164,7 @@ public class GameUI : MonoBehaviour
                 _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]), "");
 
             _coins.SetScore(gameData.Money);
-            //OnUpdateScore?.Invoke((int)gameData.Money);
+            OnUpdateScoreForLeaderboard?.Invoke();
         }                   
         _uiCreationItemsList[index].SetBuyPrice(gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
         _uiCreationItemsList[index].SetItemCount(gameData.ItemCount[index], gameData.ItemDataList[index].MaxCount(gameData.ItemBonusMultiplayer[index], gameData.ItemMaxCountHelper[index]));      

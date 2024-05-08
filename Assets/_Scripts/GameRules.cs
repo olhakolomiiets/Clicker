@@ -13,11 +13,8 @@ public class GameRules : MonoBehaviour
     public event Action<int, float> OnStartWorkOnItem, OnStartWorkOnUpgradeItem;
     public event Action<int> OnActivateItem, OnActivateUpgradeItem, OnAutomateItem, OnActivatePassiveIncome;
     public event Action<int, GameData> OnUpdateData, OnPerformAction;
-
     public event Action<int, GameData> OnUpdateUpgradeData, OnUpdatePerformAction;
-
     public event Action<GameData> OnUpdateGameData;
-
     private int timeAfterExit;
 
     /// <summary>
@@ -123,6 +120,8 @@ public class GameRules : MonoBehaviour
             _currentGameData.Money += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
             _currentGameData.MoneyPerSec = _currentGameData.ItemDataList[index].ItemIncomePerSec(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
         }
+
+
 
         SendDataUpdate();
     }

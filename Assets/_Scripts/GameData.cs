@@ -10,9 +10,6 @@ public class GameData
     //Money representation should handle a lot but at some point it will get reset to 0
     public double Money { get; set;}
     public double MoneyPerSec { get; set;}
-    public double Diamonds { get; set;}
-    public string ExitTime { get; set;}
-    public int PassiveIncomeTime { get; set;} = 180;
 
     //Bonus multiplier allows us to better balance the incremental game
     //https://www.gamedeveloper.com/design/the-math-of-idle-games-part-i
@@ -34,9 +31,6 @@ public class GameData
         GameDataSave data = JsonUtility.FromJson<GameDataSave>(dataString);
         Money = data.Money;
         MoneyPerSec = data.MoneyPerSec;
-        Diamonds = data.Diamonds;
-        ExitTime = data.ExitTime;
-        PassiveIncomeTime = data.PassiveIncomeTime;
         ItemCount = data.ItemCount;
         UpgradeItemCount = data.UpgradeItemCount;
         Managers = data.Managers;
@@ -51,9 +45,6 @@ public class GameData
         {
             Money = Money,
             MoneyPerSec = MoneyPerSec,
-            Diamonds = Diamonds,
-            ExitTime = DateTime.Now.ToBinary().ToString(),
-            PassiveIncomeTime = PassiveIncomeTime,
             ItemCount = ItemCount,
             UpgradeItemCount = UpgradeItemCount,
             Managers = Managers,
@@ -67,9 +58,6 @@ public struct GameDataSave
 {
     public double Money;
     public double MoneyPerSec;
-    public double Diamonds;
-    public string ExitTime;
-    public int PassiveIncomeTime;
     public List<int> ItemCount;
     public List<int> UpgradeItemCount;
     public List<bool> Managers;

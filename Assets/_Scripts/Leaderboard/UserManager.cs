@@ -5,42 +5,42 @@ using UnityEngine;
 
 public class UserManager : MonoBehaviour
 {
-    [SerializeField] private UserData _userData;
     [SerializeField] private TMP_InputField inputField;
+    GeneralGameData _currentGameData;
 
-    private const string PlayerPrefsKey = "HasVisitedGame";
+    private string PlayerPrefsKey = "HasVisitedGame";
 
-    void Start()
+    public void PrepareGameData(GeneralGameData gameData)
     {
+        _currentGameData = gameData;
+
         if (!PlayerPrefs.HasKey(PlayerPrefsKey))
-        {
-            _userData.UserId = Guid.NewGuid().ToString(); 
-            GenerateUsername(); 
-            PlayerPrefs.SetInt(PlayerPrefsKey, 1); 
-        }
+            GenerateUserData();
         else
+            inputField.text = _currentGameData.UserName;
+    }
+
+    public void GenerateUserData()
+    {
+        _currentGameData.UserId = Guid.NewGuid().ToString();
+
+        string username = "Planet#";
+        string timestamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
+        using (SHA256 sha256 = SHA256.Create())
         {
-            inputField.text = _userData.UserName;
+            byte[] bytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(timestamp));
+            string combinedInfo = BitConverter.ToString(bytes).Replace("-", "").Substring(0, 10);
+            _currentGameData.UserName = username + combinedInfo;
+
+            inputField.text = _currentGameData.UserName;
         }
 
-    }
-private void GenerateUsername()
-    {
-            string username = "Planet#";
-            string timestamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] bytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(timestamp));
-                string combinedInfo  = BitConverter.ToString(bytes).Replace("-", "").Substring(0, 10);
-                _userData.UserName = username + combinedInfo;
-
-                inputField.text = _userData.UserName;
-            }
+        PlayerPrefs.SetInt(PlayerPrefsKey, 1);
     }
 
     public void UpdateUsername()
     {
-        _userData.UserName = inputField.text;
+        _currentGameData.UserName = inputField.text;
     }
 }

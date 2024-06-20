@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameUI _gameUI;    
     private GameData _gameData;
+    GeneralGameData _generalGameData;
     [SerializeField] private GameRules _gameRules;
     [SerializeField] private SaveSystem _saveSystem;
     //[SerializeField] private VisualsController _visualsController;
@@ -41,19 +42,21 @@ public class GameManager : MonoBehaviour
         _rewardTimer.OnActivatedCoinsRewardButton.AddListener(ActivatedRewardButton);
         _boosterReward.OnBoosterRewardEarned.AddListener(_gameRules.SendDataUpdate);
         _boosterReward.OnBoosterRewardReceived.AddListener(_gameRules.SendDataUpdate);
-
+        
         PrepareGameData();
         PrepareUI();
         ConnectGameRulesToUI();
 
-        _gameRules.PrepareGameData(_gameData);
+        _gameRules.PrepareGameData(_gameData, _generalGameData);
+
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   _visualsController.InitializeVisual(_gameData);
-        _purchaseManager.PrepareGameData(_gameData);       
+        _purchaseManager.PrepareGameData(_gameData);     
     }
 
     private void Start()
     {
         LoadSavedData();
+        LoadGeneralGameData();
 
         _creationItemsCount = _gameData.ItemCount;
         _upgradeItemCount = _gameData.UpgradeItemCount;
@@ -86,7 +89,7 @@ public class GameManager : MonoBehaviour
         _gameRules.OnUpdateGameData += _passiveIncome.PrepareGameData;
         _gameRules.OnActivatePassiveIncome += _passiveIncome.ActivatePassiveIncome;
 
-        _gameRules.OnUpdateGameData += _leaderboard.PrepareGameData;
+        _gameRules.OnUpdateGameData += _leaderboard.PrepareData;
 
         //_gameRules.OnUpdateData += _visualsController.UpdateVisuals;
         //_gameRules.OnPerformAction += _visualsController.PerformAction;
@@ -98,6 +101,8 @@ public class GameManager : MonoBehaviour
     private void PrepareGameData()
     {
         _gameData = new();
+        _generalGameData = new();
+        //_generalGameData = _generalManager.generalData;
         _gameData.ItemDataList = _creationItemsDataList;
         _gameData.UpgradeItemDataList = _upgradeItemsDataList;        
     }
@@ -129,7 +134,7 @@ public class GameManager : MonoBehaviour
 
         _passiveIncome.OnEarningPassiveIncome += _gameRules.GetPassiveIncome;
 
-        _gameUI.OnUpdateScoreForLeaderboard += _leaderboard.UpdateUserRank;
+        //_gameUI.OnUpdateScoreForLeaderboard += _leaderboard.UpdateUserRank;
     }
 
     /// <summary>
@@ -143,7 +148,7 @@ public class GameManager : MonoBehaviour
             _gameData.GetSaveData(),
             //_visualsController.GetSaveData()
         };
-        _saveSystem.SaveTheGame(dataToSave);
+        _saveSystem.SaveThePlanet(dataToSave);
 
         isGameSaved = true;
 
@@ -156,14 +161,37 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void LoadSavedData()
     {
-        List<string> data = _saveSystem.LoadGame();
+        List<string> data = _saveSystem.LoadPlanet();
         if (data.Count > 0)
         {
-            _gameRules.LoadGame(data[0]);
+            _gameRules.LoadPlanet(data[0]);
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! _visualsController.LoadData(data[1]);
         }
 
         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// LoadSavedData");
+    }
+
+    public void SaveGeneralGameData()
+    {
+        List<string> dataToSave = new()
+        {
+            _generalGameData.GetSaveData()
+        };
+        _saveSystem.SaveTheGame(dataToSave);
+
+        PlayerPrefs.SetInt("SavedScene", SceneManager.GetActiveScene().buildIndex);
+        isGameSaved = true;
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GeneralManager /// SaveGame " + dataToSave);
+    }
+
+    public void LoadGeneralGameData()
+    {
+        List<string> data = _saveSystem.LoadGame();
+        if (data.Count > 0)
+        {
+            _gameRules.LoadGame(data[0]);
+        }
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GeneralManager /// LoadSavedGeneralData");
     }
 
     /// <summary>
@@ -182,6 +210,7 @@ public class GameManager : MonoBehaviour
             if (isGameSaved)
             {
                 LoadSavedData();
+                LoadGeneralGameData();
 
                 Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// OnApplicationFocus /// LoadSavedData");
             }
@@ -193,6 +222,7 @@ public class GameManager : MonoBehaviour
         if (pauseStatus)
         {
             SaveGame();
+            SaveGeneralGameData();
             Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// OnApplicationPause /// SaveGame");
         }
         else
@@ -200,6 +230,7 @@ public class GameManager : MonoBehaviour
             if (isGameSaved)
             {
                 LoadSavedData();
+                LoadGeneralGameData();
                 Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// OnApplicationPause /// LoadSavedData");
             }
         }
@@ -208,7 +239,10 @@ public class GameManager : MonoBehaviour
     private void OnApplicationQuit()
     {       
         if (!isGameSaved)
+        {
             SaveGame();
+            SaveGeneralGameData();
+        }
     }
 
     private void OnDisable()
@@ -219,12 +253,18 @@ public class GameManager : MonoBehaviour
         _boosterReward.OnBoosterRewardReceived.RemoveListener(_gameRules.SendDataUpdate);
 
         if (!isGameSaved)
+        {
             SaveGame();
+            SaveGeneralGameData();
+        }
     }
 
     private void OnDestroy()
     {
         if (!isGameSaved)
+        {
             SaveGame();
+            SaveGeneralGameData();
+        }
     }
 }

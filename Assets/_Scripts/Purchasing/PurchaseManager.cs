@@ -42,6 +42,7 @@ public class PurchaseManager : MonoBehaviour
     [HideInInspector] public UnityEvent PurchasedProductDiamondsPack300;
 
     GameData _currentGameData;
+    GeneralGameData _currentGeneralData;
 
     private void Awake()
     {
@@ -68,6 +69,11 @@ public class PurchaseManager : MonoBehaviour
         _currentGameData = gameData;
     }
 
+    public void PrepareGeneralData(GeneralGameData generalData)
+    {
+        _currentGeneralData = generalData;
+    }
+
     public void NoAds()
     {
         //PlayerPrefs.SetInt("NoAdsPurchased", 1);
@@ -76,9 +82,9 @@ public class PurchaseManager : MonoBehaviour
     public void StarterPack()
     {
         _currentGameData.Money += _coinsInPack;
-        _currentGameData.Diamonds += _diamondsInPack;
+        _currentGeneralData.Diamonds += _diamondsInPack;
         _coinsPanel.SetScore(_currentGameData.Money);
-        _diamondsPanel.SetDiamondsScore(_currentGameData.Diamonds);
+        _diamondsPanel.SetDiamondsScore(_currentGeneralData.Diamonds);
         _starterPackButton.SetActive(false);
         //PlayerPrefs.SetInt("StarterPackPurchased", 1);
     }
@@ -86,9 +92,9 @@ public class PurchaseManager : MonoBehaviour
     public void SpecialOffer()
     {
         _currentGameData.Money += _coins;
-        _currentGameData.Diamonds += _diamonds;
+        _currentGeneralData.Diamonds += _diamonds;
         _coinsPanel.SetScore(_currentGameData.Money);
-        _diamondsPanel.SetDiamondsScore(_currentGameData.Diamonds);
+        _diamondsPanel.SetDiamondsScore(_currentGeneralData.Diamonds);
         _specialOfferButton.SetActive(false);
         //PlayerPrefs.SetInt("SpecialOfferPurchased", 1);
     }
@@ -105,19 +111,19 @@ public class PurchaseManager : MonoBehaviour
 
     public void DiamondsPack50()
     {
-        _currentGameData.Diamonds += _diamondsInPack1;
-        _diamondsPanel.SetDiamondsScore(_currentGameData.Diamonds);
+        _currentGeneralData.Diamonds += _diamondsInPack1;
+        _diamondsPanel.SetDiamondsScore(_currentGeneralData.Diamonds);
     }
     public void DiamondsPack100()
     {
-        _currentGameData.Diamonds += _diamondsInPack2;
-        _diamondsPanel.SetDiamondsScore(_currentGameData.Diamonds);
+        _currentGeneralData.Diamonds += _diamondsInPack2;
+        _diamondsPanel.SetDiamondsScore(_currentGeneralData.Diamonds);
     }    
     
     public void DiamondsPack300()
     {
-        _currentGameData.Diamonds += _diamondsInPack3;
-        _diamondsPanel.SetDiamondsScore(_currentGameData.Diamonds);
+        _currentGeneralData.Diamonds += _diamondsInPack3;
+        _diamondsPanel.SetDiamondsScore(_currentGeneralData.Diamonds);
     }
 
     void RestoreVariable()

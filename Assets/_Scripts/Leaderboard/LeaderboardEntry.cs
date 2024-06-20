@@ -41,9 +41,11 @@ public class LeaderboardEntry : MonoBehaviour
         return string.Format("{0:0.##} {1}", number, suffixes[suffixIndex]).Replace(',', '.');
     }
 
-    public void UpdateLeaderboardRank(double _money)
+    public void UpdateLeaderboardElement(double _money)
     {
         rankText.text = Rank.ToString();
+
+        UserMoney = _money;
 
         if (_money > 1000)
             moneyText.text = AbbreviateNumber(_money);

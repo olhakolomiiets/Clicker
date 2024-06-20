@@ -7,27 +7,27 @@ using TMPro;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 public class FirebaseManager : MonoBehaviour
 {
-    //Firebase variables
     [Header("Firebase")]
     public DependencyStatus dependencyStatus;
-    public FirebaseAuth auth;    
+    public FirebaseAuth auth;
     public FirebaseUser User;
     public DatabaseReference DBreference;
 
-    //User Data variables
     [Header("UserData")]
-    [SerializeField] private UserData _userData;
     [SerializeField] private LeaderboardEntry _leaderboardEntry;
     [SerializeField] private Transform _leaderboardContent;
-
     [SerializeField] private List<LeaderboardEntry> _userList = new();
     [SerializeField] private UIController _uiController;
 
     GameData _currentGameData;
+    GeneralGameData _currentGeneralData;
     private int _rank = 0;
+    private LeaderboardEntry _targetUser;
+    [HideInInspector] public UnityEvent OnLoadScoreboardData;
 
     void Awake()
     {
@@ -55,30 +55,31 @@ public class FirebaseManager : MonoBehaviour
         DBreference = FirebaseDatabase.DefaultInstance.RootReference;
     }
 
-    public void PrepareGameData(GameData gameData)
+    public void PrepareData(GeneralGameData generalGameData, GameData gameData)
     {
+        _currentGeneralData = generalGameData;
         _currentGameData = gameData;
     }
 
     //Function for the save button
     public void SaveDataButton()
     {
-        _userList.Clear();
+        OnLoadScoreboardData?.Invoke();
 
-        StartCoroutine(UpdateUsernameDatabase(_userData.UserName));
-        StartCoroutine(UpdateMoney(_currentGameData.Money));
+        StartCoroutine(UpdateUsernameDatabase(_currentGeneralData.UserName, _currentGeneralData.UserId));
+        StartCoroutine(UpdateMoney(_currentGameData.Money, _currentGeneralData.UserId));
     }
 
     //Function for the scoreboard button
     public void ScoreboardButton()
-    {        
+    {
         StartCoroutine(LoadScoreboardData());
     }
 
-    private IEnumerator UpdateUsernameDatabase(string _username)
+    private IEnumerator UpdateUsernameDatabase(string _username, string userId)
     {
         //Set the currently logged in user username in the database
-        Task DBTask = DBreference.Child("users").Child(_userData.UserId).Child("username").SetValueAsync(_username);
+        Task DBTask = DBreference.Child("users").Child(userId).Child("username").SetValueAsync(_username);
 
         yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
 
@@ -92,9 +93,9 @@ public class FirebaseManager : MonoBehaviour
         }
     }
 
-    private IEnumerator UpdateMoney(double _money)
+    private IEnumerator UpdateMoney(double _money, string userId)
     {
-        Task DBTask = DBreference.Child("users").Child(_userData.UserId).Child("money").SetValueAsync(_money);
+        Task DBTask = DBreference.Child("users").Child(userId).Child("money").SetValueAsync(_money);
 
         yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
 
@@ -112,8 +113,9 @@ public class FirebaseManager : MonoBehaviour
 
     private IEnumerator LoadScoreboardData()
     {
+        _userList.Clear();
         //Get all the users data ordered by money amount
-        Task<DataSnapshot>  DBTask = DBreference.Child("users").OrderByChild("money").GetValueAsync();
+        Task<DataSnapshot> DBTask = DBreference.Child("users").OrderByChild("money").GetValueAsync();
 
         yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
 
@@ -123,11 +125,12 @@ public class FirebaseManager : MonoBehaviour
         }
         else
         {
+            _rank = 0;
             //Data has been retrieved
             DataSnapshot snapshot = DBTask.Result;
 
             //Destroy any existing scoreboard elements
-            foreach (Transform child in _leaderboardEntry.transform)
+            foreach (Transform child in _leaderboardContent.transform)
             {
                 Destroy(child.gameObject);
             }
@@ -140,7 +143,7 @@ public class FirebaseManager : MonoBehaviour
                 _rank++;
 
                 //Instantiate new scoreboard elements
-                LeaderboardEntry scoreboardElement = Instantiate(_leaderboardEntry, _leaderboardContent).GetComponent<LeaderboardEntry>();
+                LeaderboardEntry scoreboardElement = Instantiate(_leaderboardEntry, _leaderboardContent).GetComponent<LeaderboardEntry>();               
                 scoreboardElement.NewElement(_rank, username, money);
 
                 _userList.Add(scoreboardElement);
@@ -148,36 +151,81 @@ public class FirebaseManager : MonoBehaviour
 
             //Go to scoareboard screen
             _uiController.LeaderboardScreen();
+
         }
     }
 
-    public void UpdateUserRank()
+    public void UpdateLeaderboard()
     {
-        LeaderboardEntry targetUser = null;
         foreach (var user in _userList)
         {
-            if (user.UserName == _userData.UserName)
+            if (user.UserName == _currentGeneralData.UserName)
             {
-                targetUser = user;
+                _targetUser = user;
                 break;
             }
         }
 
-        if (targetUser != null)
+        if (_targetUser != null)
         {
-            foreach (var user in _userList)
+            if (_targetUser.UserMoney < _currentGameData.Money)
             {
-                if (user.UserMoney < _currentGameData.Money)
-                {
-                    user.Rank++;
-                    user.UpdateLeaderboardRank(_currentGameData.Money);
-                }
+                _targetUser.UpdateLeaderboardElement(_currentGameData.Money);
             }
-            _userList.Sort((x, y) => y.Rank.CompareTo(x.Rank));
         }
         else
         {
             Debug.LogError("Game object not found!");
         }
     }
+
+    public void MoveUserUp()
+    {
+        if (_targetUser == null)
+        {
+            Debug.LogError("Target user not found!");
+            return;
+        }
+
+        int index = _userList.IndexOf(_targetUser);
+        if (index == -1)
+        {
+            Debug.LogError("Target user not found in the user list!");
+            return;
+        }
+
+        if (index > 0)
+        {
+            // Swap the target user with the user above it
+            LeaderboardEntry temp = _userList[index];
+            _userList[index] = _userList[index - 1];
+            _userList[index - 1] = temp;
+
+            // Update ranks based on the new order
+            UpdateRanks();
+
+            // Update UI positions
+            UpdateUIPositions();
+        }
+    }
+
+    private void UpdateRanks()
+    {
+        for (int i = 0; i < _userList.Count; i++)
+        {
+            _userList[i].Rank = i + 1;
+        }
+    }
+
+    private void UpdateUIPositions()
+    {
+        foreach (LeaderboardEntry userEntry in _userList)
+        {
+            // Update UI position of each user entry based on its rank
+            // You need to implement this part based on your UI setup
+            // For example, you might adjust the position of userEntry.gameObject in a vertical layout group
+            // or update the text displaying the rank
+        }
+    }
+
 }

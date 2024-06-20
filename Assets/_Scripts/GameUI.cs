@@ -147,14 +147,14 @@ public class GameUI : MonoBehaviour
         _uiCreationItemsList[index].ToggleActivation(val);
     }
 
-    public void UpdateUI(int index, GameData gameData)
+    public void UpdateUI(int index, GameData gameData, GeneralGameData generalData)
     {
         _managerControllers[index].SetButtonPurchased(index, gameData.Managers[index]);
 
         if(gameData.ItemDataList[index].IsPremium)
         {
             _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].DiamondsIncome(gameData.ItemCount[index]), "");
-            _diamonds.SetDiamondsScore(gameData.Diamonds);
+            _diamonds.SetDiamondsScore(generalData.Diamonds);
         }          
         else
         {
@@ -171,12 +171,12 @@ public class GameUI : MonoBehaviour
         _uiCreationItemsList[index].ToggleBuyButton(gameData.Money >= gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]) && gameData.ItemCount[index] < gameData.ItemDataList[index].MaxCountIncrement);
     }
 
-    public void UpdateUpgradeUI(int index, GameData gameData)
+    public void UpdateUpgradeUI(int index, GameData gameData, GeneralGameData generalData)
     {       
         _uiUpgradeItemsList[index].SetIncome(gameData.UpgradeItemDataList[index].ItemIncome(gameData.UpgradeItemCount[index]));
         _uiUpgradeItemsList[index].SetBuyPrice(gameData.UpgradeItemDataList[index].ItemCost);
-        _uiUpgradeItemsList[index].ToggleBuyButton(gameData.Diamonds >= gameData.UpgradeItemDataList[index].ItemCost);
-        _diamonds.SetDiamondsScore(gameData.Diamonds);
+        _uiUpgradeItemsList[index].ToggleBuyButton(generalData.Diamonds >= gameData.UpgradeItemDataList[index].ItemCost);
+        _diamonds.SetDiamondsScore(generalData.Diamonds);
     }
 
     public void UpdateUILanguage()

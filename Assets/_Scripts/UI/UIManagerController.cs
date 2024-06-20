@@ -9,7 +9,7 @@ public class UIManagerController : MonoBehaviour
     [SerializeField] private GameObject _buyManagersPanel;
     [SerializeField] private GameObject _buyManagerButtonPrefab;
     [SerializeField] private UISquadLeadersButton _buyButton;
-
+    [SerializeField] private RectTransform _panelTransform;
     public event Action<int> OnManagerPurchased;
 
     private void Awake()
@@ -46,7 +46,9 @@ public class UIManagerController : MonoBehaviour
         {
             _buyButton.SetPurchasedImage();
             _managerButton.SetActive(false);
+            _panelTransform.sizeDelta = new Vector2(980, 185);
             _buyButton.gameObject.SetActive(false);
+
         }
 
     }

@@ -12,9 +12,6 @@ public class PassiveIncomeData : ScriptableObject
     public int ExtraTimeCount { get; set; }
 
     [field: SerializeField]
-    public int ExtraTimePurchasedCount { get; set; }
-
-    [field: SerializeField]
     public double ExtraTimePrice { get; set; }
 
     [field: SerializeField]

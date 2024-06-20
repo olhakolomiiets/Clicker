@@ -1,11 +1,15 @@
-//using CBS.Scriptable;
-//using CBS.UI;
+using CBS.Scriptable;
+using CBS.UI;
 using DG.Tweening;
+using Exoa.Cameras;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
+    [SerializeField] private CameraPerspective _camera;
+    [SerializeField] private Vector3 _cameraPos;
+    [SerializeField] private float _cameraDistance;
     [Header("Shop Panel")]
     [SerializeField] private RectTransform _toggleButton;
     [SerializeField] private RectTransform _shopPanel;
@@ -31,6 +35,8 @@ public class UIController : MonoBehaviour
 
     private DragRotateGPT _planetRotator;
     private ObjectPlaceRotator _objectPlaceRotator; 
+    private Vector3 _startCameraPos;
+    private float _startCameraDistance;
 
     private void Start()
     {
@@ -42,6 +48,9 @@ public class UIController : MonoBehaviour
     {
         if(isDisplayed)
         {
+            _camera.MoveCameraTo(_startCameraDistance);
+            _camera.MoveCameraToInstant(_startCameraPos);
+
             _shopPanel.DOAnchorPosY(_panelMiddlePosY, _tweenDuration);
             _toggleButton.DORotate(new Vector3(0, 0, 0), _tweenDuration);
             isDisplayed = false;
@@ -53,6 +62,12 @@ public class UIController : MonoBehaviour
         }
         else
         {
+            _startCameraDistance = _camera.FinalDistance;
+            _startCameraPos = _camera.gameObject.transform.position;
+
+            _camera.MoveCameraTo(_cameraDistance);
+            _camera.MoveCameraToInstant(_cameraPos);
+            
             _creationItemsParent.DOAnchorPos(new Vector3(0, -350, 0), 0.25f);
             _creationButton.Select();
 
@@ -101,12 +116,12 @@ public class UIController : MonoBehaviour
         _shopItemsParent.DOAnchorPos(new Vector3(1090, -350, 0), 0.25f);
     }
 
-    // public void ShowLeaderboards()
-    // {
-    //     var prefabs = CBSScriptable.Get<LeaderboardPrefabs>();
-    //     var leaderboardsPrefab = prefabs.LeaderboardsWindow;
-    //     UIView.ShowWindow(leaderboardsPrefab);
-    // }
+    public void ShowLeaderboards()
+    {
+        var prefabs = CBSScriptable.Get<LeaderboardPrefabs>();
+        var leaderboardsPrefab = prefabs.LeaderboardsWindow;
+        UIView.ShowWindow(leaderboardsPrefab);
+    }
 
     public void ClearScreen() //Turn off all screens
     {

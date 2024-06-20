@@ -6,7 +6,6 @@ using UnityEngine;
 public class ItemData : ScriptableObject
 {
     public double ItemIncome(int itemCount, int bonusMultiplier) => ItemBaseIncome * itemCount * bonusMultiplier;
-
     public double ItemIncomePerSec(int itemCount, int bonusMultiplier) => ItemBaseIncome * itemCount * bonusMultiplier / (double)Delay;
     public double DiamondsIncome(int itemCount) => ItemDiamondsIncome * itemCount;
     //A way to set the base price of purchasing item and the upgrade cost in one method

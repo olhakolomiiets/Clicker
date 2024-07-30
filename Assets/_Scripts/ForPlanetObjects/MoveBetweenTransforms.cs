@@ -1,15 +1,19 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MoveBetweenTransforms : MonoBehaviour
 {
-    public GameObject targetObject;
-    public Transform[] waypoints;
-    public float moveDuration = 2f;
-    public float minRandomDelay = 1f;
-    public float maxRandomDelay = 5f;
-    public float repeatDelay = 3f;
-    public bool invertMovement = false; // Set to true to invert movement
+    public GameObject targetObject; // The object to move
+    public Transform[] waypoints; // Array of waypoints to move between
+    public float moveDuration = 2f; // Duration of movement from one waypoint to another
+    public float minRandomDelay = 1f; // Minimum random delay between movements
+    public float maxRandomDelay = 5f; // Maximum random delay between movements
+    public float repeatDelay = 3f; // Delay before repeating the entire movement cycle
+    public bool invertMovement = false; // Set to true to invert movement direction
+
+    public UnityEvent onCheckpointReached; // Event triggered when a checkpoint is reached
+    public UnityEvent onCycleCompleted; // Event triggered when all checkpoints in a cycle are completed
 
     private void Start()
     {
@@ -21,6 +25,7 @@ public class MoveBetweenTransforms : MonoBehaviour
         while (true)
         {
             yield return StartCoroutine(MoveBetweenWaypoints());
+            onCycleCompleted?.Invoke();
             float delayBeforeRepeat = Random.Range(minRandomDelay, maxRandomDelay);
             yield return new WaitForSeconds(delayBeforeRepeat);
         }
@@ -34,6 +39,7 @@ public class MoveBetweenTransforms : MonoBehaviour
         {
             int nextWaypointIndex = (i + 1) % numWaypoints;
             yield return StartCoroutine(MoveToWaypoint(waypoints[nextWaypointIndex]));
+            onCheckpointReached?.Invoke();
             yield return null; // Smooth transition
         }
     }

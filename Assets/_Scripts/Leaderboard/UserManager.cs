@@ -2,45 +2,106 @@ using System;
 using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
+using CBS.Models;
+using CBS.Utils;
+using UnityEngine.UI;
 
-public class UserManager : MonoBehaviour
+namespace CBS.UI
 {
-    [SerializeField] private TMP_InputField inputField;
-    GeneralGameData _currentGameData;
 
-    private string PlayerPrefsKey = "HasVisitedGame";
-
-    public void PrepareGameData(GeneralGameData gameData)
+    public class UserManager : MonoBehaviour
     {
-        _currentGameData = gameData;
 
-        if (!PlayerPrefs.HasKey(PlayerPrefsKey))
-            GenerateUserData();
-        else
-            inputField.text = _currentGameData.UserName;
-    }
+        [SerializeField] private Text NicknameLabel;
+        [SerializeField] private GameObject UserNamePanel;
+        [SerializeField] private GameObject EditNamePanel;
+        [SerializeField] private InputField EditInput;
 
-    public void GenerateUserData()
-    {
-        _currentGameData.UserId = Guid.NewGuid().ToString();
+        GeneralGameData _currentGameData;
 
-        string username = "Planet#";
-        string timestamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+        private IProfile CBSProfile { get; set; }
+        private IAuth Auth { get; set; }
 
-        using (SHA256 sha256 = SHA256.Create())
+        private void Awake()
         {
-            byte[] bytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(timestamp));
-            string combinedInfo = BitConverter.ToString(bytes).Replace("-", "").Substring(0, 10);
-            _currentGameData.UserName = username + combinedInfo;
-
-            inputField.text = _currentGameData.UserName;
+            CBSProfile = CBSModule.Get<CBSProfileModule>();
+            Auth = CBSModule.Get<CBSAuthModule>();
         }
 
-        PlayerPrefs.SetInt(PlayerPrefsKey, 1);
-    }
+        private void OnEnable()
+        {
+            DisplayUI();
+            CBSProfile.OnDisplayNameUpdated += OnUserNameUpdated;
+            CBSProfile.GetAccountInfo(OnAccountInfoGetted);
+        }
 
-    public void UpdateUsername()
-    {
-        _currentGameData.UserName = inputField.text;
+        private void OnDisable()
+        {
+            CBSProfile.OnDisplayNameUpdated -= OnUserNameUpdated;
+        }
+
+        public void PrepareGameData(GeneralGameData gameData)
+        {
+            _currentGameData = gameData;
+        }
+
+
+        public void UpdateNickname()
+        {
+            string newName = EditInput.text;
+
+            if (string.IsNullOrEmpty(newName))
+            {
+                new PopupViewer().ShowSimplePopup(new PopupRequest
+                {
+                    Title = AuthTXTHandler.ErrorTitle,
+                    Body = AuthTXTHandler.InvalidInput
+                });
+                return;
+            }
+            CBSProfile.UpdateDisplayName(newName, onComplete =>
+            {
+                if (!onComplete.IsSuccess)
+                {
+                    new PopupViewer().ShowFabError(onComplete.Error);
+                }
+            });
+        }
+
+        private void OnUserNameUpdated(CBSUpdateDisplayNameResult result)
+        {
+            if (result.IsSuccess)
+            {
+                NicknameLabel.text = result.DisplayName;
+                ShowNickname();
+
+                _currentGameData.UserName = NicknameLabel.text;
+            }
+        }
+
+        public void ShowNickname()
+        {
+            UserNamePanel.SetActive(true);
+            EditNamePanel.SetActive(false);
+        }
+
+        public void ShowEditName()
+        {
+            EditInput.text = CBSProfile.DisplayName;
+            UserNamePanel.SetActive(false);
+            EditNamePanel.SetActive(true);
+        }
+
+        private void OnAccountInfoGetted(CBSGetAccountInfoResult result)
+        {
+            DisplayUI();
+        }
+
+        private void DisplayUI()
+        {
+            ShowNickname();
+            NicknameLabel.text = CBSProfile.DisplayName;
+            EditInput.text = string.Empty;
+        }
     }
 }

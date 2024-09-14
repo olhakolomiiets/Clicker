@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     [Space(10)]
     [SerializeField] private PurchaseManager _purchaseManager;
     [SerializeField] private PassiveIncome _passiveIncome;
-    [SerializeField] private FirebaseManager _leaderboard;
+    [SerializeField] private UpdateLeaderboardStatistic _updateLeaderboard;
 
     private bool isGameSaved = false;
 
@@ -88,8 +88,6 @@ public class GameManager : MonoBehaviour
 
         _gameRules.OnUpdateGameData += _passiveIncome.PrepareGameData;
         _gameRules.OnActivatePassiveIncome += _passiveIncome.ActivatePassiveIncome;
-
-        _gameRules.OnUpdateGameData += _leaderboard.PrepareData;
 
         //_gameRules.OnUpdateData += _visualsController.UpdateVisuals;
         //_gameRules.OnPerformAction += _visualsController.PerformAction;

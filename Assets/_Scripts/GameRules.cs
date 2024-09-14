@@ -16,6 +16,7 @@ public class GameRules : MonoBehaviour
     public event Action<int, GameData, GeneralGameData> OnUpdateUpgradeData, OnUpdatePerformAction;
     public event Action<GeneralGameData, GameData> OnUpdateGameData;
     private int timeAfterExit;
+    public double _totalScore;
 
     /// <summary>
     /// Handles clicking of the Manager purchas button per each Item (index)
@@ -120,6 +121,8 @@ public class GameRules : MonoBehaviour
             _currentGameData.Money += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
             _currentGeneralData.TotalScore += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
             _currentGameData.MoneyPerSec = _currentGameData.ItemDataList[index].ItemIncomePerSec(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
+
+            _totalScore = _currentGeneralData.TotalScore;
         }
 
         SendDataUpdate();
@@ -136,6 +139,8 @@ public class GameRules : MonoBehaviour
         _currentGameData.Money += 1000000;
         _currentGeneralData.Diamonds += 200;
 
+        _currentGeneralData.TotalScore += 1000000;
+
         SendDataUpdate();
     }
 
@@ -143,6 +148,7 @@ public class GameRules : MonoBehaviour
     {
         _currentGameData.Money += passiveIncome;
         _currentGeneralData.TotalScore += passiveIncome;
+        _totalScore = _currentGeneralData.TotalScore;
         SendDataUpdate();
     }
 

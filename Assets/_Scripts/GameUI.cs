@@ -15,7 +15,7 @@ public class GameUI : MonoBehaviour
     [Header("Creation Store")]
     [SerializeField] private GameObject _uiItemPrefab;
     [SerializeField] private RectTransform _uiItemParent;
-    [SerializeField] private List<ObjectActivator> _objectActivator = new();        
+    [SerializeField] private List<ObjectActivator> _objectActivator = new();
     private List<UIManagerController> _managerControllers = new();
     private List<ItemController> _uiCreationItemsList = new();
 
@@ -25,8 +25,18 @@ public class GameUI : MonoBehaviour
     [SerializeField] private List<ObjectActivator> _upgradeObjectActivator = new();
     private List<UpgradeItemController> _uiUpgradeItemsList = new();
 
-    [SerializeField] private GameObject _water;
-    private bool isDisplayed;
+    [SerializeField] private List<GameObject> _trees;
+    [SerializeField] private GameObject _decorations;
+    [SerializeField] private GameObject _buildings;
+    [SerializeField] private List<GameObject> _extraObjs;
+    [SerializeField] private GameObject _humans;
+    [SerializeField] private GameObject _animals;
+    private bool isTreesDisplayed;
+    private bool isDecorationsDisplayed;
+    private bool isBuildingsDisplayed;
+    private bool isExtraObjsDisplayed;
+    private bool isHumansDisplayed;
+    private bool isAnimalsDisplayed;
 
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;
 
@@ -39,8 +49,8 @@ public class GameUI : MonoBehaviour
 
         for (int i = 0; i < data.Count; i++)
         {
-            ItemController itemController = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();            
-            
+            ItemController itemController = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();
+
             _uiCreationItemsList.Add(itemController);
             itemController.Prepare(data[i].ItemImage, data[i].IsPremium, data[i].TranslationText);
 
@@ -55,7 +65,7 @@ public class GameUI : MonoBehaviour
             float _scrollItemGroupHeight = 220 * data.Count;
             _uiItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
 
-            _managerControllers[i].OnManagerPurchased += PurchaseManager;           
+            _managerControllers[i].OnManagerPurchased += PurchaseManager;
         }
 
         OnBuyButonClicked += ActivateNextCreationObject;
@@ -136,7 +146,7 @@ public class GameUI : MonoBehaviour
     public void StartWorkOnItem(int index, float delay)
     {
         _uiCreationItemsList[index].StartWork(delay);
-    }    
+    }
     public void StartWorkOnUpgradeItem(int index, float delay)
     {
         _uiUpgradeItemsList[index].StartWork(delay);
@@ -151,28 +161,28 @@ public class GameUI : MonoBehaviour
     {
         _managerControllers[index].SetButtonPurchased(index, gameData.Managers[index]);
 
-        if(gameData.ItemDataList[index].IsPremium)
+        if (gameData.ItemDataList[index].IsPremium)
         {
             _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].DiamondsIncome(gameData.ItemCount[index]), "");
             _diamonds.SetDiamondsScore(generalData.Diamonds);
-        }          
+        }
         else
         {
-            if(gameData.Managers[index])
+            if (gameData.Managers[index])
                 _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncomePerSec(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]), " / sec");
             else
                 _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]), "");
 
             _coins.SetScore(gameData.Money);
             OnUpdateScoreForLeaderboard?.Invoke();
-        }                   
+        }
         _uiCreationItemsList[index].SetBuyPrice(gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
-        _uiCreationItemsList[index].SetItemCount(gameData.ItemCount[index], gameData.ItemDataList[index].MaxCount(gameData.ItemBonusMultiplayer[index], gameData.ItemMaxCountHelper[index]));      
+        _uiCreationItemsList[index].SetItemCount(gameData.ItemCount[index], gameData.ItemDataList[index].MaxCount(gameData.ItemBonusMultiplayer[index], gameData.ItemMaxCountHelper[index]));
         _uiCreationItemsList[index].ToggleBuyButton(gameData.Money >= gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]) && gameData.ItemCount[index] < gameData.ItemDataList[index].MaxCountIncrement);
     }
 
     public void UpdateUpgradeUI(int index, GameData gameData, GeneralGameData generalData)
-    {       
+    {
         _uiUpgradeItemsList[index].SetIncome(gameData.UpgradeItemDataList[index].ItemIncome(gameData.UpgradeItemCount[index]));
         _uiUpgradeItemsList[index].SetBuyPrice(gameData.UpgradeItemDataList[index].ItemCost);
         _uiUpgradeItemsList[index].ToggleBuyButton(generalData.Diamonds >= gameData.UpgradeItemDataList[index].ItemCost);
@@ -195,7 +205,7 @@ public class GameUI : MonoBehaviour
     internal void ActivateItem(int index)
     {
         _uiCreationItemsList[index].ActivateButton();
-    }    
+    }
 
     public void PlanetObjectsToggle()
     {
@@ -210,10 +220,47 @@ public class GameUI : MonoBehaviour
         }
     }
 
-    public void WaterToggle()
+    public void TreesToggle()
     {
-        _water.SetActive(!isDisplayed);
+        foreach (var obj in _trees)
+        {
+            obj.SetActive(!isTreesDisplayed);
+        }
 
-        isDisplayed = !isDisplayed;
+        isTreesDisplayed = !isTreesDisplayed;
+    }
+
+    public void ExtraObjsToggle()
+    {
+        foreach (var obj in _extraObjs)
+        {
+            obj.SetActive(!isExtraObjsDisplayed);
+        }
+
+        isExtraObjsDisplayed = !isExtraObjsDisplayed;
+    }
+
+    public void DecorationsToggle()
+    {
+        _decorations.SetActive(!isDecorationsDisplayed);
+        isDecorationsDisplayed = !isDecorationsDisplayed;
+    }
+
+    public void BuildingsToggle()
+    {
+        _buildings.SetActive(!isBuildingsDisplayed);
+        isBuildingsDisplayed = !isBuildingsDisplayed;
+    }
+
+    public void HumansToggle()
+    {
+        _humans.SetActive(!isHumansDisplayed);
+        isHumansDisplayed = !isHumansDisplayed;
+    }
+
+    public void AnimalsToggle()
+    {
+        _animals.SetActive(!isAnimalsDisplayed);
+        isAnimalsDisplayed = !isAnimalsDisplayed;
     }
 }

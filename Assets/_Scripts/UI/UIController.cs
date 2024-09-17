@@ -2,6 +2,7 @@ using CBS.Scriptable;
 using CBS.UI;
 using DG.Tweening;
 using Exoa.Cameras;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,8 @@ public class UIController : MonoBehaviour
     [SerializeField] private CameraPerspective _camera;
     [SerializeField] private Vector3 _cameraPos;
     [SerializeField] private float _cameraDistance;
+    [SerializeField] private GameObject _backgroundImage;
+
     [Header("Shop Panel")]
     [SerializeField] private RectTransform _toggleButton;
     [SerializeField] private RectTransform _shopPanel;
@@ -51,6 +54,11 @@ public class UIController : MonoBehaviour
             _camera.MoveCameraTo(_startCameraDistance);
             _camera.MoveCameraToInstant(_startCameraPos);
 
+            if (_backgroundImage != null)
+            {
+                StartCoroutine(SmoothScaleBackground(1f));
+            }
+
             _shopPanel.DOAnchorPosY(_panelMiddlePosY, _tweenDuration);
             _toggleButton.DORotate(new Vector3(0, 0, 0), _tweenDuration);
             isDisplayed = false;
@@ -67,7 +75,12 @@ public class UIController : MonoBehaviour
 
             _camera.MoveCameraTo(_cameraDistance);
             _camera.MoveCameraToInstant(_cameraPos);
-            
+
+            if (_backgroundImage != null)
+            {
+                StartCoroutine(SmoothScaleBackground(0.93f));
+            }
+
             _creationItemsParent.DOAnchorPos(new Vector3(0, -350, 0), 0.25f);
             _creationButton.Select();
 
@@ -77,6 +90,22 @@ public class UIController : MonoBehaviour
             ColorToggle(0);
             _planetRotator.enabled = false;
         }
+    }
+
+    IEnumerator SmoothScaleBackground(float scale)
+    {
+        Vector3 initialScale = _backgroundImage.transform.localScale;
+        Vector3 targetScale = new Vector3(scale, scale, scale);
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < 0.8f)
+        {
+            elapsedTime += Time.deltaTime;
+            _backgroundImage.transform.localScale = Vector3.Lerp(initialScale, targetScale, elapsedTime / 0.8f);
+            yield return null; 
+        }
+        _backgroundImage.transform.localScale = targetScale;
     }
 
     public void ShopsToggle(int index)

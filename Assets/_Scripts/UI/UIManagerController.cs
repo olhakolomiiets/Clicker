@@ -46,7 +46,7 @@ public class UIManagerController : MonoBehaviour
         {
             _buyButton.SetPurchasedImage();
             _managerButton.SetActive(false);
-            _panelTransform.sizeDelta = new Vector2(980, 185);
+            //_panelTransform.sizeDelta = new Vector2(980, 185);
             _buyButton.gameObject.SetActive(false);
 
         }

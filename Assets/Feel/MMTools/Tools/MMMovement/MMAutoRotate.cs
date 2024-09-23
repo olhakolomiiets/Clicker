@@ -142,7 +142,7 @@ namespace MoreMountains.Tools
 				transform.Rotate(RotationSpeed * Time.deltaTime, RotationSpace);
 			}
 
-			if (Orbiting)
+			if (Orbiting && OrbitCenterTransform != null)
 			{
 				_orbitCenter = OrbitCenterTransform.transform.position + OrbitCenterOffset;
 				if (AdditiveOrbitRotation)

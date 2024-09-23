@@ -1,7 +1,5 @@
 using Firebase.Analytics;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -12,7 +10,6 @@ using CBS.Models;
 
 public class PassiveIncome : MonoBehaviour
 {
-    //public static PassiveIncome instance;
     #region EDITOR FIELDS
 
     [Header("Purchasing Extra Time")]
@@ -46,17 +43,16 @@ public class PassiveIncome : MonoBehaviour
     [SerializeField] private Button _3xButtonReward;
 
     [Space(10)]
-    [SerializeField] private ScorePanel _money;
-    [SerializeField] private ScorePanel _diamonds;
     [SerializeField] private GoogleMobileAds.Sample.RewardedAdController _adController;
 
     #endregion
 
-    #region EVENTS
+    #region EVENTS & ACTIONS
 
     [HideInInspector] public UnityEvent OnUserEarnedRewardEvent, RewardedAdLoadedEvent, RewardedAdLoadedWithErrorEvent;
 
-    public event Action<double> OnEarningPassiveIncome;
+    public event Action<double, double> OnEarningPassiveIncome;
+    public event Action<double, int> OnGetPassiveIncomeExtraTime;
 
     #endregion
 
@@ -72,19 +68,6 @@ public class PassiveIncome : MonoBehaviour
     private int _3xPassiveIncome;
 
     #endregion
-
-    // private void Awake()
-    // {
-    //     if (instance == null)
-    //     {
-    //         instance = this;
-    //         DontDestroyOnLoad(gameObject);
-    //     }
-    //     else if (instance != this)
-    //     {
-    //         Destroy(gameObject);
-    //     }
-    // }
 
     private void OnEnable()
     {
@@ -106,7 +89,7 @@ public class PassiveIncome : MonoBehaviour
             _extraTimePriceTxt.text = _passiveIncomeData.ExtraTimePrice.ToString();
     }
 
-    #region CBS Currencies
+    #region CBS CURRENCIES
     private void OnAddCurrency(CBSUpdateCurrencyResult result)
     {
         if (result.IsSuccess)
@@ -144,11 +127,7 @@ public class PassiveIncome : MonoBehaviour
 
     public void GetExtraTimeForPassiveIncome()
     {       
-        _currentGeneralData.Diamonds -= _passiveIncomeData.ExtraTimePrice;
-        _diamonds.SetDiamondsScore(_currentGeneralData.Diamonds);
-        _currentGeneralData.PassiveIncomeTime += _passiveIncomeData.ExtraTime;
-
-        _currentGeneralData.ExtraTimePurchasedCount++;
+        OnGetPassiveIncomeExtraTime?.Invoke(_passiveIncomeData.ExtraTimePrice, _passiveIncomeData.ExtraTime);
 
         if (_currentGeneralData.ExtraTimePurchasedCount >= _passiveIncomeData.ExtraTimeCount)
             _extraTimePanel.SetActive(false);
@@ -168,8 +147,8 @@ public class PassiveIncome : MonoBehaviour
 
     public void EarningPassiveIncome()
     {
-        OnEarningPassiveIncome?.Invoke(_passiveProfit);
-        _currentGeneralData.TotalScore += _passiveProfit;
+        OnEarningPassiveIncome?.Invoke(_passiveProfit, 0);
+
         passiveIncomeWind.SetActive(false);
 
         CurrencyModule.AddCurrencyToProfile(currencyCode, (int)_passiveProfit, OnAddCurrency);
@@ -198,9 +177,7 @@ public class PassiveIncome : MonoBehaviour
 
     public void UserEarnedReward()
     {
-        _currentGameData.Money += _2xPassiveIncome;
-         _currentGeneralData.TotalScore += _2xPassiveIncome;
-        _money.SetScore(_currentGameData.Money);
+        OnEarningPassiveIncome?.Invoke(_2xPassiveIncome, 0);
 
         CurrencyModule.AddCurrencyToProfile(currencyCode, (int)_2xPassiveIncome, OnAddCurrency);
 
@@ -228,11 +205,7 @@ public class PassiveIncome : MonoBehaviour
         _2xButtonReward.interactable = false;
         _3xButtonReward.interactable = false;
 
-        _currentGameData.Money += _3xPassiveIncome;
-        _currentGeneralData.Diamonds -= _3xPassiveIncomePrice;
-        _currentGeneralData.TotalScore += _3xPassiveIncome;
-        _money.SetScore(_currentGameData.Money);
-        _diamonds.SetDiamondsScore(_currentGeneralData.Diamonds);
+        OnEarningPassiveIncome?.Invoke(_3xPassiveIncome, _3xPassiveIncomePrice);
 
         CurrencyModule.AddCurrencyToProfile(currencyCode, (int)_3xPassiveIncome, OnAddCurrency);
         CurrencyModule.SubtractCurrencyFromProfile(diamondCode, (int)_3xPassiveIncomePrice, OnSubtract);

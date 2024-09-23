@@ -40,8 +40,6 @@ public class GameUI : MonoBehaviour
 
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;
 
-    public event Action OnUpdateScoreForLeaderboard;
-
     public void PrepareCreationUI(List<ItemData> data)
     {
         _uiCreationItemsList.Clear();
@@ -62,7 +60,7 @@ public class GameUI : MonoBehaviour
 
             ConnectEvents(i, itemController);
 
-            float _scrollItemGroupHeight = 220 * data.Count;
+            float _scrollItemGroupHeight = 190 * data.Count;
             _uiItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
 
             _managerControllers[i].OnManagerPurchased += PurchaseManager;
@@ -174,7 +172,8 @@ public class GameUI : MonoBehaviour
                 _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]), "");
 
             _coins.SetScore(gameData.Money);
-            OnUpdateScoreForLeaderboard?.Invoke();
+            _diamonds.SetDiamondsScore(generalData.Diamonds);
+            
         }
         _uiCreationItemsList[index].SetBuyPrice(gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
         _uiCreationItemsList[index].SetItemCount(gameData.ItemCount[index], gameData.ItemDataList[index].MaxCount(gameData.ItemBonusMultiplayer[index], gameData.ItemMaxCountHelper[index]));

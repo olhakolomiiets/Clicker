@@ -30,7 +30,6 @@ public class GameManager : MonoBehaviour
     [Space(10)]
     [SerializeField] private PurchaseManager _purchaseManager;
     [SerializeField] private PassiveIncome _passiveIncome;
-    [SerializeField] private UpdateLeaderboardStatistic _updateLeaderboard;
 
     private bool isGameSaved = false;
 
@@ -46,11 +45,11 @@ public class GameManager : MonoBehaviour
         PrepareGameData();
         PrepareUI();
         ConnectGameRulesToUI();
+        ConnectGameRulesToRewards();
 
         _gameRules.PrepareGameData(_gameData, _generalGameData);
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   _visualsController.InitializeVisual(_gameData);
-        _purchaseManager.PrepareGameData(_gameData);     
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   _visualsController.InitializeVisual(_gameData);   
     }
 
     private void Start()
@@ -66,7 +65,7 @@ public class GameManager : MonoBehaviour
 
     private void ActivatedRewardButton()
     {
-        _coinsReward.PrepareRewardData(_gameData);
+        _coinsReward.PrepareRewardData(_gameData.Money);
     }
 
     /// <summary>
@@ -86,11 +85,23 @@ public class GameManager : MonoBehaviour
         _gameRules.OnUpdateData += _gameUI.UpdateUI;
         _gameRules.OnUpdateUpgradeData += _gameUI.UpdateUpgradeUI;
 
+        //_gameRules.OnUpdateData += _visualsController.UpdateVisuals;
+        //_gameRules.OnPerformAction += _visualsController.PerformAction;
+    }
+
+    private void ConnectGameRulesToRewards()
+    {
         _gameRules.OnUpdateGameData += _passiveIncome.PrepareGameData;
         _gameRules.OnActivatePassiveIncome += _passiveIncome.ActivatePassiveIncome;
 
-        //_gameRules.OnUpdateData += _visualsController.UpdateVisuals;
-        //_gameRules.OnPerformAction += _visualsController.PerformAction;
+        _passiveIncome.OnEarningPassiveIncome += _gameRules.GetPassiveIncome;
+        _passiveIncome.OnGetPassiveIncomeExtraTime += _gameRules.UpdatePassiveIncomeTime;
+
+        _coinsReward.OnEarningReward += _gameRules.GetReward;
+
+        _purchaseManager.OnPurchasingPack += _gameRules.GetPurchasedProduct;
+        _purchaseManager.OnPurchasingDiamonds += _gameRules.GetPurchasedProduct;
+
     }
 
     /// <summary>
@@ -100,7 +111,6 @@ public class GameManager : MonoBehaviour
     {
         _gameData = new();
         _generalGameData = new();
-        //_generalGameData = _generalManager.generalData;
         _gameData.ItemDataList = _creationItemsDataList;
         _gameData.UpgradeItemDataList = _upgradeItemsDataList;        
     }
@@ -117,6 +127,7 @@ public class GameManager : MonoBehaviour
         _gameUI.OnProgressButtonClicked += _gameRules.HandleStartItemProgress;
        
         _gameUI.OnWorkFinished += _gameRules.IncreaseScore;
+        
         _gameUI.OnWorkFinished += _gameRules.HandleManager;
 
         _gameUI.OnUpgradeItemPurchased += _gameRules.HandleStartUpgradeItemProgress;
@@ -130,9 +141,6 @@ public class GameManager : MonoBehaviour
         _gameUI.OnPurchaseItemFirstTime += _gameRules.PurchaseItemFirstTime;
         _gameUI.OnManagerPurchased += _gameRules.HandleManagerPurchased;
 
-        _passiveIncome.OnEarningPassiveIncome += _gameRules.GetPassiveIncome;
-
-        //_gameUI.OnUpdateScoreForLeaderboard += _leaderboard.UpdateUserRank;
     }
 
     /// <summary>
@@ -246,7 +254,6 @@ public class GameManager : MonoBehaviour
     private void OnDisable()
     {
         _rewardTimer.OnActivatedCoinsRewardButton.RemoveListener(ActivatedRewardButton);
-        //_leaderboard.OnPressLeaderboardButton.RemoveListener(ActivatedLeaderboard);
         _boosterReward.OnBoosterRewardEarned.RemoveListener(_gameRules.SendDataUpdate);
         _boosterReward.OnBoosterRewardReceived.RemoveListener(_gameRules.SendDataUpdate);
 

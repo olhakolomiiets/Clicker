@@ -11,8 +11,6 @@ public class BoosterReward : MonoBehaviour
 {
     #region EDITOR FIELDS
     
-    //[SerializeField] private ScorePanel _score;
-
     [Space(10)]
     [SerializeField] private Button buttonReward;
     [SerializeField] private GameObject getBoosterForAdsWindow;
@@ -28,7 +26,6 @@ public class BoosterReward : MonoBehaviour
     [SerializeField] private List<ItemData> _creationItemsDataList;
 
     [Space(10)]
-    [SerializeField] RewardTimers rewardTimer;
     [SerializeField] private GoogleMobileAds.Sample.RewardedAdController _adController;
 
     #endregion

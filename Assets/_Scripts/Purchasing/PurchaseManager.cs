@@ -1,13 +1,11 @@
 using Firebase.Analytics;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class PurchaseManager : MonoBehaviour
 {
-    [SerializeField] private ScorePanel _coinsPanel;
-    [SerializeField] private ScorePanel _diamondsPanel;
-
     [Header("No Ads")]
     [SerializeField] private GameObject _noAdsButton;
 
@@ -41,8 +39,8 @@ public class PurchaseManager : MonoBehaviour
     [HideInInspector] public UnityEvent PurchasedProductDiamondsPack100;
     [HideInInspector] public UnityEvent PurchasedProductDiamondsPack300;
 
-    GameData _currentGameData;
-    GeneralGameData _currentGeneralData;
+    public event Action<double, double> OnPurchasingPack;
+    public event Action<double> OnPurchasingDiamonds;
 
     private void Awake()
     {
@@ -64,16 +62,6 @@ public class PurchaseManager : MonoBehaviour
         //RestoreVariable();
     }
 
-    public void PrepareGameData(GameData gameData)
-    {
-        _currentGameData = gameData;
-    }
-
-    public void PrepareGeneralData(GeneralGameData generalData)
-    {
-        _currentGeneralData = generalData;
-    }
-
     public void NoAds()
     {
         //PlayerPrefs.SetInt("NoAdsPurchased", 1);
@@ -81,20 +69,14 @@ public class PurchaseManager : MonoBehaviour
 
     public void StarterPack()
     {
-        _currentGameData.Money += _coinsInPack;
-        _currentGeneralData.Diamonds += _diamondsInPack;
-        _coinsPanel.SetScore(_currentGameData.Money);
-        _diamondsPanel.SetDiamondsScore(_currentGeneralData.Diamonds);
+        OnPurchasingPack?.Invoke(_coinsInPack, _diamondsInPack);
         _starterPackButton.SetActive(false);
         //PlayerPrefs.SetInt("StarterPackPurchased", 1);
     }
 
     public void SpecialOffer()
     {
-        _currentGameData.Money += _coins;
-        _currentGeneralData.Diamonds += _diamonds;
-        _coinsPanel.SetScore(_currentGameData.Money);
-        _diamondsPanel.SetDiamondsScore(_currentGeneralData.Diamonds);
+        OnPurchasingPack?.Invoke(_coins, _diamonds);
         _specialOfferButton.SetActive(false);
         //PlayerPrefs.SetInt("SpecialOfferPurchased", 1);
     }
@@ -111,19 +93,16 @@ public class PurchaseManager : MonoBehaviour
 
     public void DiamondsPack50()
     {
-        _currentGeneralData.Diamonds += _diamondsInPack1;
-        _diamondsPanel.SetDiamondsScore(_currentGeneralData.Diamonds);
+        OnPurchasingDiamonds?.Invoke(_diamondsInPack1);
     }
     public void DiamondsPack100()
     {
-        _currentGeneralData.Diamonds += _diamondsInPack2;
-        _diamondsPanel.SetDiamondsScore(_currentGeneralData.Diamonds);
-    }    
-    
+        OnPurchasingDiamonds?.Invoke(_diamondsInPack2);
+    }
+
     public void DiamondsPack300()
     {
-        _currentGeneralData.Diamonds += _diamondsInPack3;
-        _diamondsPanel.SetDiamondsScore(_currentGeneralData.Diamonds);
+        OnPurchasingDiamonds?.Invoke(_diamondsInPack3);
     }
 
     void RestoreVariable()

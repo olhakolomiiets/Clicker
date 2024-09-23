@@ -134,31 +134,6 @@ public class GameRules : MonoBehaviour
         SendDataUpdate();
     }
 
-    public void GetMoney()
-    {
-        _currentGameData.Money += 1000000;
-        _currentGeneralData.Diamonds += 200;
-
-        _currentGeneralData.TotalScore += 1000000;
-
-        SendDataUpdate();
-    }
-
-    public void GetPassiveIncome(double passiveIncome)
-    {
-        _currentGameData.Money += passiveIncome;
-        _currentGeneralData.TotalScore += passiveIncome;
-        _totalScore = _currentGeneralData.TotalScore;
-        SendDataUpdate();
-    }
-
-    public void UpdatePassiveIncomeTime(double diamonds, int extraTime)
-    {
-        _currentGeneralData.Diamonds -= diamonds;
-        _currentGeneralData.PassiveIncomeTime += extraTime;
-        SendDataUpdate();
-    }
-
     /// <summary>
     /// Runs the work needed to produce money for a specific item
     /// </summary>
@@ -191,6 +166,8 @@ public class GameRules : MonoBehaviour
         _currentGameData.UpgradeItemCount[index] += 1;
         SendDataUpdate();
     }
+
+    #region LOAD GAMEDATA
 
     /// <summary>
     /// Handles Loading the Game Data and processing it to send updates to other scripts.
@@ -246,6 +223,8 @@ public class GameRules : MonoBehaviour
 
         SendDataUpdate();
     }
+
+    #endregion
 
     /// <summary>
     /// Prepares the game data when we start the game.
@@ -336,5 +315,64 @@ public class GameRules : MonoBehaviour
                 _currentGameData.ItemMaxCountHelper[index] = _currentGameData.ItemDataList[index].MaxCountIncrement;
         }
     }
+
+    public void GetMoney()
+    {
+        _currentGameData.Money += 1000000;
+        _currentGeneralData.Diamonds += 200;
+
+        _currentGeneralData.TotalScore += 1000000;
+
+        SendDataUpdate();
+    }
+
+    #region PASSIVE INCOME
+
+    public void GetPassiveIncome(double income, double diamonds)
+    {
+        _currentGameData.Money += income;
+        _currentGeneralData.TotalScore += income;
+        _totalScore = _currentGeneralData.TotalScore;
+        _currentGeneralData.Diamonds -= diamonds;
+        SendDataUpdate();
+    }
+
+    public void UpdatePassiveIncomeTime(double price, int time)
+    {
+        _currentGeneralData.Diamonds -= price;
+        _currentGeneralData.PassiveIncomeTime += time;
+        _currentGeneralData.ExtraTimePurchasedCount++;
+
+        SendDataUpdate();
+    }
+    #endregion
+
+    #region REWARDS
+
+    public void GetReward(double reward)
+    {
+        _currentGameData.Money += reward;
+        _currentGeneralData.TotalScore += reward;
+        _totalScore = _currentGeneralData.TotalScore;
+
+        SendDataUpdate();
+    }
+    #endregion
+
+    #region PURCHASES
+
+    public void GetPurchasedProduct(double coins, double diamonds)
+    {
+        _currentGameData.Money += coins;
+        _currentGeneralData.Diamonds += diamonds;
+        SendDataUpdate();
+    }
+
+    public void GetPurchasedProduct(double diamonds)
+    {
+        _currentGeneralData.Diamonds += diamonds;
+        SendDataUpdate();
+    }
+    #endregion
 }
 

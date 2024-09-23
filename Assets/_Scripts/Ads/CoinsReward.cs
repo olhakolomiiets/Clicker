@@ -3,11 +3,12 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using Firebase.Analytics;
 using TMPro;
+using System;
 
 public class CoinsReward : MonoBehaviour
 {
     #region EDITOR FIELDS
-    
+
     [SerializeField] private ScorePanel _score;
 
     [Space(10)]
@@ -28,11 +29,12 @@ public class CoinsReward : MonoBehaviour
 
     [HideInInspector] public UnityEvent OnUserEarnedRewardEvent, RewardedAdLoadedEvent, RewardedAdLoadedWithErrorEvent, OnCoinsRewardReceived;
 
+    public event Action<double> OnEarningReward;
+
     #endregion
 
     #region PRIVATE FIELDS
 
-    GameData _currentGameData;
     private double _coinsReward;
     private bool _rewardedAdUsed;
 
@@ -47,17 +49,15 @@ public class CoinsReward : MonoBehaviour
 
     }
 
-    public void PrepareRewardData(GameData gameData)
+    public void PrepareRewardData(double money)
     {
-        _currentGameData = gameData;
-        _coinsReward = _currentGameData.Money * coinsMultiplicator;
+        _coinsReward = money * coinsMultiplicator;
         _coinsRewardTxt.text = $"{_coinsReward.ToString("N0")}";
     }
 
     public void UserEarnedReward()
-    {       
-        _currentGameData.Money += _coinsReward;
-        _score.SetScore(_currentGameData.Money);
+    {
+        OnEarningReward?.Invoke(_coinsReward);
         OnCoinsRewardReceived?.Invoke();
 
         FirebaseAnalytics.LogEvent(name: "coins_for_ads");

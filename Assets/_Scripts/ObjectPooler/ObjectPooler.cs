@@ -55,33 +55,4 @@ public class ObjectPooler : MonoBehaviour
         public GameObject objectToPool;
         public bool shouldExpand;
     }
-
-    //public void DisableAllBalls()
-    //{
-    //    for (int i = 0; i < pooledObjects.Count; i++)
-    //    {
-    //            GameObject ball = pooledObjects[i];
-    //            ball.SetActive(false);
-    //    }
-    //}
-
-    //public void DisableAllBallsPuffs()
-    //{
-    //    for (int i = 0; i < pooledObjects.Count; i++)
-    //    {
-    //        GameObject ball = pooledObjects[i];
-    //        ball.SetActive(false);
-    //    }
-    //}
-
-    //public void DisableFeatherPuff(GameObject feather)
-    //{
-    //    for (int i = 0; i < pooledObjects.Count; i++)
-    //    {
-    //        if (feather = pooledObjects[i])
-    //        {
-    //            feather.SetActive(false);
-    //        }
-    //    }
-    //}
 }

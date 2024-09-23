@@ -14,7 +14,10 @@ public class PlanetObject : MonoBehaviour
         Lightning,
         TrailGreen,
         TrailBlue,
-        FogRed
+        ExplosionMysticGreen,
+        BigColorfulRay,
+        ExplosionGhost,
+        ExplosionGrenadeBlue
     };
 
     public void MakeSFX()
@@ -43,8 +46,17 @@ public class PlanetObject : MonoBehaviour
             case SFXType.TrailsRay:
                 sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX7");
                 break;
-            case SFXType.FogRed:
+            case SFXType.ExplosionMysticGreen:
                 sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX8");
+                break;
+            case SFXType.BigColorfulRay:
+                sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX9");
+                break;
+            case SFXType.ExplosionGhost:
+                sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX10");
+                break;
+            case SFXType.ExplosionGrenadeBlue:
+                sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX11");
                 break;
 
             default:

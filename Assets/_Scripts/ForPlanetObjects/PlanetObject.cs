@@ -17,7 +17,8 @@ public class PlanetObject : MonoBehaviour
         ExplosionMysticGreen,
         BigColorfulRay,
         ExplosionGhost,
-        ExplosionGrenadeBlue
+        ExplosionGrenadeBlue,
+        BigTrailRay
     };
 
     public void MakeSFX()
@@ -57,6 +58,9 @@ public class PlanetObject : MonoBehaviour
                 break;
             case SFXType.ExplosionGrenadeBlue:
                 sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX11");
+                break;
+            case SFXType.BigTrailRay:
+                sfx = ObjectPooler.SharedInstance.GetPooledObject("VFX12");
                 break;
 
             default:

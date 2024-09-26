@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -40,7 +41,7 @@ public class GameManager : MonoBehaviour
     {
         _rewardTimer.OnActivatedCoinsRewardButton.AddListener(ActivatedRewardButton);
         _boosterReward.OnBoosterRewardEarned.AddListener(_gameRules.SendDataUpdate);
-        _boosterReward.OnBoosterRewardReceived.AddListener(_gameRules.SendDataUpdate);
+        _rewardTimer.OnBoosterRewardReceived.AddListener(_gameRules.SendDataUpdate);
         
         PrepareGameData();
         PrepareUI();
@@ -65,7 +66,7 @@ public class GameManager : MonoBehaviour
 
     private void ActivatedRewardButton()
     {
-        _coinsReward.PrepareRewardData(_gameData.Money);
+        _coinsReward.PrepareRewardData((float)_gameData.Money);
     }
 
     /// <summary>
@@ -101,7 +102,6 @@ public class GameManager : MonoBehaviour
 
         _purchaseManager.OnPurchasingPack += _gameRules.GetPurchasedProduct;
         _purchaseManager.OnPurchasingDiamonds += _gameRules.GetPurchasedProduct;
-
     }
 
     /// <summary>
@@ -121,7 +121,6 @@ public class GameManager : MonoBehaviour
     private void PrepareUI()
     {
         _gameUI.PrepareCreationUI(_creationItemsDataList);
-
         _gameUI.PrepareUpgradeUI(_upgradeItemsDataList);
 
         _gameUI.OnProgressButtonClicked += _gameRules.HandleStartItemProgress;
@@ -140,7 +139,6 @@ public class GameManager : MonoBehaviour
 
         _gameUI.OnPurchaseItemFirstTime += _gameRules.PurchaseItemFirstTime;
         _gameUI.OnManagerPurchased += _gameRules.HandleManagerPurchased;
-
     }
 
     /// <summary>
@@ -255,7 +253,7 @@ public class GameManager : MonoBehaviour
     {
         _rewardTimer.OnActivatedCoinsRewardButton.RemoveListener(ActivatedRewardButton);
         _boosterReward.OnBoosterRewardEarned.RemoveListener(_gameRules.SendDataUpdate);
-        _boosterReward.OnBoosterRewardReceived.RemoveListener(_gameRules.SendDataUpdate);
+        _rewardTimer.OnBoosterRewardReceived.RemoveListener(_gameRules.SendDataUpdate);
 
         if (!isGameSaved)
         {

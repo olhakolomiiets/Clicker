@@ -4,20 +4,17 @@ using UnityEngine.Events;
 using Firebase.Analytics;
 using TMPro;
 using System;
+using System.Collections;
 
 public class CoinsReward : MonoBehaviour
 {
     #region EDITOR FIELDS
-
-    [SerializeField] private ScorePanel _score;
-
-    [Space(10)]
+    [SerializeField] private TextMeshProUGUI _title;
     [SerializeField] private Button buttonReward;
-    [SerializeField] private GameObject getCoinsForAdsWindow;
     [SerializeField] private TextMeshProUGUI _coinsRewardTxt;
 
     [Space(10)]
-    [SerializeField] private double coinsMultiplicator;
+    [SerializeField] private float coinsMultiplicator;
 
     [Space(10)]
     [SerializeField] RewardTimers rewardTimer;
@@ -35,7 +32,7 @@ public class CoinsReward : MonoBehaviour
 
     #region PRIVATE FIELDS
 
-    private double _coinsReward;
+    private float _coinsReward;
     private bool _rewardedAdUsed;
 
     #endregion
@@ -46,10 +43,15 @@ public class CoinsReward : MonoBehaviour
         _adController.OnUserEarnedRewardEvent.AddListener(UserEarnedReward);
         _adController.RewardedAdLoadedEvent.AddListener(ShowRewardedAd);
         _adController.RewardedAdLoadedWithErrorEvent.AddListener(RewardedAdWithError);
-
     }
 
-    public void PrepareRewardData(double money)
+    private void Start()
+    {
+        buttonReward.gameObject.SetActive(true);
+        _title.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("GetCoins")}";
+    }
+
+    public void PrepareRewardData(float money)
     {
         _coinsReward = money * coinsMultiplicator;
         _coinsRewardTxt.text = $"{_coinsReward.ToString("N0")}";
@@ -57,13 +59,14 @@ public class CoinsReward : MonoBehaviour
 
     public void UserEarnedReward()
     {
+        this.gameObject.SetActive(false);
         OnEarningReward?.Invoke(_coinsReward);
         OnCoinsRewardReceived?.Invoke();
 
         FirebaseAnalytics.LogEvent(name: "coins_for_ads");
 
         buttonReward.interactable = true;
-        getCoinsForAdsWindow.SetActive(false);
+        buttonReward.gameObject.SetActive(false);
         _rewardedAdUsed = true;
     }
 

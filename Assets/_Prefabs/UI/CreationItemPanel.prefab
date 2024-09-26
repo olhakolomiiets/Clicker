@@ -2311,8 +2311,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8346243575805365744}
   - component: {fileID: 6265171669911426401}
-  - component: {fileID: 7806353043317805196}
   - component: {fileID: 7246954761733918171}
+  - component: {fileID: 217132867636454735}
   m_Layer: 5
   m_Name: PurchasePanel
   m_TagString: Untagged
@@ -2349,7 +2349,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4095704100001341328}
   m_CullTransparentMesh: 1
---- !u!114 &7806353043317805196
+--- !u!114 &7246954761733918171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4095704100001341328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c86a9469fa208764784046b88e791785, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _price: {fileID: 4969214387938171706}
+  _panelImage: {fileID: 217132867636454735}
+  _purchaseReady: {fileID: -1088173301, guid: b25fe2402cd29c84db5f60be216618fc, type: 3}
+  _purchaseNotReady: {fileID: 412758317, guid: b25fe2402cd29c84db5f60be216618fc, type: 3}
+--- !u!114 &217132867636454735
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2378,23 +2394,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.2
---- !u!114 &7246954761733918171
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4095704100001341328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c86a9469fa208764784046b88e791785, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _price: {fileID: 4969214387938171706}
-  _panelImage: {fileID: 7806353043317805196}
-  _purchaseReady: {fileID: -1088173301, guid: b25fe2402cd29c84db5f60be216618fc, type: 3}
-  _purchaseNotReady: {fileID: 412758317, guid: b25fe2402cd29c84db5f60be216618fc, type: 3}
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &4428766472897523249
 GameObject:
   m_ObjectHideFlags: 0

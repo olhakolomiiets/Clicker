@@ -5,17 +5,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-using CBS;
-using CBS.Models;
-
 public class PassiveIncome : MonoBehaviour
 {
     #region EDITOR FIELDS
 
     [Header("Purchasing Extra Time")]
     [SerializeField] private PassiveIncomeData _passiveIncomeData;
-
-    [SerializeField] private string currencyCode;
 
     [Space(10)]
     [SerializeField] private GameObject _extraTimePanel;
@@ -57,9 +52,6 @@ public class PassiveIncome : MonoBehaviour
     #endregion
 
     #region PRIVATE FIELDS
-
-    private ICurrency CurrencyModule { get; set; }
-    private string diamondCode = "DI";
     GameData _currentGameData;
     GeneralGameData _currentGeneralData;
     private double _passiveProfit;
@@ -79,8 +71,6 @@ public class PassiveIncome : MonoBehaviour
 
     private void Start()
     {
-        CurrencyModule = CBSModule.Get<CBSCurrencyModule>();
-
         _extraTimeTxt.text = $"{"+" + (_passiveIncomeData.ExtraTime / 60).ToString() + " " + Lean.Localization.LeanLocalization.GetTranslationText("minutes")}";
 
         if (_currentGeneralData.ExtraTimePurchasedCount >= _passiveIncomeData.ExtraTimeCount)
@@ -88,34 +78,6 @@ public class PassiveIncome : MonoBehaviour
         else
             _extraTimePriceTxt.text = _passiveIncomeData.ExtraTimePrice.ToString();
     }
-
-    #region CBS CURRENCIES
-    private void OnAddCurrency(CBSUpdateCurrencyResult result)
-    {
-        if (result.IsSuccess)
-        {
-            var balanceChange = result.BalanceChange;
-            var updatedCurrency = result.UpdatedCurrency;
-        }
-        else
-        {
-            Debug.Log(result.Error.Message);
-        }
-    }
-
-    private void OnSubtract(CBSUpdateCurrencyResult result)
-    {
-        if (result.IsSuccess)
-        {
-            var balanceChange = result.BalanceChange;
-            var updatedCurrency = result.UpdatedCurrency;
-        }
-        else
-        {
-            Debug.Log(result.Error.Message);
-        }
-    }
-    #endregion
 
     public void PrepareGameData(GeneralGameData generalGameData, GameData gameData)
     {
@@ -148,10 +110,7 @@ public class PassiveIncome : MonoBehaviour
     public void EarningPassiveIncome()
     {
         OnEarningPassiveIncome?.Invoke(_passiveProfit, 0);
-
         passiveIncomeWind.SetActive(false);
-
-        CurrencyModule.AddCurrencyToProfile(currencyCode, (int)_passiveProfit, OnAddCurrency);
     }
 
     public void PreparePassiveIncomeUI(int timeAfterExit, double passiveIncome)
@@ -179,8 +138,6 @@ public class PassiveIncome : MonoBehaviour
     {
         OnEarningPassiveIncome?.Invoke(_2xPassiveIncome, 0);
 
-        CurrencyModule.AddCurrencyToProfile(currencyCode, (int)_2xPassiveIncome, OnAddCurrency);
-
         FirebaseAnalytics.LogEvent(name: "Get_2xPassiveIncome");
 
         _2xButtonReward.interactable = true;
@@ -206,9 +163,6 @@ public class PassiveIncome : MonoBehaviour
         _3xButtonReward.interactable = false;
 
         OnEarningPassiveIncome?.Invoke(_3xPassiveIncome, _3xPassiveIncomePrice);
-
-        CurrencyModule.AddCurrencyToProfile(currencyCode, (int)_3xPassiveIncome, OnAddCurrency);
-        CurrencyModule.SubtractCurrencyFromProfile(diamondCode, (int)_3xPassiveIncomePrice, OnSubtract);
 
         passiveIncomeWind.SetActive(false);
 

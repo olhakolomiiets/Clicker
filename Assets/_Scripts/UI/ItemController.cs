@@ -21,6 +21,7 @@ public class ItemController : MonoBehaviour
     [SerializeField] private GameObject _managerButton;
 
     private bool _isPremium;
+    private int _maxItems;
     private string _translationText;
 
     public event Action OnProgressButtonClicked, OnWorkFinished, OnPremiumItemWorkFinished, OnBuyButtonClicked, OnActivationPremium, OnFirstActivation;
@@ -36,14 +37,15 @@ public class ItemController : MonoBehaviour
         ToggleIncome(false);
     }
 
-    public void Prepare(Sprite icon, bool isPremium, string translationText)
+    public void Prepare(Sprite icon, bool isPremium, string translationText, int maxItemsCount)
     {
         _translationText = translationText;
         _itemImage.sprite = icon;
         _isPremium = isPremium;
+        _maxItems = maxItemsCount;
 
         if (_isPremium)
-            _premiumImage.SetActive(true);       
+            _premiumImage.SetActive(true);
 
         if (_purchaseInfo.isActiveAndEnabled)
         {
@@ -55,14 +57,15 @@ public class ItemController : MonoBehaviour
     {
         ToggleIncome(true);
         _purchaseInfo.gameObject.SetActive(false);
-        _progressBar.gameObject.SetActive(true);        
+        _progressBar.gameObject.SetActive(true);
         _progressButton.IsEnabled = true;
         _itemTitle.text = LeanLocalization.GetTranslationText(_translationText);
-        if (!_isPremium)
+        if (_maxItems > 1)
         {
             _buyPanel.SetActive(true);
-            _managerButton.SetActive(true);
-        }        
+            if (!_isPremium)
+                _managerButton.SetActive(true);
+        }
         _progressButton.OnButtonClicked.RemoveAllListeners();
         _progressButton.OnButtonClicked.AddListener(HandleProgressButtonClick);
     }
@@ -86,7 +89,7 @@ public class ItemController : MonoBehaviour
         {
             _progressButton.IsEnabled = false;
             _purchaseInfo.SwapImageNotReady();
-        }        
+        }
     }
 
     public void AutomateButton()
@@ -100,7 +103,7 @@ public class ItemController : MonoBehaviour
     {
         OnFirstActivation?.Invoke();
 
-        if(_isPremium)
+        if (_isPremium)
             OnActivationPremium?.Invoke();
 
         ActivateButton();
@@ -145,7 +148,7 @@ public class ItemController : MonoBehaviour
 
     public void ToggleIncome(bool val)
         => _itemScore.gameObject.SetActive(val);
-    
+
     public void SetIncome(double score, string sec)
     {
         if (score > 1000)
@@ -156,7 +159,7 @@ public class ItemController : MonoBehaviour
 
     private void HandleProgressBarFinished()
     {
-        _progressButton.IsEnabled = true;    
+        _progressButton.IsEnabled = true;
         OnWorkFinished?.Invoke();
     }
 

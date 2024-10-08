@@ -15,7 +15,7 @@ public class MoveBetweenTransforms : MonoBehaviour
     public UnityEvent onCheckpointReached; // Event triggered when a checkpoint is reached
     public UnityEvent onCycleCompleted; // Event triggered when all checkpoints in a cycle are completed
 
-    private void Start()
+    private void OnEnable()
     {
         StartCoroutine(RepeatMovement());
     }

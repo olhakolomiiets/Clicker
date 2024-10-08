@@ -60,7 +60,7 @@ public class GameUI : MonoBehaviour
 
             ConnectEvents(i, itemController);
 
-            float _scrollItemGroupHeight = 190 * data.Count;
+            float _scrollItemGroupHeight = 165 * data.Count;
             _uiItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
 
             _managerControllers[i].OnManagerPurchased += PurchaseManager;
@@ -96,7 +96,7 @@ public class GameUI : MonoBehaviour
 
             ConnectEvents(i, upgradeItemController);
 
-            float _scrollItemGroupHeight = 220 * (data.Count + 1);
+            float _scrollItemGroupHeight = 165 * (data.Count + 1);
             _upgradeItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
         }
 

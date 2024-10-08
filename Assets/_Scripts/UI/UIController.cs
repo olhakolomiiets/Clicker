@@ -31,13 +31,19 @@ public class UIController : MonoBehaviour
     [SerializeField] private RectTransform _shopItemsParent;
     [SerializeField] private Button _shopButton;
 
+    [Header("Planet Levels")]
+    [SerializeField] private RectTransform _menuButton;
+    [SerializeField] private RectTransform _levelsPanel;
+    [SerializeField] private float _levelsPanelTopPosX, _levelsPanelMiddlePosX;
+
     [HideInInspector] public bool isDisplayed;
+    [HideInInspector] public bool isLevelsDisplayed;
 
     [SerializeField] private GameObject _planet;
     [SerializeField] private GameObject _leaderboardUI;
 
     private DragRotateGPT _planetRotator;
-    private ObjectPlaceRotator _objectPlaceRotator; 
+    private ObjectPlaceRotator _objectPlaceRotator;
     private Vector3 _startCameraPos;
     private float _startCameraDistance;
 
@@ -49,7 +55,7 @@ public class UIController : MonoBehaviour
 
     public void ToggleUpgradeStorePanel()
     {
-        if(isDisplayed)
+        if (isDisplayed)
         {
             _camera.MoveCameraTo(_startCameraDistance);
             _camera.MoveCameraToInstant(_startCameraPos);
@@ -66,7 +72,7 @@ public class UIController : MonoBehaviour
             if (!_objectPlaceRotator.isRotating)
             {
                 _planetRotator.enabled = true;
-            }          
+            }
         }
         else
         {
@@ -92,6 +98,50 @@ public class UIController : MonoBehaviour
         }
     }
 
+    public void ToggleLevelsPanel()
+    {
+        if (isLevelsDisplayed)
+        {
+            _camera.MoveCameraTo(_startCameraDistance);
+            _camera.MoveCameraToInstant(_startCameraPos);
+
+            if (_backgroundImage != null)
+            {
+                StartCoroutine(SmoothScaleBackground(1f));
+            }
+
+            _levelsPanel.DOAnchorPosX(_levelsPanelMiddlePosX, _tweenDuration);
+            _menuButton.gameObject.SetActive(true);
+            //_menuButton.DORotate(new Vector3(0, 0, 0), _tweenDuration);
+            isLevelsDisplayed = false;
+
+            if (!_objectPlaceRotator.isRotating)
+            {
+                _planetRotator.enabled = true;
+            }
+        }
+        else
+        {
+            _startCameraDistance = _camera.FinalDistance;
+            _startCameraPos = _camera.gameObject.transform.position;
+
+            _camera.MoveCameraTo(_cameraDistance);
+            _camera.MoveCameraToInstant(_cameraPos);
+
+            if (_backgroundImage != null)
+            {
+                StartCoroutine(SmoothScaleBackground(0.93f));
+            }
+
+            _levelsPanel.DOAnchorPosX(_levelsPanelTopPosX, _tweenDuration);
+            _menuButton.gameObject.SetActive(false);
+
+            //_menuButton.DORotate(new Vector3(0, 0, 180), _tweenDuration);
+            isLevelsDisplayed = true;
+            _planetRotator.enabled = false;
+        }
+    }
+
     IEnumerator SmoothScaleBackground(float scale)
     {
         Vector3 initialScale = _backgroundImage.transform.localScale;
@@ -103,7 +153,7 @@ public class UIController : MonoBehaviour
         {
             elapsedTime += Time.deltaTime;
             _backgroundImage.transform.localScale = Vector3.Lerp(initialScale, targetScale, elapsedTime / 0.8f);
-            yield return null; 
+            yield return null;
         }
         _backgroundImage.transform.localScale = targetScale;
     }

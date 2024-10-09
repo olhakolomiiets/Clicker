@@ -40,7 +40,6 @@ public class UIController : MonoBehaviour
     [HideInInspector] public bool isLevelsDisplayed;
 
     [SerializeField] private GameObject _planet;
-    [SerializeField] private GameObject _leaderboardUI;
 
     private DragRotateGPT _planetRotator;
     private ObjectPlaceRotator _objectPlaceRotator;
@@ -201,15 +200,4 @@ public class UIController : MonoBehaviour
         var leaderboardsPrefab = prefabs.LeaderboardsWindow;
         UIView.ShowWindow(leaderboardsPrefab);
     }
-
-    public void ClearScreen() //Turn off all screens
-    {
-        _leaderboardUI.SetActive(false);
-    }
-    public void LeaderboardScreen() //Scoreboard button
-    {
-        ClearScreen();
-        _leaderboardUI.SetActive(true);
-    }
-
 }

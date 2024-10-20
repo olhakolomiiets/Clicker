@@ -9,6 +9,7 @@ public class GeneralGameData
     public string ExitTime { get; set;}
     public int PassiveIncomeTime { get; set;} = 180;
     public int ExtraTimePurchasedCount { get; set; }
+    public bool IsGameSaved { get; set; }
 
     public void SetData(string dataString)
     {
@@ -22,6 +23,7 @@ public class GeneralGameData
         ExitTime = data.ExitTime;
         PassiveIncomeTime = data.PassiveIncomeTime;
         ExtraTimePurchasedCount = data.ExtraTimePurchasedCount;
+        IsGameSaved = data.IsGameSaved;
 
         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! General Game Data /// SetData " + dataString);
     }
@@ -35,7 +37,8 @@ public class GeneralGameData
             Diamonds = Diamonds,
             ExitTime = DateTime.Now.ToBinary().ToString(),
             PassiveIncomeTime = PassiveIncomeTime,
-            ExtraTimePurchasedCount = ExtraTimePurchasedCount
+            ExtraTimePurchasedCount = ExtraTimePurchasedCount,
+            IsGameSaved = IsGameSaved
         });
 }
 
@@ -49,5 +52,6 @@ public struct GeneralGameDataSave
     public string ExitTime;
     public int PassiveIncomeTime;
     public int ExtraTimePurchasedCount;
+    public bool IsGameSaved;
 }
 

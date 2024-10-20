@@ -81,18 +81,23 @@ public class GameRules : MonoBehaviour
 
         // double itemPrice = _currentGameData.ItemDataList[index].ManagerPrice;
         // UpdateCurrency(currencyCode, itemPrice, false);
-        
+
         Debug.Log($"Purchased a manager for {index}");
-        ActivateManagerFor(index);
+        HandleManager(index);
+        _currentGameData.IsManagerPurchased += 1;
     }
 
     public void HandlePremiumManager(int index)
     {
         if (_currentGameData.Managers[index])
+        {
             return;
-
-        _currentGameData.Managers[index] = true;
-        ActivateManagerFor(index);
+        }
+        else
+        {
+            _currentGameData.Managers[index] = true;
+            ActivateManagerFor(index);
+        }
     }
 
     /// <summary>
@@ -179,9 +184,21 @@ public class GameRules : MonoBehaviour
         }
         else
         {
-            _currentGameData.Money += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
             _currentGeneralData.TotalScore += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
-            _currentGameData.MoneyPerSec = _currentGameData.ItemDataList[index].ItemIncomePerSec(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
+
+            if (_currentGameData.Managers[index])
+            {
+                _currentGameData.MoneyPerSec = _currentGameData.ItemDataList[index].ItemIncomePerSec(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
+                _currentGameData.Money += _currentGameData.MoneyPerSec;
+
+                //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// IncreaseScore /// Money: " + _currentGameData.Money + " /// MoneyPerSec: " + _currentGameData.MoneyPerSec);
+            }
+            else
+            {
+                _currentGameData.Money += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
+
+                //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// IncreaseScore /// Money: " + _currentGameData.Money);
+            }
 
             // double income = _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
             // UpdateCurrency(currencyCode, income, true);
@@ -209,6 +226,8 @@ public class GameRules : MonoBehaviour
     {
         OnPerformAction?.Invoke(index, _currentGameData, _currentGeneralData);
         OnStartWorkOnItem?.Invoke(index, _currentGameData.ItemDataList[index].Delay);
+
+        //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// HandleStartItemProgress /// Delay: " + _currentGameData.ItemDataList[index].Delay);
     }
 
     public void HandleStartUpgradeItemProgress(int index)
@@ -260,8 +279,10 @@ public class GameRules : MonoBehaviour
             {
                 ActivateItem(i);
             }
-            if (_currentGameData.Managers[i])
-                ActivateManagerFor(i);
+
+            _currentGameData.ItemDataList[i].Auto = _currentGameData.Managers[i];
+            
+            //HandleManager(i);
         }
 
         for (int i = 0; i < _currentGameData.UpgradeItemDataList.Count; i++)
@@ -294,11 +315,12 @@ public class GameRules : MonoBehaviour
             timeAfterExit = (int)rawTime;
 
             OnActivatePassiveIncome?.Invoke(timeAfterExit);
+
+            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// LoadGame /// Time After Exit: " + timeAfterExit);
         }
 
         SendDataUpdate();
     }
-
     #endregion
 
     /// <summary>

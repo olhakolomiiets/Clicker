@@ -1,6 +1,7 @@
 using Lean.Localization;
 using System;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,13 +20,11 @@ public class ItemController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _purchaseInfoText;
     [SerializeField] private GameObject _buyPanel;
     [SerializeField] private GameObject _managerButton;
-
     private bool _isPremium;
+    private bool isAuto;
     private int _maxItems;
     private string _translationText;
-
     public event Action OnProgressButtonClicked, OnWorkFinished, OnPremiumItemWorkFinished, OnBuyButtonClicked, OnActivationPremium, OnFirstActivation;
-
     public bool isWorking => _progressButton.IsEnabled == false;
     private void Awake()
     {
@@ -37,12 +36,19 @@ public class ItemController : MonoBehaviour
         ToggleIncome(false);
     }
 
-    public void Prepare(Sprite icon, bool isPremium, string translationText, int maxItemsCount)
+    void Start()
+    {
+        if (_progressButton.IsEnabled && isAuto)
+            OnProgressButtonClicked?.Invoke();
+    }
+
+    public void Prepare(Sprite icon, bool isPremium, string translationText, int maxItemsCount, bool auto)
     {
         _translationText = translationText;
         _itemImage.sprite = icon;
         _isPremium = isPremium;
         _maxItems = maxItemsCount;
+        isAuto = auto;
 
         if (_isPremium)
             _premiumImage.SetActive(true);

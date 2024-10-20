@@ -28,6 +28,8 @@ public class ProgressBar : MonoBehaviour
         }
         _progressBarImage.fillAmount = 0;
         OnProgressBarFinished?.Invoke();
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! ProgressBar /// MakeProgress /// Delay: " + delay);
     }
 
     public void ResetProgress()

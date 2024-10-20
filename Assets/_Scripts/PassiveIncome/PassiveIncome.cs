@@ -56,6 +56,7 @@ public class PassiveIncome : MonoBehaviour
     GeneralGameData _currentGeneralData;
     private double _passiveProfit;
     private bool _rewardReceived;
+    private bool _isPassiveIncome;
     private int _2xPassiveIncome;
     private int _3xPassiveIncome;
 
@@ -85,10 +86,11 @@ public class PassiveIncome : MonoBehaviour
         _currentGameData = gameData;
 
         _buyButton.interactable = (generalGameData.Diamonds <= _passiveIncomeData.ExtraTimePrice) ? false : true;
+        _rewardReceived = false;
     }
 
     public void GetExtraTimeForPassiveIncome()
-    {       
+    {
         OnGetPassiveIncomeExtraTime?.Invoke(_passiveIncomeData.ExtraTimePrice, _passiveIncomeData.ExtraTime);
 
         if (_currentGeneralData.ExtraTimePurchasedCount >= _passiveIncomeData.ExtraTimeCount)
@@ -100,7 +102,7 @@ public class PassiveIncome : MonoBehaviour
 
     public void ActivatePassiveIncome(int timeAfterExit)
     {
-        if (!_rewardReceived && timeAfterExit > _delayTime && _currentGameData.MoneyPerSec > 0)
+        if (!_rewardReceived && timeAfterExit > _delayTime && _currentGameData.MoneyPerSec > 0 && _currentGameData.IsManagerPurchased > 0)
         {
             _passiveProfit = Math.Min(timeAfterExit, _currentGeneralData.PassiveIncomeTime) * _currentGameData.MoneyPerSec;
             PreparePassiveIncomeUI(timeAfterExit, _passiveProfit);
@@ -111,6 +113,7 @@ public class PassiveIncome : MonoBehaviour
     {
         OnEarningPassiveIncome?.Invoke(_passiveProfit, 0);
         passiveIncomeWind.SetActive(false);
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! PassiveIncome /// EarningPassiveIncome /// PassiveIncome: " + _passiveProfit);
     }
 
     public void PreparePassiveIncomeUI(int timeAfterExit, double passiveIncome)
@@ -136,13 +139,17 @@ public class PassiveIncome : MonoBehaviour
 
     public void UserEarnedReward()
     {
-        OnEarningPassiveIncome?.Invoke(_2xPassiveIncome, 0);
+        if (_isPassiveIncome)
+        {
+            OnEarningPassiveIncome?.Invoke(_2xPassiveIncome, 0);
 
-        FirebaseAnalytics.LogEvent(name: "Get_2xPassiveIncome");
+            FirebaseAnalytics.LogEvent(name: "Get_2xPassiveIncome");
 
-        _2xButtonReward.interactable = true;
-        _3xButtonReward.interactable = true;
-        passiveIncomeWind.SetActive(false);
+            _2xButtonReward.interactable = true;
+            _3xButtonReward.interactable = true;
+            passiveIncomeWind.SetActive(false);
+            _isPassiveIncome = false;
+        }
     }
 
     public void GetDoublePassiveIncome()
@@ -150,11 +157,12 @@ public class PassiveIncome : MonoBehaviour
         _2xButtonReward.interactable = false;
         _3xButtonReward.interactable = false;
 
+        _rewardReceived = true;
+        _isPassiveIncome = true;
+
         //buttonReward.GetComponentInChildren<Text>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
         _adController.LoadAd();
-
-        _rewardReceived = true;
     }
 
     public void GetTriplePassiveIncome()
@@ -164,14 +172,14 @@ public class PassiveIncome : MonoBehaviour
 
         OnEarningPassiveIncome?.Invoke(_3xPassiveIncome, _3xPassiveIncomePrice);
 
-        passiveIncomeWind.SetActive(false);
-
         _rewardReceived = true;
+        passiveIncomeWind.SetActive(false);
     }
 
     public void ShowRewardedAd()
     {
-        _adController.ShowAd();
+        if (_isPassiveIncome)
+            _adController.ShowAd();
     }
 
     public void RewardedAdWithError()

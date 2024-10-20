@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private GameUI _gameUI;    
+    [SerializeField] private GameUI _gameUI;
     private GameData _gameData;
     GeneralGameData _generalGameData;
     [SerializeField] private GameRules _gameRules;
@@ -25,14 +25,13 @@ public class GameManager : MonoBehaviour
 
     [Space(10)]
     [SerializeField] private RewardTimers _rewardTimer;
-    [SerializeField] private CoinsReward _coinsReward;
-    [SerializeField] private BoosterReward _boosterReward;
+    [SerializeField] private RewardsManager _rewardsManager;
 
     [Space(10)]
     [SerializeField] private PurchaseManager _purchaseManager;
     [SerializeField] private PassiveIncome _passiveIncome;
 
-    private bool isGameSaved = false;
+    private bool isGameSaved = true;
 
     /// <summary>
     /// All the setup happens here
@@ -40,9 +39,9 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         _rewardTimer.OnActivatedCoinsRewardButton.AddListener(ActivatedRewardButton);
-        _boosterReward.OnBoosterRewardEarned.AddListener(_gameRules.SendDataUpdate);
+        _rewardsManager.OnBoosterRewardEarned.AddListener(_gameRules.SendDataUpdate);
         _rewardTimer.OnBoosterRewardReceived.AddListener(_gameRules.SendDataUpdate);
-        
+
         PrepareGameData();
         PrepareUI();
         ConnectGameRulesToUI();
@@ -55,8 +54,11 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        LoadSavedData();
-        LoadGeneralGameData();
+        if (isGameSaved)
+        {
+            LoadSavedData();
+            LoadGeneralGameData();
+        }
 
         _creationItemsCount = _gameData.ItemCount;
         _upgradeItemCount = _gameData.UpgradeItemCount;
@@ -66,7 +68,7 @@ public class GameManager : MonoBehaviour
 
     private void ActivatedRewardButton()
     {
-        _coinsReward.PrepareRewardData((float)_gameData.Money);
+        _rewardsManager.PrepareRewardData((float)_gameData.Money);
     }
 
     /// <summary>
@@ -98,7 +100,7 @@ public class GameManager : MonoBehaviour
         _passiveIncome.OnEarningPassiveIncome += _gameRules.GetPassiveIncome;
         _passiveIncome.OnGetPassiveIncomeExtraTime += _gameRules.UpdatePassiveIncomeTime;
 
-        _coinsReward.OnEarningReward += _gameRules.GetReward;
+        _rewardsManager.OnEarningReward += _gameRules.GetReward;
 
         _purchaseManager.OnPurchasingPack += _gameRules.GetPurchasedProduct;
         _purchaseManager.OnPurchasingDiamonds += _gameRules.GetPurchasedProduct;
@@ -112,7 +114,7 @@ public class GameManager : MonoBehaviour
         _gameData = new();
         _generalGameData = new();
         _gameData.ItemDataList = _creationItemsDataList;
-        _gameData.UpgradeItemDataList = _upgradeItemsDataList;        
+        _gameData.UpgradeItemDataList = _upgradeItemsDataList;       
     }
 
     /// <summary>
@@ -124,9 +126,9 @@ public class GameManager : MonoBehaviour
         _gameUI.PrepareUpgradeUI(_upgradeItemsDataList);
 
         _gameUI.OnProgressButtonClicked += _gameRules.HandleStartItemProgress;
-       
+
         _gameUI.OnWorkFinished += _gameRules.IncreaseScore;
-        
+
         _gameUI.OnWorkFinished += _gameRules.HandleManager;
 
         _gameUI.OnUpgradeItemPurchased += _gameRules.HandleStartUpgradeItemProgress;
@@ -171,6 +173,7 @@ public class GameManager : MonoBehaviour
             _gameRules.LoadPlanet(data[0]);
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! _visualsController.LoadData(data[1]);
         }
+        isGameSaved = false;
 
         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// LoadSavedData");
     }
@@ -182,10 +185,9 @@ public class GameManager : MonoBehaviour
             _generalGameData.GetSaveData()
         };
         _saveSystem.SaveTheGame(dataToSave);
-
         PlayerPrefs.SetInt("SavedScene", SceneManager.GetActiveScene().buildIndex);
-        isGameSaved = true;
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GeneralManager /// SaveGame " + dataToSave);
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GeneralManager /// SaveGeneralGameData /// SaveGameData " + dataToSave);
     }
 
     public void LoadGeneralGameData()
@@ -195,7 +197,7 @@ public class GameManager : MonoBehaviour
         {
             _gameRules.LoadGame(data[0]);
         }
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GeneralManager /// LoadSavedGeneralData");
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GeneralManager /// LoadGeneralGameData");
     }
 
     /// <summary>
@@ -240,26 +242,26 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void OnApplicationQuit()
-    {       
-        if (!isGameSaved)
-        {
-            SaveGame();
-            SaveGeneralGameData();
-        }
-    }
+    // private void OnApplicationQuit()
+    // {
+    //     if (!isGameSaved)
+    //     {
+    //         SaveGame();
+    //         SaveGeneralGameData();
+    //         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// OnApplicationQuit /// SaveGame");
+    //     }
+    // }
 
     private void OnDisable()
     {
-        _rewardTimer.OnActivatedCoinsRewardButton.RemoveListener(ActivatedRewardButton);
-        _boosterReward.OnBoosterRewardEarned.RemoveListener(_gameRules.SendDataUpdate);
-        _rewardTimer.OnBoosterRewardReceived.RemoveListener(_gameRules.SendDataUpdate);
-
         if (!isGameSaved)
         {
             SaveGame();
             SaveGeneralGameData();
         }
+        _rewardTimer.OnActivatedCoinsRewardButton.RemoveListener(ActivatedRewardButton);
+        _rewardsManager.OnBoosterRewardEarned.RemoveListener(_gameRules.SendDataUpdate);
+        _rewardTimer.OnBoosterRewardReceived.RemoveListener(_gameRules.SendDataUpdate);
     }
 
     private void OnDestroy()

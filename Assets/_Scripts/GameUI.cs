@@ -50,7 +50,7 @@ public class GameUI : MonoBehaviour
             ItemController itemController = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();
 
             _uiCreationItemsList.Add(itemController);
-            itemController.Prepare(data[i].ItemImage, data[i].IsPremium, data[i].TranslationText, data[i].MaxCountIncrement);
+            itemController.Prepare(data[i].ItemImage, data[i].IsPremium, data[i].TranslationText, data[i].MaxCountIncrement, data[i].Auto);
 
             UIManagerController _managerController = itemController.GetComponent<UIManagerController>();
             _managerControllers.Add(_managerController);
@@ -64,6 +64,7 @@ public class GameUI : MonoBehaviour
             _uiItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
 
             _managerControllers[i].OnManagerPurchased += PurchaseManager;
+
         }
 
         OnBuyButonClicked += ActivateNextCreationObject;

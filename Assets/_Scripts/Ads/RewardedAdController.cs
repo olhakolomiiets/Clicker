@@ -23,11 +23,7 @@ namespace GoogleMobileAds.Sample
 
         #region UNITY EVENTS
 
-        [HideInInspector] public UnityEvent OnUserEarnedRewardEvent;
-        [HideInInspector] public UnityEvent OnAdClosedEvent;
-        [HideInInspector] public UnityEvent RewardedAdLoadedEvent;
-        [HideInInspector] public UnityEvent RewardedAdLoadedWithErrorEvent;
-
+        [HideInInspector] public UnityEvent OnUserEarnedRewardEvent, OnAdClosedEvent, RewardedAdLoadedEvent, RewardedAdLoadedWithErrorEvent;
         #endregion
 
         public RewardedAd _rewardedAd;

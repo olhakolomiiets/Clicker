@@ -28,9 +28,9 @@ public class SaveSystem : MonoBehaviour
         if (PlayerPrefs.HasKey(_saveKeyName) == false)
             return new();
         SavedData data = JsonUtility.FromJson<SavedData>(PlayerPrefs.GetString(_saveKeyName));
-        Debug.Log("Planet Load " + _saveKeyName);
 
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! Load GameData /// LoadData " + data.savedData);
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! SaveSystem /// LoadPlanet /// SaveKeyName  " + _saveKeyName);
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! SaveSystem /// LoadPlanet /// Data " + data.savedData);
         return data.savedData;
     }
 
@@ -49,9 +49,9 @@ public class SaveSystem : MonoBehaviour
         if (PlayerPrefs.HasKey(_saveGameKeyName) == false)
             return new();
         SavedGeneralData data = JsonUtility.FromJson<SavedGeneralData>(PlayerPrefs.GetString(_saveGameKeyName));
-        Debug.Log("Game Load " + _saveGameKeyName);
 
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! Load GameData /// LoadData " + data.savedGeneralData);
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! SaveSystem /// LoadGame /// SaveGameKeyName " + _saveGameKeyName);
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! SaveSystem /// LoadGame /// GeneralData " + data.savedGeneralData);
         return data.savedGeneralData;
     }
 

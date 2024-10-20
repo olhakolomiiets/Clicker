@@ -5,8 +5,8 @@ using UnityEngine;
 [CreateAssetMenu]
 public class ItemData : ScriptableObject
 {
-    public double ItemIncome(int itemCount, int bonusMultiplier) => ItemBaseIncome * itemCount * bonusMultiplier;
-    public double ItemIncomePerSec(int itemCount, int bonusMultiplier) => ItemBaseIncome * itemCount * bonusMultiplier / (double)Delay;
+    public double ItemIncome(int itemCount, int bonusMultiplier) => ItemBaseIncome * BoosterMultiplier * itemCount * bonusMultiplier;
+    public double ItemIncomePerSec(int itemCount, int bonusMultiplier) => ItemBaseIncome * BoosterMultiplier * itemCount * bonusMultiplier / (double)Delay;
     public double DiamondsIncome(int itemCount) => ItemDiamondsIncome * itemCount;
     //A way to set the base price of purchasing item and the upgrade cost in one method
     public double ItemUpgradePrice(int itemCount)
@@ -18,15 +18,18 @@ public class ItemData : ScriptableObject
 
     //Those parameters are editable though the inspector. Originally i have planed to load this data from a file (for example xls)
     [field: SerializeField]
-    public double ItemBaseIncome { get; set; } = 1.67;
+    public double ItemBaseIncome { get; set; }
 
     [field: SerializeField]
-    public int ItemDiamondsIncome { get; set; } = 1;
+    public int ItemDiamondsIncome { get; set; }
     
     [field: SerializeField]
-    public double ItemStartCost { get; private set; } = 3.738;
+    public double ItemStartCost { get; private set; }
     [field: SerializeField]
-    public double ItemCostMultiFactor { get; private set; } = 1.07;
+    public double ItemCostMultiFactor { get; private set; }
+
+    [field: SerializeField]
+    public double BoosterMultiplier { get; set; }
 
     //We set the max count as a limit before we increase the bonus multplier for the score
        public int MaxCount(int bonusMultiplier, int maxCountHelper) =>
@@ -47,25 +50,17 @@ public class ItemData : ScriptableObject
     [SerializeField] public int MaxCountIncrement;
     
     [field: SerializeField]
-    public float Delay { get; set; } = 0.6f;
+    public float Delay { get; set; }
     [field: SerializeField]
-    public float ManagerPrice { get; set; } = 1000;
+    public float ManagerPrice { get; set; }
     [field: SerializeField]
     public Sprite ItemImage { get; set; }
     [field: SerializeField] 
     public bool IsPremium { get; set; }    
+    [field: SerializeField]
+    public bool Auto { get; set; }  
     
     [field: SerializeField] 
     public string TranslationText { get; set; }
-
-    public void DivideItemBaseIncomeBy2()
-    {
-        ItemBaseIncome /= 2f;
-    }
-
-    public void MultiplyItemBaseIncomeBy2()
-    {
-        ItemBaseIncome *= 2;
-    }
 
 }

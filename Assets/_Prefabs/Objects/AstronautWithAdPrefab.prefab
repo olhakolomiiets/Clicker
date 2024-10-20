@@ -480,8 +480,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 493857618068357929}
-        m_TargetAssemblyTypeName: CoinsReward, Assembly-CSharp
+      - m_Target: {fileID: 343218387278387860}
+        m_TargetAssemblyTypeName: RewardsManager, Assembly-CSharp
         m_MethodName: GetCoins
         m_Mode: 1
         m_Arguments:
@@ -708,8 +708,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6525371067647248414}
-        m_TargetAssemblyTypeName: BoosterReward, Assembly-CSharp
+      - m_Target: {fileID: 343218387278387860}
+        m_TargetAssemblyTypeName: RewardsManager, Assembly-CSharp
         m_MethodName: GetCoinsBooster
         m_Mode: 1
         m_Arguments:
@@ -878,8 +878,6 @@ GameObject:
   - component: {fileID: 9192536289318652696}
   - component: {fileID: 4758674844147505692}
   - component: {fileID: 763878922881019029}
-  - component: {fileID: 6525371067647248414}
-  - component: {fileID: 493857618068357929}
   m_Layer: 6
   m_Name: Canvas
   m_TagString: Untagged
@@ -990,64 +988,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetTransformRight: {fileID: 9179754432687862637}
   targetTransformLeft: {fileID: 9183679621822280944}
---- !u!114 &6525371067647248414
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6332454907833565626}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b09515c3539a9f46a84ebef389d9f21, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _title: {fileID: 2514326181269286053}
-  buttonReward: {fileID: 8233107213310284750}
-  _coinsRewardTxt: {fileID: 3205730396963292707}
-  _adController: {fileID: 0}
-  OnUserEarnedRewardEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  RewardedAdLoadedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  RewardedAdLoadedWithErrorEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnBoosterRewardEarned:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &493857618068357929
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6332454907833565626}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4c0cfa1e6d130c4d920ba5358d93e5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _title: {fileID: 2514326181269286053}
-  buttonReward: {fileID: 6149248330764319129}
-  _coinsRewardTxt: {fileID: 3205730396963292707}
-  coinsMultiplicator: 1.2
-  rewardTimer: {fileID: 0}
-  _adController: {fileID: 0}
-  OnUserEarnedRewardEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  RewardedAdLoadedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  RewardedAdLoadedWithErrorEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnCoinsRewardReceived:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &6537457319239751961
 GameObject:
   m_ObjectHideFlags: 0
@@ -1059,7 +999,6 @@ GameObject:
   - component: {fileID: 5110538618358532447}
   - component: {fileID: 8734157253152760657}
   - component: {fileID: 2514326181269286053}
-  - component: {fileID: 8271913600723374196}
   m_Layer: 6
   m_Name: TitleText (TMP)
   m_TagString: Untagged
@@ -1183,20 +1122,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &8271913600723374196
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6537457319239751961}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbf51be86e70d7941bd40914206e4ddc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  translationName: GetCoins
-  FallbackText: TitleText
 --- !u!1 &6635903011009902774
 GameObject:
   m_ObjectHideFlags: 0
@@ -1242,6 +1167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9abb44af9ea76324ba4086c4c57b258c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rewardTimers: {fileID: 0}
   targetObject: {fileID: 7817263548251303350}
   waypoints:
   - {fileID: 6724665694445205023}
@@ -1297,7 +1223,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4801412595580282369
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1385,6 +1311,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3212617889797900212}
+  - component: {fileID: 343218387278387860}
   m_Layer: 6
   m_Name: AstronautWithAdPrefab
   m_TagString: Untagged
@@ -1410,6 +1337,45 @@ Transform:
   - {fileID: 228572924842379817}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &343218387278387860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7684761382573804028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 799febd736bbe6542821d7593521b9e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _coinsTitle: {fileID: 2514326181269286053}
+  _coinsButton: {fileID: 6149248330764319129}
+  _reward: {fileID: 6973627001788310646}
+  _coinsRewardTxt: {fileID: 3205730396963292707}
+  _coinsMultiplicator: 0.4
+  _boosterTime: 300
+  _boosterTitle: {fileID: 2514326181269286053}
+  _boosterButton: {fileID: 8233107213310284750}
+  _description: {fileID: 9108018519227396141}
+  _meteor: {fileID: 8676762366947229653}
+  _rewardTimer: {fileID: 0}
+  _adController: {fileID: 0}
+  OnUserEarnedRewardEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  RewardedAdLoadedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  RewardedAdLoadedWithErrorEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnCoinsRewardReceived:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBoosterRewardEarned:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &7817263548251303350
 GameObject:
   m_ObjectHideFlags: 0

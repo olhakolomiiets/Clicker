@@ -85,7 +85,7 @@ public class PurchaseManager : MonoBehaviour
     {
         for (int i = 0; i < _creationItemsDataList.Count; i++)
         {
-            _creationItemsDataList[i].MultiplyItemBaseIncomeBy2();
+            _creationItemsDataList[i].BoosterMultiplier = 2;
         }
         _coinsBoosterButton.SetActive(false);
         //PlayerPrefs.SetInt("CoinsBoosterPurchased", 1);

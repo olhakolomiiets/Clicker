@@ -64,7 +64,6 @@ public class RewardsManager : MonoBehaviour
         _coinsButton.gameObject.SetActive(true);
         _reward.SetActive(true);
         _coinsTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("GetCoins")}";
-        _adController.LoadAd();
     }
 
     public void EnableBoosterReward()
@@ -75,7 +74,6 @@ public class RewardsManager : MonoBehaviour
         _boosterButton.gameObject.SetActive(true);
         _boosterTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Booster")}";
         _description.SetActive(true);
-        _adController.LoadAd();
     }
 
     public void PrepareRewardData(float money)
@@ -124,9 +122,7 @@ public class RewardsManager : MonoBehaviour
         _isBoosterRewardActive = true;
         _description.GetComponent<TextMeshProUGUI>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
-        //_adController.LoadAd();
-
-        ShowRewardedAd();
+        _adController.LoadAd();
     }
 
     public void GetCoins()
@@ -135,17 +131,12 @@ public class RewardsManager : MonoBehaviour
         _isCoinsRewardActive = true;
         //buttonReward.GetComponentInChildren<Text>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
-        //_adController.LoadAd();
-        
-        ShowRewardedAd();
+        _adController.LoadAd();
     }
 
     public void ShowRewardedAd()
     {
-        if (_adController._rewardedAd != null && _isCoinsRewardActive == true || _adController._rewardedAd != null && _isBoosterRewardActive == true)
-            _adController.ShowAd();
-        else
-            _adController.LoadAd();
+        _adController.ShowAd();
     }
 
     public void RewardedAdWithError()

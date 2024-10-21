@@ -13,14 +13,14 @@ public class RewardTimers : MonoBehaviour
     [Space(10)]
     [SerializeField] private GameObject _boosterTimer;
     [SerializeField] private TextMeshProUGUI _timerTxt;
-    [SerializeField] private int _boosterTime;
 
     [Space(10)]
     [SerializeField] private List<ItemData> _creationItemsDataList;
 
     private DateTime endTime;
     private DateTime startTime;
-    [SerializeField] private int timeLeft;
+    private int _boosterTime;
+    private int timeLeft;
     private bool isTimeSaved = true;
     private bool isBooster;
 
@@ -140,8 +140,6 @@ public class RewardTimers : MonoBehaviour
                 DisableCoinsBooster();
                 yield break;
             }
-
-            Debug.Log("++++++++++++++++++++++ Update Coins Booster Timer " + _timerTxt);
 
             yield return new WaitForSeconds(1f);
         }

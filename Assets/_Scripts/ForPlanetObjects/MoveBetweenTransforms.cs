@@ -15,12 +15,15 @@ public class MoveBetweenTransforms : MonoBehaviour
 
     public UnityEvent onCheckpointReached; // Event triggered when a checkpoint is reached
     public UnityEvent onCycleCompleted; // Event triggered when all checkpoints in a cycle are completed
+    public UnityEvent onStart;
 
     private Vector3 targetObjectPos; // My precious
 
     private void OnEnable()
     {
         StartCoroutine(RepeatMovement());
+        onCheckpointReached?.Invoke();
+        onStart?.Invoke();
     }
 
     IEnumerator RepeatMovement()

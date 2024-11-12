@@ -79,9 +79,6 @@ public class GameRules : MonoBehaviour
         _currentGameData.Money -= _currentGameData.ItemDataList[index].ManagerPrice;
         _currentGameData.Managers[index] = true;
 
-        // double itemPrice = _currentGameData.ItemDataList[index].ManagerPrice;
-        // UpdateCurrency(currencyCode, itemPrice, false);
-
         Debug.Log($"Purchased a manager for {index}");
         HandleManager(index);
         _currentGameData.IsManagerPurchased += 1;
@@ -147,9 +144,6 @@ public class GameRules : MonoBehaviour
         _currentGameData.Money -= _currentGameData.ItemDataList[index].ItemUpgradePrice(_currentGameData.ItemCount[index]);
         _currentGameData.ItemCount[index] = 1;
 
-        // double itemPrice = _currentGameData.ItemDataList[index].ItemUpgradePrice(_currentGameData.ItemCount[index]);
-        // UpdateCurrency(currencyCode, itemPrice, false);
-
         ActivateItem(index);
     }
 
@@ -178,9 +172,6 @@ public class GameRules : MonoBehaviour
         if (_currentGameData.ItemDataList[index].IsPremium)
         {
             _currentGeneralData.Diamonds += _currentGameData.ItemDataList[index].DiamondsIncome(_currentGameData.ItemCount[index]);
-
-            // double income = _currentGameData.ItemDataList[index].DiamondsIncome(_currentGameData.ItemCount[index]);
-            // UpdateCurrency(diamondCode, income, true);
         }
         else
         {
@@ -200,9 +191,6 @@ public class GameRules : MonoBehaviour
                 //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// IncreaseScore /// Money: " + _currentGameData.Money);
             }
 
-            // double income = _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
-            // UpdateCurrency(currencyCode, income, true);
-
             _totalScore = _currentGeneralData.TotalScore;
         }
 
@@ -213,8 +201,6 @@ public class GameRules : MonoBehaviour
     {
         _currentGeneralData.Diamonds += _currentGameData.UpgradeItemDataList[index].ItemIncome(_currentGameData.UpgradeItemCount[index]);
 
-        // double income = _currentGameData.UpgradeItemDataList[index].ItemIncome(_currentGameData.UpgradeItemCount[index]);
-        // UpdateCurrency(diamondCode, income, true);
         SendDataUpdate();
     }
 
@@ -245,18 +231,12 @@ public class GameRules : MonoBehaviour
         _currentGameData.Money -= _currentGameData.ItemDataList[index].ItemUpgradePrice(_currentGameData.ItemCount[index]);
         _currentGameData.ItemCount[index] += 1;
 
-        // double itemPrice = _currentGameData.ItemDataList[index].ItemUpgradePrice(_currentGameData.ItemCount[index]);
-        // UpdateCurrency(currencyCode, itemPrice, false);
-
         SendDataUpdate();
     }
     public void HandleDiamondsUpgrade(int index)
     {
         _currentGeneralData.Diamonds -= _currentGameData.UpgradeItemDataList[index].ItemCost;
         _currentGameData.UpgradeItemCount[index] += 1;
-
-        // double itemPrice = _currentGameData.UpgradeItemDataList[index].ItemCost;
-        // UpdateCurrency(diamondCode, itemPrice, false);
 
         SendDataUpdate();
     }
@@ -281,7 +261,7 @@ public class GameRules : MonoBehaviour
             }
 
             _currentGameData.ItemDataList[i].Auto = _currentGameData.Managers[i];
-            
+
             //HandleManager(i);
         }
 
@@ -361,6 +341,7 @@ public class GameRules : MonoBehaviour
             UnlockOtherItems(i);
             UnlockManagers(i);
             CheckBonusMultiplier(i);
+            CheckBoosterMultiplier(i);
             OnUpdateData?.Invoke(i, _currentGameData, _currentGeneralData);
         }
 
@@ -413,14 +394,17 @@ public class GameRules : MonoBehaviour
         }
     }
 
+    private void CheckBoosterMultiplier(int index)
+    {
+        if (_currentGameData.BoosterMultiplier > 0)
+            _currentGameData.ItemDataList[index].BoosterMultiplier = _currentGameData.BoosterMultiplier;
+    }
+
     public void GetMoney()
     {
         _currentGameData.Money += 1000000;
         _currentGeneralData.Diamonds += 200;
         _currentGeneralData.TotalScore += 1000000;
-
-        // UpdateCurrency(currencyCode, 1000000, true);
-        // UpdateCurrency(diamondCode, 200, true);
 
         SendDataUpdate();
     }
@@ -434,9 +418,6 @@ public class GameRules : MonoBehaviour
         _totalScore = _currentGeneralData.TotalScore;
         _currentGeneralData.Diamonds -= diamonds;
 
-        // UpdateCurrency(currencyCode, income, true);
-        // UpdateCurrency(diamondCode, diamonds, false);
-
         SendDataUpdate();
     }
 
@@ -445,8 +426,6 @@ public class GameRules : MonoBehaviour
         _currentGeneralData.Diamonds -= price;
         _currentGeneralData.PassiveIncomeTime += time;
         _currentGeneralData.ExtraTimePurchasedCount++;
-
-        // UpdateCurrency(diamondCode, price, false);
 
         SendDataUpdate();
     }
@@ -460,8 +439,6 @@ public class GameRules : MonoBehaviour
         _currentGeneralData.TotalScore += reward;
         _totalScore = _currentGeneralData.TotalScore;
 
-        // UpdateCurrency(currencyCode, reward, true);
-
         SendDataUpdate();
     }
     #endregion
@@ -473,9 +450,6 @@ public class GameRules : MonoBehaviour
         _currentGameData.Money += coins;
         _currentGeneralData.Diamonds += diamonds;
 
-        // UpdateCurrency(currencyCode, coins, true);
-        // UpdateCurrency(diamondCode, diamonds, true);
-
         SendDataUpdate();
     }
 
@@ -483,7 +457,12 @@ public class GameRules : MonoBehaviour
     {
         _currentGeneralData.Diamonds += diamonds;
 
-        // UpdateCurrency(diamondCode, diamonds, true);
+        SendDataUpdate();
+    }
+
+    public void GetPurchasedBooster(double boosterMultiplier)
+    {
+        _currentGameData.BoosterMultiplier = boosterMultiplier;
 
         SendDataUpdate();
     }

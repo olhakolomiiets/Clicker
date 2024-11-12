@@ -13,9 +13,12 @@ public class UIManager : MonoBehaviour
     public void LoadSceene(int level)
     {
         SceneManager.LoadScene(level);
+        PlayerPrefs.SetInt("SavedScene", level);
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! UIManager /// LoadSceene /// Scene Index: " + level);
     }
 
-    public void LoadRemoteSceene(string key) 
+    public void LoadRemoteSceene(string key)
     {
         loadHandle = Addressables.LoadSceneAsync(key, LoadSceneMode.Single);
     }

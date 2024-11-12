@@ -21,6 +21,7 @@ public class GameData
 
     public List<ItemData> ItemDataList = new();
     public List<double> ItemIncomePerSec = new();
+    public double BoosterMultiplier { get; set;}
 
     public List<UpgradeItemData> UpgradeItemDataList = new();
     public int IsManagerPurchased;
@@ -36,6 +37,7 @@ public class GameData
         UpgradeItemCount = data.UpgradeItemCount;
         Managers = data.Managers;
         ItemBonusMultiplayer = data.ItemBonusMultiplayer;
+        BoosterMultiplier = data.BoosterMultiplier;
         ItemMaxCountHelper = data.ItemMaxCountHelper;
         IsManagerPurchased = data.IsManagerPurchased;
 
@@ -51,6 +53,7 @@ public class GameData
             UpgradeItemCount = UpgradeItemCount,
             Managers = Managers,
             ItemBonusMultiplayer = ItemBonusMultiplayer,
+            BoosterMultiplier = BoosterMultiplier,
             ItemMaxCountHelper = ItemMaxCountHelper,
             IsManagerPurchased = IsManagerPurchased
         });
@@ -65,6 +68,7 @@ public struct GameDataSave
     public List<int> UpgradeItemCount;
     public List<bool> Managers;
     public List<int> ItemBonusMultiplayer;
+    public double BoosterMultiplier;
     public List<int> ItemMaxCountHelper;
     public int IsManagerPurchased;
 }

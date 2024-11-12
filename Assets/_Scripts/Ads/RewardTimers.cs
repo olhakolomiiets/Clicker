@@ -116,10 +116,12 @@ public class RewardTimers : MonoBehaviour
 
         _boosterTimer.SetActive(true);
 
-        for (int i = 0; i < _creationItemsDataList.Count; i++)
+        foreach (var item in _creationItemsDataList)
         {
-            _creationItemsDataList[i].BoosterMultiplier = 2;
+            item.BoosterMultiplier += 1;
         }
+
+        OnBoosterRewardEarned?.Invoke();
 
         StartCoroutine(UpdateCoinsBoosterTimer());
         //StartCoroutine(ActivateCoinsRewardAd());
@@ -147,20 +149,13 @@ public class RewardTimers : MonoBehaviour
 
     private void DisableCoinsBooster()
     {
-        for (int i = 0; i < _creationItemsDataList.Count; i++)
+        foreach (var item in _creationItemsDataList)
         {
-            _creationItemsDataList[i].BoosterMultiplier = 1;
+            item.BoosterMultiplier -= 1;
         }
+
         OnBoosterRewardReceived?.Invoke();
         _boosterTimer.SetActive(false);
-    }
-
-    private void DisableBooster()
-    {
-        for (int i = 0; i < _creationItemsDataList.Count; i++)
-        {
-            _creationItemsDataList[i].BoosterMultiplier = 1;
-        }
     }
 
     private void SaveTimerState()
@@ -207,7 +202,6 @@ public class RewardTimers : MonoBehaviour
 
     private void OnDisable()
     {
-        DisableBooster();
         _rewardsManager.OnCoinsRewardReceived.RemoveListener(StartBoosterRewardCoroutine);
         _rewardsManager.OnBoosterRewardEarned.RemoveListener(StartCoinsRewardCoroutine);
     }

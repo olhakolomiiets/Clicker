@@ -31,6 +31,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PurchaseManager _purchaseManager;
     [SerializeField] private PassiveIncome _passiveIncome;
 
+    [Space(10)]
+    [SerializeField] private LevelController _levelController;
+
     private bool isGameSaved = true;
 
     /// <summary>
@@ -39,7 +42,7 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         _rewardTimer.OnActivatedCoinsRewardButton.AddListener(ActivatedRewardButton);
-        _rewardsManager.OnBoosterRewardEarned.AddListener(_gameRules.SendDataUpdate);
+        _rewardTimer.OnBoosterRewardEarned.AddListener(_gameRules.SendDataUpdate);
         _rewardTimer.OnBoosterRewardReceived.AddListener(_gameRules.SendDataUpdate);
 
         PrepareGameData();
@@ -56,8 +59,8 @@ public class GameManager : MonoBehaviour
     {
         if (isGameSaved)
         {
-            LoadSavedData();
             LoadGeneralGameData();
+            LoadSavedData();
         }
 
         _creationItemsCount = _gameData.ItemCount;
@@ -71,6 +74,7 @@ public class GameManager : MonoBehaviour
         _rewardsManager.PrepareRewardData((float)_gameData.Money);
     }
 
+    #region CONNECT METHODS
     /// <summary>
     /// Connecting Game Rule events to Ui so we can click buttons, progress the game and get a visual response in the UI and
     /// a Visualization
@@ -95,6 +99,8 @@ public class GameManager : MonoBehaviour
     private void ConnectGameRulesToRewards()
     {
         _gameRules.OnUpdateGameData += _passiveIncome.PrepareGameData;
+        _gameRules.OnUpdateGameData += _levelController.PrepareGameData;
+
         _gameRules.OnActivatePassiveIncome += _passiveIncome.ActivatePassiveIncome;
 
         _passiveIncome.OnEarningPassiveIncome += _gameRules.GetPassiveIncome;
@@ -104,17 +110,21 @@ public class GameManager : MonoBehaviour
 
         _purchaseManager.OnPurchasingPack += _gameRules.GetPurchasedProduct;
         _purchaseManager.OnPurchasingDiamonds += _gameRules.GetPurchasedProduct;
+        _purchaseManager.OnPurchasingBooster += _gameRules.GetPurchasedBooster;
     }
+    #endregion
+
+    #region PREPARE METHODS
 
     /// <summary>
     /// GameData stores the state of our game
     /// </summary>
     private void PrepareGameData()
     {
-        _gameData = new();
         _generalGameData = new();
+        _gameData = new();
         _gameData.ItemDataList = _creationItemsDataList;
-        _gameData.UpgradeItemDataList = _upgradeItemsDataList;       
+        _gameData.UpgradeItemDataList = _upgradeItemsDataList;
     }
 
     /// <summary>
@@ -142,7 +152,9 @@ public class GameManager : MonoBehaviour
         _gameUI.OnPurchaseItemFirstTime += _gameRules.PurchaseItemFirstTime;
         _gameUI.OnManagerPurchased += _gameRules.HandleManagerPurchased;
     }
+    #endregion
 
+    #region SAVE & LOAD
     /// <summary>
     /// I have decided that GameManager will know what objects needs to save and load theire data.
     /// SaveSystem just does the Saving work
@@ -157,8 +169,6 @@ public class GameManager : MonoBehaviour
         _saveSystem.SaveThePlanet(dataToSave);
 
         isGameSaved = true;
-
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// SaveGame " + dataToSave);
     }
 
     /// <summary>
@@ -173,9 +183,8 @@ public class GameManager : MonoBehaviour
             _gameRules.LoadPlanet(data[0]);
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! _visualsController.LoadData(data[1]);
         }
-        isGameSaved = false;
 
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// LoadSavedData");
+        isGameSaved = false;
     }
 
     public void SaveGeneralGameData()
@@ -185,9 +194,6 @@ public class GameManager : MonoBehaviour
             _generalGameData.GetSaveData()
         };
         _saveSystem.SaveTheGame(dataToSave);
-        PlayerPrefs.SetInt("SavedScene", SceneManager.GetActiveScene().buildIndex);
-
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GeneralManager /// SaveGeneralGameData /// SaveGameData " + dataToSave);
     }
 
     public void LoadGeneralGameData()
@@ -197,7 +203,6 @@ public class GameManager : MonoBehaviour
         {
             _gameRules.LoadGame(data[0]);
         }
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GeneralManager /// LoadGeneralGameData");
     }
 
     /// <summary>
@@ -208,6 +213,7 @@ public class GameManager : MonoBehaviour
         _saveSystem.ResetData();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+    #endregion
 
     private void OnApplicationFocus(bool focusStatus)
     {
@@ -215,10 +221,8 @@ public class GameManager : MonoBehaviour
         {
             if (isGameSaved)
             {
-                LoadSavedData();
                 LoadGeneralGameData();
-
-                Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// OnApplicationFocus /// LoadSavedData");
+                LoadSavedData();
             }
         }
     }
@@ -229,15 +233,13 @@ public class GameManager : MonoBehaviour
         {
             SaveGame();
             SaveGeneralGameData();
-            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// OnApplicationPause /// SaveGame");
         }
         else
         {
             if (isGameSaved)
             {
-                LoadSavedData();
                 LoadGeneralGameData();
-                Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// OnApplicationPause /// LoadSavedData");
+                LoadSavedData();
             }
         }
     }
@@ -260,7 +262,7 @@ public class GameManager : MonoBehaviour
             SaveGeneralGameData();
         }
         _rewardTimer.OnActivatedCoinsRewardButton.RemoveListener(ActivatedRewardButton);
-        _rewardsManager.OnBoosterRewardEarned.RemoveListener(_gameRules.SendDataUpdate);
+        _rewardTimer.OnBoosterRewardEarned.RemoveListener(_gameRules.SendDataUpdate);
         _rewardTimer.OnBoosterRewardReceived.RemoveListener(_gameRules.SendDataUpdate);
     }
 

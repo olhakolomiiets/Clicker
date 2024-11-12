@@ -478,7 +478,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1722934536991456945
 RectTransform:
   m_ObjectHideFlags: 0
@@ -708,6 +708,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9abb44af9ea76324ba4086c4c57b258c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rewardTimer: {fileID: 0}
   targetObject: {fileID: 8978139862506954875}
   waypoints:
   - {fileID: 3476827355784447927}
@@ -721,6 +722,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onCycleCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+  onStart:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &8978139862506954875

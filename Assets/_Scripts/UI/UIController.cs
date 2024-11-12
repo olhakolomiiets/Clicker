@@ -32,7 +32,8 @@ public class UIController : MonoBehaviour
     [SerializeField] private Button _shopButton;
 
     [Header("Planet Levels")]
-    [SerializeField] private RectTransform _menuButton;
+    [SerializeField] private RectTransform _menuArrow;
+    [SerializeField] private GameObject _bg;
     [SerializeField] private RectTransform _levelsPanel;
     [SerializeField] private float _levelsPanelTopPosX, _levelsPanelMiddlePosX;
 
@@ -101,8 +102,7 @@ public class UIController : MonoBehaviour
     {
         if (isLevelsDisplayed)
         {
-            _camera.MoveCameraTo(_startCameraDistance);
-            _camera.MoveCameraToInstant(_startCameraPos);
+            _bg.SetActive(false);
 
             if (_backgroundImage != null)
             {
@@ -110,8 +110,7 @@ public class UIController : MonoBehaviour
             }
 
             _levelsPanel.DOAnchorPosX(_levelsPanelMiddlePosX, _tweenDuration);
-            _menuButton.gameObject.SetActive(true);
-            //_menuButton.DORotate(new Vector3(0, 0, 0), _tweenDuration);
+            _menuArrow.DORotate(new Vector3(0, 0, 0), _tweenDuration);
             isLevelsDisplayed = false;
 
             if (!_objectPlaceRotator.isRotating)
@@ -121,11 +120,7 @@ public class UIController : MonoBehaviour
         }
         else
         {
-            _startCameraDistance = _camera.FinalDistance;
-            _startCameraPos = _camera.gameObject.transform.position;
-
-            _camera.MoveCameraTo(_cameraDistance);
-            _camera.MoveCameraToInstant(_cameraPos);
+            _bg.SetActive(true);
 
             if (_backgroundImage != null)
             {
@@ -133,9 +128,8 @@ public class UIController : MonoBehaviour
             }
 
             _levelsPanel.DOAnchorPosX(_levelsPanelTopPosX, _tweenDuration);
-            _menuButton.gameObject.SetActive(false);
 
-            //_menuButton.DORotate(new Vector3(0, 0, 180), _tweenDuration);
+            _menuArrow.DORotate(new Vector3(0, 0, 180), _tweenDuration);
             isLevelsDisplayed = true;
             _planetRotator.enabled = false;
         }

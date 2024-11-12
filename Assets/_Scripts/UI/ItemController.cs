@@ -20,6 +20,9 @@ public class ItemController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _purchaseInfoText;
     [SerializeField] private GameObject _buyPanel;
     [SerializeField] private GameObject _managerButton;
+    [SerializeField] private Image _buttonCyImg;
+    [SerializeField] private Image _purchaseCyImg;
+    [SerializeField] private Image _progressBarCyImg;
     private bool _isPremium;
     private bool isAuto;
     private int _maxItems;
@@ -38,25 +41,30 @@ public class ItemController : MonoBehaviour
 
     void Start()
     {
-        if (_progressButton.IsEnabled && isAuto)
+        if (_progressButton.IsEnabled == true && isAuto == true)
             OnProgressButtonClicked?.Invoke();
     }
 
-    public void Prepare(Sprite icon, bool isPremium, string translationText, int maxItemsCount, bool auto)
+    public void Prepare(Sprite icon, Sprite currency, bool isPremium, string translationText, int maxItemsCount, bool auto)
     {
         _translationText = translationText;
         _itemImage.sprite = icon;
+        _buttonCyImg.sprite = _purchaseCyImg.sprite = _progressBarCyImg.sprite = currency;
         _isPremium = isPremium;
         _maxItems = maxItemsCount;
         isAuto = auto;
+
+        _itemTitle.text = LeanLocalization.GetTranslationText(translationText);
 
         if (_isPremium)
             _premiumImage.SetActive(true);
 
         if (_purchaseInfo.isActiveAndEnabled)
         {
-            _purchaseInfoText.text = $"{LeanLocalization.GetTranslationText("Unlock")} {LeanLocalization.GetTranslationText(_translationText)}";
+            _purchaseInfoText.text = $"{LeanLocalization.GetTranslationText("Unlock")} {LeanLocalization.GetTranslationText(translationText)}";
         }
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! ItemController /// Prepare /// Translation Text: " + _translationText);
     }
 
     public void ActivateButton()
@@ -146,6 +154,8 @@ public class ItemController : MonoBehaviour
     public void ToggleBuyButton(bool val)
         => _buyButton.interactable = val;
 
+    public void DisableBuyPanel(bool val) => _buyPanel.SetActive(val);
+
     public void StartWork(float delay)
     {
         _progressButton.IsEnabled = false;
@@ -155,12 +165,24 @@ public class ItemController : MonoBehaviour
     public void ToggleIncome(bool val)
         => _itemScore.gameObject.SetActive(val);
 
-    public void SetIncome(double score, string sec)
+    public void SetIncomePerSec(double score, string sec)
     {
         if (score > 1000)
             _itemScore.text = $"{AbbreviateNumber(score) + sec}";
         else
             _itemScore.text = $"{score.ToString("N0") + sec}";
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! ItemController /// SetIncomePerSec /// Item Income Per Sec: " + score);
+    }
+
+    public void SetIncome(double score)
+    {
+        if (score > 1000)
+            _itemScore.text = $"{AbbreviateNumber(score)}";
+        else
+            _itemScore.text = $"{score.ToString("N0")}";
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! ItemController /// SetIncome /// Item Income: " + score);
     }
 
     private void HandleProgressBarFinished()

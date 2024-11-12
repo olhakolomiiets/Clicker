@@ -2,68 +2,60 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class LastSceneManager : MonoBehaviour
 {
-    private bool isSceneSaved = false;
-    private void OnEnable()
+    [SerializeField] private List<Button> _levelButtons;
+
+    private GameData currentGameData;
+    private bool isSceneSaved = true;
+    private void Awake()
     {
-        LoadSavedScene();
+        if (PlayerPrefs.HasKey("SavedScene"))
+        {
+            int sceneIndex = PlayerPrefs.GetInt("SavedScene");
+            int activeScene = SceneManager.GetActiveScene().buildIndex;
+
+            if (activeScene != sceneIndex)
+                StartCoroutine(LoadYourAsyncScene(sceneIndex));
+
+            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! LastSceneManager /// Awake /// Scene Index: " + sceneIndex);
+            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! LastSceneManager /// Awake /// Active Scene Index: " + activeScene);
+        }
     }
+
+    IEnumerator LoadYourAsyncScene(int index)
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(index);
+
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+    }
+
     private void SaveScene()
     {
         PlayerPrefs.SetInt("SavedScene", SceneManager.GetActiveScene().buildIndex);
         isSceneSaved = true;
     }
+
     private void LoadSavedScene()
     {
+        isSceneSaved = false;
         if (PlayerPrefs.HasKey("SavedScene"))
-        {
             SceneManager.LoadScene(PlayerPrefs.GetInt("SavedScene"));
-        }
     }
 
-    private void OnApplicationFocus(bool focusStatus)
+    private void HandleApplicationState(bool status)
     {
-        if (focusStatus)
-        {
-            if (isSceneSaved)
-            {
-                LoadSavedScene();
-            }
-        }
-    }
-
-    private void OnApplicationPause(bool pauseStatus)
-    {
-        if (pauseStatus)
-        {
-            SaveScene();
-        }
-        else
-        {
-            if (isSceneSaved)
-            {
-                LoadSavedScene();
-            }
-        }
-    }
-
-    private void OnApplicationQuit()
-    {
-        if (!isSceneSaved)
-            SaveScene();
-    }
-
-    private void OnDisable()
-    {
-        if (!isSceneSaved)
-            SaveScene();
+        if (status) SaveScene();
+        else if (isSceneSaved) LoadSavedScene();
     }
 
     private void OnDestroy()
     {
-        if (!isSceneSaved)
-            SaveScene();
+
     }
 }

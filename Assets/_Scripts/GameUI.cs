@@ -50,7 +50,7 @@ public class GameUI : MonoBehaviour
             ItemController itemController = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();
 
             _uiCreationItemsList.Add(itemController);
-            itemController.Prepare(data[i].ItemImage, data[i].IsPremium, data[i].TranslationText, data[i].MaxCountIncrement, data[i].Auto);
+            itemController.Prepare(data[i].ItemImage, data[i].CurrencyImage, data[i].IsPremium, data[i].TranslationText, data[i].MaxCountIncrement, data[i].Auto);
 
             UIManagerController _managerController = itemController.GetComponent<UIManagerController>();
             _managerControllers.Add(_managerController);
@@ -162,23 +162,27 @@ public class GameUI : MonoBehaviour
 
         if (gameData.ItemDataList[index].IsPremium)
         {
-            _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].DiamondsIncome(gameData.ItemCount[index]), "");
+            _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].DiamondsIncome(gameData.ItemCount[index]));
             _diamonds.SetDiamondsScore(generalData.Diamonds);
         }
         else
         {
             if (gameData.Managers[index])
-                _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncomePerSec(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]), " / sec");
+                _uiCreationItemsList[index].SetIncomePerSec(gameData.ItemDataList[index].ItemIncomePerSec(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]), " / sec");
             else
-                _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]), "");
+                _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]));
 
             _coins.SetScore(gameData.Money);
             _diamonds.SetDiamondsScore(generalData.Diamonds);
-            
         }
+
+        if (gameData.BoosterMultiplier > 0)
+            gameData.ItemDataList[index].BoosterMultiplier = gameData.BoosterMultiplier;
+
         _uiCreationItemsList[index].SetBuyPrice(gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
         _uiCreationItemsList[index].SetItemCount(gameData.ItemCount[index], gameData.ItemDataList[index].MaxCount(gameData.ItemBonusMultiplayer[index], gameData.ItemMaxCountHelper[index]));
-        _uiCreationItemsList[index].ToggleBuyButton(gameData.Money >= gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]) && gameData.ItemCount[index] < gameData.ItemDataList[index].MaxCountIncrement);
+        _uiCreationItemsList[index].ToggleBuyButton(gameData.Money >= gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
+        _uiCreationItemsList[index].DisableBuyPanel(gameData.ItemCount[index] < gameData.ItemDataList[index].MaxCountIncrement);
     }
 
     public void UpdateUpgradeUI(int index, GameData gameData, GeneralGameData generalData)

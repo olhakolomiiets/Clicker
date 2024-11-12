@@ -12,10 +12,10 @@ namespace CBS.UI
     {
         [SerializeField]
         private Text DisplayName;
-        [SerializeField]
-        private Text Description;
-        [SerializeField]
-        private Image Icon;
+        //[SerializeField]
+        //private Text Description;
+        //[SerializeField]
+        //private Image Icon;
         [SerializeField]
         private Button CollectBtn;
         [SerializeField]
@@ -47,8 +47,8 @@ namespace CBS.UI
             CurrentCalendar = null;
             CurrentPosition = null;
             DisplayName.text = string.Empty;
-            Description.text = string.Empty;
-            Icon.gameObject.SetActive(false);
+            //Description.text = string.Empty;
+            //Icon.gameObject.SetActive(false);
             CollectBtn.gameObject.SetActive(false);
             PurchaseBtn.gameObject.SetActive(false);
             PositionScroller.HideAll();
@@ -83,10 +83,10 @@ namespace CBS.UI
             CurrentCalendar = instance;
             CollectBtn.gameObject.SetActive(false);
             DisplayName.text = instance.DisplayName;
-            Description.text = instance.Description;
+            //Description.text = instance.Description;
             var iconSprite = instance.GetSprite();
-            Icon.gameObject.SetActive(iconSprite != null);
-            Icon.sprite = instance.GetSprite();
+            //Icon.gameObject.SetActive(iconSprite != null);
+            //Icon.sprite = instance.GetSprite();
 
             var positions = instance.Positions;
             var slotPrefab = Prefabs.CalendarSlot;

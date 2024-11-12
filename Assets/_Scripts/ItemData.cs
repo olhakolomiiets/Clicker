@@ -42,7 +42,6 @@ public class ItemData : ScriptableObject
 
     //public int MaxCount(int maxCountHelper) => maxCountHelper;
 
-
     //Parameter used to caluclate if we should increase the bonus multiplier
     public int BonusMaxCountThreshold => 4;
     //Parameter used to caluclate if we should increase the bonus multiplier
@@ -62,5 +61,7 @@ public class ItemData : ScriptableObject
     
     [field: SerializeField] 
     public string TranslationText { get; set; }
+    [field: SerializeField]
+    public Sprite CurrencyImage { get; set; }
 
 }

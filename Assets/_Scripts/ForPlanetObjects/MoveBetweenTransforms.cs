@@ -30,7 +30,8 @@ public class MoveBetweenTransforms : MonoBehaviour
     {
         while (true)
         {
-            _rewardTimer.ActivateRewardAd(); // My precious
+            if (_rewardTimer != null)
+                _rewardTimer.ActivateRewardAd(); // My precious
 
             yield return StartCoroutine(MoveBetweenWaypoints());
             onCycleCompleted?.Invoke();
@@ -47,7 +48,8 @@ public class MoveBetweenTransforms : MonoBehaviour
 
         for (int i = 0; i < numWaypoints; i++)
         {
-            _rewardTimer.ActivateRewardAd(); // My precious
+            if(_rewardTimer != null)
+                _rewardTimer.ActivateRewardAd(); // My precious
 
             int nextWaypointIndex = (i + 1) % numWaypoints;
             yield return StartCoroutine(MoveToWaypoint(waypoints[nextWaypointIndex], nextWaypointIndex));

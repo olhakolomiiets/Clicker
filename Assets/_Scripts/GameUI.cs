@@ -50,7 +50,7 @@ public class GameUI : MonoBehaviour
             ItemController itemController = Instantiate(_uiItemPrefab, _uiItemParent).GetComponent<ItemController>();
 
             _uiCreationItemsList.Add(itemController);
-            itemController.Prepare(data[i].ItemImage, data[i].CurrencyImage, data[i].IsPremium, data[i].TranslationText, data[i].MaxCountIncrement, data[i].Auto);
+            itemController.Prepare(data[i].ItemImage, data[i].CurrencyImage, data[i].IsPremium, data[i].TranslationText, data[i].MaxCountIncrement);
 
             UIManagerController _managerController = itemController.GetComponent<UIManagerController>();
             _managerControllers.Add(_managerController);
@@ -134,7 +134,6 @@ public class GameUI : MonoBehaviour
     private void ConnectEvents(int i, UpgradeItemController upgradeItemController)
     {
         upgradeItemController.OnUpgradeItemBuyButtonClicked += () => OnUpgradeItemPurchased?.Invoke(i);
-        upgradeItemController.OnUpdateWorkFinished += () => OnUpdateWorkFinished?.Invoke(i);
     }
 
     public void UpdateManagerAvailability(int index, bool val)
@@ -145,10 +144,6 @@ public class GameUI : MonoBehaviour
     public void StartWorkOnItem(int index, float delay)
     {
         _uiCreationItemsList[index].StartWork(delay);
-    }
-    public void StartWorkOnUpgradeItem(int index, float delay)
-    {
-        _uiUpgradeItemsList[index].StartWork(delay);
     }
 
     public void ToggleItemActiveState(int index, bool val)
@@ -182,14 +177,14 @@ public class GameUI : MonoBehaviour
         _uiCreationItemsList[index].SetBuyPrice(gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
         _uiCreationItemsList[index].SetItemCount(gameData.ItemCount[index], gameData.ItemDataList[index].MaxCount(gameData.ItemBonusMultiplayer[index], gameData.ItemMaxCountHelper[index]));
         _uiCreationItemsList[index].ToggleBuyButton(gameData.Money >= gameData.ItemDataList[index].ItemUpgradePrice(gameData.ItemCount[index]));
-        _uiCreationItemsList[index].DisableBuyPanel(gameData.ItemCount[index] < gameData.ItemDataList[index].MaxCountIncrement);
+        _uiCreationItemsList[index].DisableBuyPanel(gameData.ItemCount[index] > 0 && gameData.ItemCount[index] < gameData.ItemDataList[index].MaxCountIncrement);
     }
 
     public void UpdateUpgradeUI(int index, GameData gameData, GeneralGameData generalData)
     {
-        _uiUpgradeItemsList[index].SetIncome(gameData.UpgradeItemDataList[index].ItemIncome(gameData.UpgradeItemCount[index]));
         _uiUpgradeItemsList[index].SetBuyPrice(gameData.UpgradeItemDataList[index].ItemCost);
         _uiUpgradeItemsList[index].ToggleBuyButton(generalData.Diamonds >= gameData.UpgradeItemDataList[index].ItemCost);
+        _uiUpgradeItemsList[index].DisableBuyPanel(gameData.UpgradeItemCount[index] < gameData.UpgradeItemDataList[index].MaxCountIncrement);
         _diamonds.SetDiamondsScore(generalData.Diamonds);
     }
 

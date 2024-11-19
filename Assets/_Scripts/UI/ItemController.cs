@@ -24,7 +24,6 @@ public class ItemController : MonoBehaviour
     [SerializeField] private Image _purchaseCyImg;
     [SerializeField] private Image _progressBarCyImg;
     private bool _isPremium;
-    private bool isAuto;
     private int _maxItems;
     private string _translationText;
     public event Action OnProgressButtonClicked, OnWorkFinished, OnPremiumItemWorkFinished, OnBuyButtonClicked, OnActivationPremium, OnFirstActivation;
@@ -39,20 +38,13 @@ public class ItemController : MonoBehaviour
         ToggleIncome(false);
     }
 
-    void Start()
-    {
-        if (_progressButton.IsEnabled == true && isAuto == true)
-            OnProgressButtonClicked?.Invoke();
-    }
-
-    public void Prepare(Sprite icon, Sprite currency, bool isPremium, string translationText, int maxItemsCount, bool auto)
+    public void Prepare(Sprite icon, Sprite currency, bool isPremium, string translationText, int maxItemsCount)
     {
         _translationText = translationText;
         _itemImage.sprite = icon;
         _buttonCyImg.sprite = _purchaseCyImg.sprite = _progressBarCyImg.sprite = currency;
         _isPremium = isPremium;
         _maxItems = maxItemsCount;
-        isAuto = auto;
 
         _itemTitle.text = LeanLocalization.GetTranslationText(translationText);
 
@@ -64,7 +56,7 @@ public class ItemController : MonoBehaviour
             _purchaseInfoText.text = $"{LeanLocalization.GetTranslationText("Unlock")} {LeanLocalization.GetTranslationText(translationText)}";
         }
 
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! ItemController /// Prepare /// Translation Text: " + _translationText);
+        //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! ItemController /// Prepare /// Translation Text: " + _translationText);
     }
 
     public void ActivateButton()
@@ -172,7 +164,7 @@ public class ItemController : MonoBehaviour
         else
             _itemScore.text = $"{score.ToString("N0") + sec}";
 
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! ItemController /// SetIncomePerSec /// Item Income Per Sec: " + score);
+        //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! ItemController /// SetIncomePerSec /// Item Income Per Sec: " + score);
     }
 
     public void SetIncome(double score)
@@ -182,7 +174,7 @@ public class ItemController : MonoBehaviour
         else
             _itemScore.text = $"{score.ToString("N0")}";
 
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! ItemController /// SetIncome /// Item Income: " + score);
+        //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! ItemController /// SetIncome /// Item Income: " + score);
     }
 
     private void HandleProgressBarFinished()

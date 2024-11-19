@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using CBS;
 using CBS.Models;
+using System.Collections.Generic;
 
 public class GameRules : MonoBehaviour
 {
@@ -14,8 +15,7 @@ public class GameRules : MonoBehaviour
     public event Action<int, bool> OnModifyManagerAvailability, OnToggleItemActivationState;
     public event Action<int, float> OnStartWorkOnItem, OnStartWorkOnUpgradeItem;
     public event Action<int> OnActivateItem, OnActivateUpgradeItem, OnAutomateItem, OnActivatePassiveIncome;
-    public event Action<int, GameData, GeneralGameData> OnUpdateData, OnPerformAction;
-    public event Action<int, GameData, GeneralGameData> OnUpdateUpgradeData, OnUpdatePerformAction;
+    public event Action<int, GameData, GeneralGameData> OnUpdateData, OnPerformAction, OnUpdateUpgradeData;
     public event Action<GeneralGameData, GameData> OnUpdateGameData;
     private int timeAfterExit;
     public double _totalScore;
@@ -119,12 +119,6 @@ public class GameRules : MonoBehaviour
         }
     }
 
-    public void HandleUpgradeManager(int index)
-    {
-        IncreaseDiamondsScore(index);
-        HandleStartUpgradeItemProgress(index);
-    }
-
     /// <summary>
     /// Performs the work of "clicking the button" automatically
     /// </summary>
@@ -157,11 +151,11 @@ public class GameRules : MonoBehaviour
         SendDataUpdate();
     }
 
-    private void ActivateUpgradeItem(int i)
-    {
-        OnActivateUpgradeItem?.Invoke(i);
-        SendDataUpdate();
-    }
+    // private void ActivateUpgradeItem(int i)
+    // {
+    //     OnActivateUpgradeItem?.Invoke(i);
+    //     SendDataUpdate();
+    // }
 
     /// <summary>
     /// Adds money to the data and sends the update event
@@ -175,31 +169,10 @@ public class GameRules : MonoBehaviour
         }
         else
         {
+            _currentGameData.Money += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
             _currentGeneralData.TotalScore += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
-
-            if (_currentGameData.Managers[index])
-            {
-                _currentGameData.MoneyPerSec = _currentGameData.ItemDataList[index].ItemIncomePerSec(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
-                _currentGameData.Money += _currentGameData.MoneyPerSec;
-
-                //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// IncreaseScore /// Money: " + _currentGameData.Money + " /// MoneyPerSec: " + _currentGameData.MoneyPerSec);
-            }
-            else
-            {
-                _currentGameData.Money += _currentGameData.ItemDataList[index].ItemIncome(_currentGameData.ItemCount[index], _currentGameData.ItemBonusMultiplayer[index]);
-
-                //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// IncreaseScore /// Money: " + _currentGameData.Money);
-            }
-
             _totalScore = _currentGeneralData.TotalScore;
         }
-
-        SendDataUpdate();
-    }
-
-    public void IncreaseDiamondsScore(int index)
-    {
-        _currentGeneralData.Diamonds += _currentGameData.UpgradeItemDataList[index].ItemIncome(_currentGameData.UpgradeItemCount[index]);
 
         SendDataUpdate();
     }
@@ -216,11 +189,6 @@ public class GameRules : MonoBehaviour
         //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// HandleStartItemProgress /// Delay: " + _currentGameData.ItemDataList[index].Delay);
     }
 
-    public void HandleStartUpgradeItemProgress(int index)
-    {
-        OnUpdatePerformAction?.Invoke(index, _currentGameData, _currentGeneralData);
-        OnStartWorkOnUpgradeItem?.Invoke(index, _currentGameData.UpgradeItemDataList[index].Delay);
-    }
 
     /// <summary>
     /// Handle Upgrading the item by spending the money to increas the income and count
@@ -256,21 +224,9 @@ public class GameRules : MonoBehaviour
         for (int i = 0; i < _currentGameData.ItemDataList.Count; i++)
         {
             if (_currentGameData.ItemCount[i] > 0)
-            {
                 ActivateItem(i);
-            }
 
-            _currentGameData.ItemDataList[i].Auto = _currentGameData.Managers[i];
-
-            //HandleManager(i);
-        }
-
-        for (int i = 0; i < _currentGameData.UpgradeItemDataList.Count; i++)
-        {
-            if (_currentGameData.UpgradeItemCount[i] > 0)
-            {
-                ActivateUpgradeItem(i);
-            }
+            HandleManager(i);
         }
         OnUpdateGameData?.Invoke(_currentGeneralData, _currentGameData);
         SendDataUpdate();
@@ -344,13 +300,23 @@ public class GameRules : MonoBehaviour
             CheckBoosterMultiplier(i);
             OnUpdateData?.Invoke(i, _currentGameData, _currentGeneralData);
         }
+        CalculateMoneyPerSec();
 
         for (int i = 0; i < _currentGameData.UpgradeItemDataList.Count; i++)
         {
             OnUpdateUpgradeData?.Invoke(i, _currentGameData, _currentGeneralData);
-        }
-
+        }       
         OnUpdateGameData?.Invoke(_currentGeneralData, _currentGameData);
+    }
+
+    private void CalculateMoneyPerSec()
+    {
+        _currentGameData.MoneyPerSec = 0;
+        for (int i = 0; i < _currentGameData.ItemDataList.Count; i++)
+        {
+            _currentGameData.MoneyPerSec += _currentGameData.ItemDataList[i].ItemIncomePerSec(_currentGameData.ItemCount[i], _currentGameData.ItemBonusMultiplayer[i]);
+        }
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// CalculateMoneyPerSec /// Money Per Sec: " + _currentGameData.MoneyPerSec);
     }
 
     /// <summary>
@@ -396,16 +362,19 @@ public class GameRules : MonoBehaviour
 
     private void CheckBoosterMultiplier(int index)
     {
-        if (_currentGameData.BoosterMultiplier > 0)
+        if (_currentGameData.BoosterMultiplier == 0)
+            _currentGameData.BoosterMultiplier = 1;
+
+        if (!_currentGameData.ItemDataList[index].IsPremium)
             _currentGameData.ItemDataList[index].BoosterMultiplier = _currentGameData.BoosterMultiplier;
     }
+
 
     public void GetMoney()
     {
         _currentGameData.Money += 1000000;
         _currentGeneralData.Diamonds += 200;
         _currentGeneralData.TotalScore += 1000000;
-
         SendDataUpdate();
     }
 
@@ -417,7 +386,6 @@ public class GameRules : MonoBehaviour
         _currentGeneralData.TotalScore += income;
         _totalScore = _currentGeneralData.TotalScore;
         _currentGeneralData.Diamonds -= diamonds;
-
         SendDataUpdate();
     }
 
@@ -426,7 +394,6 @@ public class GameRules : MonoBehaviour
         _currentGeneralData.Diamonds -= price;
         _currentGeneralData.PassiveIncomeTime += time;
         _currentGeneralData.ExtraTimePurchasedCount++;
-
         SendDataUpdate();
     }
     #endregion
@@ -438,7 +405,6 @@ public class GameRules : MonoBehaviour
         _currentGameData.Money += reward;
         _currentGeneralData.TotalScore += reward;
         _totalScore = _currentGeneralData.TotalScore;
-
         SendDataUpdate();
     }
     #endregion
@@ -449,23 +415,33 @@ public class GameRules : MonoBehaviour
     {
         _currentGameData.Money += coins;
         _currentGeneralData.Diamonds += diamonds;
-
         SendDataUpdate();
     }
 
     public void GetPurchasedProduct(double diamonds)
     {
         _currentGeneralData.Diamonds += diamonds;
-
         SendDataUpdate();
     }
 
-    public void GetPurchasedBooster(double boosterMultiplier)
+    public void GetPurchasedBooster()
     {
-        _currentGameData.BoosterMultiplier = boosterMultiplier;
-
+        _currentGameData.BoosterMultiplier += _currentGameData.BoosterMultiplier == 0 ? 2 : 1;
+        _currentGameData.IsBoosterPurchased = true;
         SendDataUpdate();
     }
     #endregion
+
+    public void GetCoinsBooster()
+    {
+        _currentGameData.BoosterMultiplier = _currentGameData.IsBoosterPurchased ? 3 : 2;
+        SendDataUpdate();
+    }
+
+    public void DisableCoinsBooster()
+    {
+        _currentGameData.BoosterMultiplier -= 1;
+        SendDataUpdate();
+    }
 }
 

@@ -42,8 +42,6 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         _rewardTimer.OnActivatedCoinsRewardButton.AddListener(ActivatedRewardButton);
-        _rewardTimer.OnBoosterRewardEarned.AddListener(_gameRules.SendDataUpdate);
-        _rewardTimer.OnBoosterRewardReceived.AddListener(_gameRules.SendDataUpdate);
 
         PrepareGameData();
         PrepareUI();
@@ -71,7 +69,7 @@ public class GameManager : MonoBehaviour
 
     private void ActivatedRewardButton()
     {
-        _rewardsManager.PrepareRewardData((float)_gameData.Money);
+        _rewardsManager.PrepareRewardData((float)_gameData.MoneyPerSec);
     }
 
     #region CONNECT METHODS
@@ -85,7 +83,6 @@ public class GameManager : MonoBehaviour
         _gameRules.OnActivateItem += _gameUI.ActivateItem;
 
         _gameRules.OnStartWorkOnItem += _gameUI.StartWorkOnItem;
-        _gameRules.OnStartWorkOnUpgradeItem += _gameUI.StartWorkOnUpgradeItem;
 
         _gameRules.OnToggleItemActivationState += _gameUI.ToggleItemActiveState;
 
@@ -107,6 +104,9 @@ public class GameManager : MonoBehaviour
         _passiveIncome.OnGetPassiveIncomeExtraTime += _gameRules.UpdatePassiveIncomeTime;
 
         _rewardsManager.OnEarningReward += _gameRules.GetReward;
+
+        _rewardTimer.OnSetBoosterTimer += _gameRules.GetCoinsBooster;
+        _rewardTimer.OnEndBoosterTimer += _gameRules.DisableCoinsBooster;
 
         _purchaseManager.OnPurchasingPack += _gameRules.GetPurchasedProduct;
         _purchaseManager.OnPurchasingDiamonds += _gameRules.GetPurchasedProduct;
@@ -139,10 +139,8 @@ public class GameManager : MonoBehaviour
 
         _gameUI.OnWorkFinished += _gameRules.IncreaseScore;
 
-        _gameUI.OnWorkFinished += _gameRules.HandleManager;
+        _gameUI.OnWorkFinished += _gameRules.HandleManager;    
 
-        _gameUI.OnUpgradeItemPurchased += _gameRules.HandleStartUpgradeItemProgress;
-        _gameUI.OnUpdateWorkFinished += _gameRules.HandleUpgradeManager;
         _gameUI.OnUpgradeItemPurchased += _gameRules.HandleDiamondsUpgrade;
 
         _gameUI.OnBuyButonClicked += _gameRules.HandleUpgrade;
@@ -262,8 +260,6 @@ public class GameManager : MonoBehaviour
             SaveGeneralGameData();
         }
         _rewardTimer.OnActivatedCoinsRewardButton.RemoveListener(ActivatedRewardButton);
-        _rewardTimer.OnBoosterRewardEarned.RemoveListener(_gameRules.SendDataUpdate);
-        _rewardTimer.OnBoosterRewardReceived.RemoveListener(_gameRules.SendDataUpdate);
     }
 
     private void OnDestroy()

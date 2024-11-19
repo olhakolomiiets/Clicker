@@ -40,7 +40,8 @@ public class PurchaseManager : MonoBehaviour
     [HideInInspector] public UnityEvent PurchasedProductDiamondsPack300;
 
     public event Action<double, double> OnPurchasingPack;
-    public event Action<double> OnPurchasingDiamonds, OnPurchasingBooster;
+    public event Action<double> OnPurchasingDiamonds;
+    public event Action OnPurchasingBooster;
 
     private void Awake()
     {
@@ -83,7 +84,7 @@ public class PurchaseManager : MonoBehaviour
 
     public void CoinsBooster()
     {
-        OnPurchasingBooster?.Invoke(2);
+        OnPurchasingBooster?.Invoke();
         _coinsBoosterButton.SetActive(false);
         PlayerPrefs.SetInt("CoinsBoosterPurchased", 1);
     }

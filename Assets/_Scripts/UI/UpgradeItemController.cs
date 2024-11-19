@@ -9,14 +9,13 @@ using UnityEngine.UI;
 public class UpgradeItemController : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _itemTitle;
-    [SerializeField] private TextMeshProUGUI _itemScore;
     [SerializeField] private Button _buyButton;
     [SerializeField] private TextMeshProUGUI _buyButtonText;
     [SerializeField] private Image _itemImage;
 
     private string _translationText;
 
-    public event Action OnUpgradeItemBuyButtonClicked, OnUpdateWorkFinished;
+    public event Action OnUpgradeItemBuyButtonClicked;
 
     private void Awake()
     {
@@ -45,30 +44,7 @@ public class UpgradeItemController : MonoBehaviour
     public void ToggleBuyButton(bool val)
         => _buyButton.interactable = val;
 
-    public void SetIncome(double score)
-    {
-        _itemScore.text = $"{score.ToString("N0")}";
-    }
-
-    public void StartWork(float delay)
-    => StartCoroutine(MakeProgress(delay));
-
-    private IEnumerator MakeProgress(float delay)
-    {
-        float timePassed = 0;
-        while (timePassed < delay)
-        {
-            timePassed += Time.deltaTime;
-            float progress = Mathf.Clamp01(timePassed / delay);
-            yield return null;
-        }
-        OnUpdateWorkFinished?.Invoke();
-    }
-
-    public void ResetProgress()
-    {
-        StopAllCoroutines();
-    }
+    public void DisableBuyPanel(bool val) => _buyButton.gameObject.SetActive(val);
 
     public void UpdateLanguage()
     {

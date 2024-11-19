@@ -27,7 +27,8 @@ public class RewardTimers : MonoBehaviour
     [Space(10)]
     [SerializeField] private float activationInterval;
 
-    [HideInInspector] public UnityEvent OnActivatedCoinsRewardButton, OnBoosterRewardReceived, OnCoinsRewardReceived, OnBoosterRewardEarned;
+    [HideInInspector] public UnityEvent OnActivatedCoinsRewardButton, OnActivatedBoosterRewardButton, OnCoinsRewardReceived, OnBoosterRewardEarned;
+    public event Action OnSetBoosterTimer, OnEndBoosterTimer;
 
     private void OnEnable()
     {
@@ -84,6 +85,7 @@ public class RewardTimers : MonoBehaviour
     void ActivateBoosterRewardObject()
     {
         _rewardsManager.gameObject.SetActive(true);
+        OnActivatedBoosterRewardButton?.Invoke();
         _rewardsManager.EnableBoosterReward();
     }
 
@@ -115,13 +117,7 @@ public class RewardTimers : MonoBehaviour
         endTime = startTime.AddSeconds(timeLeft);
 
         _boosterTimer.SetActive(true);
-
-        foreach (var item in _creationItemsDataList)
-        {
-            item.BoosterMultiplier += 1;
-        }
-
-        OnBoosterRewardEarned?.Invoke();
+        OnSetBoosterTimer?.Invoke();
 
         StartCoroutine(UpdateCoinsBoosterTimer());
         //StartCoroutine(ActivateCoinsRewardAd());
@@ -149,12 +145,7 @@ public class RewardTimers : MonoBehaviour
 
     private void DisableCoinsBooster()
     {
-        foreach (var item in _creationItemsDataList)
-        {
-            item.BoosterMultiplier -= 1;
-        }
-
-        OnBoosterRewardReceived?.Invoke();
+        OnEndBoosterTimer?.Invoke();
         _boosterTimer.SetActive(false);
     }
 

@@ -105,7 +105,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 833915433790489408}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3663,7 +3663,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2133995257310505984}
         m_TargetAssemblyTypeName: SoundBtn, Assembly-CSharp
-        m_MethodName: ToggleMusic
+        m_MethodName: SetMusicVolume
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3685,6 +3685,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfb54f1d79cf09c49a1f6a6e86f53923, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _audioMixer: {fileID: 24100000, guid: 201d03ab875c5ef47aba8b8ec746b9dc, type: 2}
+  _musicGroupName: Music
   _defaultAudioMixedSnapshot: {fileID: 24500006, guid: 201d03ab875c5ef47aba8b8ec746b9dc, type: 2}
   _mutedAudioMixerSnapshot: {fileID: 2050853557629163886, guid: 201d03ab875c5ef47aba8b8ec746b9dc, type: 2}
   _soundOffIcon: {fileID: 21300000, guid: e361d02cc95a6fb40a8220613b54f43f, type: 3}

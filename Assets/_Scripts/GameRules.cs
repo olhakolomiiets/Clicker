@@ -252,7 +252,7 @@ public class GameRules : MonoBehaviour
 
             OnActivatePassiveIncome?.Invoke(timeAfterExit);
 
-            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// LoadGame /// Time After Exit: " + timeAfterExit);
+            //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// LoadGame /// Time After Exit: " + timeAfterExit);
         }
 
         SendDataUpdate();
@@ -316,7 +316,7 @@ public class GameRules : MonoBehaviour
         {
             _currentGameData.MoneyPerSec += _currentGameData.ItemDataList[i].ItemIncomePerSec(_currentGameData.ItemCount[i], _currentGameData.ItemBonusMultiplayer[i]);
         }
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// CalculateMoneyPerSec /// Money Per Sec: " + _currentGameData.MoneyPerSec);
+        //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// CalculateMoneyPerSec /// Money Per Sec: " + _currentGameData.MoneyPerSec);
     }
 
     /// <summary>

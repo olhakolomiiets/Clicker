@@ -18,13 +18,10 @@ public class SoundBtn : MonoBehaviour
 
     [SerializeField]
     private Image _buttonIconImage;
-
-
     private bool _soundToggle = true;
-
     private bool _isMusicOn;
 
-    private void Awake()
+    private void Start()
     {
         UpdateMusic();
     }
@@ -65,9 +62,14 @@ public class SoundBtn : MonoBehaviour
     {
         if (PlayerPrefs.HasKey("music"))
         {
-            _isMusicOn = PlayerPrefs.GetInt("music") == 1 ? true : false; ;
+            _isMusicOn = PlayerPrefs.GetInt("music") == 1 ? false : true;
+            _buttonIconImage.sprite = _isMusicOn ? _soundOffIcon : _soundOnIcon;
+            if (_audioMixer != null)
+            {
+                float musicVolume;
+                musicVolume = !_isMusicOn ? -80f : -13f;
+                _audioMixer.SetFloat(_musicGroupName, musicVolume);
+            }
         }
-        _buttonIconImage.sprite = _isMusicOn ? _soundOffIcon : _soundOnIcon;
-        SetMusicVolume();
     }
 }

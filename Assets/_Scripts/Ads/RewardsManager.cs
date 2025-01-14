@@ -28,7 +28,8 @@ public class RewardsManager : MonoBehaviour
     [Space(10)]
     [SerializeField] MoveBetweenTransforms _meteor;
     [SerializeField] RewardTimers _rewardTimer;
-    [SerializeField] private GoogleMobileAds.Sample.RewardedAdController _adController;
+    //[SerializeField] private GoogleMobileAds.Sample.RewardedAdController _adController;
+    [SerializeField] private AppodealAdController _appodealController;
 
     #endregion
 
@@ -51,9 +52,13 @@ public class RewardsManager : MonoBehaviour
 
     private void OnEnable()
     {
-        _adController.OnUserEarnedRewardEvent.AddListener(UserEarnedReward);
-        _adController.RewardedAdLoadedEvent.AddListener(ShowRewardedAd);
-        _adController.RewardedAdLoadedWithErrorEvent.AddListener(RewardedAdWithError);
+        if (_appodealController == null)
+        {
+            _appodealController = FindAnyObjectByType<AppodealAdController>();
+        }
+        _appodealController.OnUserEarnedRewardEvent.AddListener(UserEarnedReward);
+        //_adController.RewardedAdLoadedEvent.AddListener(ShowRewardedAd);
+        _appodealController.RewardedAdLoadedWithErrorEvent.AddListener(RewardedAdWithError);
     }
 
     public void EnableCoinsReward()
@@ -122,7 +127,8 @@ public class RewardsManager : MonoBehaviour
         _isBoosterRewardActive = true;
         _description.GetComponent<TextMeshProUGUI>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
-        _adController.LoadAd();
+        _appodealController.ShowRewardedVideo(); 
+        //_adController.LoadAd();
     }
 
     public void GetCoins()
@@ -131,12 +137,13 @@ public class RewardsManager : MonoBehaviour
         _isCoinsRewardActive = true;
         //buttonReward.GetComponentInChildren<Text>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
-        _adController.LoadAd();
+        _appodealController.ShowRewardedVideo(); 
+        //_adController.LoadAd();
     }
 
     public void ShowRewardedAd()
     {
-        _adController.ShowAd();
+        //_adController.ShowAd();
     }
 
     public void RewardedAdWithError()
@@ -146,8 +153,8 @@ public class RewardsManager : MonoBehaviour
 
     private void OnDisable()
     {
-        _adController.OnUserEarnedRewardEvent.RemoveListener(UserEarnedReward);
-        _adController.RewardedAdLoadedEvent.RemoveListener(ShowRewardedAd);
-        _adController.RewardedAdLoadedWithErrorEvent.RemoveListener(RewardedAdWithError);
+        _appodealController.OnUserEarnedRewardEvent.RemoveListener(UserEarnedReward);
+        //_adController.RewardedAdLoadedEvent.RemoveListener(ShowRewardedAd);
+        _appodealController.RewardedAdLoadedWithErrorEvent.RemoveListener(RewardedAdWithError);
     }
 }

@@ -38,7 +38,8 @@ public class PassiveIncome : MonoBehaviour
     [SerializeField] private Button _3xButtonReward;
 
     [Space(10)]
-    [SerializeField] private GoogleMobileAds.Sample.RewardedAdController _adController;
+    //[SerializeField] private GoogleMobileAds.Sample.RewardedAdController _adController;
+    [SerializeField] private AppodealAdController _appodealController;
 
     #endregion
 
@@ -64,10 +65,14 @@ public class PassiveIncome : MonoBehaviour
 
     private void OnEnable()
     {
+        if (_appodealController == null)
+        {
+            _appodealController = FindAnyObjectByType<AppodealAdController>();
+        }
         _rewardReceived = false;
-        _adController.OnUserEarnedRewardEvent.AddListener(UserEarnedReward);
-        _adController.RewardedAdLoadedEvent.AddListener(ShowRewardedAd);
-        _adController.RewardedAdLoadedWithErrorEvent.AddListener(RewardedAdWithError);
+        _appodealController.OnUserEarnedRewardEvent.AddListener(UserEarnedReward);
+        //_adController.RewardedAdLoadedEvent.AddListener(ShowRewardedAd);
+        _appodealController.RewardedAdLoadedWithErrorEvent.AddListener(RewardedAdWithError);
     }
 
     private void Start()
@@ -162,7 +167,8 @@ public class PassiveIncome : MonoBehaviour
 
         //buttonReward.GetComponentInChildren<Text>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
-        _adController.LoadAd();
+        _appodealController.ShowRewardedVideo(); 
+        //_adController.LoadAd();
     }
 
     public void GetTriplePassiveIncome()
@@ -178,8 +184,8 @@ public class PassiveIncome : MonoBehaviour
 
     public void ShowRewardedAd()
     {
-        if (_isPassiveIncome)
-            _adController.ShowAd();
+        //if (_isPassiveIncome)
+            //_adController.ShowAd();
     }
 
     public void RewardedAdWithError()
@@ -189,8 +195,8 @@ public class PassiveIncome : MonoBehaviour
 
     private void OnDisable()
     {
-        _adController.OnUserEarnedRewardEvent.RemoveListener(UserEarnedReward);
-        _adController.RewardedAdLoadedEvent.RemoveListener(ShowRewardedAd);
-        _adController.RewardedAdLoadedWithErrorEvent.RemoveListener(RewardedAdWithError);
+        _appodealController.OnUserEarnedRewardEvent.RemoveListener(UserEarnedReward);
+        //_adController.RewardedAdLoadedEvent.RemoveListener(ShowRewardedAd);
+        _appodealController.RewardedAdLoadedWithErrorEvent.RemoveListener(RewardedAdWithError);
     }
 }

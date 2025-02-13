@@ -65,7 +65,7 @@ public class PurchaseManager : MonoBehaviour
 
     public void NoAds()
     {
-        //PlayerPrefs.SetInt("NoAdsPurchased", 1);
+        PlayerPrefs.SetInt("NoAdsPurchased", 1);
     }
 
     public void StarterPack()
@@ -73,13 +73,15 @@ public class PurchaseManager : MonoBehaviour
         OnPurchasingPack?.Invoke(_coinsInPack, _diamondsInPack);
         _starterPackButton.SetActive(false);
         PlayerPrefs.SetInt("StarterPackPurchased", 1);
+        UpdateShopUI();
     }
 
     public void SpecialOffer()
     {
         OnPurchasingPack?.Invoke(_coins, _diamonds);
         _specialOfferButton.SetActive(false);
-        //PlayerPrefs.SetInt("SpecialOfferPurchased", 1);
+        PlayerPrefs.SetInt("SpecialOfferPurchased", 1);
+        UpdateShopUI();
     }
 
     public void CoinsBooster()
@@ -87,6 +89,7 @@ public class PurchaseManager : MonoBehaviour
         OnPurchasingBooster?.Invoke();
         _coinsBoosterButton.SetActive(false);
         PlayerPrefs.SetInt("CoinsBoosterPurchased", 1);
+        UpdateShopUI();
     }
 
     public void DiamondsPack50()
@@ -117,6 +120,28 @@ public class PurchaseManager : MonoBehaviour
         {
             _coinsBoosterButton.SetActive(false);
         }
+
+        UpdateShopUI();
+    }
+
+    public void UpdateShopUI()
+    {
+        RectTransform shopItemParent = GetComponent<RectTransform>();
+        int activeChildrenCount = GetActiveChildrenCount(shopItemParent);
+
+        float _scrollItemGroupHeight = 165 * activeChildrenCount;
+        shopItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
+    }
+
+    int GetActiveChildrenCount(RectTransform parent)
+    {
+        int count = 0;
+        foreach (Transform child in parent)
+        {
+            if (child.gameObject.activeSelf)
+                count++;
+        }
+        return count;
     }
 
     private void OnDisable()

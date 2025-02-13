@@ -26,6 +26,7 @@ public class RewardsManager : MonoBehaviour
     [SerializeField] private GameObject _description;
 
     [Space(10)]
+    [SerializeField] private TextMeshProUGUI _serviceTxt;
     [SerializeField] MoveBetweenTransforms _meteor;
     [SerializeField] RewardTimers _rewardTimer;
     //[SerializeField] private GoogleMobileAds.Sample.RewardedAdController _adController;
@@ -68,6 +69,7 @@ public class RewardsManager : MonoBehaviour
 
         _coinsButton.gameObject.SetActive(true);
         _reward.SetActive(true);
+        _serviceTxt.text = $"";
         _coinsTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("GetCoins")}";
     }
 
@@ -77,6 +79,7 @@ public class RewardsManager : MonoBehaviour
         _reward.SetActive(false);
 
         _boosterButton.gameObject.SetActive(true);
+        _serviceTxt.text = $"";
         _boosterTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Booster")}";
         _description.SetActive(true);
     }
@@ -125,7 +128,7 @@ public class RewardsManager : MonoBehaviour
     {
         _boosterButton.interactable = false;
         _isBoosterRewardActive = true;
-        _description.GetComponent<TextMeshProUGUI>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
+        _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
         _appodealController.ShowRewardedVideo(); 
         //_adController.LoadAd();
@@ -135,7 +138,7 @@ public class RewardsManager : MonoBehaviour
     {
         _coinsButton.interactable = false;
         _isCoinsRewardActive = true;
-        //buttonReward.GetComponentInChildren<Text>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
+        _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
         _appodealController.ShowRewardedVideo(); 
         //_adController.LoadAd();
@@ -148,7 +151,7 @@ public class RewardsManager : MonoBehaviour
 
     public void RewardedAdWithError()
     {
-        //buttonReward.GetComponentInChildren<Text>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("RewardedAdError")}";
+        _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("RewardedAdError")}";
     }
 
     private void OnDisable()

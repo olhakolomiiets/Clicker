@@ -10,17 +10,19 @@ public class UISquadLeadersButton : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _managerTitle;
     [SerializeField] private Button _buyButton;
     [SerializeField] private Sprite _puchasedSprite;
+    [SerializeField] private Image _currency;
 
     public event Action OnClicked;
+    private string _translationText;
 
     private void Awake()
     {
         _buyButton.onClick.AddListener(() => OnClicked?.Invoke());
     }
-    public void SetValue(string value, string translationText)
+    public void SetValue(float value, Sprite currency)
     {
-        _priceText.text = value;
-        _managerTitle.text = $"{LeanLocalization.GetTranslationText("Unlock")} {LeanLocalization.GetTranslationText(translationText)}";
+        _priceText.text = value.ToString("N0");
+        _currency.sprite = currency;
     }
 
     public void ToggleActive(bool active) 

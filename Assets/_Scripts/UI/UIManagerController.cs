@@ -12,17 +12,25 @@ public class UIManagerController : MonoBehaviour
     [SerializeField] private RectTransform _panelTransform;
     public event Action<int> OnManagerPurchased;
 
+    private TutorialManager tutorialManager;
+
     private void Awake()
     {
         _buyManagersPanel = GameObject.FindGameObjectWithTag("ManagersPanel");
     }
 
-    public void AddButton(int index, float price, string translationText)
+    private void Start()
+    {
+        if (PlayerPrefs.GetInt("FirstTutorial") == 0)
+            tutorialManager = FindAnyObjectByType<TutorialManager>();
+    }
+
+    public void AddButton(int index, float price, Sprite currency)
     {
         GameObject buttonObject = Instantiate(_buyManagerButtonPrefab, _buyManagersPanel.transform);
         _buyButton = buttonObject.GetComponent<UISquadLeadersButton>();
 
-        _buyButton.SetValue(price.ToString(), translationText);
+        _buyButton.SetValue(price, currency);
         int i = index;
         _buyButton.OnClicked += () => OnManagerPurchased?.Invoke(i);
         _buyButton.ToggleActive(false);
@@ -32,6 +40,9 @@ public class UIManagerController : MonoBehaviour
     public void ToggleManagerPanel()
     { 
         _buyButton.gameObject.SetActive(!_buyButton.gameObject.activeSelf);
+
+        if (PlayerPrefs.GetInt("TutorialCompleted") == 0 && PlayerPrefs.GetInt("TutorialStep") == 6)
+            tutorialManager.OnTutorialCompleted();
 
         if (_buyButton.gameObject.activeSelf == false)
             return;

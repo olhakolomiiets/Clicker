@@ -47,14 +47,12 @@ public class RewardTimers : MonoBehaviour
     {
         if (!isBooster)
         {
-            //StartCoroutine(ActivateCoinsRewardAd());
             ActivateCoinsRewardObject();
             isBooster = true;
         }
 
         else
-        {
-            //StartCoroutine(ActivateBoosterRewardAd());
+        {         
             ActivateBoosterRewardObject();
             isBooster = false;
         }
@@ -120,7 +118,6 @@ public class RewardTimers : MonoBehaviour
         OnSetBoosterTimer?.Invoke();
 
         StartCoroutine(UpdateCoinsBoosterTimer());
-        //StartCoroutine(ActivateCoinsRewardAd());
     }
 
     IEnumerator UpdateCoinsBoosterTimer()

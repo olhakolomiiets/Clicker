@@ -1,57 +1,218 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using TMPro;
+using Lean.Localization;
 
 public class TutorialManager : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> tips = new List<GameObject>();
-    [SerializeField] private GameObject background;
-    [SerializeField] private Button nextTipButton;
+    [SerializeField] private static TutorialManager Instance;
+    [Header("Tutorial")]
+    [SerializeField] private GameObject tutorialPointerPrefab;
+    [SerializeField] private Transform[] tutorialSteps;
+    [SerializeField] private GameObject tutorialInfo;
+    [SerializeField] private TextMeshProUGUI tutorialStepTitle;
+    [SerializeField] private TextMeshProUGUI tutorialStepText;
 
-    private int currentTipIndex = 0;
+    [Header("Game Tips")]
+    [SerializeField] private GameObject tipInfo;
 
-    void Start()
+    [Header("Other")]
+    [SerializeField] private UIController uiController;
+
+    private string TutorialStepKey = "TutorialStep";
+    private string TutorialStepStateKey = "TutorialStepState";
+    private string TutorialCompletedKey = "TutorialCompleted";
+    private GameObject currentPointer;
+    private int tutorialStep;
+    private int stepState;
+    private int activeIndex;
+
+    private void Awake()
     {
-        if (PlayerPrefs.GetInt("FirstTutorial") == 0)
+        if (Instance == null)
+            Instance = this;
+        else
         {
-            nextTipButton.gameObject?.SetActive(true);
-            ShowTip(currentTipIndex);
-            PlayerPrefs.SetInt("FirstTutorial", 1);
-        }
-
-        if (nextTipButton != null)
-        {
-            nextTipButton.onClick.AddListener(OnNextTipButtonClicked);
+            Destroy(gameObject);
+            return;
         }
     }
 
-    void OnNextTipButtonClicked()
+    private void Start()
     {
-        // Disable the current tip
-        if (currentTipIndex < tips.Count)
-        {
-            tips[currentTipIndex].SetActive(false);
-        }
-
-        // Enable the next tip (if it exists)
-        currentTipIndex++;
-        if (currentTipIndex < tips.Count)
-        {
-            tips[currentTipIndex].SetActive(true);
-        }
-        else nextTipButton.gameObject?.SetActive(false);
+        LoadTutorialState();
+        ShowNextTutorial();
     }
 
-    void ShowTip(int index)
+    private void LoadTutorialState()
     {
-        if (index >= 0 && index < tips.Count)
+        tutorialStep = PlayerPrefs.GetInt(TutorialStepKey, 0);
+        stepState = PlayerPrefs.GetInt(TutorialStepStateKey, 0);
+    }
+
+    private void SaveTutorialState()
+    {
+        PlayerPrefs.SetInt(TutorialStepKey, tutorialStep);
+        PlayerPrefs.SetInt(TutorialStepStateKey, stepState);
+        PlayerPrefs.Save();
+    }
+
+    public void ShowNextTutorial()
+    {
+        if (tutorialStep == 0)
+            ShowTutorialInfo(tutorialStep);
+
+        if (uiController.isDisplayed)
         {
-            // Disable all tips except the one at the specified index
-            for (int i = 0; i < tips.Count; i++)
+            ResetPointer();
+
+            if (HandleTutorialExitCondition())
+                return;     
+            
+            if (tutorialStep < tutorialSteps.Length)
             {
-                tips[i].SetActive(i == index);
+                ShowPointer(tutorialSteps[tutorialStep]);
             }
-        }      
+
+            ShowTutorialInfo(tutorialStep);
+            SaveTutorialState();
+        }
+        else ShowFirstStep();       
+    }
+
+    public void ShowNextTutorial(int step)
+    {
+        LoadTutorialState();
+
+        tutorialStep = step;
+
+        ResetPointer();
+
+        if (HandleTutorialExitCondition())
+            return;
+
+        ShowPointer(tutorialSteps[tutorialStep]);
+        ShowTutorialInfo(tutorialStep);
+        SaveTutorialState();
+    }
+
+    public void ShowNextTutorial(int step, int state)
+    {
+        if (uiController.isDisplayed)
+        {
+            tutorialStep = step;
+            stepState = state;
+
+            ResetPointer();
+
+            if (HandleTutorialExitCondition())
+                return;
+
+            ShowPointer(tutorialSteps[tutorialStep]);
+            ShowTutorialInfo(tutorialStep);
+            SaveTutorialState();
+        }
+        else ShowFirstStep();
+    }
+
+    public void ShowFirstStep()
+    {
+        ResetPointer();
+        ShowPointer(tutorialSteps[0]);
+    }
+
+    private bool HandleTutorialExitCondition()
+    {
+        if ((tutorialStep == 5 && stepState == 0) || (tutorialStep == 6 && stepState == 0))
+        {
+            tutorialInfo.SetActive(false);
+            return true;
+        }
+        return false;
+    }
+
+    private void ShowPointer(Transform target)
+    {
+        if (target == null)
+            return;
+
+        currentPointer = Instantiate(tutorialPointerPrefab, target.position, Quaternion.identity, target);
+    }
+
+    public void ResetPointer()
+    {
+        if (currentPointer != null)
+            Destroy(currentPointer);
+    }
+
+    public void ShowGameTip(int i)
+    {
+
+        activeIndex = i;
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! TutorialManager /// ShowGameTip /// Before ResetPointer /// Tutorial Step: " + tutorialStep);
+
+        if ((tutorialStep == 5))
+            return;
+
+        ResetPointer();
+
+        if (!uiController.isDisplayed)
+            ShowPointer(tutorialSteps[0]);
+
+        tipInfo.SetActive(true);
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! TutorialManager /// ShowGameTip /// After ResetPointer /// Tutorial Step: " + tutorialStep);
+    }
+
+    public void HideGameTip()
+    {
+        if ((tutorialStep < 6))
+            return;
+
+        ResetPointer();
+
+        tipInfo.SetActive(false);
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! TutorialManager /// HideGameTip /// Tutorial Step: " + tutorialStep);
+    }
+
+    public void HideGameTip(int i)
+    {
+        if (activeIndex == i)
+        {
+            if ((tutorialStep < 6))
+                return;
+
+            ResetPointer();
+
+            tipInfo.SetActive(false);
+            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! TutorialManager /// HideGameTip With Index /// Tutorial Step: " + tutorialStep);
+        }       
+    }
+
+    public void AdvanceTutorial()
+    {
+        stepState = 0;
+        tutorialStep++;
+        SaveTutorialState();
+        ShowNextTutorial();
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! TutorialManager /// AdvanceTutorial /// Tutorial Step: " + tutorialStep);
+    }
+
+    public void ShowTutorialInfo(int step)
+    {
+        tutorialInfo.SetActive(true);
+        tutorialStepTitle.text = $"{LeanLocalization.GetTranslationText("TitleTutorialStep" + step)}";
+        tutorialStepText.text = $"{LeanLocalization.GetTranslationText("TextTutorialStep" + step)}";
+    }
+    public void OnTutorialCompleted()
+    {
+        PlayerPrefs.SetInt(TutorialCompletedKey, 1);
+        tutorialInfo.SetActive(false);
+        stepState = 0;
+        tutorialStep++;
+        SaveTutorialState();  
     }
 }

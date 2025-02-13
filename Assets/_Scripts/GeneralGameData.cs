@@ -10,6 +10,7 @@ public class GeneralGameData
     public int PassiveIncomeTime { get; set;} = 180;
     public int ExtraTimePurchasedCount { get; set; }
     public bool IsGameSaved { get; set; }
+    public int ActivePlanet { get; set; } = 1;
 
     public void SetData(string dataString)
     {
@@ -24,6 +25,7 @@ public class GeneralGameData
         PassiveIncomeTime = data.PassiveIncomeTime;
         ExtraTimePurchasedCount = data.ExtraTimePurchasedCount;
         IsGameSaved = data.IsGameSaved;
+        ActivePlanet = data.ActivePlanet;
 
         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! General Game Data /// SetData " + dataString);
     }
@@ -38,7 +40,8 @@ public class GeneralGameData
             ExitTime = DateTime.Now.ToBinary().ToString(),
             PassiveIncomeTime = PassiveIncomeTime,
             ExtraTimePurchasedCount = ExtraTimePurchasedCount,
-            IsGameSaved = IsGameSaved
+            IsGameSaved = IsGameSaved,
+            ActivePlanet = ActivePlanet
         });
 }
 
@@ -52,6 +55,7 @@ public struct GeneralGameDataSave
     public string ExitTime;
     public int PassiveIncomeTime;
     public int ExtraTimePurchasedCount;
+    public int ActivePlanet;
     public bool IsGameSaved;
 }
 

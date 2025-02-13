@@ -2,7 +2,9 @@ using CBS.Scriptable;
 using CBS.UI;
 using DG.Tweening;
 using Exoa.Cameras;
+using System;
 using System.Collections;
+using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -47,6 +49,9 @@ public class UIController : MonoBehaviour
     private Vector3 _startCameraPos;
     private float _startCameraDistance;
 
+    public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnStorePanelDisplayed, OnStorePanelNotDisplayed;
+    public event Action<int> OnLoadTutorialNextStep;
+
     private void Start()
     {
         _planetRotator = _planet.GetComponent<DragRotateGPT>();
@@ -73,6 +78,16 @@ public class UIController : MonoBehaviour
             {
                 _planetRotator.enabled = true;
             }
+
+            if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
+            {
+                int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
+                int stepState = PlayerPrefs.GetInt("TutorialStepState");
+                if (tutorialStep < 5 || tutorialStep == 5 && stepState == 1 || tutorialStep == 6 && stepState == 1)
+                    OnTutorialNonCompleted.Invoke();
+            }
+
+            OnStorePanelNotDisplayed.Invoke();
         }
         else
         {
@@ -95,6 +110,16 @@ public class UIController : MonoBehaviour
             isDisplayed = true;
             ColorToggle(0);
             _planetRotator.enabled = false;
+
+            if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
+            {
+                int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
+                if (tutorialStep == 0)
+                    OnTutorialStepCompleted.Invoke();
+                else OnLoadTutorialNextStep.Invoke(tutorialStep);
+            }
+
+            OnStorePanelDisplayed.Invoke();
         }
     }
 
@@ -161,9 +186,12 @@ public class UIController : MonoBehaviour
         _upgradeItemsParent.DOAnchorPos(index == 1 ? creationPos : upgradePos, 0.25f);
         _shopItemsParent.DOAnchorPos(index == 2 ? creationPos : shopPos, 0.25f);
 
+        int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
+        if (tutorialStep == 3 && index == 1 || tutorialStep == 4 && index == 2)
+            OnTutorialStepCompleted.Invoke();
+
         ColorToggle(index);
     }
-
 
     private void ColorToggle(int i)
     {
@@ -193,5 +221,11 @@ public class UIController : MonoBehaviour
         var prefabs = CBSScriptable.Get<LeaderboardPrefabs>();
         var leaderboardsPrefab = prefabs.LeaderboardsWindow;
         UIView.ShowWindow(leaderboardsPrefab);
+    }
+
+    public void ShowTutorialHint(int step, int state)
+    {
+        if (!isDisplayed && step == 5 && state == 1 || !isDisplayed && step == 6 && state == 1)
+            OnTutorialNonCompleted.Invoke();
     }
 }

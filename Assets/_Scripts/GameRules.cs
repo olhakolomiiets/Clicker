@@ -17,8 +17,13 @@ public class GameRules : MonoBehaviour
     public event Action<int> OnActivateItem, OnActivateUpgradeItem, OnAutomateItem, OnActivatePassiveIncome;
     public event Action<int, GameData, GeneralGameData> OnUpdateData, OnPerformAction, OnUpdateUpgradeData;
     public event Action<GeneralGameData, GameData> OnUpdateGameData;
+    public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnNewObjectPurchased;
+    public event Action<int, int> OnTutorialStepReady;
     private int timeAfterExit;
     public double _totalScore;
+    [SerializeField] private double moneyForNextPlanet;
+    [SerializeField] private double moneyForTreeHint;
+    [SerializeField] private double moneyForManagerHint;
 
     #region CBS FIELDS
     [SerializeField] private string currencyCode;
@@ -138,6 +143,11 @@ public class GameRules : MonoBehaviour
         _currentGameData.Money -= _currentGameData.ItemDataList[index].ItemUpgradePrice(_currentGameData.ItemCount[index]);
         _currentGameData.ItemCount[index] = 1;
 
+        if (PlayerPrefs.GetInt("TutorialCompleted") == 0 && PlayerPrefs.GetInt("TutorialStep") == 5)
+            OnTutorialStepCompleted.Invoke();
+
+        OnNewObjectPurchased.Invoke();
+
         ActivateItem(index);
     }
 
@@ -174,8 +184,32 @@ public class GameRules : MonoBehaviour
             _totalScore = _currentGeneralData.TotalScore;
         }
 
+        if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
+            CheckTutorialStep();
+
+        if (_currentGameData.Money > moneyForNextPlanet && currencyCode == "1P")
+            _currentGeneralData.ActivePlanet = 2;
+
+        if (_currentGameData.Money > moneyForNextPlanet && currencyCode == "2P")
+            _currentGeneralData.ActivePlanet = 3;
+
         SendDataUpdate();
     }
+
+    private void CheckTutorialStep()
+    {
+        int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
+
+        if (tutorialStep == 1)
+        {
+            if (_currentGameData.Money >= 5) OnTutorialStepCompleted.Invoke();
+            else OnTutorialStepReady.Invoke(tutorialStep, 1);
+        }
+
+        if ((tutorialStep == 5 && _currentGameData.Money >= moneyForTreeHint) || (tutorialStep == 6 && _currentGameData.Money >= moneyForManagerHint))
+            OnTutorialStepReady.Invoke(tutorialStep, 1);
+    }
+
 
     /// <summary>
     /// Runs the work needed to produce money for a specific item

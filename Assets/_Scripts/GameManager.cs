@@ -34,6 +34,10 @@ public class GameManager : MonoBehaviour
     [Space(10)]
     [SerializeField] private LevelController _levelController;
 
+    [Space(10)]
+    [SerializeField] private UIController _uiController;
+    [SerializeField] private TutorialManager _tutorialManager;
+
     private bool isGameSaved = true;
 
     /// <summary>
@@ -47,6 +51,10 @@ public class GameManager : MonoBehaviour
         PrepareUI();
         ConnectGameRulesToUI();
         ConnectGameRulesToRewards();
+        ConnectGameTips();
+
+        if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
+            ConnectTutorialManager();
 
         _gameRules.PrepareGameData(_gameData, _generalGameData);
 
@@ -111,6 +119,29 @@ public class GameManager : MonoBehaviour
         _purchaseManager.OnPurchasingPack += _gameRules.GetPurchasedProduct;
         _purchaseManager.OnPurchasingDiamonds += _gameRules.GetPurchasedProduct;
         _purchaseManager.OnPurchasingBooster += _gameRules.GetPurchasedBooster;
+    }
+
+    private void ConnectTutorialManager()
+    {
+        _uiController.OnTutorialStepCompleted += _tutorialManager.AdvanceTutorial;
+        _uiController.OnTutorialNonCompleted += _tutorialManager.ShowFirstStep;
+        _uiController.OnLoadTutorialNextStep += _tutorialManager.ShowNextTutorial;
+
+        _gameRules.OnTutorialStepCompleted += _tutorialManager.AdvanceTutorial;        
+        _gameRules.OnTutorialStepReady += _tutorialManager.ShowNextTutorial;
+        _gameRules.OnTutorialStepReady += _uiController.ShowTutorialHint;
+
+        _gameUI.OnTutorialStepCompleted += _tutorialManager.AdvanceTutorial;
+    }
+
+    private void ConnectGameTips()
+    {
+        _gameUI.OnItemReadyToBuy += _tutorialManager.ShowGameTip;
+        _gameRules.OnNewObjectPurchased += _tutorialManager.HideGameTip;
+        _gameUI.OnItemNotReadyToBuy += _tutorialManager.HideGameTip;
+
+        _uiController.OnStorePanelDisplayed += _tutorialManager.ResetPointer;
+        _uiController.OnStorePanelNotDisplayed += _tutorialManager.ShowFirstStep;
     }
     #endregion
 

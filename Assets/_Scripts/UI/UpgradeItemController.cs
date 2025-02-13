@@ -22,11 +22,14 @@ public class UpgradeItemController : MonoBehaviour
         _buyButton.onClick.AddListener(HandleBuyButton);
         ToggleBuyButton(false);
     }
-
     public void Prepare(Sprite icon, string translationText)
     {
         _itemImage.sprite = icon;
         _translationText = translationText;
+    }
+
+    private void Start()
+    {
         _itemTitle.text = LeanLocalization.GetTranslationText(_translationText);
     }
 

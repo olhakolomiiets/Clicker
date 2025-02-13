@@ -8,6 +8,7 @@ using UnityEngine;
 /// </summary>
 public class GameUI : MonoBehaviour
 {
+    #region EDITOR FIELDS
     [Header("Score Panel")]
     [SerializeField] private ScorePanel _coins;
     [SerializeField] private ScorePanel _diamonds;
@@ -31,6 +32,11 @@ public class GameUI : MonoBehaviour
     [SerializeField] private List<GameObject> _extraObjs;
     [SerializeField] private GameObject _humans;
     [SerializeField] private GameObject _animals;
+
+    #endregion
+
+    #region PRIVATE FIELDS
+
     private bool isTreesDisplayed;
     private bool isDecorationsDisplayed;
     private bool isBuildingsDisplayed;
@@ -38,7 +44,11 @@ public class GameUI : MonoBehaviour
     private bool isHumansDisplayed;
     private bool isAnimalsDisplayed;
 
-    public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased;
+    #endregion
+
+    public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased, OnItemReadyToBuy, OnItemNotReadyToBuy;
+    public event Action OnTutorialStepCompleted;
+    public event Action<bool, int> OnItemPurchaseReady;
 
     public void PrepareCreationUI(List<ItemData> data)
     {
@@ -54,7 +64,7 @@ public class GameUI : MonoBehaviour
 
             UIManagerController _managerController = itemController.GetComponent<UIManagerController>();
             _managerControllers.Add(_managerController);
-            _managerControllers[i].AddButton(i, data[i].ManagerPrice, data[i].TranslationText);
+            _managerControllers[i].AddButton(i, data[i].ManagerPrice, data[i].CurrencyImage);
 
             _objectActivator[i].itemController = itemController;
 
@@ -69,6 +79,15 @@ public class GameUI : MonoBehaviour
 
         OnBuyButonClicked += ActivateNextCreationObject;
         OnPurchaseItemFirstTime += ActivateNextCreationObject;
+        OnItemPurchaseReady += ActivatePurchaseReadyTip;
+    }
+
+    public void ActivatePurchaseReadyTip(bool val, int i)
+    {
+        if (val)
+            OnItemReadyToBuy.Invoke(i);
+        else
+            OnItemNotReadyToBuy.Invoke(i);
     }
 
     public void ActivatePurchasedCreationObject(List<int> itemCount)
@@ -81,6 +100,9 @@ public class GameUI : MonoBehaviour
 
     public void ActivateNextCreationObject(int i)
     {
+        if (PlayerPrefs.GetInt("TutorialCompleted") == 0 && PlayerPrefs.GetInt("TutorialStep") == 2)
+            OnTutorialStepCompleted.Invoke();
+
         _objectActivator[i].ActivateNextObject();
     }
 
@@ -129,6 +151,7 @@ public class GameUI : MonoBehaviour
         itemController.OnActivationPremium += () => OnActivationPremium?.Invoke(i);
         itemController.OnBuyButtonClicked += () => OnBuyButonClicked?.Invoke(i);
         itemController.OnFirstActivation += () => OnPurchaseItemFirstTime?.Invoke(i);
+        itemController.OnItemPurchaseReady += (bool val) => OnItemPurchaseReady?.Invoke(val, i);
     }
 
     private void ConnectEvents(int i, UpgradeItemController upgradeItemController)

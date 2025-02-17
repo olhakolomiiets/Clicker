@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlanetObject : MonoBehaviour 
 {
+    public event Action OnTutorialStepCompleted;
     public SFXType _sfx;
     public enum SFXType
     {

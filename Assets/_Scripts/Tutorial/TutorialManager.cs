@@ -201,6 +201,11 @@ public class TutorialManager : MonoBehaviour
         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! TutorialManager /// AdvanceTutorial /// Tutorial Step: " + tutorialStep);
     }
 
+    public void HideTutorialInfo()
+    {
+        tutorialInfo.SetActive(false);
+        ResetPointer();
+    }
     public void ShowTutorialInfo(int step)
     {
         tutorialInfo.SetActive(true);

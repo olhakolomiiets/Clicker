@@ -10,9 +10,6 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    [SerializeField] private CameraPerspective _camera;
-    [SerializeField] private Vector3 _cameraPos;
-    [SerializeField] private float _cameraDistance;
     [SerializeField] private GameObject _backgroundImage;
 
     [Header("Shop Panel")]
@@ -44,7 +41,10 @@ public class UIController : MonoBehaviour
 
     [SerializeField] private GameObject _planet;
 
-    private DragRotateGPT _planetRotator;
+    [Header("Planet Zoom")]
+    [SerializeField] private DragRotateGPT _planetRotator;
+    [SerializeField] private float zoomDuration;
+
     private ObjectPlaceRotator _objectPlaceRotator;
     private Vector3 _startCameraPos;
     private float _startCameraDistance;
@@ -62,8 +62,7 @@ public class UIController : MonoBehaviour
     {
         if (isDisplayed)
         {
-            _camera.MoveCameraTo(_startCameraDistance);
-            _camera.MoveCameraToInstant(_startCameraPos);
+            _planetRotator.ZoomBack(zoomDuration);
 
             if (_backgroundImage != null)
             {
@@ -91,11 +90,7 @@ public class UIController : MonoBehaviour
         }
         else
         {
-            _startCameraDistance = _camera.FinalDistance;
-            _startCameraPos = _camera.gameObject.transform.position;
-
-            _camera.MoveCameraTo(_cameraDistance);
-            _camera.MoveCameraToInstant(_cameraPos);
+            _planetRotator.SaveAndZoomToMax(zoomDuration);
 
             if (_backgroundImage != null)
             {

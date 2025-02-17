@@ -131,13 +131,14 @@ public class GameManager : MonoBehaviour
         _gameRules.OnTutorialStepReady += _tutorialManager.ShowNextTutorial;
         _gameRules.OnTutorialStepReady += _uiController.ShowTutorialHint;
 
+        _gameUI.OnNewObjectPurchased += _tutorialManager.HideTutorialInfo;
         _gameUI.OnTutorialStepCompleted += _tutorialManager.AdvanceTutorial;
     }
 
     private void ConnectGameTips()
     {
         _gameUI.OnItemReadyToBuy += _tutorialManager.ShowGameTip;
-        _gameRules.OnNewObjectPurchased += _tutorialManager.HideGameTip;
+        _gameRules.OnNewObjectPurchased += _tutorialManager.HideGameTip;       
         _gameUI.OnItemNotReadyToBuy += _tutorialManager.HideGameTip;
 
         _uiController.OnStorePanelDisplayed += _tutorialManager.ResetPointer;

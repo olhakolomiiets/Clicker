@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -46,8 +47,9 @@ public class GameUI : MonoBehaviour
 
     #endregion
 
-    public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime, OnManagerPurchased, OnItemReadyToBuy, OnItemNotReadyToBuy;
-    public event Action OnTutorialStepCompleted;
+    public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime,
+        OnManagerPurchased, OnItemReadyToBuy, OnItemNotReadyToBuy;
+    public event Action OnTutorialStepCompleted, OnNewObjectPurchased;
     public event Action<bool, int> OnItemPurchaseReady;
 
     public void PrepareCreationUI(List<ItemData> data)
@@ -100,10 +102,19 @@ public class GameUI : MonoBehaviour
 
     public void ActivateNextCreationObject(int i)
     {
-        if (PlayerPrefs.GetInt("TutorialCompleted") == 0 && PlayerPrefs.GetInt("TutorialStep") == 2)
-            OnTutorialStepCompleted.Invoke();
-
         _objectActivator[i].ActivateNextObject();
+
+        if (PlayerPrefs.GetInt("TutorialCompleted") == 0 && PlayerPrefs.GetInt("TutorialStep") == 2)
+        {
+            OnNewObjectPurchased.Invoke();
+            StartCoroutine(InvokeAction());
+        }
+    }
+
+    private IEnumerator InvokeAction()
+    {        
+        yield return new WaitForSeconds(3f);
+        OnTutorialStepCompleted.Invoke();         
     }
 
     public void PrepareUpgradeUI(List<UpgradeItemData> data)

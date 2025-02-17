@@ -146,8 +146,6 @@ public class GameRules : MonoBehaviour
         if (PlayerPrefs.GetInt("TutorialCompleted") == 0 && PlayerPrefs.GetInt("TutorialStep") == 5)
             OnTutorialStepCompleted.Invoke();
 
-        OnNewObjectPurchased.Invoke();
-
         ActivateItem(index);
     }
 

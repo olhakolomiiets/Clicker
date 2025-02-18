@@ -48,8 +48,5 @@ public class FaceTarget : MonoBehaviour
         {
             transform.rotation = desiredRotation;
         }
-
-        // ƒл€ отладки: выводим вычисленный угол в консоль.
-        Debug.Log("Computed Y Angle: " + targetAngle);
     }
 }

@@ -17,6 +17,7 @@ public class PassiveIncome : MonoBehaviour
     [SerializeField] private Button _buyButton;
     [SerializeField] private TextMeshProUGUI _extraTimeTxt;
     [SerializeField] private TextMeshProUGUI _extraTimePriceTxt;
+    [SerializeField] private TextMeshProUGUI _timeTxt;
 
     [Header("Passive Income")]
     [SerializeField] private int _delayTime;
@@ -79,10 +80,24 @@ public class PassiveIncome : MonoBehaviour
     {
         _extraTimeTxt.text = $"{"+" + (_passiveIncomeData.ExtraTime / 60).ToString() + " " + Lean.Localization.LeanLocalization.GetTranslationText("minutes")}";
 
+        UpdateTimeText();
+
         if (_currentGeneralData.ExtraTimePurchasedCount >= _passiveIncomeData.ExtraTimeCount)
-            _extraTimePanel.SetActive(false);
-        else
-            _extraTimePriceTxt.text = _passiveIncomeData.ExtraTimePrice.ToString();
+        {
+            _extraTimeTxt.text = _timeTxt.text;
+            _buyButton.gameObject.SetActive(false);
+            _timeTxt.gameObject.SetActive(false);
+        }
+        else _extraTimePriceTxt.text = _passiveIncomeData.ExtraTimePrice.ToString();
+    }
+
+    void UpdateTimeText()
+    {
+        int hours = _currentGeneralData.PassiveIncomeTime / 3600;
+        int minutes = (_currentGeneralData.PassiveIncomeTime % 3600) / 60;
+        int seconds = _currentGeneralData.PassiveIncomeTime % 60;
+
+        _timeTxt.text = $"{hours:D2}:{minutes:D2}:{seconds:D2}";
     }
 
     public void PrepareGameData(GeneralGameData generalGameData, GameData gameData)
@@ -99,10 +114,15 @@ public class PassiveIncome : MonoBehaviour
         OnGetPassiveIncomeExtraTime?.Invoke(_passiveIncomeData.ExtraTimePrice, _passiveIncomeData.ExtraTime);
 
         if (_currentGeneralData.ExtraTimePurchasedCount >= _passiveIncomeData.ExtraTimeCount)
-            _extraTimePanel.SetActive(false);
+        {
+            _extraTimeTxt.text = _timeTxt.text;
+            _buyButton.gameObject.SetActive(false);      
+            _timeTxt.gameObject.SetActive(false);
+        }          
 
         _passiveIncomeData.ExtraTimePrice = _passiveIncomeData.ExtraTimePrice * _passiveIncomeData.ExtraTimePriceMultiplier;
         _extraTimePriceTxt.text = _passiveIncomeData.ExtraTimePrice.ToString();
+        UpdateTimeText();
     }
 
     public void ActivatePassiveIncome(int timeAfterExit)

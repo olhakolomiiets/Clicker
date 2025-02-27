@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
         ConnectGameRulesToRewards();
         ConnectGameTips();
 
-        if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
+        if (PlayerPrefs.GetInt("TutorialStepsCompleted") < 7)
             ConnectTutorialManager();
 
         _gameRules.PrepareGameData(_gameData, _generalGameData);
@@ -126,6 +126,9 @@ public class GameManager : MonoBehaviour
         _uiController.OnTutorialStepCompleted += _tutorialManager.AdvanceTutorial;
         _uiController.OnTutorialNonCompleted += _tutorialManager.ShowFirstStep;
         _uiController.OnLoadTutorialNextStep += _tutorialManager.ShowNextTutorial;
+        _uiController.OnShowShopTutorial += _tutorialManager.ShowShopTutorial;
+        _uiController.OnShowUpgradeTutorial += _tutorialManager.ShowUpgradeTutorial;
+        _uiController.OnHideTutorial += _tutorialManager.HideTutorialInfo;
 
         _gameRules.OnTutorialStepCompleted += _tutorialManager.AdvanceTutorial;        
         _gameRules.OnTutorialStepReady += _tutorialManager.ShowNextTutorial;
@@ -137,12 +140,14 @@ public class GameManager : MonoBehaviour
 
     private void ConnectGameTips()
     {
-        _gameUI.OnItemReadyToBuy += _tutorialManager.ShowGameTip;
-        _gameRules.OnNewObjectPurchased += _tutorialManager.HideGameTip;       
-        _gameUI.OnItemNotReadyToBuy += _tutorialManager.HideGameTip;
+        _gameRules.OnManagerAvailability += _tutorialManager.ShowGameTip;
+        _gameRules.OnManagerNonAvailability += _tutorialManager.HideGameTip;
+
+        _gameRules.OnItemReadyToBuy += _tutorialManager.ShowGameTip;
+        _gameRules.OnItemNotReadyToBuy += _tutorialManager.HideGameTip;
 
         _uiController.OnStorePanelDisplayed += _tutorialManager.ResetPointer;
-        _uiController.OnStorePanelNotDisplayed += _tutorialManager.ShowFirstStep;
+        _uiController.OnStorePanelNotDisplayed += _tutorialManager.ShowFirstPointer;
     }
     #endregion
 

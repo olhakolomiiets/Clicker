@@ -23,11 +23,11 @@ public class ItemController : MonoBehaviour
     [SerializeField] private Image _buttonCyImg;
     [SerializeField] private Image _purchaseCyImg;
     [SerializeField] private Image _progressBarCyImg;
+    [SerializeField] private Sprite diamondImg;
     private bool _isPremium;
     private int _maxItems;
     private string _translationText;
     public event Action OnProgressButtonClicked, OnWorkFinished, OnPremiumItemWorkFinished, OnBuyButtonClicked, OnActivationPremium, OnFirstActivation;
-    public event Action<bool> OnItemPurchaseReady;
     public bool isWorking => _progressButton.IsEnabled == false;
     private void Awake()
     {
@@ -48,7 +48,11 @@ public class ItemController : MonoBehaviour
         _maxItems = maxItemsCount;
 
         if (_isPremium)
-            _premiumImage.SetActive(true);   
+        {
+            _premiumImage.SetActive(true);
+            _progressBarCyImg.sprite = diamondImg;
+        }
+           
     }
 
     private void Start()
@@ -89,13 +93,11 @@ public class ItemController : MonoBehaviour
         {
             _progressButton.IsEnabled = true;
             _purchaseInfo.SwapImageReady();
-            OnItemPurchaseReady.Invoke(true);
         }
         else
         {
             _progressButton.IsEnabled = false;
             _purchaseInfo.SwapImageNotReady();
-            OnItemPurchaseReady.Invoke(false);
         }
     }
 

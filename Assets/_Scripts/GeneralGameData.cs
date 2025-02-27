@@ -7,10 +7,11 @@ public class GeneralGameData
     public double TotalScore { get; set;}
     public double Diamonds { get; set;}
     public string ExitTime { get; set;}
-    public int PassiveIncomeTime { get; set;} = 180;
+    public int PassiveIncomeTime { get; set;} = 1800;
     public int ExtraTimePurchasedCount { get; set; }
     public bool IsGameSaved { get; set; }
     public int ActivePlanet { get; set; } = 1;
+    public int PlanetUnlocked { get; set; } = 1;
 
     public void SetData(string dataString)
     {

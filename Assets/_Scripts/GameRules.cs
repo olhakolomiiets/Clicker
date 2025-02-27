@@ -17,13 +17,16 @@ public class GameRules : MonoBehaviour
     public event Action<int> OnActivateItem, OnActivateUpgradeItem, OnAutomateItem, OnActivatePassiveIncome;
     public event Action<int, GameData, GeneralGameData> OnUpdateData, OnPerformAction, OnUpdateUpgradeData;
     public event Action<GeneralGameData, GameData> OnUpdateGameData;
-    public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnNewObjectPurchased;
-    public event Action<int, int> OnTutorialStepReady;
-    private int timeAfterExit;
+    public event Action OnTutorialStepCompleted, OnTutorialNonCompleted;
+    public event Action<int, int> OnTutorialStepReady, OnManagerAvailability, OnManagerNonAvailability, OnItemNotReadyToBuy, OnItemReadyToBuy;
+    private int timeAfterExit, itemIndex;
     public double _totalScore;
-    [SerializeField] private double moneyForNextPlanet;
     [SerializeField] private double moneyForTreeHint;
     [SerializeField] private double moneyForManagerHint;
+    [SerializeField] private string planetKey;
+    [SerializeField] private int requiredObjects = 6;
+    private bool isManagerTipShown, isItemTipShown;
+
 
     #region CBS FIELDS
     [SerializeField] private string currencyCode;
@@ -83,6 +86,9 @@ public class GameRules : MonoBehaviour
             return;
         _currentGameData.Money -= _currentGameData.ItemDataList[index].ManagerPrice;
         _currentGameData.Managers[index] = true;
+       
+        OnManagerNonAvailability?.Invoke(index, 1);
+        isManagerTipShown = false;
 
         Debug.Log($"Purchased a manager for {index}");
         HandleManager(index);
@@ -142,8 +148,13 @@ public class GameRules : MonoBehaviour
     {
         _currentGameData.Money -= _currentGameData.ItemDataList[index].ItemUpgradePrice(_currentGameData.ItemCount[index]);
         _currentGameData.ItemCount[index] = 1;
+        
+        OnItemNotReadyToBuy.Invoke(index, 0);
+        isItemTipShown = false;
 
-        if (PlayerPrefs.GetInt("TutorialCompleted") == 0 && PlayerPrefs.GetInt("TutorialStep") == 5)
+        Debug.Log($"GameRules /// PurchaseItemFirstTime /// Item Index: {index} /// isItemTipShown: {isItemTipShown} /// Item Purchased");
+
+        if (PlayerPrefs.GetInt("TutorialStep") == 3)
             OnTutorialStepCompleted.Invoke();
 
         ActivateItem(index);
@@ -182,30 +193,7 @@ public class GameRules : MonoBehaviour
             _totalScore = _currentGeneralData.TotalScore;
         }
 
-        if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
-            CheckTutorialStep();
-
-        if (_currentGameData.Money > moneyForNextPlanet && currencyCode == "1P")
-            _currentGeneralData.ActivePlanet = 2;
-
-        if (_currentGameData.Money > moneyForNextPlanet && currencyCode == "2P")
-            _currentGeneralData.ActivePlanet = 3;
-
         SendDataUpdate();
-    }
-
-    private void CheckTutorialStep()
-    {
-        int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
-
-        if (tutorialStep == 1)
-        {
-            if (_currentGameData.Money >= 5) OnTutorialStepCompleted.Invoke();
-            else OnTutorialStepReady.Invoke(tutorialStep, 1);
-        }
-
-        if ((tutorialStep == 5 && _currentGameData.Money >= moneyForTreeHint) || (tutorialStep == 6 && _currentGameData.Money >= moneyForManagerHint))
-            OnTutorialStepReady.Invoke(tutorialStep, 1);
     }
 
 
@@ -339,6 +327,11 @@ public class GameRules : MonoBehaviour
             OnUpdateUpgradeData?.Invoke(i, _currentGameData, _currentGeneralData);
         }       
         OnUpdateGameData?.Invoke(_currentGeneralData, _currentGameData);
+
+        if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
+            CheckTutorialStep();
+
+        CheckAndUnlockNextPlanet();
     }
 
     private void CalculateMoneyPerSec()
@@ -361,6 +354,19 @@ public class GameRules : MonoBehaviour
         {
             bool val = _currentGameData.ItemDataList[index].ManagerPrice < _currentGameData.Money;
             OnModifyManagerAvailability?.Invoke(index, val);
+
+                if (val && !isManagerTipShown && !_currentGameData.ItemDataList[index].IsPremium)
+                {                   
+                    OnManagerAvailability?.Invoke(index, 1);
+                    isManagerTipShown = true;
+                    Debug.Log($"!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// UnlockManagers /// Manager Index: {index} /// Manager Availability");
+                }
+                else if (!val && isManagerTipShown && !_currentGameData.ItemDataList[index].IsPremium)
+                {                    
+                    OnManagerNonAvailability?.Invoke(index, 1);
+                    isManagerTipShown = false;
+                    Debug.Log($"!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// UnlockManagers /// Manager Index: {index} /// Manager Non Availability");
+                }
         }
     }
 
@@ -369,11 +375,25 @@ public class GameRules : MonoBehaviour
     /// </summary>
     /// <param name="index"></param>
     private void UnlockOtherItems(int index)
-    {
+    {   
         if (_currentGameData.ItemCount[index] == 0)
         {
             bool val = _currentGameData.ItemDataList[index].ItemUpgradePrice(_currentGameData.ItemCount[index]) < _currentGameData.Money;
             OnToggleItemActivationState?.Invoke(index, val);
+
+                if (val && !isItemTipShown)
+                {
+                    itemIndex = index;                
+                    OnItemReadyToBuy.Invoke(index, 0);
+                    isItemTipShown = true;
+                    Debug.Log($"GameRules /// UnlockOtherItems /// Item Index: {index} /// Item Ready To Buy");
+                }
+                else
+                {                   
+                    OnItemNotReadyToBuy.Invoke(index, 0);
+                    isItemTipShown = false;
+                    Debug.Log($"GameRules /// UnlockOtherItems /// Item Index: {index} /// Item Not Ready To Buy");
+                }         
         }
     }
 
@@ -475,5 +495,48 @@ public class GameRules : MonoBehaviour
         _currentGameData.BoosterMultiplier -= 1;
         SendDataUpdate();
     }
+
+    private void CheckTutorialStep()
+    {
+        int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
+
+        if (tutorialStep == 1 && _currentGameData.Money >= 5)
+        {
+            OnTutorialStepCompleted.Invoke();
+        }
+
+        if ((tutorialStep == 3 && _currentGameData.Money >= moneyForTreeHint) || (tutorialStep == 4 && _currentGameData.Money >= moneyForManagerHint))
+            OnTutorialStepReady.Invoke(tutorialStep, 1);
+    }
+
+    #region PLANET UNLOCKER
+    public void CheckAndUnlockNextPlanet()
+    {
+        if (planetKey == "Planet" + _currentGeneralData.ActivePlanet && IsCurrentPlanetUnlocked())
+        {
+            UnlockNextPlanet();
+        }
+    }
+
+    private bool IsCurrentPlanetUnlocked()
+    {
+        int unlockedObjects = 0;
+        for (int i = 0; i < requiredObjects; i++)
+        {
+            if (_currentGameData.ItemCount[i] >= 1)
+            {
+                unlockedObjects++;
+            }
+        }
+        return unlockedObjects >= requiredObjects;
+    }
+
+    private void UnlockNextPlanet()
+    {
+        _currentGeneralData.ActivePlanet++;
+        Debug.Log($"New planet unlocked: {_currentGeneralData.ActivePlanet}");
+    }
+
+    #endregion
 }
 

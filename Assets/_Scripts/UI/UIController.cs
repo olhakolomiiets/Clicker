@@ -46,11 +46,9 @@ public class UIController : MonoBehaviour
     [SerializeField] private float zoomDuration;
 
     private ObjectPlaceRotator _objectPlaceRotator;
-    private Vector3 _startCameraPos;
-    private float _startCameraDistance;
 
-    public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnStorePanelDisplayed, OnStorePanelNotDisplayed;
-    public event Action<int> OnLoadTutorialNextStep;
+    public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnStorePanelDisplayed, OnStorePanelNotDisplayed, OnHideTutorial;
+    public event Action<int> OnLoadTutorialNextStep, OnShowShopTutorial, OnShowUpgradeTutorial;
 
     private void Start()
     {
@@ -82,10 +80,10 @@ public class UIController : MonoBehaviour
             {
                 int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
                 int stepState = PlayerPrefs.GetInt("TutorialStepState");
-                if (tutorialStep < 5 || tutorialStep == 5 && stepState == 1 || tutorialStep == 6 && stepState == 1)
+                if (tutorialStep < 3 || tutorialStep == 3 && stepState == 1 || tutorialStep == 4 && stepState == 1)
                     OnTutorialNonCompleted.Invoke();
             }
-
+            
             OnStorePanelNotDisplayed.Invoke();
         }
         else
@@ -111,10 +109,10 @@ public class UIController : MonoBehaviour
                 int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
                 if (tutorialStep == 0)
                     OnTutorialStepCompleted.Invoke();
-                else OnLoadTutorialNextStep.Invoke(tutorialStep);
+                else
+                    OnLoadTutorialNextStep.Invoke(tutorialStep);
             }
-
-            OnStorePanelDisplayed.Invoke();
+            else OnStorePanelDisplayed.Invoke();
         }
     }
 
@@ -181,9 +179,21 @@ public class UIController : MonoBehaviour
         _upgradeItemsParent.DOAnchorPos(index == 1 ? creationPos : upgradePos, 0.25f);
         _shopItemsParent.DOAnchorPos(index == 2 ? creationPos : shopPos, 0.25f);
 
-        int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
-        if (tutorialStep == 3 && index == 1 || tutorialStep == 4 && index == 2)
-            OnTutorialStepCompleted.Invoke();
+        if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
+        {
+            if (index == 1 && PlayerPrefs.GetInt("UpgradeTutorialShown", 0) == 0)
+            {
+                OnShowUpgradeTutorial.Invoke(5);               
+            }
+            else if (index == 2 && PlayerPrefs.GetInt("ShopTutorialShown", 0) == 0)
+            {
+                OnShowShopTutorial.Invoke(6);                
+            }
+            else if (index == 0 && PlayerPrefs.GetInt("UpgradeTutorialShown", 0) == 1 || index == 0 && PlayerPrefs.GetInt("ShopTutorialShown", 0) == 1 || index == 1 && PlayerPrefs.GetInt("ShopTutorialShown", 0) == 1)
+            {
+                OnHideTutorial.Invoke();
+            }
+        }
 
         ColorToggle(index);
     }

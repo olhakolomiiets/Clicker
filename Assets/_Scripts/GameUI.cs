@@ -1,3 +1,4 @@
+using MoreMountains.Feedbacks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,12 +28,14 @@ public class GameUI : MonoBehaviour
     [SerializeField] private List<ObjectActivator> _upgradeObjectActivator = new();
     private List<UpgradeItemController> _uiUpgradeItemsList = new();
 
-    [SerializeField] private List<GameObject> _trees;
-    [SerializeField] private GameObject _decorations;
-    [SerializeField] private GameObject _buildings;
-    [SerializeField] private List<GameObject> _extraObjs;
-    [SerializeField] private GameObject _humans;
-    [SerializeField] private GameObject _animals;
+    //[SerializeField] private List<GameObject> _trees;
+    //[SerializeField] private GameObject _decorations;
+    //[SerializeField] private GameObject _buildings;
+    //[SerializeField] private List<GameObject> _extraObjs;
+    //[SerializeField] private GameObject _humans;
+    //[SerializeField] private GameObject _animals;
+
+    [SerializeField] private MMF_Player mmfPlayer;
 
     #endregion
 
@@ -48,10 +51,8 @@ public class GameUI : MonoBehaviour
     #endregion
 
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime,
-        OnManagerPurchased, OnItemReadyToBuy, OnItemNotReadyToBuy;
+        OnManagerPurchased;
     public event Action OnTutorialStepCompleted, OnNewObjectPurchased;
-    public event Action<bool, int> OnItemPurchaseReady;
-
     public void PrepareCreationUI(List<ItemData> data)
     {
         _uiCreationItemsList.Clear();
@@ -76,20 +77,10 @@ public class GameUI : MonoBehaviour
             _uiItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
 
             _managerControllers[i].OnManagerPurchased += PurchaseManager;
-
         }
 
         OnBuyButonClicked += ActivateNextCreationObject;
-        OnPurchaseItemFirstTime += ActivateNextCreationObject;
-        OnItemPurchaseReady += ActivatePurchaseReadyTip;
-    }
-
-    public void ActivatePurchaseReadyTip(bool val, int i)
-    {
-        if (val)
-            OnItemReadyToBuy.Invoke(i);
-        else
-            OnItemNotReadyToBuy.Invoke(i);
+        OnPurchaseItemFirstTime += ActivateNewCreationObject;
     }
 
     public void ActivatePurchasedCreationObject(List<int> itemCount)
@@ -104,16 +95,22 @@ public class GameUI : MonoBehaviour
     {
         _objectActivator[i].ActivateNextObject();
 
-        if (PlayerPrefs.GetInt("TutorialCompleted") == 0 && PlayerPrefs.GetInt("TutorialStep") == 2)
+        if (PlayerPrefs.GetInt("TutorialStep") == 2)
         {
             OnNewObjectPurchased.Invoke();
             StartCoroutine(InvokeAction());
+            return;
         }
+    }
+
+    public void ActivateNewCreationObject(int i)
+    {
+        _objectActivator[i].ActivateNextObject();
     }
 
     private IEnumerator InvokeAction()
     {        
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(3.25f);
         OnTutorialStepCompleted.Invoke();         
     }
 
@@ -152,6 +149,7 @@ public class GameUI : MonoBehaviour
 
     private void PurchaseManager(int index)
     {
+        mmfPlayer.PlayFeedbacks();
         OnManagerPurchased?.Invoke(index);
     }
 
@@ -162,7 +160,6 @@ public class GameUI : MonoBehaviour
         itemController.OnActivationPremium += () => OnActivationPremium?.Invoke(i);
         itemController.OnBuyButtonClicked += () => OnBuyButonClicked?.Invoke(i);
         itemController.OnFirstActivation += () => OnPurchaseItemFirstTime?.Invoke(i);
-        itemController.OnItemPurchaseReady += (bool val) => OnItemPurchaseReady?.Invoke(val, i);
     }
 
     private void ConnectEvents(int i, UpgradeItemController upgradeItemController)
@@ -191,7 +188,7 @@ public class GameUI : MonoBehaviour
 
         if (gameData.ItemDataList[index].IsPremium)
         {
-            _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].DiamondsIncome(gameData.ItemCount[index]));
+            _uiCreationItemsList[index].SetIncomePerSec(gameData.ItemDataList[index].DiamondsIncomePerHour(gameData.ItemCount[index]), " / hour");
             _diamonds.SetDiamondsScore(generalData.Diamonds);
         }
         else
@@ -253,47 +250,47 @@ public class GameUI : MonoBehaviour
         }
     }
 
-    public void TreesToggle()
-    {
-        foreach (var obj in _trees)
-        {
-            obj.SetActive(!isTreesDisplayed);
-        }
+    //public void TreesToggle()
+    //{
+    //    foreach (var obj in _trees)
+    //    {
+    //        obj.SetActive(!isTreesDisplayed);
+    //    }
 
-        isTreesDisplayed = !isTreesDisplayed;
-    }
+    //    isTreesDisplayed = !isTreesDisplayed;
+    //}
 
-    public void ExtraObjsToggle()
-    {
-        foreach (var obj in _extraObjs)
-        {
-            obj.SetActive(!isExtraObjsDisplayed);
-        }
+    //public void ExtraObjsToggle()
+    //{
+    //    foreach (var obj in _extraObjs)
+    //    {
+    //        obj.SetActive(!isExtraObjsDisplayed);
+    //    }
 
-        isExtraObjsDisplayed = !isExtraObjsDisplayed;
-    }
+    //    isExtraObjsDisplayed = !isExtraObjsDisplayed;
+    //}
 
-    public void DecorationsToggle()
-    {
-        _decorations.SetActive(!isDecorationsDisplayed);
-        isDecorationsDisplayed = !isDecorationsDisplayed;
-    }
+    //public void DecorationsToggle()
+    //{
+    //    _decorations.SetActive(!isDecorationsDisplayed);
+    //    isDecorationsDisplayed = !isDecorationsDisplayed;
+    //}
 
-    public void BuildingsToggle()
-    {
-        _buildings.SetActive(!isBuildingsDisplayed);
-        isBuildingsDisplayed = !isBuildingsDisplayed;
-    }
+    //public void BuildingsToggle()
+    //{
+    //    _buildings.SetActive(!isBuildingsDisplayed);
+    //    isBuildingsDisplayed = !isBuildingsDisplayed;
+    //}
 
-    public void HumansToggle()
-    {
-        _humans.SetActive(!isHumansDisplayed);
-        isHumansDisplayed = !isHumansDisplayed;
-    }
+    //public void HumansToggle()
+    //{
+    //    _humans.SetActive(!isHumansDisplayed);
+    //    isHumansDisplayed = !isHumansDisplayed;
+    //}
 
-    public void AnimalsToggle()
-    {
-        _animals.SetActive(!isAnimalsDisplayed);
-        isAnimalsDisplayed = !isAnimalsDisplayed;
-    }
+    //public void AnimalsToggle()
+    //{
+    //    _animals.SetActive(!isAnimalsDisplayed);
+    //    isAnimalsDisplayed = !isAnimalsDisplayed;
+    //}
 }

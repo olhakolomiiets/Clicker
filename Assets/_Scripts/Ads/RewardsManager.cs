@@ -86,8 +86,12 @@ public class RewardsManager : MonoBehaviour
 
     public void PrepareRewardData(float money)
     {
-        _coinsReward = money * _coinsMultiplicator;
+        if (!_rewardTimer.isBoosterTimerActive)
+            _coinsReward = money * _coinsMultiplicator;
+        else _coinsReward = (money/2) * _coinsMultiplicator;
+
         _coinsRewardTxt.text = $"{_coinsReward.ToString("N0")}";
+
     }
 
     public void UserEarnedReward()
@@ -102,7 +106,7 @@ public class RewardsManager : MonoBehaviour
 
             _coinsButton.interactable = true;
             _coinsButton.gameObject.SetActive(false);
-            _reward.SetActive(false);
+            
             _isCoinsRewardActive = false;
 
             this.gameObject.SetActive(false);
@@ -117,7 +121,7 @@ public class RewardsManager : MonoBehaviour
 
             _boosterButton.interactable = true;
             _boosterButton.gameObject.SetActive(false);
-            _description.SetActive(false);
+            
             _isBoosterRewardActive = false;
 
             this.gameObject.SetActive(false);
@@ -128,6 +132,7 @@ public class RewardsManager : MonoBehaviour
     {
         _boosterButton.interactable = false;
         _isBoosterRewardActive = true;
+        _description.SetActive(false);
         _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
         _appodealController.ShowRewardedVideo(); 
@@ -138,6 +143,7 @@ public class RewardsManager : MonoBehaviour
     {
         _coinsButton.interactable = false;
         _isCoinsRewardActive = true;
+        _reward.SetActive(false);
         _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
         _appodealController.ShowRewardedVideo(); 

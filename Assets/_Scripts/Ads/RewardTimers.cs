@@ -23,6 +23,7 @@ public class RewardTimers : MonoBehaviour
     private int timeLeft;
     private bool isTimeSaved = true;
     private bool isBooster;
+    public bool isBoosterTimerActive;
 
     [Space(10)]
     [SerializeField] private float activationInterval;
@@ -116,6 +117,7 @@ public class RewardTimers : MonoBehaviour
 
         _boosterTimer.SetActive(true);
         OnSetBoosterTimer?.Invoke();
+        isBoosterTimerActive = true;
 
         StartCoroutine(UpdateCoinsBoosterTimer());
     }
@@ -142,6 +144,7 @@ public class RewardTimers : MonoBehaviour
 
     private void DisableCoinsBooster()
     {
+        isBoosterTimerActive = false;
         OnEndBoosterTimer?.Invoke();
         _boosterTimer.SetActive(false);
     }

@@ -22,9 +22,9 @@ public class DragRotateGPT : MonoBehaviour
     [Tooltip("Позиция камеры при zoomParam = 0 (например, дальняя)")]
     public Vector3 startCamPos = new Vector3(-2f, 97f, -97f);  // Скрин №1
     [Tooltip("Позиция камеры при zoomParam = 1 (например, ближняя)")]
-    public Vector3 endCamPos = new Vector3(-2f, 42f, -45f);   // Скрин №2
+    public Vector3 endCamPos = new Vector3(-1.4f, 43.9f, -47.5f);   // Скрин №2
     [Tooltip("Начальное значение зума (0 = startCamPos, 1 = endCamPos)")]
-    public Vector3 shopCamPos = new Vector3(-2f, 42f, -45f);   // Скрин №3
+    public Vector3 shopCamPos = new Vector3(-2f, 74.4f, -119.6f);   // Скрин №3
     [Tooltip("Начальное значение зума (0 = startCamPos, 1 = endCamPos)")]
     public float zoomParam = 0f;
     [Tooltip("Скорость изменения zoomParam при колёсике мыши")]

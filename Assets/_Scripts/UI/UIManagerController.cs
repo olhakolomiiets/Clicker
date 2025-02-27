@@ -1,3 +1,5 @@
+using MoreMountains.Feedbacks;
+using MoreMountains.Tools;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +12,7 @@ public class UIManagerController : MonoBehaviour
     [SerializeField] private GameObject _buyManagerButtonPrefab;
     [SerializeField] private UISquadLeadersButton _buyButton;
     [SerializeField] private RectTransform _panelTransform;
+
     public event Action<int> OnManagerPurchased;
 
     private TutorialManager tutorialManager;
@@ -21,7 +24,7 @@ public class UIManagerController : MonoBehaviour
 
     private void Start()
     {
-        if (PlayerPrefs.GetInt("FirstTutorial") == 0)
+        if (PlayerPrefs.GetInt("TutorialStepsCompleted") < 7)
             tutorialManager = FindAnyObjectByType<TutorialManager>();
     }
 
@@ -41,8 +44,8 @@ public class UIManagerController : MonoBehaviour
     { 
         _buyButton.gameObject.SetActive(!_buyButton.gameObject.activeSelf);
 
-        if (PlayerPrefs.GetInt("TutorialCompleted") == 0 && PlayerPrefs.GetInt("TutorialStep") == 6)
-            tutorialManager.OnTutorialCompleted();
+        if (PlayerPrefs.GetInt("TutorialStep") == 4 && tutorialManager != null)
+            tutorialManager.AdvanceTutorial();
 
         if (_buyButton.gameObject.activeSelf == false)
             return;

@@ -19,6 +19,8 @@ public class MoveBetweenTransforms : MonoBehaviour
 
     private Vector3 targetObjectPos; // My precious
 
+    private int _index = 1;
+
     private void OnEnable()
     {
         StartCoroutine(RepeatMovement());
@@ -29,10 +31,7 @@ public class MoveBetweenTransforms : MonoBehaviour
     IEnumerator RepeatMovement()
     {
         while (true)
-        {
-            if (_rewardTimer != null)
-                _rewardTimer.ActivateRewardAd(); // My precious
-
+        {            
             yield return StartCoroutine(MoveBetweenWaypoints());
             onCycleCompleted?.Invoke();
 
@@ -48,8 +47,13 @@ public class MoveBetweenTransforms : MonoBehaviour
 
         for (int i = 0; i < numWaypoints; i++)
         {
-            if(_rewardTimer != null)
-                _rewardTimer.ActivateRewardAd(); // My precious
+            //if(_rewardTimer != null)
+            //{
+            //    Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! MoveBetweenTransforms /// MoveBetweenWaypoints /// Index Before" + _index);
+            //    _rewardTimer.ActivateRewardAd(_index); // My precious
+            //    _index = _index % 3 + 1;
+            //    Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! MoveBetweenTransforms /// MoveBetweenWaypoints /// Index After" + _index);
+            //}               
 
             int nextWaypointIndex = (i + 1) % numWaypoints;
             yield return StartCoroutine(MoveToWaypoint(waypoints[nextWaypointIndex], nextWaypointIndex));
@@ -62,6 +66,14 @@ public class MoveBetweenTransforms : MonoBehaviour
 
     IEnumerator MoveToWaypoint(Transform waypoint, int index)
     {
+        if (_rewardTimer != null)
+        {
+            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! MoveBetweenTransforms /// MoveToWaypoint /// Index Before" + _index);
+            _rewardTimer.ActivateRewardAd(_index); // My precious
+            _index = _index % 3 + 1;
+            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! MoveBetweenTransforms /// MoveToWaypoint /// Index After" + _index);
+        }
+
         Vector3 startPosition = targetObject.transform.position;
         Vector3 endPosition = waypoint.position;
 
@@ -85,7 +97,7 @@ public class MoveBetweenTransforms : MonoBehaviour
             yield return null;
         }
         targetObject.transform.position = endPosition;
-        yield return new WaitForSeconds(4f); // Optional delay before moving to the next waypoint
+        yield return new WaitForSeconds(_rewardTimer.activationInterval); // Optional delay before moving to the next waypoint
     }
 
     public void SetObjectPosition() // My precious

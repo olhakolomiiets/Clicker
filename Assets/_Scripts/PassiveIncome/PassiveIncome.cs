@@ -3,6 +3,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class PassiveIncome : MonoBehaviour
@@ -158,8 +159,29 @@ public class PassiveIncome : MonoBehaviour
 
         _passiveIncomeTxt.text = $"{passiveIncome:N0}";
 
-        _2xPassiveIncomeTxt.text = _2xPassiveIncome.ToString();
-        _3xPassiveIncomeTxt.text = _3xPassiveIncome.ToString();
+        if (_2xPassiveIncome > 1000)
+        {
+            _2xPassiveIncomeTxt.text = $"{AbbreviateNumber(_2xPassiveIncome)}";
+            _3xPassiveIncomeTxt.text = $"{AbbreviateNumber(_3xPassiveIncome)}";
+        }    
+        else
+        {
+            _2xPassiveIncomeTxt.text = _2xPassiveIncome.ToString();
+            _3xPassiveIncomeTxt.text = _3xPassiveIncome.ToString();
+        }
+
+    }
+
+    string AbbreviateNumber(double number)
+    {
+        string[] suffixes = { "", "K", "M", "B", "T" };
+        int suffixIndex = 0;
+        while (number >= 1000 && suffixIndex < suffixes.Length - 1)
+        {
+            number /= 1000;
+            suffixIndex++;
+        }
+        return string.Format("{0:0.##} {1}", number, suffixes[suffixIndex]).Replace(',', '.');
     }
 
     public void UserEarnedReward()

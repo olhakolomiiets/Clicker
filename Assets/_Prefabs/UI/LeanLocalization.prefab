@@ -585,6 +585,64 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u0423\u043F\u0441! \u0429\u043E\u0441\u044C \u0441\u0442\u0430\u043B\u043E\u0441\u044F..."
     Object: {fileID: 0}
+--- !u!1 &1264832233768296589
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8513603397852393765}
+  - component: {fileID: 1318990425559894337}
+  m_Layer: 0
+  m_Name: LevelTip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8513603397852393765
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1264832233768296589}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1318990425559894337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1264832233768296589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Buy all objects
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u041A\u0443\u043F\u0438 \u0432\u0441\u0435 \u043E\u0431\u044A\u0435\u043A\u0442\u044B"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Comprar todos los objetos
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041A\u0443\u043F\u0438 \u0432\u0441\u0456 \u043E\u0431'\u0454\u043A\u0442\u0438"
+    Object: {fileID: 0}
 --- !u!1 &1265846067925557321
 GameObject:
   m_ObjectHideFlags: 0
@@ -1730,6 +1788,64 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0412\u0456\u0442\u0430\u0454\u043C\u043E!"
+    Object: {fileID: 0}
+--- !u!1 &3641828870138197314
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1290865261756141020}
+  - component: {fileID: 2465236669434414545}
+  m_Layer: 0
+  m_Name: GetDiamonds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1290865261756141020
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3641828870138197314}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2465236669434414545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3641828870138197314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Get Diamonds for ads
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u041F\u043E\u043B\u0443\u0447\u0438 Diamonds \u0437\u0430 \u0440\u0435\u043A\u043B\u0430\u043C\u0443"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Obt\xE9n Diamonds por anuncios"
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041E\u0442\u0440\u0438\u043C\u0430\u0439 Diamonds \u0437\u0430 \u0440\u0435\u043A\u043B\u0430\u043C\u0443"
     Object: {fileID: 0}
 --- !u!1 &3695912790869593986
 GameObject:
@@ -3992,6 +4108,7 @@ Transform:
   - {fileID: 7486379621374817873}
   - {fileID: 592708173286451529}
   - {fileID: 8219402813616494766}
+  - {fileID: 1290865261756141020}
   - {fileID: 6712771950340581732}
   - {fileID: 5045410156391465206}
   - {fileID: 3523127093540515470}
@@ -4010,6 +4127,7 @@ Transform:
   - {fileID: 5015933671599274518}
   - {fileID: 175591156923281478}
   - {fileID: 4840837439530456381}
+  - {fileID: 8513603397852393765}
   - {fileID: 1727238839729042053}
   - {fileID: 6397822134601805619}
   - {fileID: 6838859775357355133}

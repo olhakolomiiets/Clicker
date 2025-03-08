@@ -9,6 +9,7 @@ public class RewardTimers : MonoBehaviour
 {
     [Header("Coins Reward")]
     [SerializeField] private RewardsManager _rewardsManager;
+    [SerializeField] private GameObject _meteor;
 
     [Space(10)]
     [SerializeField] private GameObject _boosterTimer;
@@ -22,70 +23,79 @@ public class RewardTimers : MonoBehaviour
     private int _boosterTime;
     private int timeLeft;
     private bool isTimeSaved = true;
-    private bool isBooster;
     public bool isBoosterTimerActive;
 
     [Space(10)]
-    [SerializeField] private float activationInterval;
+    public float activationInterval;
 
-    [HideInInspector] public UnityEvent OnActivatedCoinsRewardButton, OnActivatedBoosterRewardButton, OnCoinsRewardReceived, OnBoosterRewardEarned;
+    [HideInInspector] public UnityEvent OnActivatedCoinsRewardButton, OnCoinsRewardReceived, OnBoosterRewardEarned, OnDiamondsRewardReceived;
     public event Action OnSetBoosterTimer, OnEndBoosterTimer;
 
     private void OnEnable()
     {
         _rewardsManager.OnCoinsRewardReceived.AddListener(StartBoosterRewardCoroutine);
-        _rewardsManager.OnBoosterRewardEarned.AddListener(StartCoinsRewardCoroutine);
+        _rewardsManager.OnBoosterRewardEarned.AddListener(StartDiamondsRewardCoroutine);
+        _rewardsManager.OnDiamondsRewardReceived.AddListener(StartCoinsRewardCoroutine);
 
         _rewardsManager.OnEarningBoosterReward += SetBoosterTimer;
     }
 
     void Start()
     {
-        ActivateRewardAd();
+        StartCoroutine(ActivateCoinsRewardAd());
+        Debug.Log($"/// RewardTimers /// Start ///");
     }
 
-    public void ActivateRewardAd()
+    public void ActivateRewardAd(int index)
     {
-        if (!isBooster)
+        switch (index)
         {
-            ActivateCoinsRewardObject();
-            isBooster = true;
+            case 1:
+                ActivateCoinsRewardObject();
+                break;
+            case 2:
+                ActivateBoosterRewardObject();
+                break;
+            case 3:
+                ActivateDiamondsRewardObject();
+                break;
         }
-
-        else
-        {         
-            ActivateBoosterRewardObject();
-            isBooster = false;
-        }
-
     }
 
     IEnumerator ActivateCoinsRewardAd()
     {
-        yield return new WaitForSeconds(activationInterval);
+        yield return new WaitForSecondsRealtime(activationInterval);
         ActivateCoinsRewardObject();
-        isBooster = true;
     }
 
     IEnumerator ActivateBoosterRewardAd()
     {
-        yield return new WaitForSeconds(activationInterval);
+        yield return new WaitForSecondsRealtime(activationInterval);
         ActivateBoosterRewardObject();
-        isBooster = false;
+    }
+
+    IEnumerator ActivateDiamondsRewardAd()
+    {
+        yield return new WaitForSecondsRealtime(activationInterval);
+        ActivateDiamondsRewardObject();
     }
 
     void ActivateCoinsRewardObject()
-    {
-        _rewardsManager.gameObject.SetActive(true);
+    {      
+        _meteor.SetActive(true);
         OnActivatedCoinsRewardButton?.Invoke();
-        _rewardsManager.EnableCoinsReward();
     }
 
     void ActivateBoosterRewardObject()
     {
-        _rewardsManager.gameObject.SetActive(true);
-        OnActivatedBoosterRewardButton?.Invoke();
+        _meteor.SetActive(true);
         _rewardsManager.EnableBoosterReward();
+    }
+
+    void ActivateDiamondsRewardObject()
+    {
+        _meteor.SetActive(true);
+        _rewardsManager.EnableDiamondsReward();
     }
 
     private void StartBoosterRewardCoroutine()
@@ -96,6 +106,11 @@ public class RewardTimers : MonoBehaviour
     private void StartCoinsRewardCoroutine()
     {
         StartCoroutine(ActivateCoinsRewardAd());
+    }
+
+    private void StartDiamondsRewardCoroutine()
+    {
+        StartCoroutine(ActivateDiamondsRewardAd());
     }
 
     private void SetBoosterTimer(int time, bool isReward)
@@ -194,6 +209,7 @@ public class RewardTimers : MonoBehaviour
     private void OnDisable()
     {
         _rewardsManager.OnCoinsRewardReceived.RemoveListener(StartBoosterRewardCoroutine);
-        _rewardsManager.OnBoosterRewardEarned.RemoveListener(StartCoinsRewardCoroutine);
+        _rewardsManager.OnBoosterRewardEarned.RemoveListener(StartDiamondsRewardCoroutine);
+        _rewardsManager.OnDiamondsRewardReceived.RemoveListener(StartCoinsRewardCoroutine);
     }
 }

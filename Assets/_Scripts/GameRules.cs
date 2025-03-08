@@ -359,13 +359,13 @@ public class GameRules : MonoBehaviour
                 {                   
                     OnManagerAvailability?.Invoke(index, 1);
                     isManagerTipShown = true;
-                    Debug.Log($"!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// UnlockManagers /// Manager Index: {index} /// Manager Availability");
+                    //Debug.Log($"!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// UnlockManagers /// Manager Index: {index} /// Manager Availability");
                 }
-                else if (!val && isManagerTipShown && !_currentGameData.ItemDataList[index].IsPremium)
+                else
                 {                    
                     OnManagerNonAvailability?.Invoke(index, 1);
                     isManagerTipShown = false;
-                    Debug.Log($"!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// UnlockManagers /// Manager Index: {index} /// Manager Non Availability");
+                    //Debug.Log($"!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// UnlockManagers /// Manager Index: {index} /// Manager Non Availability");
                 }
         }
     }
@@ -386,13 +386,13 @@ public class GameRules : MonoBehaviour
                     itemIndex = index;                
                     OnItemReadyToBuy.Invoke(index, 0);
                     isItemTipShown = true;
-                    Debug.Log($"GameRules /// UnlockOtherItems /// Item Index: {index} /// Item Ready To Buy");
+                    //Debug.Log($"GameRules /// UnlockOtherItems /// Item Index: {index} /// Item Ready To Buy");
                 }
                 else
                 {                   
                     OnItemNotReadyToBuy.Invoke(index, 0);
                     isItemTipShown = false;
-                    Debug.Log($"GameRules /// UnlockOtherItems /// Item Index: {index} /// Item Not Ready To Buy");
+                    //Debug.Log($"GameRules /// UnlockOtherItems /// Item Index: {index} /// Item Not Ready To Buy");
                 }         
         }
     }
@@ -421,12 +421,17 @@ public class GameRules : MonoBehaviour
             _currentGameData.ItemDataList[index].BoosterMultiplier = _currentGameData.BoosterMultiplier;
     }
 
-
-    public void GetMoney()
+    public void Get10KMoney()
     {
-        _currentGameData.Money += 1000000;
-        _currentGeneralData.Diamonds += 200;
-        _currentGeneralData.TotalScore += 1000000;
+        _currentGameData.Money += 10000;
+        _currentGeneralData.TotalScore += 10000;
+        SendDataUpdate();
+    }
+
+    public void Get50MMoney()
+    {
+        _currentGameData.Money += 50000000;
+        _currentGeneralData.TotalScore += 50000000;
         SendDataUpdate();
     }
 
@@ -459,6 +464,24 @@ public class GameRules : MonoBehaviour
         _totalScore = _currentGeneralData.TotalScore;
         SendDataUpdate();
     }
+
+    public void GetDiamonds(double reward)
+    {
+        _currentGeneralData.Diamonds += reward;
+        SendDataUpdate();
+    }
+
+    public void GetCoinsBooster()
+    {
+        _currentGameData.BoosterMultiplier = _currentGameData.IsBoosterPurchased ? 3 : 2;
+        SendDataUpdate();
+    }
+
+    public void DisableCoinsBooster()
+    {
+        _currentGameData.BoosterMultiplier -= 1;
+        SendDataUpdate();
+    }
     #endregion
 
     #region PURCHASES
@@ -483,18 +506,6 @@ public class GameRules : MonoBehaviour
         SendDataUpdate();
     }
     #endregion
-
-    public void GetCoinsBooster()
-    {
-        _currentGameData.BoosterMultiplier = _currentGameData.IsBoosterPurchased ? 3 : 2;
-        SendDataUpdate();
-    }
-
-    public void DisableCoinsBooster()
-    {
-        _currentGameData.BoosterMultiplier -= 1;
-        SendDataUpdate();
-    }
 
     private void CheckTutorialStep()
     {
@@ -523,7 +534,7 @@ public class GameRules : MonoBehaviour
         int unlockedObjects = 0;
         for (int i = 0; i < requiredObjects; i++)
         {
-            if (_currentGameData.ItemCount[i] >= 1)
+            if (_currentGameData.ItemCount[i] >= _currentGameData.ItemDataList[i].MaxCountIncrement)
             {
                 unlockedObjects++;
             }

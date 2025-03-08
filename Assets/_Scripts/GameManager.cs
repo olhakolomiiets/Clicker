@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
         ConnectGameRulesToRewards();
         ConnectGameTips();
 
-        if (PlayerPrefs.GetInt("TutorialStepsCompleted") < 7)
+        if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
             ConnectTutorialManager();
 
         _gameRules.PrepareGameData(_gameData, _generalGameData);
@@ -112,6 +112,8 @@ public class GameManager : MonoBehaviour
         _passiveIncome.OnGetPassiveIncomeExtraTime += _gameRules.UpdatePassiveIncomeTime;
 
         _rewardsManager.OnEarningReward += _gameRules.GetReward;
+
+        _rewardsManager.OnEarningDiamonds += _gameRules.GetDiamonds;
 
         _rewardTimer.OnSetBoosterTimer += _gameRules.GetCoinsBooster;
         _rewardTimer.OnEndBoosterTimer += _gameRules.DisableCoinsBooster;

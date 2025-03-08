@@ -65,7 +65,7 @@ public class TutorialManager : MonoBehaviour
     {
         LoadTutorialState();
 
-        if (tutorialStep >= 7)
+        if (stepsCompleted > 6)
             PlayerPrefs.SetInt(TutorialCompletedKey, 1);
 
         if (stepsCompleted <= 4)
@@ -343,7 +343,7 @@ public class TutorialManager : MonoBehaviour
         });
         ResetPointer();
 
-        if (tutorialStep >= 7)
+        if (stepsCompleted > 6)
             PlayerPrefs.SetInt(TutorialCompletedKey, 1);
 
         Debug.Log("TutorialManager /// HideTutorialInfo");

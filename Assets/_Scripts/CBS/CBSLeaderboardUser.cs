@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using CBS.Scriptable;
 using CBS.Utils;
 
-public class LeaderboardUser : MonoBehaviour, IScrollableItem<ProfileLeaderboardEntry>
+public class CBSLeaderboardUser : MonoBehaviour, IScrollableItem<ProfileLeaderboardEntry>
 {
     [SerializeField] private Image Background;
     [SerializeField] private Text DisplayName;

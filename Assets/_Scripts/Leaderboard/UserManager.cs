@@ -1,107 +1,185 @@
 using System;
-using System.Security.Cryptography;
-using TMPro;
+using System.Collections;
+using System.Text;
 using UnityEngine;
-using CBS.Models;
-using CBS.Utils;
+using UnityEngine.Networking;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
-namespace CBS.UI
+public class UserManager : MonoBehaviour
 {
+    [SerializeField] private Text NicknameLabel;
+    [SerializeField] private GameObject UserNamePanel;
+    [SerializeField] private GameObject EditNamePanel;
+    [SerializeField] private InputField EditInput;
 
-    public class UserManager : MonoBehaviour
+    private string deviceID;
+    private string apiUrl = "https://pbie.fatcat.com.ua/api/";
+    private string userName;
+
+    [SerializeField] private GameRules _gameRules;
+    public double totalScore;
+
+    void Start()
     {
+        deviceID = SystemInfo.deviceUniqueIdentifier;
 
-        [SerializeField] private Text NicknameLabel;
-        [SerializeField] private GameObject UserNamePanel;
-        [SerializeField] private GameObject EditNamePanel;
-        [SerializeField] private InputField EditInput;
-
-        GeneralGameData _currentGameData;
-
-        private IProfile CBSProfile { get; set; }
-        private IAuth Auth { get; set; }
-
-        private void Awake()
+        if (!IsInternetAvailable())
         {
-            CBSProfile = CBSModule.Get<CBSProfileModule>();
-            Auth = CBSModule.Get<CBSAuthModule>();
+            Debug.LogWarning("No internet connection!");
+            return;
         }
 
-        private void OnEnable()
+        StartCoroutine(Login());
+    }
+
+    private void OnApplicationQuit()
+    {
+        UpdateLeaderboardData();
+    }
+
+    private bool IsInternetAvailable()
+    {
+        return Application.internetReachability != NetworkReachability.NotReachable;
+    }
+
+    #region LOGIN
+
+    IEnumerator Login()
+    {
+        string url = apiUrl + "login.php";
+
+        userName = "Planet_" + Random.Range(1000, 9999);
+        string json = "{\"device_id\":\"" + deviceID + "\",\"name\":\"" + userName + "\"}";
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
         {
-            DisplayUI();
-            CBSProfile.OnDisplayNameUpdated += OnUserNameUpdated;
-            CBSProfile.GetAccountInfo(OnAccountInfoGetted);
-        }
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
 
-        private void OnDisable()
-        {
-            CBSProfile.OnDisplayNameUpdated -= OnUserNameUpdated;
-        }
+            yield return request.SendWebRequest();
 
-        public void PrepareGameData(GeneralGameData gameData)
-        {
-            _currentGameData = gameData;
-        }
-
-
-        public void UpdateNickname()
-        {
-            string newName = EditInput.text;
-
-            if (string.IsNullOrEmpty(newName))
+            if (request.result == UnityWebRequest.Result.Success)
             {
-                new PopupViewer().ShowSimplePopup(new PopupRequest
-                {
-                    Title = AuthTXTHandler.ErrorTitle,
-                    Body = AuthTXTHandler.InvalidInput
-                });
-                return;
+                string response = request.downloadHandler.text;
+                PlayerData data = JsonUtility.FromJson<PlayerData>(response);
+
+                if (NicknameLabel != null)
+                    NicknameLabel.text = data.name;
+
+                totalScore = data.total_score;
+                Debug.Log("Логін успішний! Гравець: " + data.name + ", Очки: " + data.total_score);
             }
-            CBSProfile.UpdateDisplayName(newName, onComplete =>
+            else
             {
-                if (!onComplete.IsSuccess)
-                {
-                    new PopupViewer().ShowFabError(onComplete.Error);
-                }
-            });
-        }
-
-        private void OnUserNameUpdated(CBSUpdateDisplayNameResult result)
-        {
-            if (result.IsSuccess)
-            {
-                NicknameLabel.text = result.DisplayName;
-                ShowNickname();
-
-                _currentGameData.UserName = NicknameLabel.text;
+                Debug.LogError("Помилка логіну: " + request.error);
             }
         }
+    }
 
-        public void ShowNickname()
+    #endregion
+
+    #region UPDATE USERNAME
+
+    public void UpdateNickname()
+    {
+        string newName = EditInput.text;
+
+        if (string.IsNullOrEmpty(newName))
         {
-            UserNamePanel.SetActive(true);
-            EditNamePanel.SetActive(false);
+            Debug.LogError("Invalid input: Name cannot be empty.");
+            return;
         }
 
-        public void ShowEditName()
+        NicknameLabel.text = newName;
+        ShowNickname();
+
+        PlayerPrefs.SetString("UserName", newName);
+        PlayerPrefs.Save();
+
+        StartCoroutine(UpdateUserNameRequest(deviceID, newName));
+    }
+
+    private void ShowNickname()
+    {
+        UserNamePanel.SetActive(true);
+        EditNamePanel.SetActive(false);
+    }
+
+    public void ShowEditName()
+    {
+        EditInput.text = NicknameLabel.text;
+        UserNamePanel.SetActive(false);
+        EditNamePanel.SetActive(true);
+    }
+
+    private IEnumerator UpdateUserNameRequest(string deviceID, string newName)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("device_id", deviceID);
+        form.AddField("name", newName);
+
+        using (UnityWebRequest request = UnityWebRequest.Post(apiUrl + "update_name.php", form))
         {
-            EditInput.text = CBSProfile.DisplayName;
-            UserNamePanel.SetActive(false);
-            EditNamePanel.SetActive(true);
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.LogError("Error updating username: " + request.error);
+            }
+            else
+            {
+                Debug.Log("Username updated successfully");
+            }
+        }
+    }
+
+    #endregion
+
+    #region UPDATE TOTAL SCORE
+
+    private void UpdateLeaderboardData()
+    {
+        if (!IsInternetAvailable())
+        {
+            Debug.LogWarning("No internet connection!");
+            return;
         }
 
-        private void OnAccountInfoGetted(CBSGetAccountInfoResult result)
-        {
-            DisplayUI();
-        }
+        totalScore = _gameRules._totalScore;
+        StartCoroutine(UpdateLeaderboard());
+    }
 
-        private void DisplayUI()
+    private IEnumerator UpdateLeaderboard()
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("device_id", deviceID);
+        form.AddField("total_score", totalScore.ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+        using (UnityWebRequest request = UnityWebRequest.Post(apiUrl + "update_score.php", form))
         {
-            ShowNickname();
-            NicknameLabel.text = CBSProfile.DisplayName;
-            EditInput.text = string.Empty;
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.LogError("Error updating score: " + request.error);
+            }
+            else
+            {
+                Debug.Log("Score updated successfully");
+            }
         }
+    }
+
+    #endregion
+
+    [System.Serializable]
+    private class PlayerData
+    {
+        public string device_id;
+        public string name;
+        public int total_score;
     }
 }

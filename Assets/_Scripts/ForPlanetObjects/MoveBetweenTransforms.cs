@@ -4,28 +4,17 @@ using UnityEngine.Events;
 
 public class MoveBetweenTransforms : MonoBehaviour
 {
-    [SerializeField] private RewardTimers _rewardTimer;
     public GameObject targetObject; // The object to move
     public Transform[] waypoints; // Array of waypoints to move between
     public float moveDuration = 2f; // Duration of movement from one waypoint to another
     public float minRandomDelay = 1f; // Minimum random delay between movements
     public float maxRandomDelay = 5f; // Maximum random delay between movements
-    public float repeatDelay = 3f; // Delay before repeating the entire movement cycle
+    public float repeatDelay = 60f; // Delay before repeating the entire movement cycle
     public bool invertMovement = false; // Set to true to invert movement direction
-
-    public UnityEvent onCheckpointReached; // Event triggered when a checkpoint is reached
-    public UnityEvent onCycleCompleted; // Event triggered when all checkpoints in a cycle are completed
-    public UnityEvent onStart;
-
-    private Vector3 targetObjectPos; // My precious
-
-    private int _index = 1;
 
     private void OnEnable()
     {
         StartCoroutine(RepeatMovement());
-        onCheckpointReached?.Invoke();
-        onStart?.Invoke();
     }
 
     IEnumerator RepeatMovement()
@@ -33,9 +22,7 @@ public class MoveBetweenTransforms : MonoBehaviour
         while (true)
         {            
             yield return StartCoroutine(MoveBetweenWaypoints());
-            onCycleCompleted?.Invoke();
 
-            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! MoveBetweenTransforms /// RepeatMovement /// Invoke UnityEvent: onCycleCompleted");
             float delayBeforeRepeat = Random.Range(minRandomDelay, maxRandomDelay);
             yield return new WaitForSeconds(delayBeforeRepeat);
         }
@@ -46,41 +33,18 @@ public class MoveBetweenTransforms : MonoBehaviour
         int numWaypoints = waypoints.Length;
 
         for (int i = 0; i < numWaypoints; i++)
-        {
-            //if(_rewardTimer != null)
-            //{
-            //    Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! MoveBetweenTransforms /// MoveBetweenWaypoints /// Index Before" + _index);
-            //    _rewardTimer.ActivateRewardAd(_index); // My precious
-            //    _index = _index % 3 + 1;
-            //    Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! MoveBetweenTransforms /// MoveBetweenWaypoints /// Index After" + _index);
-            //}               
-
+        {     
             int nextWaypointIndex = (i + 1) % numWaypoints;
             yield return StartCoroutine(MoveToWaypoint(waypoints[nextWaypointIndex], nextWaypointIndex));
-            onCheckpointReached?.Invoke();
 
-            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! MoveBetweenTransforms /// RepeatMovement /// Invoke MoveBetweenWaypoints: onCheckpointReached");
             yield return null; // Smooth transition
         }
     }
 
     IEnumerator MoveToWaypoint(Transform waypoint, int index)
     {
-        if (_rewardTimer != null)
-        {
-            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! MoveBetweenTransforms /// MoveToWaypoint /// Index Before" + _index);
-            _rewardTimer.ActivateRewardAd(_index); // My precious
-            _index = _index % 3 + 1;
-            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! MoveBetweenTransforms /// MoveToWaypoint /// Index After" + _index);
-        }
-
         Vector3 startPosition = targetObject.transform.position;
         Vector3 endPosition = waypoint.position;
-
-        // if (startPosition == endPosition) // My precious
-        //     yield break;
-
-        targetObjectPos = endPosition; // My precious
 
         float elapsedTime = 0f;
         while (elapsedTime < moveDuration)
@@ -97,11 +61,7 @@ public class MoveBetweenTransforms : MonoBehaviour
             yield return null;
         }
         targetObject.transform.position = endPosition;
-        yield return new WaitForSeconds(_rewardTimer.activationInterval); // Optional delay before moving to the next waypoint
-    }
 
-    public void SetObjectPosition() // My precious
-    {
-        targetObject.transform.position = targetObjectPos;
+        yield return new WaitForSeconds(repeatDelay);
     }
 }

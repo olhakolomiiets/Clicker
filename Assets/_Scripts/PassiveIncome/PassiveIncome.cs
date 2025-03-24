@@ -106,7 +106,7 @@ public class PassiveIncome : MonoBehaviour
         _currentGeneralData = generalGameData;
         _currentGameData = gameData;
 
-        _buyButton.interactable = (generalGameData.Diamonds <= _passiveIncomeData.ExtraTimePrice) ? false : true;
+        _buyButton.interactable = (generalGameData.Diamonds < _passiveIncomeData.ExtraTimePrice) ? false : true;
         _rewardReceived = false;
     }
 
@@ -123,7 +123,7 @@ public class PassiveIncome : MonoBehaviour
 
         _passiveIncomeData.ExtraTimePrice = _passiveIncomeData.ExtraTimePrice * _passiveIncomeData.ExtraTimePriceMultiplier;
         _extraTimePriceTxt.text = _passiveIncomeData.ExtraTimePrice.ToString();
-        UpdateTimeText();
+        UpdateTimeText();       
     }
 
     public void ActivatePassiveIncome(int timeAfterExit)
@@ -139,6 +139,7 @@ public class PassiveIncome : MonoBehaviour
     {
         OnEarningPassiveIncome?.Invoke(_passiveProfit, 0);
         passiveIncomeWind.SetActive(false);
+        FirebaseAnalytics.LogEvent(name: "passive_income_received");
         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! PassiveIncome /// EarningPassiveIncome /// PassiveIncome: " + _passiveProfit);
     }
 
@@ -169,7 +170,6 @@ public class PassiveIncome : MonoBehaviour
             _2xPassiveIncomeTxt.text = _2xPassiveIncome.ToString();
             _3xPassiveIncomeTxt.text = _3xPassiveIncome.ToString();
         }
-
     }
 
     string AbbreviateNumber(double number)
@@ -190,7 +190,7 @@ public class PassiveIncome : MonoBehaviour
         {
             OnEarningPassiveIncome?.Invoke(_2xPassiveIncome, 0);
 
-            FirebaseAnalytics.LogEvent(name: "Get_2xPassiveIncome");
+            FirebaseAnalytics.LogEvent(name: "double_passive_income_received");
 
             _2xButtonReward.interactable = true;
             _3xButtonReward.interactable = true;

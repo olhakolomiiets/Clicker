@@ -12,7 +12,6 @@ public class RewardsManager : MonoBehaviour
 
     [Header("Coins Reward")]
     [SerializeField] private TextMeshProUGUI _coinsTitle;
-    [SerializeField] private Button _coinsButton;
     [SerializeField] private GameObject _coinsObj;
     [SerializeField] private TextMeshProUGUI _coinsRewardTxt;
 
@@ -21,7 +20,6 @@ public class RewardsManager : MonoBehaviour
 
     [Header("Booster Reward")]
     [SerializeField] private TextMeshProUGUI _boosterTitle;
-    [SerializeField] private Button _boosterButton;
     [SerializeField] private GameObject _boosterObj;
 
     [Space(10)]
@@ -29,16 +27,16 @@ public class RewardsManager : MonoBehaviour
 
     [Header("Diamonds Reward")]
     [SerializeField] private TextMeshProUGUI _diamondsTitle;
-    [SerializeField] private Button _diamondsButton;
     [SerializeField] private GameObject _diamondsObj;
     [SerializeField] private TextMeshProUGUI _diamondsRewardTxt;
 
     [Space(10)]
+    [SerializeField] private Button _rewardButton;
     [SerializeField] private float _diamonds;
 
     [Space(10)]
     [SerializeField] private TextMeshProUGUI _serviceTxt;
-    [SerializeField] MoveBetweenTransforms _meteor;
+    [SerializeField] AstronautMoveBetweenTransforms _meteor;
     [SerializeField] RewardTimers _rewardTimer;
     //[SerializeField] private GoogleMobileAds.Sample.RewardedAdController _adController;
     [SerializeField] private AppodealAdController _appodealController;
@@ -47,7 +45,7 @@ public class RewardsManager : MonoBehaviour
 
     #region UNITY EVENTS
 
-    [HideInInspector] public UnityEvent OnUserEarnedRewardEvent, RewardedAdLoadedEvent, RewardedAdLoadedWithErrorEvent, OnCoinsRewardReceived, OnBoosterRewardEarned, OnDiamondsRewardReceived;
+    [HideInInspector] public UnityEvent OnUserEarnedRewardEvent, RewardedAdLoadedEvent, RewardedAdLoadedWithErrorEvent, OnCoinsRewardReceived, OnBoosterRewardEarned, OnDiamondsRewardReceived, OnRewardReceived;
 
     public event Action<double> OnEarningReward, OnEarningDiamonds;
     public event Action<int, bool> OnEarningBoosterReward;
@@ -76,44 +74,44 @@ public class RewardsManager : MonoBehaviour
 
     public void EnableCoinsReward()
     {
-        _boosterButton.gameObject.SetActive(false);
         _boosterObj.SetActive(false);
 
-        _diamondsButton.gameObject.SetActive(false);
         _diamondsObj.SetActive(false);
 
-        _coinsButton.gameObject.SetActive(true);
+        _rewardButton.gameObject.SetActive(true);
         _coinsObj.SetActive(true);
         _serviceTxt.text = $"";
         _coinsTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("GetCoins")}";
+
+        _isCoinsRewardActive = true;
     }
 
     public void EnableDiamondsReward()
-    {
-        _boosterButton.gameObject.SetActive(false);        
+    {      
         _boosterObj.SetActive(false);
 
-        _coinsButton.gameObject.SetActive(false);
         _coinsObj.SetActive(false);
 
-        _diamondsButton.gameObject.SetActive(true);
+        _rewardButton.gameObject.SetActive(true);
         _diamondsObj.SetActive(true);
         _serviceTxt.text = $"";
         _diamondsTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("GetDiamonds")}";
+
+        _isDiamondsRewardActive = true;
     }
 
     public void EnableBoosterReward()
-    {
-        _coinsButton.gameObject.SetActive(false);     
+    {    
         _coinsObj.SetActive(false);
 
-        _diamondsButton.gameObject.SetActive(false);
         _diamondsObj.SetActive(false);
 
-        _boosterButton.gameObject.SetActive(true);
+        _rewardButton.gameObject.SetActive(true);
         _serviceTxt.text = $"";
         _boosterTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Booster")}";
         _boosterObj.SetActive(true);
+
+        _isBoosterRewardActive = true;
     }
 
     public void PrepareRewardData(float money)
@@ -133,13 +131,10 @@ public class RewardsManager : MonoBehaviour
         if (_isCoinsRewardActive)
         {
             OnEarningReward?.Invoke(_coinsReward);
-            OnCoinsRewardReceived?.Invoke();
+            OnRewardReceived?.Invoke();
             FirebaseAnalytics.LogEvent(name: "coins_for_ads");
 
             _meteor.SetObjectPosition();
-
-            _coinsButton.interactable = true;
-            _coinsButton.gameObject.SetActive(false);
             
             _isCoinsRewardActive = false;
 
@@ -148,13 +143,10 @@ public class RewardsManager : MonoBehaviour
         else if (_isBoosterRewardActive)
         {
             OnEarningBoosterReward?.Invoke(_boosterTime, true);
-            OnBoosterRewardEarned?.Invoke();
+            OnRewardReceived?.Invoke();
             FirebaseAnalytics.LogEvent(name: "booster_for_ads");
 
             _meteor.SetObjectPosition();
-
-            _boosterButton.interactable = true;
-            _boosterButton.gameObject.SetActive(false);
             
             _isBoosterRewardActive = false;
 
@@ -163,24 +155,19 @@ public class RewardsManager : MonoBehaviour
         else if (_isDiamondsRewardActive)
         {
             OnEarningDiamonds?.Invoke(_diamonds);
-            OnDiamondsRewardReceived?.Invoke();
+            OnRewardReceived?.Invoke();
             FirebaseAnalytics.LogEvent(name: "diamonds_for_ads");
 
             _meteor.SetObjectPosition();
 
-            _diamondsButton.interactable = true;
-            _diamondsButton.gameObject.SetActive(false);
-
             _isDiamondsRewardActive = false;
 
             _meteor.gameObject.SetActive(false);
-        }
+        }       
     }
 
     public void GetCoinsBooster()
     {
-        _boosterButton.interactable = false;
-        _isBoosterRewardActive = true;
         _boosterObj.SetActive(false);
         _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
@@ -190,8 +177,6 @@ public class RewardsManager : MonoBehaviour
 
     public void GetCoins()
     {
-        _coinsButton.interactable = false;
-        _isCoinsRewardActive = true;
         _coinsObj.SetActive(false);
         _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
@@ -199,14 +184,32 @@ public class RewardsManager : MonoBehaviour
         //_adController.LoadAd();
     }
 
-    public void GetDiamondssBooster()
+    public void GetDiamonds()
     {
-        _diamondsButton.interactable = false;
-        _isDiamondsRewardActive = true;
         _diamondsObj.SetActive(false);
         _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
 
         _appodealController.ShowRewardedVideo();
+    }
+
+    public void GetReward()
+    {
+        if (_isCoinsRewardActive)
+        {
+            _coinsObj.SetActive(false);
+        }
+        else if (_isBoosterRewardActive)
+        {
+            _boosterObj.SetActive(false);
+        }
+        else if (_isDiamondsRewardActive)
+        {           
+            _diamondsObj.SetActive(false);
+        }
+
+        _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
+        _appodealController.ShowRewardedVideo();
+        _rewardButton.gameObject.SetActive(false);
     }
 
     public void ShowRewardedAd()

@@ -1,3 +1,4 @@
+using MoreMountains.Tools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,24 +27,26 @@ public class RewardTimers : MonoBehaviour
     public bool isBoosterTimerActive;
 
     [Space(10)]
-    public float activationInterval;
+    public float minDelay = 90f;
+    public float maxDelay = 140f;
 
     [HideInInspector] public UnityEvent OnActivatedCoinsRewardButton, OnCoinsRewardReceived, OnBoosterRewardEarned, OnDiamondsRewardReceived;
     public event Action OnSetBoosterTimer, OnEndBoosterTimer;
 
     private void OnEnable()
     {
-        _rewardsManager.OnCoinsRewardReceived.AddListener(StartBoosterRewardCoroutine);
-        _rewardsManager.OnBoosterRewardEarned.AddListener(StartDiamondsRewardCoroutine);
-        _rewardsManager.OnDiamondsRewardReceived.AddListener(StartCoinsRewardCoroutine);
-
+        _rewardsManager.OnRewardReceived.AddListener(StartMeteorCoroutine);
         _rewardsManager.OnEarningBoosterReward += SetBoosterTimer;
     }
 
     void Start()
     {
         StartCoroutine(ActivateCoinsRewardAd());
-        Debug.Log($"/// RewardTimers /// Start ///");
+    }
+
+    public float GetRandomDelay()
+    {
+        return UnityEngine.Random.Range(minDelay, maxDelay);
     }
 
     public void ActivateRewardAd(int index)
@@ -64,20 +67,18 @@ public class RewardTimers : MonoBehaviour
 
     IEnumerator ActivateCoinsRewardAd()
     {
-        yield return new WaitForSecondsRealtime(activationInterval);
+        float interval = GetRandomDelay();
+        Debug.Log($"RewardTimers /// ActivateCoinsRewardAd /// Random Delay: {interval}");
+        yield return new WaitForSecondsRealtime(interval);
         ActivateCoinsRewardObject();
     }
 
-    IEnumerator ActivateBoosterRewardAd()
+    IEnumerator ActivateMeteor()
     {
-        yield return new WaitForSecondsRealtime(activationInterval);
-        ActivateBoosterRewardObject();
-    }
-
-    IEnumerator ActivateDiamondsRewardAd()
-    {
-        yield return new WaitForSecondsRealtime(activationInterval);
-        ActivateDiamondsRewardObject();
+        float interval = GetRandomDelay();
+        Debug.Log($"RewardTimers /// ActivateCoinsRewardAd /// Random Delay: {interval}");
+        yield return new WaitForSecondsRealtime(interval);
+        _meteor.SetActive(true);
     }
 
     void ActivateCoinsRewardObject()
@@ -98,19 +99,9 @@ public class RewardTimers : MonoBehaviour
         _rewardsManager.EnableDiamondsReward();
     }
 
-    private void StartBoosterRewardCoroutine()
+    private void StartMeteorCoroutine()
     {
-        StartCoroutine(ActivateBoosterRewardAd());
-    }
-
-    private void StartCoinsRewardCoroutine()
-    {
-        StartCoroutine(ActivateCoinsRewardAd());
-    }
-
-    private void StartDiamondsRewardCoroutine()
-    {
-        StartCoroutine(ActivateDiamondsRewardAd());
+        StartCoroutine(ActivateMeteor());
     }
 
     private void SetBoosterTimer(int time, bool isReward)
@@ -208,8 +199,6 @@ public class RewardTimers : MonoBehaviour
 
     private void OnDisable()
     {
-        _rewardsManager.OnCoinsRewardReceived.RemoveListener(StartBoosterRewardCoroutine);
-        _rewardsManager.OnBoosterRewardEarned.RemoveListener(StartDiamondsRewardCoroutine);
-        _rewardsManager.OnDiamondsRewardReceived.RemoveListener(StartCoinsRewardCoroutine);
+        _rewardsManager.OnCoinsRewardReceived.RemoveListener(StartMeteorCoroutine);
     }
 }

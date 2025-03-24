@@ -1,3 +1,4 @@
+using Firebase.Analytics;
 using MoreMountains.Feedbacks;
 using System;
 using System.Collections;
@@ -101,6 +102,7 @@ public class GameUI : MonoBehaviour
             StartCoroutine(InvokeAction());
             return;
         }
+        FirebaseAnalytics.LogEvent(name: "creation_object_purchased");
     }
 
     public void ActivateNewCreationObject(int i)

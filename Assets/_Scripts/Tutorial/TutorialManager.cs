@@ -5,6 +5,7 @@ using TMPro;
 using Lean.Localization;
 using DG.Tweening;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class TutorialManager : MonoBehaviour
 {
@@ -65,8 +66,10 @@ public class TutorialManager : MonoBehaviour
     {
         LoadTutorialState();
 
-        if (stepsCompleted > 6)
+        if (SceneManager.GetActiveScene().buildIndex != 0)
             PlayerPrefs.SetInt(TutorialCompletedKey, 1);
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! TutorialManager /// Start /// Tutorial CompletedKey: " + PlayerPrefs.GetInt(TutorialCompletedKey) + " /// Steps Completed: " + stepsCompleted);
 
         if (stepsCompleted <= 4)
             ShowNextTutorial();
@@ -343,7 +346,7 @@ public class TutorialManager : MonoBehaviour
         });
         ResetPointer();
 
-        if (stepsCompleted > 6)
+        if (stepsCompleted >= 6)
             PlayerPrefs.SetInt(TutorialCompletedKey, 1);
 
         Debug.Log("TutorialManager /// HideTutorialInfo");

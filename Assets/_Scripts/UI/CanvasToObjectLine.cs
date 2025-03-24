@@ -13,7 +13,7 @@ public class CanvasToObjectLine : MonoBehaviour
 
     private LineRenderer lineRenderer;
 
-    void Awake()
+    void OnEnable()
     {
         // Получаем компонент LineRenderer или добавляем его, если его нет
         lineRenderer = GetComponent<LineRenderer>();
@@ -21,7 +21,7 @@ public class CanvasToObjectLine : MonoBehaviour
         {
             lineRenderer = gameObject.AddComponent<LineRenderer>();
         }
-
+              
         // Настройка LineRenderer
         lineRenderer.positionCount = 2;
         lineRenderer.startWidth = lineThickness;
@@ -47,5 +47,10 @@ public class CanvasToObjectLine : MonoBehaviour
             lineRenderer.SetPosition(0, startObject.position);
             lineRenderer.SetPosition(1, endObject.position);
         }
+    }
+
+    private void OnDisable()
+    {
+        Destroy(lineRenderer);
     }
 }

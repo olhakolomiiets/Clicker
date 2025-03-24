@@ -14,6 +14,7 @@ public class LevelController : MonoBehaviour
     [SerializeField] private List<Button> _levelButtons;
     private GeneralGameData generalData;
     [SerializeField] private Color disabledColor = new Color(1, 1, 1, 0.5f);
+    [SerializeField] private Color enabledColor = Color.white;
 
     [SerializeField] private GameObject levelInfo;
 
@@ -53,6 +54,10 @@ public class LevelController : MonoBehaviour
             bool isActive = generalData.ActivePlanet > i;
             ColorBlock colors = _levelButtons[i].colors;
             colors.normalColor = isActive ? Color.white : disabledColor;
+            colors.pressedColor = isActive ? enabledColor : disabledColor;
+            colors.highlightedColor = isActive ? enabledColor : disabledColor;
+            colors.selectedColor = isActive ? enabledColor : disabledColor;
+            colors.disabledColor = disabledColor;
             _levelButtons[i].colors = colors;
         }
     }
@@ -81,11 +86,6 @@ public class LevelController : MonoBehaviour
         generalData = generalGameData;
 
         UpdateLevelButtons();
-
-        //for (int i = 0; i < _levelButtons.Count; i++)
-        //{
-        //    _levelButtons[i].interactable = generalData.ActivePlanet > i;
-        //}
     }
 
     public void ShowTip()

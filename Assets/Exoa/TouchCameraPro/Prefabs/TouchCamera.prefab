@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1367270649431066998}
   - component: {fileID: 1367270649431066993}
   - component: {fileID: 1367270649431066953}
+  - component: {fileID: 1590746257920246748}
   m_Layer: 0
   m_Name: TouchCamera
   m_TagString: MainCamera
@@ -29,12 +30,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1367270649431066992}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.30070576, y: 0, z: 0, w: 0.953717}
   m_LocalPosition: {x: 0, y: 20.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 35, y: 0, z: 0}
 --- !u!20 &1367270649431066997
 Camera:
@@ -50,9 +52,17 @@ Camera:
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -94,7 +104,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1367270649431066992}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d2324aa12cfd0b942aa2986ed763d5f2, type: 3}
   m_Name: 
@@ -103,15 +113,56 @@ MonoBehaviour:
   rightClickDrag: 0
   middleClickDrag: 0
   oneFingerDrag: 1
-  focusTweenDuration: 1
-  focusEase: 10
-  focusDistanceMultiplier: 1
+  twoFingerDrag: 0
+  twoFingerPinch: 0
+  scrollWheel: 0
+  groundHeight: 0
+  groundHeightAnim:
+    halfLife: 0.1
+    distanceFromTargetToComplete: 0
+  allowPitchRotation: 1
+  PitchSensitivity: 0.25
+  PitchClamp: 1
+  PitchMinMax: {x: 5, y: 90}
+  allowYawRotation: 1
+  YawSensitivity: 0.25
+  YawClamp: 0
+  YawMinMax: {x: 5, y: 90}
+  maxTranslationSpeed: 3
   focusRadiusMultiplier: 0.5
-  followRadiusMultiplier: 1
-  initSize: 6
+  followMove:
+    halfLife: 0.1
+    distanceFromTargetToComplete: 0
+  enableTranslationInertia: 0
+  positionInertiaMove:
+    moveType: 0
+    maxVelocity: 0
+    minVelocity: 0
+    A: 0
+    B: 0
+    D: 0
+    logBase: 0
+  positionAcceleration:
+    samples: 22
+    maxMagnitude: 0
+    accelerationFactor: 100
+  positionInertiaForce: 1
+  enableRotationInertia: 0
+  rotationInertiaMove:
+    moveType: 0
+    maxVelocity: 0
+    minVelocity: 0
+    A: 0
+    B: 0
+    D: 0
+    logBase: 0
+  rotationAcceleration:
+    samples: 22
+    maxMagnitude: 0
+    accelerationFactor: 100
+  rotationInertiaForce: 1
   sizeMinMax: {x: 1, y: 12}
-  initialRotationY: 0
-  moveLerp: 0.2
+  fixedDistance: 30
 --- !u!114 &1367270649431066998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,21 +179,59 @@ MonoBehaviour:
   rightClickDrag: 0
   middleClickDrag: 0
   oneFingerDrag: 1
-  focusTweenDuration: 1
-  focusEase: 10
-  focusDistanceMultiplier: 1
-  focusRadiusMultiplier: 0.5
-  followRadiusMultiplier: 0.5
-  initDistance: 10
-  minMaxDistance: {x: 3, y: 30}
-  followDistanceMultiplier: 1
-  initialRotation: {x: 35, y: 0}
+  twoFingerDrag: 0
+  twoFingerPinch: 0
+  scrollWheel: 0
+  groundHeight: 0
+  groundHeightAnim:
+    halfLife: 0.1
+    distanceFromTargetToComplete: 0
   allowPitchRotation: 1
   PitchSensitivity: 0.25
   PitchClamp: 1
   PitchMinMax: {x: 5, y: 90}
   allowYawRotation: 1
   YawSensitivity: 0.25
+  YawClamp: 0
+  YawMinMax: {x: 5, y: 90}
+  maxTranslationSpeed: 3
+  focusRadiusMultiplier: 0.5
+  followMove:
+    halfLife: 0.1
+    distanceFromTargetToComplete: 0
+  enableTranslationInertia: 0
+  positionInertiaMove:
+    moveType: 0
+    maxVelocity: 0
+    minVelocity: 0
+    A: 0
+    B: 0
+    D: 0
+    logBase: 0
+  positionAcceleration:
+    samples: 22
+    maxMagnitude: 0
+    accelerationFactor: 100
+  positionInertiaForce: 1
+  enableRotationInertia: 0
+  rotationInertiaMove:
+    moveType: 0
+    maxVelocity: 0
+    minVelocity: 0
+    A: 0
+    B: 0
+    D: 0
+    logBase: 0
+  rotationAcceleration:
+    samples: 22
+    maxMagnitude: 0
+    accelerationFactor: 100
+  rotationInertiaForce: 1
+  minMaxDistance: {x: 3, y: 30}
+  initDistance: 10
+  zoomSmoothness: 0
+  fov: 55
+  focusDistanceMultiplier: 1
 --- !u!114 &1367270649431066993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,11 +239,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1367270649431066992}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 78735d97e02833c4e87a7952a47ae49d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  switchMove:
+    halfLife: 0.1
+    distanceFromTargetToComplete: 0
 --- !u!114 &1367270649431066953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,4 +259,59 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0703de1087d14a49ac22d0c9b6af02a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
+  movementType: 0
+  elasticity: 0.05
+  elasticSpace: 5
   bounderiesCollider: {fileID: 0}
+  sphereCollider: {fileID: 0}
+  boxCollider: {fileID: 0}
+  mode: 0
+  pitchThreshold: 60
+  insideThreshold: 0.5
+  drawGizmos: 0
+  drawElasticGizmos: 0
+--- !u!114 &1590746257920246748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1367270649431066992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+  m_TaaSettings:
+    quality: 3
+    frameInfluence: 0.1
+    jitterScale: 1
+    mipBias: 0
+    varianceClampScale: 0.9
+    contrastAdaptiveSharpening: 0

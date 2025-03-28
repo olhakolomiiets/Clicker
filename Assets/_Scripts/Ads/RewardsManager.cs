@@ -38,8 +38,7 @@ public class RewardsManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _serviceTxt;
     [SerializeField] AstronautMoveBetweenTransforms _meteor;
     [SerializeField] RewardTimers _rewardTimer;
-    //[SerializeField] private GoogleMobileAds.Sample.RewardedAdController _adController;
-    [SerializeField] private AppodealAdController _appodealController;
+    [SerializeField] private GoogleMobileAds.Sample.RewardedAdController _adController;
 
     #endregion
 
@@ -63,13 +62,9 @@ public class RewardsManager : MonoBehaviour
 
     private void OnEnable()
     {
-        if (_appodealController == null)
-        {
-            _appodealController = FindAnyObjectByType<AppodealAdController>();
-        }
-        _appodealController.OnUserEarnedRewardEvent.AddListener(UserEarnedReward);
-        //_adController.RewardedAdLoadedEvent.AddListener(ShowRewardedAd);
-        _appodealController.RewardedAdLoadedWithErrorEvent.AddListener(RewardedAdWithError);
+        _adController.OnUserEarnedRewardEvent.AddListener(UserEarnedReward);
+        _adController.RewardedAdLoadedEvent.AddListener(ShowRewardedAd);
+        _adController.RewardedAdLoadedWithErrorEvent.AddListener(RewardedAdWithError);
     }
 
     public void EnableCoinsReward()
@@ -166,32 +161,6 @@ public class RewardsManager : MonoBehaviour
         }       
     }
 
-    public void GetCoinsBooster()
-    {
-        _boosterObj.SetActive(false);
-        _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
-
-        _appodealController.ShowRewardedVideo(); 
-        //_adController.LoadAd();
-    }
-
-    public void GetCoins()
-    {
-        _coinsObj.SetActive(false);
-        _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
-
-        _appodealController.ShowRewardedVideo(); 
-        //_adController.LoadAd();
-    }
-
-    public void GetDiamonds()
-    {
-        _diamondsObj.SetActive(false);
-        _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
-
-        _appodealController.ShowRewardedVideo();
-    }
-
     public void GetReward()
     {
         if (_isCoinsRewardActive)
@@ -207,14 +176,14 @@ public class RewardsManager : MonoBehaviour
             _diamondsObj.SetActive(false);
         }
 
-        _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
-        _appodealController.ShowRewardedVideo();
         _rewardButton.gameObject.SetActive(false);
+        _serviceTxt.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
+        _adController.LoadAd();
     }
 
     public void ShowRewardedAd()
     {
-        //_adController.ShowAd();
+        _adController.ShowAd();
     }
 
     public void RewardedAdWithError()
@@ -224,8 +193,8 @@ public class RewardsManager : MonoBehaviour
 
     private void OnDisable()
     {
-        _appodealController.OnUserEarnedRewardEvent.RemoveListener(UserEarnedReward);
-        //_adController.RewardedAdLoadedEvent.RemoveListener(ShowRewardedAd);
-        _appodealController.RewardedAdLoadedWithErrorEvent.RemoveListener(RewardedAdWithError);
+        _adController.OnUserEarnedRewardEvent.RemoveListener(UserEarnedReward);
+        _adController.RewardedAdLoadedEvent.RemoveListener(ShowRewardedAd);
+        _adController.RewardedAdLoadedWithErrorEvent.RemoveListener(RewardedAdWithError);
     }
 }

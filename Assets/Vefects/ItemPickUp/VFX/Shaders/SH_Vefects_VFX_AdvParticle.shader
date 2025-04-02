@@ -266,7 +266,7 @@ Shader "Vefects/SH_Vefects_VFX_AdvParticle"
 			sampler2D _NoiseDistortion_Texture;
 			sampler2D _ColorGradientMask;
 			sampler2D _Noise_01_Texture;
-			uniform float4 _CameraDepthTexture_TexelSize;
+			//uniform float4 _CameraDepthTexture_TexelSize;
 
 
 						
@@ -564,8 +564,7 @@ Shader "Vefects/SH_Vefects_VFX_AdvParticle"
 			sampler2D _Mask_Texture;
 			sampler2D _NoiseDistortion_Texture;
 			sampler2D _Noise_01_Texture;
-			uniform float4 _CameraDepthTexture_TexelSize;
-
+			//uniform float4 _CameraDepthTexture_TexelSize;
 
 			
 			VertexOutput VertexFunction( VertexInput v  )

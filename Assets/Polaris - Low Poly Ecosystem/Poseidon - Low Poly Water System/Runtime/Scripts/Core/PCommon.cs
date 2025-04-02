@@ -28,7 +28,7 @@ namespace Pinwheel.Poseidon
         {
             get
             {
-                RenderPipelineAsset rpAsset = GraphicsSettings.renderPipelineAsset;
+                RenderPipelineAsset rpAsset = GraphicsSettings.defaultRenderPipeline;
                 if (rpAsset == null)
                 {
                     return PRenderPipelineType.Builtin;

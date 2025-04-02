@@ -78,6 +78,37 @@ namespace CBS
             return updateResult.Result.AsFunctionResult();
         }
 
+        //[FunctionName(AzureFunctions.UpdateStatisticMethod)]
+        //public static async Task<dynamic> UpdateStatisticTrigger([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger log)
+        //{
+        //    // ¬место получени€ данных из запроса, делаем запрос в API
+        //    var apiUrl = "https://pbie.fatcat.com.ua/api/"; // «амените на нужный URL
+        //    var client = new HttpClient();
+        //    var response = await client.GetStringAsync(apiUrl);
+
+        //    if (string.IsNullOrEmpty(response))
+        //    {
+        //        return new { error = "Failed to retrieve data from API." };
+        //    }
+
+        //    // ѕредположим, что данные пришли в формате JSON и их нужно десериализовать
+        //    var data = JsonConvert.DeserializeObject<YourResponseType>(response);
+
+        //    // “еперь можно обработать данные, как в оригинальном запросе
+        //    var profileID = data.ProfileID;
+        //    var statisticName = data.StatisticName;
+        //    var statisticValue = data.StatisticValue;
+
+        //    var updateResult = await UpdateProfileStatisticValueAsync(profileID, statisticName, statisticValue);
+        //    if (updateResult.Error != null)
+        //    {
+        //        return ErrorHandler.ThrowError(updateResult.Error).AsFunctionResult();
+        //    }
+
+        //    return updateResult.Result.AsFunctionResult();
+        //}
+
+
         [FunctionName(AzureFunctions.AddStatisticMethod)]
         public static async Task<dynamic> AddStatisticTrigger([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger log)
         {

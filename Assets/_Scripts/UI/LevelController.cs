@@ -1,5 +1,6 @@
 using DG.Tweening;
 using Lean.Localization;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,8 +12,8 @@ using UnityEngine.UI;
 
 public class LevelController : MonoBehaviour
 {
-    [SerializeField] private List<Button> _levelButtons;
-    private GeneralGameData generalData;
+    [SerializeField] private List<Button> _buyButtons;
+    [SerializeField] private List<Button> _levelButtons;   
     [SerializeField] private Color disabledColor = new Color(1, 1, 1, 0.5f);
     [SerializeField] private Color enabledColor = Color.white;
 
@@ -24,7 +25,14 @@ public class LevelController : MonoBehaviour
     private float duration = 0.5f;
     private bool isHidingTip = false;
 
+    [SerializeField] private double nextPlanetPrice;
+
+    private GeneralGameData generalData;
+    private GameData data;
+
     private AsyncOperationHandle<SceneInstance> loadHandle;
+    public event Action<double> OnNextPlanetPurchased;
+    private int level;
 
     //private void Start()
     //{
@@ -44,7 +52,11 @@ public class LevelController : MonoBehaviour
 
     private void Start()
     {
+        level = SceneManager.GetActiveScene().buildIndex + 1;
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! LevelController /// Start /// Scene Index: " + level);
+
         UpdateLevelButtons();
+        UpdateBuyButtons();
     }
 
     private void UpdateLevelButtons()
@@ -59,6 +71,44 @@ public class LevelController : MonoBehaviour
             colors.selectedColor = isActive ? enabledColor : disabledColor;
             colors.disabledColor = disabledColor;
             _levelButtons[i].colors = colors;
+        }
+    }
+
+    private void UpdateBuyButtons()
+    {
+        for (int i = 0; i < _buyButtons.Count; i++)
+        {
+            bool isTargetButton = i == level - 1;
+            bool isActive = isTargetButton && data.Money > nextPlanetPrice && generalData.ActivePlanet == level;
+
+            ColorBlock colors = _buyButtons[i].colors;
+            colors.normalColor = isActive ? Color.white : disabledColor;
+            colors.pressedColor = isActive ? enabledColor : disabledColor;
+            colors.highlightedColor = isActive ? enabledColor : disabledColor;
+            colors.selectedColor = isActive ? enabledColor : disabledColor;
+            colors.disabledColor = disabledColor;
+
+            _buyButtons[i].colors = colors;
+        }
+
+        for (int i = 0; i < _buyButtons.Count; i++)
+        {
+            if (generalData.ActivePlanet - 1 > i)
+                _buyButtons[i].gameObject.SetActive(false);
+        }
+    }
+
+
+    public void PurchaseNextPlanet()
+    {
+        if (data.Money > nextPlanetPrice && generalData.ActivePlanet == level)
+        {
+            OnNextPlanetPurchased.Invoke(nextPlanetPrice);
+            _buyButtons[level - 1].gameObject.SetActive(false);
+        }
+        else
+        {
+            ShowTip();
         }
     }
 
@@ -84,8 +134,9 @@ public class LevelController : MonoBehaviour
     public void PrepareGameData(GeneralGameData generalGameData, GameData gameData)
     {
         generalData = generalGameData;
-
+        data = gameData;
         UpdateLevelButtons();
+        UpdateBuyButtons();
     }
 
     public void ShowTip()

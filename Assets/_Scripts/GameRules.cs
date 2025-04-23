@@ -339,7 +339,7 @@ public class GameRules : MonoBehaviour
             CheckTutorialStep();
         }
 
-        CheckAndUnlockNextPlanet();
+        //CheckAndUnlockNextPlanet();
 
         OnDataUpdated?.Invoke();
     }
@@ -541,35 +541,47 @@ public class GameRules : MonoBehaviour
     }
 
     #region PLANET UNLOCKER
-    public void CheckAndUnlockNextPlanet()
-    {
-        if (planetKey == "Planet" + _currentGeneralData.ActivePlanet && IsCurrentPlanetUnlocked())
-        {
-            UnlockNextPlanet();
-        }
-    }
 
-    private bool IsCurrentPlanetUnlocked()
+    public void HandlePlanet(double planetPrice)
     {
-        int unlockedObjects = 0;
-        for (int i = 0; i < requiredObjects; i++)
-        {
-            if (_currentGameData.ItemCount[i] >= _currentGameData.ItemDataList[i].MaxCountIncrement)
-            {
-                unlockedObjects++;
-            }
-        }
-        return unlockedObjects >= requiredObjects;
-    }
-
-    private void UnlockNextPlanet()
-    {
+        _currentGameData.Money -= planetPrice;
         _currentGeneralData.ActivePlanet++;
 
         string eventName = _currentGeneralData.ActivePlanet + "_planet_unlocked";
         FirebaseAnalytics.LogEvent(eventName);
         Debug.Log($"New planet unlocked: {_currentGeneralData.ActivePlanet}");
+
+        SendDataUpdate();
     }
+    //public void CheckAndUnlockNextPlanet()
+    //{
+    //    if (planetKey == "Planet" + _currentGeneralData.ActivePlanet && IsCurrentPlanetUnlocked())
+    //    {
+    //        UnlockNextPlanet();
+    //    }
+    //}
+
+    //private bool IsCurrentPlanetUnlocked()
+    //{
+    //    int unlockedObjects = 0;
+    //    for (int i = 0; i < requiredObjects; i++)
+    //    {
+    //        if (_currentGameData.ItemCount[i] >= _currentGameData.ItemDataList[i].MaxCountIncrement)
+    //        {
+    //            unlockedObjects++;
+    //        }
+    //    }
+    //    return unlockedObjects >= requiredObjects;
+    //}
+
+    //private void UnlockNextPlanet()
+    //{
+    //    _currentGeneralData.ActivePlanet++;
+
+    //    string eventName = _currentGeneralData.ActivePlanet + "_planet_unlocked";
+    //    FirebaseAnalytics.LogEvent(eventName);
+    //    Debug.Log($"New planet unlocked: {_currentGeneralData.ActivePlanet}");
+    //}
 
     #endregion
 }

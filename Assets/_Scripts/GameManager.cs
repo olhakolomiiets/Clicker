@@ -121,6 +121,8 @@ public class GameManager : MonoBehaviour
         _purchaseManager.OnPurchasingPack += _gameRules.GetPurchasedProduct;
         _purchaseManager.OnPurchasingDiamonds += _gameRules.GetPurchasedProduct;
         _purchaseManager.OnPurchasingBooster += _gameRules.GetPurchasedBooster;
+
+        _levelController.OnNextPlanetPurchased += _gameRules.HandlePlanet;
     }
 
     private void ConnectTutorialManager()

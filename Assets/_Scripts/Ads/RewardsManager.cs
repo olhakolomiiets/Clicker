@@ -69,44 +69,41 @@ public class RewardsManager : MonoBehaviour
 
     public void EnableCoinsReward()
     {
-        _boosterObj.SetActive(false);
+        _isCoinsRewardActive = true;
 
+        _boosterObj.SetActive(false);
         _diamondsObj.SetActive(false);
 
         _rewardButton.gameObject.SetActive(true);
         _coinsObj.SetActive(true);
         _serviceTxt.text = $"";
-        _coinsTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("GetCoins")}";
-
-        _isCoinsRewardActive = true;
+        _coinsTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("GetCoins")}";       
     }
 
     public void EnableDiamondsReward()
-    {      
-        _boosterObj.SetActive(false);
+    {
+        _isDiamondsRewardActive = true;
 
+        _boosterObj.SetActive(false);
         _coinsObj.SetActive(false);
 
         _rewardButton.gameObject.SetActive(true);
         _diamondsObj.SetActive(true);
         _serviceTxt.text = $"";
-        _diamondsTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("GetDiamonds")}";
-
-        _isDiamondsRewardActive = true;
+        _diamondsTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("GetDiamonds")}";      
     }
 
     public void EnableBoosterReward()
-    {    
-        _coinsObj.SetActive(false);
+    {
+        _isBoosterRewardActive = true;
 
+        _coinsObj.SetActive(false);
         _diamondsObj.SetActive(false);
 
         _rewardButton.gameObject.SetActive(true);
-        _serviceTxt.text = $"";
-        _boosterTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Booster")}";
         _boosterObj.SetActive(true);
-
-        _isBoosterRewardActive = true;
+        _serviceTxt.text = $"";
+        _boosterTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Booster")}";    
     }
 
     public void PrepareRewardData(float money)
@@ -125,38 +122,35 @@ public class RewardsManager : MonoBehaviour
     {
         if (_isCoinsRewardActive)
         {
+            _isCoinsRewardActive = false;
+
             OnEarningReward?.Invoke(_coinsReward);
             OnRewardReceived?.Invoke();
             FirebaseAnalytics.LogEvent(name: "coins_for_ads");
 
-            _meteor.SetObjectPosition();
-            
-            _isCoinsRewardActive = false;
-
+            _meteor.SetObjectPosition();                      
             _meteor.gameObject.SetActive(false);
         }
         else if (_isBoosterRewardActive)
         {
+            _isBoosterRewardActive = false;
+
             OnEarningBoosterReward?.Invoke(_boosterTime, true);
             OnRewardReceived?.Invoke();
             FirebaseAnalytics.LogEvent(name: "booster_for_ads");
 
-            _meteor.SetObjectPosition();
-            
-            _isBoosterRewardActive = false;
-
+            _meteor.SetObjectPosition();                      
             _meteor.gameObject.SetActive(false);
         }
         else if (_isDiamondsRewardActive)
         {
+            _isDiamondsRewardActive = false;
+
             OnEarningDiamonds?.Invoke(_diamonds);
             OnRewardReceived?.Invoke();
             FirebaseAnalytics.LogEvent(name: "diamonds_for_ads");
 
-            _meteor.SetObjectPosition();
-
-            _isDiamondsRewardActive = false;
-
+            _meteor.SetObjectPosition();            
             _meteor.gameObject.SetActive(false);
         }       
     }

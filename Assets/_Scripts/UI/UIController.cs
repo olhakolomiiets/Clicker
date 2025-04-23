@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Net.NetworkInformation;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -56,6 +57,28 @@ public class UIController : MonoBehaviour
         _objectPlaceRotator = _planet.GetComponent<ObjectPlaceRotator>();
     }
 
+    public void OpenShop()
+    {
+        if (isDisplayed)
+        {
+            ShopsToggle(2);
+        }
+        else
+        {
+            _planetRotator.SaveAndZoomToMax(zoomDuration);
+
+            if (_backgroundImage != null)
+            {
+                StartCoroutine(SmoothScaleBackground(0.93f));
+            }
+
+            _shopPanel.DOAnchorPosY(_panelTopPosY, _tweenDuration);
+            _toggleButton.DORotate(new Vector3(0, 0, 180), _tweenDuration);
+            isDisplayed = true;
+            _planetRotator.enabled = false;
+            ShopsToggle(2);
+        }            
+    }
     public void ToggleUpgradeStorePanel()
     {
         if (isDisplayed)
@@ -171,13 +194,12 @@ public class UIController : MonoBehaviour
 
     public void ShopsToggle(int index)
     {
-        Vector3 creationPos = new Vector3(0, -350, 0);
-        Vector3 upgradePos = new Vector3(0, -1110, 0);
-        Vector3 shopPos = new Vector3(1090, -350, 0);
+        Vector3 visiblePos = new Vector3(0, -350, 0);
+        Vector3 hidePos = new Vector3(0, -1130, 0);
 
-        _creationItemsParent.DOAnchorPos(index == 0 ? creationPos : new Vector3(-1090, -350, 0), 0.25f);
-        _upgradeItemsParent.DOAnchorPos(index == 1 ? creationPos : upgradePos, 0.25f);
-        _shopItemsParent.DOAnchorPos(index == 2 ? creationPos : shopPos, 0.25f);
+        _creationItemsParent.DOAnchorPos(index == 0 ? visiblePos : hidePos, 0.25f);
+        _upgradeItemsParent.DOAnchorPos(index == 1 ? visiblePos : hidePos, 0.25f);
+        _shopItemsParent.DOAnchorPos(index == 2 ? visiblePos : hidePos, 0.25f);
 
         if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
         {

@@ -33,6 +33,12 @@ public class LevelController : MonoBehaviour
     private AsyncOperationHandle<SceneInstance> loadHandle;
     public event Action<double> OnNextPlanetPurchased;
     private int level;
+    private Coroutine _moneyChecker;
+
+    [Header("Money Checker")]
+    [SerializeField] private GameObject _moneyDependentGO;      // объект, который нужно активировать/деактивировать
+    [SerializeField] private double _moneyThreshold;           // минимальная сумма для активации
+    [SerializeField] private float _checkInterval = 0.5f;
 
     //private void Start()
     //{
@@ -57,6 +63,23 @@ public class LevelController : MonoBehaviour
 
         UpdateLevelButtons();
         UpdateBuyButtons();
+
+        if (_moneyChecker == null)
+            _moneyChecker = StartCoroutine(CheckMoneyRoutine());
+    }
+
+    private IEnumerator CheckMoneyRoutine()
+    {
+        // подождать, пока data окажется не null
+        yield return new WaitUntil(() => data != null);
+
+        while (true)
+        {
+            bool hasEnough = data.Money >= _moneyThreshold;
+            _moneyDependentGO.SetActive(hasEnough);
+
+            yield return new WaitForSeconds(_checkInterval);
+        }
     }
 
     private void UpdateLevelButtons()

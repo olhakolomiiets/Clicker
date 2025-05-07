@@ -283,16 +283,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // private void OnApplicationQuit()
-    // {
-    //     if (!isGameSaved)
-    //     {
-    //         SaveGame();
-    //         SaveGeneralGameData();
-    //         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameManager /// OnApplicationQuit /// SaveGame");
-    //     }
-    // }
-
     private void OnDisable()
     {
         if (!isGameSaved)

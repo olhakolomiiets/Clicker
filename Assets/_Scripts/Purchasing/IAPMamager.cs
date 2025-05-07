@@ -124,6 +124,8 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
             PurchasedProductSpecialOffer.Invoke();
 
+            NoAds();
+
             FirebaseAnalytics.LogEvent(name: "money_specialOffer_purchased");
         }
         else if (String.Equals(product.definition.id, coinsBooster, StringComparison.Ordinal))

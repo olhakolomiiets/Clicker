@@ -45,7 +45,7 @@ public class PurchaseManager : MonoBehaviour
 
     private void Awake()
     {
-        _purchaseController = FindObjectOfType<IAPManager>();
+        _purchaseController = FindAnyObjectByType<IAPManager>();
     }
 
     private void OnEnable()
@@ -65,7 +65,7 @@ public class PurchaseManager : MonoBehaviour
 
     public void NoAds()
     {
-        PlayerPrefs.SetInt("NoAdsPurchased", 1);
+        _noAdsButton.SetActive(false);
     }
 
     public void StarterPack()
@@ -79,6 +79,7 @@ public class PurchaseManager : MonoBehaviour
     public void SpecialOffer()
     {
         OnPurchasingPack?.Invoke(_coins, _diamonds);
+        _noAdsButton.SetActive(false);
         _specialOfferButton.SetActive(false);
         PlayerPrefs.SetInt("SpecialOfferPurchased", 1);
         UpdateShopUI();
@@ -115,10 +116,15 @@ public class PurchaseManager : MonoBehaviour
         if (PlayerPrefs.GetInt("SpecialOfferPurchased") == 1)
         {
             _specialOfferButton.SetActive(false);
+            _noAdsButton.SetActive(false);
         }
         if (PlayerPrefs.GetInt("CoinsBoosterPurchased") == 1)
         {
             _coinsBoosterButton.SetActive(false);
+        }
+        if (PlayerPrefs.GetInt("adsRemoved") == 1)
+        {
+            _noAdsButton.SetActive(false);
         }
 
         UpdateShopUI();
@@ -154,5 +160,4 @@ public class PurchaseManager : MonoBehaviour
         _purchaseController.PurchasedProductDiamondsPack100.RemoveListener(DiamondsPack100);
         _purchaseController.PurchasedProductDiamondsPack300.RemoveListener(DiamondsPack300);
     }
-
 }

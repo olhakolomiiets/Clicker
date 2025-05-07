@@ -36,24 +36,14 @@ public class LevelController : MonoBehaviour
     private Coroutine _moneyChecker;
 
     [Header("Money Checker")]
-    [SerializeField] private GameObject _moneyDependentGO;      // объект, который нужно активировать/деактивировать
-    [SerializeField] private double _moneyThreshold;           // минимальная сумма для активации
+    [SerializeField] private GameObject _moneyDependentGO;
     [SerializeField] private float _checkInterval = 0.5f;
-
-    //private void Start()
-    //{
-    //    for (int i = 0; i < _levelButtons.Count; i++)
-    //    {
-    //        _levelButtons[i].interactable = generalData.ActivePlanet > i;
-    //    }
-    //}
 
     private void Awake()
     {
         tipRectTransform = levelInfo.GetComponent<RectTransform>();
         tipCanvasGroup = levelInfo.GetComponent<CanvasGroup>();
         originalPosition = tipRectTransform.anchoredPosition;
-
     }
 
     private void Start()
@@ -70,12 +60,11 @@ public class LevelController : MonoBehaviour
 
     private IEnumerator CheckMoneyRoutine()
     {
-        // подождать, пока data окажется не null
         yield return new WaitUntil(() => data != null);
 
         while (true)
         {
-            bool hasEnough = data.Money >= _moneyThreshold;
+            bool hasEnough = data.Money >= nextPlanetPrice && generalData.ActivePlanet == level;
             _moneyDependentGO.SetActive(hasEnough);
 
             yield return new WaitForSeconds(_checkInterval);

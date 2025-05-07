@@ -115,7 +115,6 @@ public class RewardsManager : MonoBehaviour
         else _coinsReward = (money/2) * _coinsMultiplicator;
 
         _coinsRewardTxt.text = $"{_coinsReward.ToString("N0")}";
-
     }
 
     public void UserEarnedReward()

@@ -15,10 +15,10 @@ public class GameRules : MonoBehaviour
     // I want to use events to keep the classes unaware of each other
     public event Action<int, bool> OnModifyManagerAvailability, OnToggleItemActivationState;
     public event Action<int, float> OnStartWorkOnItem, OnStartWorkOnUpgradeItem;
-    public event Action<int> OnActivateItem, OnActivateUpgradeItem, OnAutomateItem, OnActivatePassiveIncome;
+    public event Action<int> OnActivateItem, OnActivateUpgradeItem, OnAutomateItem, OnActivatePassiveIncome, OnUpgradeTutorialStepReady;
     public event Action<int, GameData, GeneralGameData> OnUpdateData, OnPerformAction, OnUpdateUpgradeData;
     public event Action<GeneralGameData, GameData> OnUpdateGameData;
-    public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnDataUpdated;
+    public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnDataUpdated, OnRewardRecived;
     public event Action<int, int> OnTutorialStepReady, OnManagerAvailability, OnManagerNonAvailability, OnItemNotReadyToBuy, OnItemReadyToBuy;
     private int timeAfterExit, itemIndex;
     public double _totalScore;
@@ -153,10 +153,7 @@ public class GameRules : MonoBehaviour
         _currentGameData.ItemCount[index] = 1;
         
         OnItemNotReadyToBuy.Invoke(index, 0);
-        //isItemTipShown = false;
         isTipShown = false;
-
-        Debug.Log($"GameRules /// PurchaseItemFirstTime /// Item Index: {index} /// isItemTipShown: {isTipShown} /// Item Purchased");
 
         if (PlayerPrefs.GetInt("TutorialStep") == 3)
             OnTutorialStepCompleted.Invoke();
@@ -175,12 +172,6 @@ public class GameRules : MonoBehaviour
         OnActivateItem?.Invoke(i);
         SendDataUpdate();
     }
-
-    // private void ActivateUpgradeItem(int i)
-    // {
-    //     OnActivateUpgradeItem?.Invoke(i);
-    //     SendDataUpdate();
-    // }
 
     /// <summary>
     /// Adds money to the data and sends the update event
@@ -211,8 +202,6 @@ public class GameRules : MonoBehaviour
     {
         OnPerformAction?.Invoke(index, _currentGameData, _currentGeneralData);
         OnStartWorkOnItem?.Invoke(index, _currentGameData.ItemDataList[index].Delay);
-
-        //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// HandleStartItemProgress /// Delay: " + _currentGameData.ItemDataList[index].Delay);
     }
 
 
@@ -277,10 +266,7 @@ public class GameRules : MonoBehaviour
             timeAfterExit = (int)rawTime;
 
             OnActivatePassiveIncome?.Invoke(timeAfterExit);
-
-            //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// LoadGame /// Time After Exit: " + timeAfterExit);
         }
-
         SendDataUpdate();
     }
     #endregion
@@ -326,20 +312,20 @@ public class GameRules : MonoBehaviour
             CheckBoosterMultiplier(i);
             OnUpdateData?.Invoke(i, _currentGameData, _currentGeneralData);
         }
+
         CalculateMoneyPerSec();
 
         for (int i = 0; i < _currentGameData.UpgradeItemDataList.Count; i++)
         {
             OnUpdateUpgradeData?.Invoke(i, _currentGameData, _currentGeneralData);
-        }       
+        }
+
         OnUpdateGameData?.Invoke(_currentGeneralData, _currentGameData);
 
         if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
         {
             CheckTutorialStep();
         }
-
-        //CheckAndUnlockNextPlanet();
 
         OnDataUpdated?.Invoke();
     }
@@ -351,7 +337,6 @@ public class GameRules : MonoBehaviour
         {
             _currentGameData.MoneyPerSec += _currentGameData.ItemDataList[i].ItemIncomePerSec(_currentGameData.ItemCount[i], _currentGameData.ItemBonusMultiplayer[i]);
         }
-        //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// CalculateMoneyPerSec /// Money Per Sec: " + _currentGameData.MoneyPerSec);
     }
 
     /// <summary>
@@ -369,13 +354,11 @@ public class GameRules : MonoBehaviour
                 {                   
                     OnManagerAvailability?.Invoke(index, 1);
                     isTipShown = true;
-                    //Debug.Log($"!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// UnlockManagers /// Manager Index: {index} /// Manager Availability");
                 }
                 else
                 {                    
                     OnManagerNonAvailability?.Invoke(index, 1);
                     isTipShown = false;
-                    //Debug.Log($"!!!!!!!!!!!!-------------!!!!!!!!!! GameRules /// UnlockManagers /// Manager Index: {index} /// Manager Non Availability");
                 }
         }
     }
@@ -396,13 +379,11 @@ public class GameRules : MonoBehaviour
                     itemIndex = index;                
                     OnItemReadyToBuy.Invoke(index, 0);
                     isTipShown = true;
-                    //Debug.Log($"GameRules /// UnlockOtherItems /// Item Index: {index} /// Item Ready To Buy");
                 }
                 else
                 {                   
                     OnItemNotReadyToBuy.Invoke(index, 0);
                     isTipShown = false;
-                    //Debug.Log($"GameRules /// UnlockOtherItems /// Item Index: {index} /// Item Not Ready To Buy");
                 }         
         }
     }
@@ -478,7 +459,7 @@ public class GameRules : MonoBehaviour
         _totalScore = _currentGeneralData.TotalScore;
         SendDataUpdate();
 
-        FirebaseAnalytics.LogEvent(name: "ad_reward_coins");
+        FirebaseAnalytics.LogEvent(name: "coins_for_ads");
     }
 
     public void GetDiamonds(double reward)
@@ -486,7 +467,7 @@ public class GameRules : MonoBehaviour
         _currentGeneralData.Diamonds += reward;
         SendDataUpdate();
 
-        FirebaseAnalytics.LogEvent(name: "ad_reward_diamonds");
+        FirebaseAnalytics.LogEvent(name: "diamonds_for_ads");
     }
 
     public void GetCoinsBooster()
@@ -494,7 +475,8 @@ public class GameRules : MonoBehaviour
         _currentGameData.BoosterMultiplier = _currentGameData.IsBoosterPurchased ? 3 : 2;
         SendDataUpdate();
 
-        FirebaseAnalytics.LogEvent(name: "ad_reward_booster");
+        FirebaseAnalytics.LogEvent(name: "booster_for_ads");
+        Debug.Log("Game Rules /// GetCoinsBooster");
     }
 
     public void DisableCoinsBooster()
@@ -538,6 +520,9 @@ public class GameRules : MonoBehaviour
 
         if ((tutorialStep == 3 && _currentGameData.Money >= moneyForTreeHint) || (tutorialStep == 4 && _currentGameData.Money >= moneyForManagerHint))
             OnTutorialStepReady.Invoke(tutorialStep, 1);
+
+        if (tutorialStep == 5 && _currentGameData.Money >= 100000)
+            OnTutorialStepReady.Invoke(tutorialStep, 1);
     }
 
     #region PLANET UNLOCKER
@@ -553,36 +538,6 @@ public class GameRules : MonoBehaviour
 
         SendDataUpdate();
     }
-    //public void CheckAndUnlockNextPlanet()
-    //{
-    //    if (planetKey == "Planet" + _currentGeneralData.ActivePlanet && IsCurrentPlanetUnlocked())
-    //    {
-    //        UnlockNextPlanet();
-    //    }
-    //}
-
-    //private bool IsCurrentPlanetUnlocked()
-    //{
-    //    int unlockedObjects = 0;
-    //    for (int i = 0; i < requiredObjects; i++)
-    //    {
-    //        if (_currentGameData.ItemCount[i] >= _currentGameData.ItemDataList[i].MaxCountIncrement)
-    //        {
-    //            unlockedObjects++;
-    //        }
-    //    }
-    //    return unlockedObjects >= requiredObjects;
-    //}
-
-    //private void UnlockNextPlanet()
-    //{
-    //    _currentGeneralData.ActivePlanet++;
-
-    //    string eventName = _currentGeneralData.ActivePlanet + "_planet_unlocked";
-    //    FirebaseAnalytics.LogEvent(eventName);
-    //    Debug.Log($"New planet unlocked: {_currentGeneralData.ActivePlanet}");
-    //}
-
     #endregion
 }
 

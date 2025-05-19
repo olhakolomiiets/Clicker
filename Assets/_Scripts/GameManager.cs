@@ -136,7 +136,7 @@ public class GameManager : MonoBehaviour
 
         _gameRules.OnTutorialStepCompleted += _tutorialManager.AdvanceTutorial;        
         _gameRules.OnTutorialStepReady += _tutorialManager.ShowNextTutorial;
-        _gameRules.OnTutorialStepReady += _uiController.ShowTutorialHint;
+        //_gameRules.OnTutorialStepReady += _uiController.ShowTutorialHint;
 
         _gameUI.OnNewObjectPurchased += _tutorialManager.HideTutorialInfo;
         _gameUI.OnTutorialStepCompleted += _tutorialManager.AdvanceTutorial;
@@ -151,7 +151,7 @@ public class GameManager : MonoBehaviour
         _gameRules.OnItemNotReadyToBuy += _tutorialManager.HideGameTip;
 
         _uiController.OnStorePanelDisplayed += _tutorialManager.ResetPointer;
-        _uiController.OnStorePanelNotDisplayed += _tutorialManager.ShowFirstPointer;
+        //_uiController.OnStorePanelNotDisplayed += _tutorialManager.ShowFirstPointer;
     }
     #endregion
 
@@ -254,24 +254,13 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    private void OnApplicationFocus(bool focusStatus)
-    {
-        if (focusStatus)
-        {
-            if (isGameSaved)
-            {
-                LoadGeneralGameData();
-                LoadSavedData();
-            }
-        }
-    }
-
     private void OnApplicationPause(bool pauseStatus)
     {
         if (pauseStatus)
         {
             SaveGame();
             SaveGeneralGameData();
+            Debug.Log("Game Manager /// OnApplicationPause() /// Save");
         }
         else
         {
@@ -279,6 +268,7 @@ public class GameManager : MonoBehaviour
             {
                 LoadGeneralGameData();
                 LoadSavedData();
+                Debug.Log("Game Manager /// OnApplicationPause() /// Load");
             }
         }
     }

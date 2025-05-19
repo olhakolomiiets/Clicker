@@ -49,7 +49,6 @@ public class TutorialManager : MonoBehaviour
     private int tipIndex;
     private bool isHidingTip = false;
     private bool isHidingTutorial = false;
-    private bool isSecondVisit = false;
 
     private void Awake()
     {
@@ -69,15 +68,8 @@ public class TutorialManager : MonoBehaviour
         if (SceneManager.GetActiveScene().buildIndex != 0)
             PlayerPrefs.SetInt(TutorialCompletedKey, 1);
 
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! TutorialManager /// Start /// Tutorial CompletedKey: " + PlayerPrefs.GetInt(TutorialCompletedKey) + " /// Steps Completed: " + stepsCompleted);
-
         if (stepsCompleted <= 4)
-            ShowNextTutorial();
-        else
-        {
-            isSecondVisit = true;
-            ShowSecondVisitUpgradeTutorial();
-        }      
+            ShowNextTutorial();   
     }
 
     private void LoadTutorialState()
@@ -93,16 +85,15 @@ public class TutorialManager : MonoBehaviour
         PlayerPrefs.SetInt(TutorialStepStateKey, stepState);
         PlayerPrefs.SetInt(TutorialStepsCompletedKey, stepsCompleted);
 
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! TutorialManager /// SaveTutorialState /// Tutorial Step: " + tutorialStep + " Tutorial Steps Completed: " + stepsCompleted);
         PlayerPrefs.Save();
     }
     private void ShowPointer(Transform target)
     {
         if (target == null)
             return;
-    
+
+        ResetPointer();
         currentPointer = Instantiate(tutorialPointerPrefab, target.position, Quaternion.identity, target);
-        Debug.Log("TutorialManager /// ShowPointer /// Instantiating Pointer at " + target.position);
     }
 
     public void ResetPointer()
@@ -110,7 +101,6 @@ public class TutorialManager : MonoBehaviour
         if (currentPointer != null)
         {          
             Destroy(currentPointer);
-            Debug.Log("TutorialManager /// ResetPointer /// Destroying current pointer");
         }
     }
 
@@ -147,8 +137,6 @@ public class TutorialManager : MonoBehaviour
             SaveTutorialState();
         }
         else ShowFirstStep();
-
-        Debug.Log($"TutorialManager /// ShowNextTutorial /// Current Step: {tutorialStep}");
     }
 
     public void ShowNextTutorial(int step)
@@ -156,9 +144,8 @@ public class TutorialManager : MonoBehaviour
         if (isTipActive)
             HideTipInfo();
 
-        if (step == 5)
+        if (step == 5 || step == 6)
         {
-            ResetPointer();
             tutorialStep = step;
             ShowPointer(tutorialSteps[tutorialStep]);
             return;
@@ -175,7 +162,6 @@ public class TutorialManager : MonoBehaviour
         if (uiController.isDisplayed)
         {
             tutorialStep = step;
-            ResetPointer();
 
             if (HandleTutorialExitCondition())
                 return;
@@ -185,19 +171,24 @@ public class TutorialManager : MonoBehaviour
 
             ShowPointer(tutorialSteps[tutorialStep]);
             ShowTutorialInfo(tutorialStep);
-
+        
             stepsCompleted++;
             SaveTutorialState();
         }
         else ShowFirstStep();
-
-        Debug.Log($"TutorialManager /// ShowNextTutorial /// Step: {step}");
     }
 
     public void ShowNextTutorial(int step, int state)
     {
         if (isTipActive)
             HideTipInfo();
+
+        if (step == 5 || step == 6)
+        {
+            tutorialStep = step;
+            ShowPointer(tutorialSteps[tutorialStep]);
+            return;
+        }
 
         if (isHidingTutorial)
         {
@@ -211,7 +202,7 @@ public class TutorialManager : MonoBehaviour
         {
             tutorialStep = step;
             stepState = state;
-            ResetPointer();
+            //ResetPointer();
 
             if (HandleTutorialExitCondition())
                 return;
@@ -226,13 +217,11 @@ public class TutorialManager : MonoBehaviour
             SaveTutorialState();
         }
         else ShowFirstStep();
-
-        Debug.Log($"TutorialManager /// ShowNextTutorial /// Step: {step}, State: {state}");
     }
 
     public void ShowShopTutorial(int step)
     {
-        if (PlayerPrefs.GetInt(ShopTutorialKey, 0) == 1)
+        if (PlayerPrefs.GetInt(ShopTutorialKey) == 1)
             return;
 
         if (isTipActive)
@@ -257,12 +246,12 @@ public class TutorialManager : MonoBehaviour
         PlayerPrefs.SetInt("ShopTutorialShown", 1); 
         SaveTutorialState();
 
-        Debug.Log($"TutorialManager /// ShowShopTutorial /// Step: {step} /// if (isShopTutorialActive == false)");
+        StartCoroutine(HideShopTutorial());
     }
 
     public void ShowUpgradeTutorial(int step)
     {
-        if (PlayerPrefs.GetInt(UpgradeTutorialKey, 0) == 1)
+        if (PlayerPrefs.GetInt(UpgradeTutorialKey) == 1)
             return;
 
         if (isTipActive)
@@ -278,27 +267,23 @@ public class TutorialManager : MonoBehaviour
                 .OnComplete(() => ShowUpgradeTutorial(step));
             return;
         }
+            ResetPointer();
+            ShowTutorialInfo(step);
+            stepsCompleted++;
 
-        ShowTutorialInfo(step);
-        stepsCompleted++;
+            if (stepsCompleted >= 5)
+                tutorialStep++;
 
-        if (stepsCompleted >= 5)
-            tutorialStep++;
+            PlayerPrefs.SetInt("UpgradeTutorialShown", 1);
+            SaveTutorialState();
 
-        PlayerPrefs.SetInt("UpgradeTutorialShown", 1);
-        SaveTutorialState();
-
-        StartCoroutine(ShowSecondVisitShopTutorial());
-
-        Debug.Log($"TutorialManager /// ShowShopTutorial /// Step: {step} /// if (isShopTutorialActive == false)");
+            StartCoroutine(ShowShopTutorial());
     }
 
     public void ShowFirstStep()
     {        
-        ResetPointer();
-        ShowPointer(tutorialSteps[0]);
-        Debug.Log("TutorialManager /// ShowFirstStep");
-    }
+        //ResetPointer();
+        ShowPointer(tutorialSteps[0]);    }
 
     private bool HandleTutorialExitCondition()
     {
@@ -312,7 +297,7 @@ public class TutorialManager : MonoBehaviour
 
     private bool TutorialExitCondition()
     {
-        if (tutorialStep == 5 && !isSecondVisit)
+        if (tutorialStep == 5)
         {
             HideTutorialInfo();
             return true;
@@ -328,8 +313,6 @@ public class TutorialManager : MonoBehaviour
 
         SaveTutorialState();
         ShowNextTutorial();
-
-        Debug.Log($"TutorialManager /// AdvanceTutorial /// Current Step: {tutorialStep}");
     }
 
     public void HideTutorialInfo()
@@ -348,8 +331,6 @@ public class TutorialManager : MonoBehaviour
 
         if (stepsCompleted >= 6)
             PlayerPrefs.SetInt(TutorialCompletedKey, 1);
-
-        Debug.Log("TutorialManager /// HideTutorialInfo");
     }
 
     public void ShowTutorialInfo(int step)
@@ -367,53 +348,29 @@ public class TutorialManager : MonoBehaviour
             Sequence sequence = DOTween.Sequence();
             sequence.Append(rectTransform.DOScale(originalScale, duration).SetEase(Ease.OutBack));
             sequence.Join(canvasGroup.DOFade(1f, duration));
-
-            Debug.Log($"TutorialManager /// ShowTutorialInfo /// Step: {step}");
         }
     }
 
-    public void ShowSecondVisitUpgradeTutorial()
-    {          
-        if (PlayerPrefs.GetInt(UpgradeTutorialKey, 0) == 0)
-        {
-            if (uiController.isDisplayed)
-            {
-                tutorialStep = 5;
-                ResetPointer();
-
-                ShowPointer(tutorialSteps[tutorialStep]);
-                ShowTutorialInfo(tutorialStep);
-
-                stepsCompleted++;
-                SaveTutorialState();
-            }
-            else ShowFirstStep();           
-        }      
-    }
-
-    private IEnumerator ShowSecondVisitShopTutorial()
+    private IEnumerator ShowShopTutorial()
     {
         yield return new WaitForSeconds(2f);
-        ResetPointer();
+        //ResetPointer();
         ShowPointer(tutorialSteps[6]);
     }
+
+    private IEnumerator HideShopTutorial()
+    {
+        yield return new WaitForSeconds(4f);
+        ResetPointer();
+        HideTutorialInfo();
+    }
+
 
     #endregion
 
     #region GAME TIPS
-
-    public void ShowFirstPointer()
-    {      
-        if (isTipActive && stepsCompleted > 6)
-        {
-            ResetPointer();
-            ShowPointer(tutorialSteps[0]);
-            Debug.Log("TutorialManager /// ShowFirstPointer /// isTipActive: " + isTipActive + ", stepsCompleted: " + stepsCompleted);
-        }
-    }
-
     public void ShowGameTip(int i, int tip)
-    {       
+    {
         if (tutorialStep == 3)
             return;
 
@@ -424,17 +381,13 @@ public class TutorialManager : MonoBehaviour
                 .OnComplete(() => ShowGameTip(i, tip));
             return;
         }
-        
+
         if (!isTipActive && !isInfoActive)
-        {       
+        {
             activeIndex = i;
             tipIndex = tip;
 
-            if (!uiController.isDisplayed)
-                ShowPointer(tutorialSteps[0]);
-
             ShowTipInfo(tipIndex);
-            Debug.Log($"TutorialManager /// ShowGameTip /// i: {i}, tip: {tip}, tutorialStep: {tutorialStep}");
         }
     }
 
@@ -444,8 +397,6 @@ public class TutorialManager : MonoBehaviour
         {
             isHidingTip = true;           
             HideTipInfo();
-            ResetPointer();
-            Debug.Log($"TutorialManager /// HideGameTip (index, tip) /// i: {i}, tip: {tip}, activeIndex: {activeIndex}, tipIndex: {tipIndex}");
         }
     }
 
@@ -466,7 +417,6 @@ public class TutorialManager : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
         sequence.Append(tipRectTransform.DOAnchorPosX(originalPosition.x, duration));
         sequence.Join(tipCanvasGroup.DOFade(1f, duration));
-        Debug.Log($"TutorialManager /// ShowTipInfo /// index: {index}");
     }
 
     public void HideTipInfo()
@@ -480,8 +430,6 @@ public class TutorialManager : MonoBehaviour
             tipInfo.SetActive(false);
             isHidingTip = false;
         });
-
-        Debug.Log("TutorialManager /// HideTipInfo");
     }
 
     #endregion

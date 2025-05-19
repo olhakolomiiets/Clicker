@@ -2429,6 +2429,65 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u0422\u0412\u041E\u0420\u0406\u041D\u041D\u042F"
     Object: {fileID: 0}
+--- !u!1 &4202307341318189179
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5069490680469492207}
+  - component: {fileID: 1705885821203248699}
+  m_Layer: 0
+  m_Name: RestorePurchases
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5069490680469492207
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4202307341318189179}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1705885821203248699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4202307341318189179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Restore Purchases
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u0412\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C
+      \u043F\u043E\u043A\u0443\u043F\u043A\u0438"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Restaurar compras
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0412\u0456\u0434\u043D\u043E\u0432\u043B\u0435\u043D\u043D\u044F \u043F\u043E\u043A\u0443\u043F\u043E\u043A"
+    Object: {fileID: 0}
 --- !u!1 &4474215443808662021
 GameObject:
   m_ObjectHideFlags: 0
@@ -4729,6 +4788,7 @@ Transform:
   - {fileID: 8683176773223450326}
   - {fileID: 1508913682773092562}
   - {fileID: 4450295871915264613}
+  - {fileID: 5069490680469492207}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4487452411359540208
@@ -4743,7 +4803,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 806f0696300aeac44a0e17efee222854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentLanguage: Russian
+  currentLanguage: Ukrainian
   detectLanguage: 1
   defaultLanguage: English
   saveLoad: 1

@@ -159,6 +159,7 @@ public class RewardTimers : MonoBehaviour
     {
         PlayerPrefs.SetInt("BoosterTimeRemaining", timeLeft);
         isTimeSaved = true;
+        StopCoroutine(UpdateCoinsBoosterTimer());
     }
 
     private void LoadTimerState()
@@ -174,26 +175,18 @@ public class RewardTimers : MonoBehaviour
         }
     }
 
-    private void OnApplicationFocus(bool focusStatus)
-    {
-        if (focusStatus)
-        {
-            if (isTimeSaved)
-                LoadTimerState();
-        }
-    }
-
     private void OnApplicationPause(bool pauseStatus)
     {
         if (pauseStatus)
         {
             SaveTimerState();
-            StopCoroutine(UpdateCoinsBoosterTimer());
+            Debug.Log("Reward Timers /// OnApplicationPause() /// Save");
         }
         else
         {
             if (isTimeSaved)
                 LoadTimerState();
+                Debug.Log("Reward Timers /// OnApplicationPause() /// Load");
         }
     }
 

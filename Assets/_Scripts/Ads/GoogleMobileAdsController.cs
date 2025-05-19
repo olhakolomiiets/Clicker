@@ -12,7 +12,6 @@ namespace GoogleMobileAds.Samples
     {
         private static bool _isInitialized;
 
-
         private void Start()
         {
             if (_isInitialized)
@@ -34,14 +33,6 @@ namespace GoogleMobileAds.Samples
                 "75EF8D155528C04DACBBA6F36F433035"
                 #endif
             };
-
-            //RequestConfiguration requestConfiguration = new RequestConfiguration.Builder()
-            //.SetTestDeviceIds(deviceIds)
-            //.SetTagForChildDirectedTreatment(TagForChildDirectedTreatment.True)
-            //.SetTagForUnderAgeOfConsent(TagForUnderAgeOfConsent.True)
-            //.build();
-
-            //MobileAds.SetRequestConfiguration(requestConfiguration);
 
 
             RequestConfiguration requestConfiguration = new RequestConfiguration

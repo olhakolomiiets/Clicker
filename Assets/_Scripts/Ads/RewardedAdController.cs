@@ -73,6 +73,8 @@ namespace GoogleMobileAds.Sample
                     Debug.Log(String.Format("Rewarded ad granted a reward: {0} {1}",
                                             reward.Amount,
                                             reward.Type));
+
+                    OnUserEarnedRewardEvent.Invoke();
                 });
             }
             else
@@ -109,8 +111,7 @@ namespace GoogleMobileAds.Sample
                     adValue.CurrencyCode));
             };
             ad.OnAdImpressionRecorded += () =>
-            {
-                OnUserEarnedRewardEvent.Invoke();
+            {              
                 Debug.Log("Rewarded ad recorded an impression.");
             };
             ad.OnAdClicked += () =>

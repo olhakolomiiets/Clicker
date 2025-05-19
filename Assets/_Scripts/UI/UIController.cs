@@ -107,7 +107,7 @@ public class UIController : MonoBehaviour
                     OnTutorialNonCompleted.Invoke();
             }
             
-            OnStorePanelNotDisplayed.Invoke();
+            //OnStorePanelNotDisplayed.Invoke();
         }
         else
         {
@@ -203,15 +203,15 @@ public class UIController : MonoBehaviour
 
         if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
         {
-            if (index == 1 && PlayerPrefs.GetInt("UpgradeTutorialShown", 0) == 0)
+            if (index == 1 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 0)
             {
                 OnShowUpgradeTutorial.Invoke(5);               
             }
-            else if (index == 2 && PlayerPrefs.GetInt("ShopTutorialShown", 0) == 0)
+            else if (index == 2 && PlayerPrefs.GetInt("ShopTutorialShown") == 0)
             {
                 OnShowShopTutorial.Invoke(6);                
             }
-            else if (index == 0 && PlayerPrefs.GetInt("UpgradeTutorialShown", 0) == 1 || index == 0 && PlayerPrefs.GetInt("ShopTutorialShown", 0) == 1 || index == 1 && PlayerPrefs.GetInt("ShopTutorialShown", 0) == 1)
+            else if (index == 0 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 1 || index == 0 && PlayerPrefs.GetInt("ShopTutorialShown") == 1 || index == 1 && PlayerPrefs.GetInt("ShopTutorialShown") == 1)
             {
                 OnHideTutorial.Invoke();
             }
@@ -238,9 +238,9 @@ public class UIController : MonoBehaviour
 
     private void SetStartPos()
     {
-        _creationItemsParent.DOAnchorPos(new Vector3(-1090, -350, 0), 0.25f);
-        _upgradeItemsParent.DOAnchorPos(new Vector3(1090, -350, 0), 0.25f);
-        _shopItemsParent.DOAnchorPos(new Vector3(1090, -350, 0), 0.25f);
+        _creationItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
+        _upgradeItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
+        _shopItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
     }
 
     public void ShowLeaderboards()

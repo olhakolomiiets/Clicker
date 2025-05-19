@@ -1,10 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
-using Firebase.Analytics;
 using TMPro;
 using System;
-using System.Collections;
 
 public class RewardsManager : MonoBehaviour
 {
@@ -44,7 +42,7 @@ public class RewardsManager : MonoBehaviour
 
     #region UNITY EVENTS
 
-    [HideInInspector] public UnityEvent OnUserEarnedRewardEvent, RewardedAdLoadedEvent, RewardedAdLoadedWithErrorEvent, OnCoinsRewardReceived, OnBoosterRewardEarned, OnDiamondsRewardReceived, OnRewardReceived;
+    [HideInInspector] public UnityEvent OnUserEarnedRewardEvent, OnAdClosedEvent, RewardedAdLoadedEvent, RewardedAdLoadedWithErrorEvent, OnCoinsRewardReceived, OnBoosterRewardEarned, OnDiamondsRewardReceived, OnRewardReceived;
 
     public event Action<double> OnEarningReward, OnEarningDiamonds;
     public event Action<int, bool> OnEarningBoosterReward;
@@ -57,14 +55,23 @@ public class RewardsManager : MonoBehaviour
     private bool _isCoinsRewardActive;
     private bool _isBoosterRewardActive;
     private bool _isDiamondsRewardActive;
+    private bool _isRewardEarned;
 
     #endregion
 
     private void OnEnable()
     {
-        _adController.OnUserEarnedRewardEvent.AddListener(UserEarnedReward);
+        _adController.OnUserEarnedRewardEvent.AddListener(SetRewardState);
+        _adController.OnAdClosedEvent.AddListener(UserEarnedReward);
         _adController.RewardedAdLoadedEvent.AddListener(ShowRewardedAd);
         _adController.RewardedAdLoadedWithErrorEvent.AddListener(RewardedAdWithError);
+    }
+
+    private void SetRewardState()
+    {
+        _isRewardEarned = true;
+
+        Debug.Log("Rewards Manager /// SetRewardState() /// _isRewardEarned " + _isRewardEarned);
     }
 
     public void EnableCoinsReward()
@@ -77,7 +84,7 @@ public class RewardsManager : MonoBehaviour
         _rewardButton.gameObject.SetActive(true);
         _coinsObj.SetActive(true);
         _serviceTxt.text = $"";
-        _coinsTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("GetCoins")}";       
+        _coinsTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("GetCoins")}";
     }
 
     public void EnableDiamondsReward()
@@ -119,39 +126,48 @@ public class RewardsManager : MonoBehaviour
 
     public void UserEarnedReward()
     {
-        if (_isCoinsRewardActive)
+        if (_isRewardEarned)
         {
-            _isCoinsRewardActive = false;
+            if (_isCoinsRewardActive)
+            {
+                _isCoinsRewardActive = false;
 
-            OnEarningReward?.Invoke(_coinsReward);
-            OnRewardReceived?.Invoke();
-            FirebaseAnalytics.LogEvent(name: "coins_for_ads");
+                OnEarningReward?.Invoke(_coinsReward);
+                OnRewardReceived?.Invoke();
 
-            _meteor.SetObjectPosition();                      
-            _meteor.gameObject.SetActive(false);
+                _meteor.SetObjectPosition();
+                _meteor.gameObject.SetActive(false);
+
+                Debug.Log("Rewards Manager /// UserEarnedReward() /// Coins " + _coinsReward + "_isRewardEarned " + _isRewardEarned);
+            }
+            else if (_isBoosterRewardActive)
+            {
+                _isBoosterRewardActive = false;
+
+                OnEarningBoosterReward?.Invoke(_boosterTime, true);
+                OnRewardReceived?.Invoke();
+
+                _meteor.SetObjectPosition();
+                _meteor.gameObject.SetActive(false);
+
+                Debug.Log("Rewards Manager /// UserEarnedReward() /// Booster " + _boosterTime + "_isRewardEarned " + _isRewardEarned);
+            }
+            else if (_isDiamondsRewardActive)
+            {
+                _isDiamondsRewardActive = false;
+
+                OnEarningDiamonds?.Invoke(_diamonds);
+                OnRewardReceived?.Invoke();
+
+                _meteor.SetObjectPosition();
+                _meteor.gameObject.SetActive(false);
+
+                Debug.Log("Rewards Manager /// UserEarnedReward() /// Diamonds " + _diamonds + "_isRewardEarned " + _isRewardEarned);
+            }
+
+            _isRewardEarned = false;   
+            Debug.Log("Rewards Manager /// _isRewardEarned " + _isRewardEarned);
         }
-        else if (_isBoosterRewardActive)
-        {
-            _isBoosterRewardActive = false;
-
-            OnEarningBoosterReward?.Invoke(_boosterTime, true);
-            OnRewardReceived?.Invoke();
-            FirebaseAnalytics.LogEvent(name: "booster_for_ads");
-
-            _meteor.SetObjectPosition();                      
-            _meteor.gameObject.SetActive(false);
-        }
-        else if (_isDiamondsRewardActive)
-        {
-            _isDiamondsRewardActive = false;
-
-            OnEarningDiamonds?.Invoke(_diamonds);
-            OnRewardReceived?.Invoke();
-            FirebaseAnalytics.LogEvent(name: "diamonds_for_ads");
-
-            _meteor.SetObjectPosition();            
-            _meteor.gameObject.SetActive(false);
-        }       
     }
 
     public void GetReward()
@@ -165,7 +181,7 @@ public class RewardsManager : MonoBehaviour
             _boosterObj.SetActive(false);
         }
         else if (_isDiamondsRewardActive)
-        {           
+        {
             _diamondsObj.SetActive(false);
         }
 
@@ -187,6 +203,7 @@ public class RewardsManager : MonoBehaviour
     private void OnDisable()
     {
         _adController.OnUserEarnedRewardEvent.RemoveListener(UserEarnedReward);
+        _adController.OnUserEarnedRewardEvent.RemoveListener(SetRewardState);
         _adController.RewardedAdLoadedEvent.RemoveListener(ShowRewardedAd);
         _adController.RewardedAdLoadedWithErrorEvent.RemoveListener(RewardedAdWithError);
     }

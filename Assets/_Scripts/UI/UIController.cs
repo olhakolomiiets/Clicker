@@ -1,5 +1,3 @@
-using CBS.Scriptable;
-using CBS.UI;
 using DG.Tweening;
 using Exoa.Cameras;
 using System;
@@ -49,7 +47,7 @@ public class UIController : MonoBehaviour
     private ObjectPlaceRotator _objectPlaceRotator;
 
     public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnStorePanelDisplayed, OnStorePanelNotDisplayed, OnHideTutorial;
-    public event Action<int> OnLoadTutorialNextStep, OnShowShopTutorial, OnShowUpgradeTutorial;
+    public event Action<int> OnLoadTutorialNextStep, OnShowShopTutorial, OnShowUpgradeTutorial, OnLoadTutorialStep;
 
     private void Start()
     {
@@ -211,7 +209,13 @@ public class UIController : MonoBehaviour
             {
                 OnShowShopTutorial.Invoke(6);                
             }
-            else if (index == 0 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 1 || index == 0 && PlayerPrefs.GetInt("ShopTutorialShown") == 1 || index == 1 && PlayerPrefs.GetInt("ShopTutorialShown") == 1)
+            else if (index == 0 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 1 && PlayerPrefs.GetInt("TutorialCompleted") == 0 || index == 0 && PlayerPrefs.GetInt("ShopTutorialShown") == 1 && PlayerPrefs.GetInt("TutorialCompleted") == 0)
+            {
+                int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
+                OnLoadTutorialStep.Invoke(tutorialStep);
+            }
+
+            if (index == 1 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 1 || index == 2 && PlayerPrefs.GetInt("ShopTutorialShown") == 1)
             {
                 OnHideTutorial.Invoke();
             }
@@ -234,20 +238,11 @@ public class UIController : MonoBehaviour
         _upgradeButton.colors = upgradeColors;
         _shopButton.colors = shopColors;
     }
-
-
     private void SetStartPos()
     {
         _creationItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
         _upgradeItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
         _shopItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
-    }
-
-    public void ShowLeaderboards()
-    {
-        var prefabs = CBSScriptable.Get<LeaderboardPrefabs>();
-        var leaderboardsPrefab = prefabs.LeaderboardsWindow;
-        UIView.ShowWindow(leaderboardsPrefab);
     }
 
     public void ShowTutorialHint(int step, int state)

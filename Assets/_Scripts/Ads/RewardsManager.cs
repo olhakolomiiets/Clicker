@@ -202,8 +202,8 @@ public class RewardsManager : MonoBehaviour
 
     private void OnDisable()
     {
-        _adController.OnUserEarnedRewardEvent.RemoveListener(UserEarnedReward);
         _adController.OnUserEarnedRewardEvent.RemoveListener(SetRewardState);
+        _adController.OnAdClosedEvent.RemoveListener(UserEarnedReward);  
         _adController.RewardedAdLoadedEvent.RemoveListener(ShowRewardedAd);
         _adController.RewardedAdLoadedWithErrorEvent.RemoveListener(RewardedAdWithError);
     }

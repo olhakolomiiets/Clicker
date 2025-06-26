@@ -133,6 +133,7 @@ public class GameManager : MonoBehaviour
         _uiController.OnShowShopTutorial += _tutorialManager.ShowShopTutorial;
         _uiController.OnShowUpgradeTutorial += _tutorialManager.ShowUpgradeTutorial;
         _uiController.OnHideTutorial += _tutorialManager.HideTutorialInfo;
+        _uiController.OnLoadTutorialStep += _tutorialManager.ShowTutorialStep;
 
         _gameRules.OnTutorialStepCompleted += _tutorialManager.AdvanceTutorial;        
         _gameRules.OnTutorialStepReady += _tutorialManager.ShowNextTutorial;

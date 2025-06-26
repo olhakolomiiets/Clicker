@@ -34,12 +34,22 @@ namespace GoogleMobileAds.Samples
                 #endif
             };
 
+            RequestConfiguration requestConfiguration = new RequestConfiguration.Builder()
+            .SetTestDeviceIds(deviceIds)
+            .SetTagForChildDirectedTreatment(TagForChildDirectedTreatment.True)
+            .SetTagForUnderAgeOfConsent(TagForUnderAgeOfConsent.True)
+            .build();
 
-            RequestConfiguration requestConfiguration = new RequestConfiguration
-            {
-                TestDeviceIds = deviceIds
-            };
             MobileAds.SetRequestConfiguration(requestConfiguration);
+
+
+            //RequestConfiguration requestConfiguration = new RequestConfiguration
+            //{
+            //    TestDeviceIds = deviceIds
+            //};
+            //MobileAds.SetRequestConfiguration(requestConfiguration);
+
+
 
             Debug.Log("Google Mobile Ads Initializing.");
             MobileAds.Initialize((InitializationStatus initstatus) =>

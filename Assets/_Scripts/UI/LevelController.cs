@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Firebase.Analytics;
 using Lean.Localization;
 using System;
 using System.Collections;
@@ -117,6 +118,9 @@ public class LevelController : MonoBehaviour
         {
             OnNextPlanetPurchased.Invoke(nextPlanetPrice);
             _buyButtons[level - 1].gameObject.SetActive(false);
+
+            int planet = level + 1;
+            FirebaseAnalytics.LogEvent(name: "bought_planet_" + planet);
         }
         else
         {

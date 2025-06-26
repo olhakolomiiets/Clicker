@@ -21,6 +21,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:23.0.0' // Assets/Firebase/Editor/AuthDependencies.xml:13
     implementation 'com.google.firebase:firebase-auth-unity:12.0.0' // Assets/Firebase/Editor/AuthDependencies.xml:20
     implementation 'com.google.firebase:firebase-common:21.0.0' // Assets/Firebase/Editor/AppDependencies.xml:13
+    implementation 'com.google.firebase:firebase-crashlytics-ndk:19.0.0' // Assets/Firebase/Editor/CrashlyticsDependencies.xml:13
+    implementation 'com.google.firebase:firebase-crashlytics-unity:12.0.0' // Assets/Firebase/Editor/CrashlyticsDependencies.xml:20
     implementation 'com.google.firebase:firebase-database:20.3.0' // Assets/Firebase/Editor/DatabaseDependencies.xml:13
     implementation 'com.google.firebase:firebase-database-unity:11.7.0' // Assets/Firebase/Editor/DatabaseDependencies.xml:22
     implementation 'com.google.firebase:firebase-iid:21.1.0' // Assets/Firebase/Editor/MessagingDependencies.xml:17
@@ -34,9 +36,7 @@ dependencies {
 
 // Android Resolver Exclusions Start
 android {
-    namespace "com.unity3d.player"
-    ndkVersion "**NDKVERSION**"
-  packaging {
+  packagingOptions {
       exclude ('/lib/armeabi/*' + '*')
       exclude ('/lib/mips/*' + '*')
       exclude ('/lib/mips64/*' + '*')

@@ -1,7 +1,5 @@
 using System;
 using UnityEngine;
-using CBS;
-using CBS.Models;
 using System.Collections.Generic;
 using Firebase.Analytics;
 
@@ -29,53 +27,12 @@ public class GameRules : MonoBehaviour
     private bool isTipShown;
 
 
-    #region CBS FIELDS
+    #region CURRENCY FIELDS
     [SerializeField] private string currencyCode;
-    private ICurrency CurrencyModule { get; set; }
     private string diamondCode = "DI";
 
     #endregion
 
-    #region CBS CURRENCIES
-    private void Start()
-    {
-        CurrencyModule = CBSModule.Get<CBSCurrencyModule>();
-    }
-
-    private void OnAddCurrency(CBSUpdateCurrencyResult result)
-    {
-        if (result.IsSuccess)
-        {
-            var balanceChange = result.BalanceChange;
-            var updatedCurrency = result.UpdatedCurrency;
-        }
-        else
-        {
-            Debug.Log(result.Error.Message);
-        }
-    }
-
-    private void OnSubtract(CBSUpdateCurrencyResult result)
-    {
-        if (result.IsSuccess)
-        {
-            var balanceChange = result.BalanceChange;
-            var updatedCurrency = result.UpdatedCurrency;
-        }
-        else
-        {
-            Debug.Log(result.Error.Message);
-        }
-    }
-
-    private void UpdateCurrency(string code, double coins, bool isIncrease)
-    {
-        if (isIncrease == true)
-            CurrencyModule.AddCurrencyToProfile(code, (int)coins, OnAddCurrency);
-        else
-            CurrencyModule.SubtractCurrencyFromProfile(code, (int)coins, OnSubtract);
-    }
-    #endregion
 
     /// <summary>
     /// Handles clicking of the Manager purchas button per each Item (index)
@@ -521,8 +478,8 @@ public class GameRules : MonoBehaviour
         if ((tutorialStep == 3 && _currentGameData.Money >= moneyForTreeHint) || (tutorialStep == 4 && _currentGameData.Money >= moneyForManagerHint))
             OnTutorialStepReady.Invoke(tutorialStep, 1);
 
-        if (tutorialStep == 5 && _currentGameData.Money >= 100000)
-            OnTutorialStepReady.Invoke(tutorialStep, 1);
+        if (tutorialStep == 5 && _currentGameData.Money >= 100)
+            OnTutorialStepReady.Invoke(5, 1);
     }
 
     #region PLANET UNLOCKER
@@ -532,8 +489,10 @@ public class GameRules : MonoBehaviour
         _currentGameData.Money -= planetPrice;
         _currentGeneralData.ActivePlanet++;
 
-        string eventName = _currentGeneralData.ActivePlanet + "_planet_unlocked";
-        FirebaseAnalytics.LogEvent(eventName);
+        //string eventName = _currentGeneralData.ActivePlanet + "_planet_unlocked";
+        //FirebaseAnalytics.LogEvent(name: eventName);
+
+        FirebaseAnalytics.LogEvent(name: _currentGeneralData.ActivePlanet + "_planet_unlocked");
         Debug.Log($"New planet unlocked: {_currentGeneralData.ActivePlanet}");
 
         SendDataUpdate();

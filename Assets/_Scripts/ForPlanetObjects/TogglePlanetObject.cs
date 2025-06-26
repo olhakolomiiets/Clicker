@@ -7,7 +7,7 @@ public class TogglePlanetObject : MonoBehaviour
         PlanetObject planetObject = other.GetComponent<PlanetObject>();
         if (planetObject != null)
         {
-            Debug.Log("________________ENTERED____________");
+            //Debug.Log("________________ENTERED____________");
             Transform childTransform = other.gameObject.transform.GetChild(0);
             if (childTransform != null && childTransform.gameObject != null)
             {

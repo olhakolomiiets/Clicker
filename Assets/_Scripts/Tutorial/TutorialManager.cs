@@ -6,10 +6,10 @@ using Lean.Localization;
 using DG.Tweening;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering;
 
 public class TutorialManager : MonoBehaviour
 {
-    //[SerializeField] private static TutorialManager Instance;
     [Header("Tutorial")]
     [SerializeField] private GameObject tutorialPointerPrefab;
     [SerializeField] private Transform[] tutorialSteps;
@@ -17,6 +17,8 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private GameObject infoWind;
     [SerializeField] private TextMeshProUGUI tutorialStepTitle;
     [SerializeField] private TextMeshProUGUI tutorialStepText;
+
+    [SerializeField] private Button tutorialDismissButton; 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private Vector3 originalScale;
@@ -44,9 +46,11 @@ public class TutorialManager : MonoBehaviour
     private int stepsCompleted;
     private int stepState;
     private int activeIndex;
-    private float duration = 0.5f;
-    private bool isInfoActive;
     private int tipIndex;
+
+    private float duration = 0.5f;
+
+    private bool isInfoActive;  
     private bool isHidingTip = false;
     private bool isHidingTutorial = false;
 
@@ -110,6 +114,17 @@ public class TutorialManager : MonoBehaviour
         if (tutorialStep == 0)
             ShowTutorialInfo(tutorialStep);
 
+        if (tutorialStep == 5 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 0 || tutorialStep == 6 && PlayerPrefs.GetInt("ShopTutorialShown") == 0)
+        {
+            if (uiController.isDisplayed)
+            {
+                ShowPointer(tutorialSteps[tutorialStep]);
+            }
+            else ShowFirstStep();
+
+            return;
+        }
+
         if (isHidingTutorial)
         {
             DOTween.Sequence()
@@ -120,8 +135,6 @@ public class TutorialManager : MonoBehaviour
 
         if (uiController.isDisplayed)
         {
-            ResetPointer();
-
             if (HandleTutorialExitCondition())
                 return;
 
@@ -134,6 +147,8 @@ public class TutorialManager : MonoBehaviour
             ShowTutorialInfo(tutorialStep);
 
             stepsCompleted++;
+
+            //Debug.Log($"TutorialManager /// ShowNextTutorial() /// tutorialStep: {tutorialStep} /// stepsCompleted: {stepsCompleted}");
             SaveTutorialState();
         }
         else ShowFirstStep();
@@ -144,10 +159,13 @@ public class TutorialManager : MonoBehaviour
         if (isTipActive)
             HideTipInfo();
 
-        if (step == 5 || step == 6)
+        if (step == 5 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 0 || step == 6 && PlayerPrefs.GetInt("ShopTutorialShown") == 0)
         {
-            tutorialStep = step;
-            ShowPointer(tutorialSteps[tutorialStep]);
+            if (uiController.isDisplayed)
+            {
+                ShowPointer(tutorialSteps[step]);
+            }
+            else ShowFirstStep();
             return;
         }
 
@@ -171,8 +189,10 @@ public class TutorialManager : MonoBehaviour
 
             ShowPointer(tutorialSteps[tutorialStep]);
             ShowTutorialInfo(tutorialStep);
-        
+
             stepsCompleted++;
+
+            //Debug.Log($"TutorialManager /// ShowNextTutorial(int step) /// tutorialStep: {tutorialStep} /// stepsCompleted: {stepsCompleted}");
             SaveTutorialState();
         }
         else ShowFirstStep();
@@ -183,10 +203,13 @@ public class TutorialManager : MonoBehaviour
         if (isTipActive)
             HideTipInfo();
 
-        if (step == 5 || step == 6)
+        if (step == 5 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 0 || step == 6 && PlayerPrefs.GetInt("ShopTutorialShown") == 0)
         {
-            tutorialStep = step;
-            ShowPointer(tutorialSteps[tutorialStep]);
+            if (uiController.isDisplayed)
+            {
+                ShowPointer(tutorialSteps[step]);
+            }
+            else ShowFirstStep();
             return;
         }
 
@@ -202,7 +225,6 @@ public class TutorialManager : MonoBehaviour
         {
             tutorialStep = step;
             stepState = state;
-            //ResetPointer();
 
             if (HandleTutorialExitCondition())
                 return;
@@ -214,9 +236,36 @@ public class TutorialManager : MonoBehaviour
             ShowTutorialInfo(tutorialStep);
 
             stepsCompleted++;
+
+            //Debug.Log($"TutorialManager /// ShowNextTutorial(int step, int state) /// tutorialStep: {tutorialStep} /// stepsCompleted: {stepsCompleted}");
             SaveTutorialState();
         }
         else ShowFirstStep();
+    }
+
+    public void ShowTutorialStep(int step)
+    {       
+        if (isInfoActive)
+        {
+            StopCoroutine(HideTutorial());
+            HideTutorialInfo();
+        }           
+
+        if (isTipActive)
+            HideTipInfo();
+
+        if (isHidingTutorial)
+        {
+            DOTween.Sequence()
+                .AppendInterval(duration)
+                .OnComplete(() => ShowTutorialStep(step));
+            return;
+        }
+
+        ShowPointer(tutorialSteps[step]);
+        ShowTutorialInfo(step);
+
+        //Debug.Log($"TutorialManager /// ShowNextTutorial(int step) /// tutorialStep: {tutorialStep} /// stepsCompleted: {stepsCompleted}");
     }
 
     public void ShowShopTutorial(int step)
@@ -237,16 +286,21 @@ public class TutorialManager : MonoBehaviour
                 .OnComplete(() => ShowShopTutorial(step));
             return;
         }
+
+        ResetPointer();
         ShowTutorialInfo(step);
         stepsCompleted++;
-
-        if (stepsCompleted >= 5)
-            tutorialStep++;
 
         PlayerPrefs.SetInt("ShopTutorialShown", 1); 
         SaveTutorialState();
 
-        StartCoroutine(HideShopTutorial());
+        if (PlayerPrefs.GetInt("UpgradeTutorialShown") == 0)
+            StartCoroutine(ShowTutorial(5));
+
+        if (PlayerPrefs.GetInt("ShopTutorialShown") == 1 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 1)
+            StartCoroutine(HideTutorial());
+
+        //Debug.Log($"TutorialManager /// ShowShopTutorial /// tutorialStep: {tutorialStep} /// stepsCompleted: {stepsCompleted}");
     }
 
     public void ShowUpgradeTutorial(int step)
@@ -267,23 +321,27 @@ public class TutorialManager : MonoBehaviour
                 .OnComplete(() => ShowUpgradeTutorial(step));
             return;
         }
-            ResetPointer();
-            ShowTutorialInfo(step);
-            stepsCompleted++;
 
-            if (stepsCompleted >= 5)
-                tutorialStep++;
+        ResetPointer();
+        ShowTutorialInfo(step);
+        stepsCompleted++;
 
-            PlayerPrefs.SetInt("UpgradeTutorialShown", 1);
-            SaveTutorialState();
+        PlayerPrefs.SetInt("UpgradeTutorialShown", 1);
+        SaveTutorialState();
 
-            StartCoroutine(ShowShopTutorial());
+        if (PlayerPrefs.GetInt("ShopTutorialShown") == 0)
+            StartCoroutine(ShowTutorial(6));
+
+        if (PlayerPrefs.GetInt("ShopTutorialShown") == 1 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 1)
+            StartCoroutine(HideTutorial());
+
+        //Debug.Log($"TutorialManager /// ShowUpgradeTutorial /// tutorialStep: {tutorialStep} /// stepsCompleted: {stepsCompleted}");
     }
 
     public void ShowFirstStep()
     {        
-        //ResetPointer();
-        ShowPointer(tutorialSteps[0]);    }
+        ShowPointer(tutorialSteps[0]);    
+    }
 
     private bool HandleTutorialExitCondition()
     {
@@ -311,14 +369,17 @@ public class TutorialManager : MonoBehaviour
         stepState = 0;
         tutorialStep++;
 
+        //Debug.Log($"TutorialManager /// AdvanceTutorial /// tutorialStep: {tutorialStep}");
+
         SaveTutorialState();
-        ShowNextTutorial();
+        ShowNextTutorial();      
     }
 
     public void HideTutorialInfo()
     {
         isInfoActive = false;
         isHidingTutorial = true;
+
         Sequence sequence = DOTween.Sequence();
         sequence.Append(rectTransform.DOScale(Vector3.zero, duration).SetEase(Ease.InBack));
         sequence.Join(canvasGroup.DOFade(0f, duration));
@@ -351,20 +412,17 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    private IEnumerator ShowShopTutorial()
+    private IEnumerator ShowTutorial(int step)
     {
         yield return new WaitForSeconds(2f);
-        //ResetPointer();
-        ShowPointer(tutorialSteps[6]);
+        ShowPointer(tutorialSteps[step]);
     }
 
-    private IEnumerator HideShopTutorial()
+    private IEnumerator HideTutorial()
     {
         yield return new WaitForSeconds(4f);
-        ResetPointer();
         HideTutorialInfo();
     }
-
 
     #endregion
 
@@ -402,21 +460,24 @@ public class TutorialManager : MonoBehaviour
 
     public void ShowTipInfo(int index)
     {
-        isTipActive = true;
-        tipInfo.SetActive(true);
-        
-        if (index == 0)
-            gameTipText.text = $"{LeanLocalization.GetTranslationText("GameTip")}";
-        else
-            gameTipText.text = $"{LeanLocalization.GetTranslationText("ManagerTip")}";
+        if (!isTipActive)
+        {
+            isTipActive = true;
+            tipInfo.SetActive(true);
 
-        float startX = originalPosition.x + 100f;
-        tipRectTransform.anchoredPosition = new Vector2(startX, originalPosition.y);
-        tipCanvasGroup.alpha = 0f;
+            if (index == 0)
+                gameTipText.text = $"{LeanLocalization.GetTranslationText("GameTip")}";
+            else
+                gameTipText.text = $"{LeanLocalization.GetTranslationText("ManagerTip")}";
 
-        Sequence sequence = DOTween.Sequence();
-        sequence.Append(tipRectTransform.DOAnchorPosX(originalPosition.x, duration));
-        sequence.Join(tipCanvasGroup.DOFade(1f, duration));
+            float startX = originalPosition.x + 100f;
+            tipRectTransform.anchoredPosition = new Vector2(startX, originalPosition.y);
+            tipCanvasGroup.alpha = 0f;
+
+            Sequence sequence = DOTween.Sequence();
+            sequence.Append(tipRectTransform.DOAnchorPosX(originalPosition.x, duration));
+            sequence.Join(tipCanvasGroup.DOFade(1f, duration));
+        }
     }
 
     public void HideTipInfo()

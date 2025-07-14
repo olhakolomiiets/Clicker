@@ -1,12 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 using TMPro;
 using Lean.Localization;
 using DG.Tweening;
 using System.Collections;
 using UnityEngine.SceneManagement;
-using UnityEngine.Rendering;
 
 public class TutorialManager : MonoBehaviour
 {
@@ -40,11 +38,13 @@ public class TutorialManager : MonoBehaviour
     private string TutorialCompletedKey = "TutorialCompleted";
     private string ShopTutorialKey = "ShopTutorialShown";
     private string UpgradeTutorialKey = "UpgradeTutorialShown";
+    private string tutorialKey;
 
     private GameObject currentPointer;
+
     private int tutorialStep;
     private int stepsCompleted;
-    private int stepState;
+    private int stepState = 0;
     private int activeIndex;
     private int tipIndex;
 
@@ -73,7 +73,7 @@ public class TutorialManager : MonoBehaviour
             PlayerPrefs.SetInt(TutorialCompletedKey, 1);
 
         if (stepsCompleted <= 4)
-            ShowNextTutorial();   
+            ShowNextTutorial(tutorialStep, stepState);   
     }
 
     private void LoadTutorialState()
@@ -109,115 +109,34 @@ public class TutorialManager : MonoBehaviour
     }
 
     #region TUTORIAL
-    public void ShowNextTutorial()
-    {
-        if (tutorialStep == 0)
-            ShowTutorialInfo(tutorialStep);
-
-        if (tutorialStep == 5 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 0 || tutorialStep == 6 && PlayerPrefs.GetInt("ShopTutorialShown") == 0)
-        {
-            if (uiController.isDisplayed)
-            {
-                ShowPointer(tutorialSteps[tutorialStep]);
-            }
-            else ShowFirstStep();
-
-            return;
-        }
-
-        if (isHidingTutorial)
-        {
-            DOTween.Sequence()
-                .AppendInterval(duration)
-                .OnComplete(() => ShowNextTutorial());
-            return;
-        }
-
-        if (uiController.isDisplayed)
-        {
-            if (HandleTutorialExitCondition())
-                return;
-
-            if (TutorialExitCondition())
-                return;
-
-            if (tutorialStep < tutorialSteps.Length)
-                ShowPointer(tutorialSteps[tutorialStep]);
-            
-            ShowTutorialInfo(tutorialStep);
-
-            stepsCompleted++;
-
-            //Debug.Log($"TutorialManager /// ShowNextTutorial() /// tutorialStep: {tutorialStep} /// stepsCompleted: {stepsCompleted}");
-            SaveTutorialState();
-        }
-        else ShowFirstStep();
-    }
-
-    public void ShowNextTutorial(int step)
-    {
-        if (isTipActive)
-            HideTipInfo();
-
-        if (step == 5 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 0 || step == 6 && PlayerPrefs.GetInt("ShopTutorialShown") == 0)
-        {
-            if (uiController.isDisplayed)
-            {
-                ShowPointer(tutorialSteps[step]);
-            }
-            else ShowFirstStep();
-            return;
-        }
-
-        if (isHidingTutorial)
-        {
-            DOTween.Sequence()
-                .AppendInterval(duration)
-                .OnComplete(() => ShowNextTutorial(step));
-            return;
-        }
-
-        if (uiController.isDisplayed)
-        {
-            tutorialStep = step;
-
-            if (HandleTutorialExitCondition())
-                return;
-
-            if (TutorialExitCondition())
-                return;
-
-            ShowPointer(tutorialSteps[tutorialStep]);
-            ShowTutorialInfo(tutorialStep);
-
-            stepsCompleted++;
-
-            //Debug.Log($"TutorialManager /// ShowNextTutorial(int step) /// tutorialStep: {tutorialStep} /// stepsCompleted: {stepsCompleted}");
-            SaveTutorialState();
-        }
-        else ShowFirstStep();
-    }
-
     public void ShowNextTutorial(int step, int state)
     {
         if (isTipActive)
             HideTipInfo();
 
-        if (step == 5 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 0 || step == 6 && PlayerPrefs.GetInt("ShopTutorialShown") == 0)
-        {
-            if (uiController.isDisplayed)
-            {
-                ShowPointer(tutorialSteps[step]);
-            }
-            else ShowFirstStep();
-            return;
-        }
+        if (isInfoActive)
+            HideTutorialInfo();
 
         if (isHidingTutorial)
         {
             DOTween.Sequence()
                 .AppendInterval(duration)
                 .OnComplete(() => ShowNextTutorial(step, state));
+            return;
+        }
+
+        if (step == 5 && PlayerPrefs.GetInt(UpgradeTutorialKey) == 0 || step == 6 && PlayerPrefs.GetInt(ShopTutorialKey) == 0)
+        {
+            tutorialKey = step == 5 ? UpgradeTutorialKey : step == 6 ? ShopTutorialKey : tutorialKey;
+
+            if (uiController.isDisplayed)
+            {
+                ShowPointer(tutorialSteps[step]);
+            }
+            else ShowFirstStep();
+            
+            //Debug.Log($"TutorialManager /// ShowNextTutorial(int step, int state) /// tutorialStep: {step} /// tutorialKey: {tutorialKey}");
+
             return;
         }
 
@@ -237,19 +156,22 @@ public class TutorialManager : MonoBehaviour
 
             stepsCompleted++;
 
-            //Debug.Log($"TutorialManager /// ShowNextTutorial(int step, int state) /// tutorialStep: {tutorialStep} /// stepsCompleted: {stepsCompleted}");
-            SaveTutorialState();
+            SaveTutorialState();          
+
+            //Debug.Log($"TutorialManager /// ShowNextTutorial(int step, int state) /// tutorialStep: {step} /// stepsCompleted: {stepsCompleted}");
         }
         else ShowFirstStep();
     }
 
     public void ShowTutorialStep(int step)
-    {       
+    {
+        if (stepState == 0) return;
+
         if (isInfoActive)
         {
             StopCoroutine(HideTutorial());
             HideTutorialInfo();
-        }           
+        }
 
         if (isTipActive)
             HideTipInfo();
@@ -265,13 +187,12 @@ public class TutorialManager : MonoBehaviour
         ShowPointer(tutorialSteps[step]);
         ShowTutorialInfo(step);
 
-        //Debug.Log($"TutorialManager /// ShowNextTutorial(int step) /// tutorialStep: {tutorialStep} /// stepsCompleted: {stepsCompleted}");
+        //Debug.Log($"TutorialManager /// ShowTutorialStep(int step) /// tutorialStep: {step}");
     }
 
-    public void ShowShopTutorial(int step)
+    public void ShowUpgradeOrShopTutorial(int step)
     {
-        if (PlayerPrefs.GetInt(ShopTutorialKey) == 1)
-            return;
+        tutorialKey = step == 5 ? UpgradeTutorialKey : step == 6 ? ShopTutorialKey : tutorialKey;
 
         if (isTipActive)
             HideTipInfo();
@@ -283,7 +204,7 @@ public class TutorialManager : MonoBehaviour
         {
             DOTween.Sequence()
                 .AppendInterval(duration)
-                .OnComplete(() => ShowShopTutorial(step));
+                .OnComplete(() => ShowUpgradeOrShopTutorial(step));
             return;
         }
 
@@ -291,56 +212,34 @@ public class TutorialManager : MonoBehaviour
         ShowTutorialInfo(step);
         stepsCompleted++;
 
-        PlayerPrefs.SetInt("ShopTutorialShown", 1); 
-        SaveTutorialState();
+        PlayerPrefs.SetInt(tutorialKey, 1);
 
-        if (PlayerPrefs.GetInt("UpgradeTutorialShown") == 0)
-            StartCoroutine(ShowTutorial(5));
+        //Debug.Log($"TutorialManager /// ShowUpgradeOrShopTutorial(int step) /// tutorialStep: {step} /// tutorialKey: {tutorialKey}");
 
-        if (PlayerPrefs.GetInt("ShopTutorialShown") == 1 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 1)
-            StartCoroutine(HideTutorial());
-
-        //Debug.Log($"TutorialManager /// ShowShopTutorial /// tutorialStep: {tutorialStep} /// stepsCompleted: {stepsCompleted}");
-    }
-
-    public void ShowUpgradeTutorial(int step)
-    {
-        if (PlayerPrefs.GetInt(UpgradeTutorialKey) == 1)
-            return;
-
-        if (isTipActive)
-            HideTipInfo();
-
-        if (isInfoActive)
-            HideTutorialInfo();
-
-        if (isHidingTutorial)
+        if (PlayerPrefs.GetInt(ShopTutorialKey) == 0)
         {
-            DOTween.Sequence()
-                .AppendInterval(duration)
-                .OnComplete(() => ShowUpgradeTutorial(step));
-            return;
-        }
-
-        ResetPointer();
-        ShowTutorialInfo(step);
-        stepsCompleted++;
-
-        PlayerPrefs.SetInt("UpgradeTutorialShown", 1);
-        SaveTutorialState();
-
-        if (PlayerPrefs.GetInt("ShopTutorialShown") == 0)
             StartCoroutine(ShowTutorial(6));
+            //Debug.Log($"TutorialManager /// ShowUpgradeOrShopTutorial /// tutorialStep: {step} /// ShopTutorialKey: {ShopTutorialKey}");
+        }
 
-        if (PlayerPrefs.GetInt("ShopTutorialShown") == 1 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 1)
+        if (PlayerPrefs.GetInt(UpgradeTutorialKey) == 0)
+        {
+            StartCoroutine(ShowTutorial(5));
+            //Debug.Log($"TutorialManager /// ShowUpgradeOrShopTutorial /// tutorialStep: {step} /// ShopTutorialKey: {UpgradeTutorialKey}");
+        }
+
+        if (PlayerPrefs.GetInt(ShopTutorialKey) == 1 && PlayerPrefs.GetInt(UpgradeTutorialKey) == 1)
+        {
             StartCoroutine(HideTutorial());
+            //Debug.Log($"TutorialManager /// ShowUpgradeOrShopTutorial /// tutorialStep: {tutorialStep} /// ShopTutorialKey: {ShopTutorialKey} {UpgradeTutorialKey}");
+        }    
 
-        //Debug.Log($"TutorialManager /// ShowUpgradeTutorial /// tutorialStep: {tutorialStep} /// stepsCompleted: {stepsCompleted}");
+        SaveTutorialState();   
     }
 
     public void ShowFirstStep()
-    {        
-        ShowPointer(tutorialSteps[0]);    
+    {
+        ShowPointer(tutorialSteps[0]);
     }
 
     private bool HandleTutorialExitCondition()
@@ -364,15 +263,15 @@ public class TutorialManager : MonoBehaviour
     }
 
     public void AdvanceTutorial()
-    {     
-        isInfoActive = false;
+    {
         stepState = 0;
         tutorialStep++;
 
-        //Debug.Log($"TutorialManager /// AdvanceTutorial /// tutorialStep: {tutorialStep}");
+        SaveTutorialState(); 
 
-        SaveTutorialState();
-        ShowNextTutorial();      
+        ShowNextTutorial(tutorialStep, stepState);
+
+        //Debug.Log($"TutorialManager /// AdvanceTutorial /// tutorialStep: {tutorialStep}");
     }
 
     public void HideTutorialInfo()

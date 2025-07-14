@@ -2,7 +2,6 @@ using Firebase.Analytics;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class PurchaseManager : MonoBehaviour
 {
@@ -28,36 +27,11 @@ public class PurchaseManager : MonoBehaviour
     [SerializeField] private GameObject _coinsBoosterButton;
     [SerializeField] private List<ItemData> _creationItemsDataList;
 
-
-    [SerializeField] private IAPManager _purchaseController;
-
-    [HideInInspector] public UnityEvent PurchasedProductNoAds;
-    [HideInInspector] public UnityEvent PurchasedProductStarterPack;
-    [HideInInspector] public UnityEvent PurchasedProductSpecialOffer;
-    [HideInInspector] public UnityEvent PurchasedProductCoinsBooster;
-    [HideInInspector] public UnityEvent PurchasedProductDiamondsPack50;
-    [HideInInspector] public UnityEvent PurchasedProductDiamondsPack100;
-    [HideInInspector] public UnityEvent PurchasedProductDiamondsPack300;
-
     public event Action<double, double> OnPurchasingPack;
     public event Action<double> OnPurchasingDiamonds;
     public event Action OnPurchasingBooster;
 
-    private void Awake()
-    {
-        _purchaseController = FindAnyObjectByType<IAPManager>();
-    }
 
-    private void OnEnable()
-    {
-        _purchaseController.PurchasedProductNoAds.AddListener(NoAds);
-        _purchaseController.PurchasedProductStarterPack.AddListener(StarterPack);
-        _purchaseController.PurchasedProductSpecialOffer.AddListener(SpecialOffer);
-        _purchaseController.PurchasedProductCoinsBooster.AddListener(CoinsBooster);
-        _purchaseController.PurchasedProductDiamondsPack50.AddListener(DiamondsPack50);
-        _purchaseController.PurchasedProductDiamondsPack100.AddListener(DiamondsPack100);
-        _purchaseController.PurchasedProductDiamondsPack300.AddListener(DiamondsPack300);
-    }
     private void Start()
     {
         RestoreVariable();
@@ -65,7 +39,9 @@ public class PurchaseManager : MonoBehaviour
 
     public void NoAds()
     {
-        _noAdsButton.SetActive(false);
+        PlayerPrefs.SetInt("adsRemoved", 1);
+        _noAdsButton.SetActive(false);  
+        FirebaseAnalytics.LogEvent(name: "no_ads_purchased");   
     }
 
     public void StarterPack()
@@ -74,15 +50,17 @@ public class PurchaseManager : MonoBehaviour
         _starterPackButton.SetActive(false);
         PlayerPrefs.SetInt("StarterPackPurchased", 1);
         UpdateShopUI();
+        FirebaseAnalytics.LogEvent(name: "money_starterPack_purchased");
     }
 
     public void SpecialOffer()
     {
         OnPurchasingPack?.Invoke(_coins, _diamonds);
-        _noAdsButton.SetActive(false);
+        NoAds();
         _specialOfferButton.SetActive(false);
         PlayerPrefs.SetInt("SpecialOfferPurchased", 1);
         UpdateShopUI();
+        FirebaseAnalytics.LogEvent(name: "money_specialOffer_purchased");
     }
 
     public void CoinsBooster()
@@ -91,20 +69,24 @@ public class PurchaseManager : MonoBehaviour
         _coinsBoosterButton.SetActive(false);
         PlayerPrefs.SetInt("CoinsBoosterPurchased", 1);
         UpdateShopUI();
+        FirebaseAnalytics.LogEvent(name: "money_coinsBooster_purchased");
     }
 
     public void DiamondsPack50()
     {
         OnPurchasingDiamonds?.Invoke(_diamondsInPack1);
+        FirebaseAnalytics.LogEvent(name: "money_diamondsPack50_purchased");
     }
     public void DiamondsPack100()
     {
         OnPurchasingDiamonds?.Invoke(_diamondsInPack2);
+        FirebaseAnalytics.LogEvent(name: "money_diamondsPack100_purchased");
     }
 
     public void DiamondsPack300()
     {
         OnPurchasingDiamonds?.Invoke(_diamondsInPack3);
+        FirebaseAnalytics.LogEvent(name: "money_diamondsPack300_purchased");
     }
 
     void RestoreVariable()
@@ -148,16 +130,5 @@ public class PurchaseManager : MonoBehaviour
                 count++;
         }
         return count;
-    }
-
-    private void OnDisable()
-    {
-        _purchaseController.PurchasedProductNoAds.RemoveListener(NoAds);
-        _purchaseController.PurchasedProductStarterPack.RemoveListener(StarterPack);
-        _purchaseController.PurchasedProductSpecialOffer.RemoveListener(SpecialOffer);
-        _purchaseController.PurchasedProductCoinsBooster.RemoveListener(CoinsBooster);
-        _purchaseController.PurchasedProductDiamondsPack50.RemoveListener(DiamondsPack50);
-        _purchaseController.PurchasedProductDiamondsPack100.RemoveListener(DiamondsPack100);
-        _purchaseController.PurchasedProductDiamondsPack300.RemoveListener(DiamondsPack300);
     }
 }

@@ -1111,17 +1111,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   productId: com.planetclicker.diamondspack100
   buttonType: 0
-  consumePurchase: 1
+  automaticallyConfirmTransaction: 1
+  onProductFetched:
+    m_PersistentCalls:
+      m_Calls: []
+  onProductFetchFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFetched:
+    m_PersistentCalls:
+      m_Calls: []
   onTransactionsRestored:
     m_PersistentCalls:
       m_Calls: []
-  onPurchaseComplete:
+  onOrderPending:
     m_PersistentCalls:
       m_Calls: []
+  onOrderConfirmed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4088050853670308581}
+        m_TargetAssemblyTypeName: PurchaseManager, Assembly-CSharp
+        m_MethodName: DiamondsPack100
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onPurchaseFailed:
     m_PersistentCalls:
       m_Calls: []
-  onProductFetched:
+  onOrderDeferred:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseCompleteLegacy:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFailedLegacy:
     m_PersistentCalls:
       m_Calls: []
   button: {fileID: 6240047594021813371}
@@ -1593,17 +1623,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   productId: com.planetclicker.diamondspack100
   buttonType: 1
-  consumePurchase: 1
+  automaticallyConfirmTransaction: 1
+  onProductFetched:
+    m_PersistentCalls:
+      m_Calls: []
+  onProductFetchFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFetched:
+    m_PersistentCalls:
+      m_Calls: []
   onTransactionsRestored:
     m_PersistentCalls:
       m_Calls: []
-  onPurchaseComplete:
+  onOrderPending:
+    m_PersistentCalls:
+      m_Calls: []
+  onOrderConfirmed:
     m_PersistentCalls:
       m_Calls: []
   onPurchaseFailed:
     m_PersistentCalls:
       m_Calls: []
-  onProductFetched:
+  onOrderDeferred:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseCompleteLegacy:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFailedLegacy:
     m_PersistentCalls:
       m_Calls: []
   button: {fileID: 6444220870329724242}
@@ -2524,19 +2572,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b79b5624d944058bd39aad2b90fb275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  productId: com.planetclicker.diamondspack100
+  productId: com.planetclicker.diamondspack300
   buttonType: 0
-  consumePurchase: 1
+  automaticallyConfirmTransaction: 1
+  onProductFetched:
+    m_PersistentCalls:
+      m_Calls: []
+  onProductFetchFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFetched:
+    m_PersistentCalls:
+      m_Calls: []
   onTransactionsRestored:
     m_PersistentCalls:
       m_Calls: []
-  onPurchaseComplete:
+  onOrderPending:
     m_PersistentCalls:
       m_Calls: []
+  onOrderConfirmed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4088050853670308581}
+        m_TargetAssemblyTypeName: PurchaseManager, Assembly-CSharp
+        m_MethodName: DiamondsPack300
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onPurchaseFailed:
     m_PersistentCalls:
       m_Calls: []
-  onProductFetched:
+  onOrderDeferred:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseCompleteLegacy:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFailedLegacy:
     m_PersistentCalls:
       m_Calls: []
   button: {fileID: 6599639669098275042}
@@ -3391,19 +3469,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b79b5624d944058bd39aad2b90fb275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  productId: com.planetclicker.diamondspack100
+  productId: com.planetclicker.coinsbooster
   buttonType: 0
-  consumePurchase: 1
+  automaticallyConfirmTransaction: 1
+  onProductFetched:
+    m_PersistentCalls:
+      m_Calls: []
+  onProductFetchFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFetched:
+    m_PersistentCalls:
+      m_Calls: []
   onTransactionsRestored:
     m_PersistentCalls:
       m_Calls: []
-  onPurchaseComplete:
+  onOrderPending:
     m_PersistentCalls:
       m_Calls: []
+  onOrderConfirmed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4088050853670308581}
+        m_TargetAssemblyTypeName: PurchaseManager, Assembly-CSharp
+        m_MethodName: CoinsBooster
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onPurchaseFailed:
     m_PersistentCalls:
       m_Calls: []
-  onProductFetched:
+  onOrderDeferred:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseCompleteLegacy:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFailedLegacy:
     m_PersistentCalls:
       m_Calls: []
   button: {fileID: 3372820282310788676}
@@ -3773,19 +3881,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b79b5624d944058bd39aad2b90fb275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  productId: com.planetclicker.diamondspack100
+  productId: com.planetclicker.specialoffer
   buttonType: 0
-  consumePurchase: 1
+  automaticallyConfirmTransaction: 1
+  onProductFetched:
+    m_PersistentCalls:
+      m_Calls: []
+  onProductFetchFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFetched:
+    m_PersistentCalls:
+      m_Calls: []
   onTransactionsRestored:
     m_PersistentCalls:
       m_Calls: []
-  onPurchaseComplete:
+  onOrderPending:
     m_PersistentCalls:
       m_Calls: []
+  onOrderConfirmed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4088050853670308581}
+        m_TargetAssemblyTypeName: PurchaseManager, Assembly-CSharp
+        m_MethodName: SpecialOffer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onPurchaseFailed:
     m_PersistentCalls:
       m_Calls: []
-  onProductFetched:
+  onOrderDeferred:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseCompleteLegacy:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFailedLegacy:
     m_PersistentCalls:
       m_Calls: []
   button: {fileID: 3237507658301288361}
@@ -4194,19 +4332,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b79b5624d944058bd39aad2b90fb275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  productId: com.planetclicker.diamondspack100
+  productId: com.planetclicker.diamondspack50
   buttonType: 0
-  consumePurchase: 1
+  automaticallyConfirmTransaction: 1
+  onProductFetched:
+    m_PersistentCalls:
+      m_Calls: []
+  onProductFetchFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFetched:
+    m_PersistentCalls:
+      m_Calls: []
   onTransactionsRestored:
     m_PersistentCalls:
       m_Calls: []
-  onPurchaseComplete:
+  onOrderPending:
     m_PersistentCalls:
       m_Calls: []
+  onOrderConfirmed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4088050853670308581}
+        m_TargetAssemblyTypeName: PurchaseManager, Assembly-CSharp
+        m_MethodName: DiamondsPack50
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onPurchaseFailed:
     m_PersistentCalls:
       m_Calls: []
-  onProductFetched:
+  onOrderDeferred:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseCompleteLegacy:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFailedLegacy:
     m_PersistentCalls:
       m_Calls: []
   button: {fileID: 4653692533574284647}
@@ -4645,19 +4813,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b79b5624d944058bd39aad2b90fb275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  productId: com.planetclicker.diamondspack100
+  productId: com.planetclicker.starterpack
   buttonType: 0
-  consumePurchase: 1
+  automaticallyConfirmTransaction: 1
+  onProductFetched:
+    m_PersistentCalls:
+      m_Calls: []
+  onProductFetchFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFetched:
+    m_PersistentCalls:
+      m_Calls: []
   onTransactionsRestored:
     m_PersistentCalls:
       m_Calls: []
-  onPurchaseComplete:
+  onOrderPending:
     m_PersistentCalls:
       m_Calls: []
+  onOrderConfirmed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4088050853670308581}
+        m_TargetAssemblyTypeName: PurchaseManager, Assembly-CSharp
+        m_MethodName: StarterPack
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onPurchaseFailed:
     m_PersistentCalls:
       m_Calls: []
-  onProductFetched:
+  onOrderDeferred:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseCompleteLegacy:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFailedLegacy:
     m_PersistentCalls:
       m_Calls: []
   button: {fileID: 160298828796592669}
@@ -7430,19 +7628,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b79b5624d944058bd39aad2b90fb275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  productId: com.planetclicker.diamondspack100
+  productId: com.planetclicker.noads
   buttonType: 0
-  consumePurchase: 1
+  automaticallyConfirmTransaction: 1
+  onProductFetched:
+    m_PersistentCalls:
+      m_Calls: []
+  onProductFetchFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFetched:
+    m_PersistentCalls:
+      m_Calls: []
   onTransactionsRestored:
     m_PersistentCalls:
       m_Calls: []
-  onPurchaseComplete:
+  onOrderPending:
     m_PersistentCalls:
       m_Calls: []
+  onOrderConfirmed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4088050853670308581}
+        m_TargetAssemblyTypeName: PurchaseManager, Assembly-CSharp
+        m_MethodName: NoAds
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onPurchaseFailed:
     m_PersistentCalls:
       m_Calls: []
-  onProductFetched:
+  onOrderDeferred:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseCompleteLegacy:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFailedLegacy:
     m_PersistentCalls:
       m_Calls: []
   button: {fileID: 2794457036174199381}
@@ -8269,7 +8497,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Restore Purchases
+  m_text: "\u0412\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C
+    \u043F\u043E\u043A\u0443\u043F\u043A\u0438"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ae14cbade3195b247ac6ace4333e1f92, type: 2}
   m_sharedMaterial: {fileID: -5326044434080925310, guid: ae14cbade3195b247ac6ace4333e1f92, type: 2}

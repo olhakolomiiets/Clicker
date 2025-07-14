@@ -46,8 +46,9 @@ public class UIController : MonoBehaviour
 
     private ObjectPlaceRotator _objectPlaceRotator;
 
-    public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnStorePanelDisplayed, OnStorePanelNotDisplayed, OnHideTutorial;
-    public event Action<int> OnLoadTutorialNextStep, OnShowShopTutorial, OnShowUpgradeTutorial, OnLoadTutorialStep;
+    public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnStorePanelDisplayed;
+    public event Action<int> OnShowUpgradeOrShopTutorial, OnLoadTutorialStep;
+    public event Action<int, int> OnLoadTutorialNextStep;
 
     private void Start()
     {
@@ -104,8 +105,6 @@ public class UIController : MonoBehaviour
                 if (tutorialStep < 3 || tutorialStep == 3 && stepState == 1 || tutorialStep == 4 && stepState == 1)
                     OnTutorialNonCompleted.Invoke();
             }
-            
-            //OnStorePanelNotDisplayed.Invoke();
         }
         else
         {
@@ -131,7 +130,7 @@ public class UIController : MonoBehaviour
                 if (tutorialStep == 0)
                     OnTutorialStepCompleted.Invoke();
                 else
-                    OnLoadTutorialNextStep.Invoke(tutorialStep);
+                    OnLoadTutorialNextStep.Invoke(tutorialStep, 1);
             }
             else OnStorePanelDisplayed.Invoke();
         }
@@ -203,21 +202,18 @@ public class UIController : MonoBehaviour
         {
             if (index == 1 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 0)
             {
-                OnShowUpgradeTutorial.Invoke(5);               
+                OnShowUpgradeOrShopTutorial.Invoke(5);               
             }
-            else if (index == 2 && PlayerPrefs.GetInt("ShopTutorialShown") == 0)
+
+            if (index == 2 && PlayerPrefs.GetInt("ShopTutorialShown") == 0)
             {
-                OnShowShopTutorial.Invoke(6);                
+                OnShowUpgradeOrShopTutorial.Invoke(6);
             }
-            else if (index == 0 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 1 && PlayerPrefs.GetInt("TutorialCompleted") == 0 || index == 0 && PlayerPrefs.GetInt("ShopTutorialShown") == 1 && PlayerPrefs.GetInt("TutorialCompleted") == 0)
+            
+            if (index == 0 && PlayerPrefs.GetInt("TutorialCompleted") == 0)
             {
                 int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
                 OnLoadTutorialStep.Invoke(tutorialStep);
-            }
-
-            if (index == 1 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 1 || index == 2 && PlayerPrefs.GetInt("ShopTutorialShown") == 1)
-            {
-                OnHideTutorial.Invoke();
             }
         }
 

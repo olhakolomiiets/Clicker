@@ -130,14 +130,11 @@ public class GameManager : MonoBehaviour
         _uiController.OnTutorialStepCompleted += _tutorialManager.AdvanceTutorial;
         _uiController.OnTutorialNonCompleted += _tutorialManager.ShowFirstStep;
         _uiController.OnLoadTutorialNextStep += _tutorialManager.ShowNextTutorial;
-        _uiController.OnShowShopTutorial += _tutorialManager.ShowShopTutorial;
-        _uiController.OnShowUpgradeTutorial += _tutorialManager.ShowUpgradeTutorial;
-        _uiController.OnHideTutorial += _tutorialManager.HideTutorialInfo;
+        _uiController.OnShowUpgradeOrShopTutorial += _tutorialManager.ShowUpgradeOrShopTutorial;
         _uiController.OnLoadTutorialStep += _tutorialManager.ShowTutorialStep;
 
         _gameRules.OnTutorialStepCompleted += _tutorialManager.AdvanceTutorial;        
         _gameRules.OnTutorialStepReady += _tutorialManager.ShowNextTutorial;
-        //_gameRules.OnTutorialStepReady += _uiController.ShowTutorialHint;
 
         _gameUI.OnNewObjectPurchased += _tutorialManager.HideTutorialInfo;
         _gameUI.OnTutorialStepCompleted += _tutorialManager.AdvanceTutorial;
@@ -152,7 +149,6 @@ public class GameManager : MonoBehaviour
         _gameRules.OnItemNotReadyToBuy += _tutorialManager.HideGameTip;
 
         _uiController.OnStorePanelDisplayed += _tutorialManager.ResetPointer;
-        //_uiController.OnStorePanelNotDisplayed += _tutorialManager.ShowFirstPointer;
     }
     #endregion
 

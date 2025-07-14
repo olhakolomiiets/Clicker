@@ -22,6 +22,7 @@ public class GameRules : MonoBehaviour
     public double _totalScore;
     [SerializeField] private double moneyForTreeHint;
     [SerializeField] private double moneyForManagerHint;
+    [SerializeField] private double moneyForUpgradeHint;
     [SerializeField] private string planetKey;
     [SerializeField] private int requiredObjects = 6;
     private bool isTipShown;
@@ -108,12 +109,12 @@ public class GameRules : MonoBehaviour
     {
         _currentGameData.Money -= _currentGameData.ItemDataList[index].ItemUpgradePrice(_currentGameData.ItemCount[index]);
         _currentGameData.ItemCount[index] = 1;
-        
-        OnItemNotReadyToBuy.Invoke(index, 0);
-        isTipShown = false;
 
         if (PlayerPrefs.GetInt("TutorialStep") == 3)
             OnTutorialStepCompleted.Invoke();
+        
+        OnItemNotReadyToBuy.Invoke(index, 0);
+        isTipShown = false;
 
         ActivateItem(index);
 
@@ -471,15 +472,12 @@ public class GameRules : MonoBehaviour
         int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
 
         if (tutorialStep == 1 && _currentGameData.Money >= 5)
-        {
             OnTutorialStepCompleted.Invoke();
-        }
 
-        if ((tutorialStep == 3 && _currentGameData.Money >= moneyForTreeHint) || (tutorialStep == 4 && _currentGameData.Money >= moneyForManagerHint))
-            OnTutorialStepReady.Invoke(tutorialStep, 1);
-
-        if (tutorialStep == 5 && _currentGameData.Money >= 100)
-            OnTutorialStepReady.Invoke(5, 1);
+        if ((tutorialStep == 3 && _currentGameData.Money >= moneyForTreeHint) || (tutorialStep == 4 && _currentGameData.Money >= moneyForManagerHint) || (tutorialStep == 5 && _currentGameData.Money >= moneyForUpgradeHint))
+        {
+            OnTutorialStepReady.Invoke(tutorialStep, 1);  
+        }                           
     }
 
     #region PLANET UNLOCKER

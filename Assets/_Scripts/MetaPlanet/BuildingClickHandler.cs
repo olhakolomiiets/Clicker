@@ -3,8 +3,15 @@ using UnityEngine;
 public class BuildingClickHandler : MonoBehaviour
 {
     public VariantPanel panel;
-    private BuildingController ctrl;
+    private MetaVariantItemController controller;
 
-    void Awake() => ctrl = GetComponent<BuildingController>();
-    void OnMouseDown() => panel.OpenFor(ctrl);
+    void Awake()
+    {
+        controller = GetComponent<MetaVariantItemController>();
+        
+    }
+    void OnMouseDown()
+    {
+        //panel.OpenFor(controller);
+    }
 }

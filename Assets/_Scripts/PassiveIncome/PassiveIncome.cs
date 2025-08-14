@@ -57,6 +57,7 @@ public class PassiveIncome : MonoBehaviour
     GameData _currentGameData;
     GeneralGameData _currentGeneralData;
     private double _passiveProfit;
+    private double _passiveDiamondsProfit;
     private bool _rewardReceived;
     private bool _isPassiveIncome;
     private int _2xPassiveIncome;

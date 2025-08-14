@@ -3,9 +3,9 @@ using UnityEngine;
 public class UpgradeClickHandler : MonoBehaviour
 {
     public UpgradePanelUI panelUI;
-    private BuildingUpgradeController ctrl;
+    private MetaUpgradeItemController ctrl;
 
-    void Awake() => ctrl = GetComponent<BuildingUpgradeController>();
+    void Awake() => ctrl = GetComponent<MetaUpgradeItemController>();
 
     void OnMouseDown()
     {

@@ -1,4 +1,5 @@
 using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,44 +7,65 @@ public class VariantButtonUI : MonoBehaviour
 {
     public Image icon;
     public TextMeshProUGUI priceText;
-    private BuildingVariantSO data;
+    public TextMeshProUGUI itemName;
+    private ItemVariant itemData;
     private int index;
-    private BuildingController controller;
+    private MetaVariantItemController itemController;
     [SerializeField] private Button button;
 
-    public void Init(BuildingVariantSO variant, int idx, BuildingController ctrl)
+    public event Action OnBuyButtonClicked;
+
+    private void Awake()
     {
-        data = variant;
-        index = idx;
-        controller = ctrl;
-        icon.sprite = variant.icon;
-        priceText.text = variant.price.ToString();
-        UpdateInteractable();
-        button.onClick.AddListener(OnClick);
+        
     }
 
-    void UpdateInteractable()
+    public void Init(ItemVariant variant, int idx, MetaVariantItemController ctrl)
+    {
+        itemData = variant;
+        index = idx;
+        itemController = ctrl;
+        icon.sprite = variant.ItemIcon;
+        itemName.text = variant.VariantName;
+        priceText.text = variant.Price.ToString();
+        UpdateInteractable();
+
+        button.onClick.AddListener(HandleBuyButton);
+        //button.onClick.AddListener(OnClick);
+    }
+
+    public void ToggleBuyButton(bool val)
+        => button.interactable = val;
+
+    public void UpdateInteractable()
     {
         //bool bought = SaveSystem.IsVariantBought(controller.gameObject.name, index);
         //bool canAfford = CurrencyManager.Instance.Coins >= data.price;
         //GetComponent<Button>().interactable = bought || canAfford;
-        // Можно менять цвет/иконку в зависимости от bought/canAfford
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ bought/canAfford
+    }
+
+    public void UpdateState(int index)
+    {
+        itemController.SelectVariant(index);
+    }
+
+    public void UpdateLanguage()
+    {
+        // if (_purchaseInfo.isActiveAndEnabled)
+        // {
+        //     _purchaseInfoText.text = $"{LeanLocalization.GetTranslationText("Unlock")} {LeanLocalization.GetTranslationText(_translationText)}";
+        // }
+        // _itemTitle.text = LeanLocalization.GetTranslationText(_translationText);
     }
 
     void OnClick()
     {
-        //bool bought = SaveSystem.IsVariantBought(controller.gameObject.name, index);
-        //if (!bought)
-        //{
-        //    if (CurrencyManager.Instance.Spend(data.price))
-        //    {
-        //        SaveSystem.MarkVariantBought(controller.gameObject.name, index);
-        //    }
-        //    else return; // не хватает монет
-        //}
-        controller.SelectVariant(index);
-        // Обновить все кнопки в панели:
+        itemController.SelectVariant(index);
+
         foreach (var btn in transform.parent.GetComponentsInChildren<VariantButtonUI>())
             btn.UpdateInteractable();
     }
+
+    private void HandleBuyButton() => OnBuyButtonClicked?.Invoke();
 }

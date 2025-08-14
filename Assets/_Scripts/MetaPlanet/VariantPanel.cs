@@ -4,23 +4,20 @@ public class VariantPanel : MonoBehaviour
 {
     [Header("UI Prefab & Container")]
     [SerializeField] private VariantButtonUI buttonPrefab;
-    [SerializeField] private RectTransform contentContainer;  // <-- сюда перетащите Content
+    [SerializeField] private RectTransform contentContainer;
+    private MetaVariantItemController itemController;
 
-    private BuildingController currentBuilding;
-
-    public void OpenFor(BuildingController building)
+    public void OpenFor(MetaVariantItemController item)
     {
-        currentBuilding = building;
+        itemController = item;
 
-        // Удаляем старые кнопки
         foreach (Transform t in contentContainer)
             Destroy(t.gameObject);
 
-        // Создаём новые как дочерние Content
-        for (int i = 0; i < building.variants.Count; i++)
+        for (int i = 0; i < item.Variants.Count; i++)
         {
             var btn = Instantiate(buttonPrefab, contentContainer);
-            btn.Init(building.variants[i], i, building);
+            btn.Init(item.Variants[i], i, item);
         }
         gameObject.SetActive(true);
     }

@@ -296,6 +296,15 @@ public class GameRules : MonoBehaviour
             _currentGameData.MoneyPerSec += _currentGameData.ItemDataList[i].ItemIncomePerSec(_currentGameData.ItemCount[i], _currentGameData.ItemBonusMultiplayer[i]);
         }
     }
+    
+    private void CalculateDiamondPerSec()
+    {
+        _currentGeneralData.DiamondsPerSec = 0;
+        for (int i = 0; i < _currentGameData.ItemDataList.Count; i++)
+        {
+            _currentGeneralData.DiamondsPerSec += _currentGameData.ItemDataList[i].DiamondsIncomePerSec(_currentGameData.ItemCount[i]);
+        }
+    }
 
     /// <summary>
     /// Logic to unlock managers for purchase
@@ -308,16 +317,16 @@ public class GameRules : MonoBehaviour
             bool val = _currentGameData.ItemDataList[index].ManagerPrice < _currentGameData.Money;
             OnModifyManagerAvailability?.Invoke(index, val);
 
-                if (val && !isTipShown && !_currentGameData.ItemDataList[index].IsPremium)
-                {                   
-                    OnManagerAvailability?.Invoke(index, 1);
-                    isTipShown = true;
-                }
-                else
-                {                    
-                    OnManagerNonAvailability?.Invoke(index, 1);
-                    isTipShown = false;
-                }
+            if (val && !isTipShown && !_currentGameData.ItemDataList[index].IsPremium)
+            {
+                OnManagerAvailability?.Invoke(index, 1);
+                isTipShown = true;
+            }
+            else
+            {
+                OnManagerNonAvailability?.Invoke(index, 1);
+                isTipShown = false;
+            }
         }
     }
 

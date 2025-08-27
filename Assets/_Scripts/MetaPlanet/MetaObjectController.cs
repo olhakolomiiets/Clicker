@@ -6,8 +6,9 @@ using UnityEngine.UI;
 
 public class MetaObjectController : MonoBehaviour
 {
-     [SerializeField] private TextMeshProUGUI _itemTitle;
+    [SerializeField] private TextMeshProUGUI _itemTitle;
     [SerializeField] private Button _buyButton;
+    [SerializeField] private TextMeshProUGUI _itemCount;
     [SerializeField] private TextMeshProUGUI _buyButtonText;
     [SerializeField] private Image _itemImage;
 
@@ -51,10 +52,13 @@ public class MetaObjectController : MonoBehaviour
         _buyButtonText.text = $"{price.ToString("N0")}";
     }
 
+    public void SetItemCount(int count, int maxCount)
+        => _itemCount.text = $"{count} / {maxCount}";
+
     public void ToggleBuyButton(bool val)
         => _buyButton.interactable = val;
 
-    public void DisableBuyPanel(bool val) => _buyButton.gameObject.SetActive(val);
+    public void DisableBuyPanel(bool val) => _buyButton.interactable = val;
 
     public void UpdateLanguage()
     {

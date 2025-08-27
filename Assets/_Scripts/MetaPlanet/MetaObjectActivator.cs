@@ -7,20 +7,10 @@ public class MetaObjectActivator : MonoBehaviour
 {
     public MetaObjectController itemController;
     public List<PlanetObject> objectsToActivate = new();
-    public List<MetaVariantItemController> variantControllers = new();
     [SerializeField] private int currentIndex = 0;
     [SerializeField] private ObjectPlaceRotator objectPlaceRotator;
 
     private bool isDisplayed;
-
-    void OnEnable()
-    {
-        foreach (PlanetObject obj in objectsToActivate)
-        {
-            MetaVariantItemController controller = obj.GetComponent<MetaVariantItemController>();        
-            variantControllers.Add(controller);
-        }
-    }
 
     public void ActivateNextObject()
     {

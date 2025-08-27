@@ -20,7 +20,7 @@ public class SaveSystem : MonoBehaviour
             savedData = dataToSave,
         };
         PlayerPrefs.SetString(_saveKeyName, JsonUtility.ToJson(data));
-        Debug.Log("Planet Saved " + _saveKeyName);
+        //Debug.Log("Planet Saved " + _saveKeyName);
     }
 
     public List<string> LoadPlanet()
@@ -29,8 +29,8 @@ public class SaveSystem : MonoBehaviour
             return new();
         SavedData data = JsonUtility.FromJson<SavedData>(PlayerPrefs.GetString(_saveKeyName));
 
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! SaveSystem /// LoadPlanet /// SaveKeyName  " + _saveKeyName);
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! SaveSystem /// LoadPlanet /// Data " + data.savedData);
+        //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! SaveSystem /// LoadPlanet /// SaveKeyName  " + _saveKeyName);
+        //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! SaveSystem /// LoadPlanet /// Data " + data.savedData);
         return data.savedData;
     }
 
@@ -41,7 +41,7 @@ public class SaveSystem : MonoBehaviour
             savedGeneralData = dataToSave,
         };
         PlayerPrefs.SetString(_saveGameKeyName, JsonUtility.ToJson(data));
-        Debug.Log("Game Saved " + _saveGameKeyName);
+        //Debug.Log("Game Saved " + _saveGameKeyName);
     }
 
     public List<string> LoadGame()
@@ -50,8 +50,8 @@ public class SaveSystem : MonoBehaviour
             return new();
         SavedGeneralData data = JsonUtility.FromJson<SavedGeneralData>(PlayerPrefs.GetString(_saveGameKeyName));
 
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! SaveSystem /// LoadGame /// SaveGameKeyName " + _saveGameKeyName);
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! SaveSystem /// LoadGame /// GeneralData " + data.savedGeneralData);
+        //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! SaveSystem /// LoadGame /// SaveGameKeyName " + _saveGameKeyName);
+        //Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! SaveSystem /// LoadGame /// GeneralData " + data.savedGeneralData);
         return data.savedGeneralData;
     }
 

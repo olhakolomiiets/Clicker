@@ -45,7 +45,7 @@ public class GameRules : MonoBehaviour
             return;
         _currentGameData.Money -= _currentGameData.ItemDataList[index].ManagerPrice;
         _currentGameData.Managers[index] = true;
-       
+
         OnManagerNonAvailability?.Invoke(index, 1);
         isTipShown = false;
 
@@ -112,7 +112,7 @@ public class GameRules : MonoBehaviour
 
         if (PlayerPrefs.GetInt("TutorialStep") == 3)
             OnTutorialStepCompleted.Invoke();
-        
+
         OnItemNotReadyToBuy.Invoke(index, 0);
         isTipShown = false;
 
@@ -296,7 +296,7 @@ public class GameRules : MonoBehaviour
             _currentGameData.MoneyPerSec += _currentGameData.ItemDataList[i].ItemIncomePerSec(_currentGameData.ItemCount[i], _currentGameData.ItemBonusMultiplayer[i]);
         }
     }
-    
+
     private void CalculateDiamondPerSec()
     {
         _currentGeneralData.DiamondsPerSec = 0;
@@ -335,23 +335,23 @@ public class GameRules : MonoBehaviour
     /// </summary>
     /// <param name="index"></param>
     private void UnlockOtherItems(int index)
-    {   
+    {
         if (_currentGameData.ItemCount[index] == 0)
         {
             bool val = _currentGameData.ItemDataList[index].ItemUpgradePrice(_currentGameData.ItemCount[index]) < _currentGameData.Money;
             OnToggleItemActivationState?.Invoke(index, val);
 
-                if (val && !isTipShown)
-                {
-                    itemIndex = index;                
-                    OnItemReadyToBuy.Invoke(index, 0);
-                    isTipShown = true;
-                }
-                else
-                {                   
-                    OnItemNotReadyToBuy.Invoke(index, 0);
-                    isTipShown = false;
-                }         
+            if (val && !isTipShown)
+            {
+                itemIndex = index;
+                OnItemReadyToBuy.Invoke(index, 0);
+                isTipShown = true;
+            }
+            else
+            {
+                OnItemNotReadyToBuy.Invoke(index, 0);
+                isTipShown = false;
+            }
         }
     }
 
@@ -485,8 +485,8 @@ public class GameRules : MonoBehaviour
 
         if ((tutorialStep == 3 && _currentGameData.Money >= moneyForTreeHint) || (tutorialStep == 4 && _currentGameData.Money >= moneyForManagerHint) || (tutorialStep == 5 && _currentGameData.Money >= moneyForUpgradeHint))
         {
-            OnTutorialStepReady.Invoke(tutorialStep, 1);  
-        }                           
+            OnTutorialStepReady.Invoke(tutorialStep, 1);
+        }
     }
 
     #region PLANET UNLOCKER
@@ -504,6 +504,21 @@ public class GameRules : MonoBehaviour
 
         SendDataUpdate();
     }
+    #endregion
+
+    #region META PLANET
+
+        public void HandleVariantItem(double price)
+    {
+        _currentGeneralData.Diamonds -= price;
+        SendDataUpdate();
+    }
+    public void HandleUpgradeLevel(double price)
+    {
+        _currentGeneralData.Diamonds -= price;
+        SendDataUpdate();
+    }
+    
     #endregion
 }
 

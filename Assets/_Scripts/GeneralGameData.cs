@@ -14,16 +14,6 @@ public class GeneralGameData
     public bool IsGameSaved { get; set; }
     public int ActivePlanet { get; set; } = 1;
     public int PlanetUnlocked { get; set; } = 1;
-    
-    public List<MetaVariantsController> VariantsControllerList = new();
-    public List<MetaVariantItemController> VariantItemsList = new();
-    public List<MetaVariantItemData> VariantItemDataList = new();
-    public List<int> VariantItemCount = new();
-    public List<int> VariantIndex = new();
-
-    public List<MetaUpgradeItemData> UpgradeItemDataList = new();
-    public List<int> UpgradeItemCount = new();
-    public List<int> UpgradeLevel = new();
 
     public void SetData(string dataString)
     {
@@ -40,10 +30,6 @@ public class GeneralGameData
         IsGameSaved = data.IsGameSaved;
         ActivePlanet = data.ActivePlanet;
         DiamondsPerSec = data.DiamondsPerSec;
-        VariantItemCount = data.VariantItemCount;
-        VariantIndex = data.VariantIndex;
-        UpgradeItemCount = data.UpgradeItemCount;
-        UpgradeLevel = data.UpgradeLevel;
 
         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! General Game Data /// SetData " + dataString);
     }
@@ -62,10 +48,6 @@ public class GeneralGameData
             IsGameSaved = IsGameSaved,
             ActivePlanet = ActivePlanet,
             DiamondsPerSec = DiamondsPerSec,
-            VariantItemCount = VariantItemCount,
-            VariantIndex = VariantIndex,
-            UpgradeItemCount = UpgradeItemCount,
-            UpgradeLevel = UpgradeLevel
         });
 }
 
@@ -82,9 +64,5 @@ public struct GeneralGameDataSave
     public int ActivePlanet;
     public bool IsGameSaved;
     public double DiamondsPerSec;
-    public List<int> VariantItemCount;
-    public List<int> VariantIndex;
-    public List<int> UpgradeItemCount;
-    public List<int> UpgradeLevel;
 }
 

@@ -1,145 +1,153 @@
+using Firebase.Analytics;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MetaPlanetManager : MonoBehaviour
 {
-    [SerializeField] private VariantButtonUI _variantUI;
     [SerializeField] private UpgradePanelUI _upgradeUI;
-    [SerializeField] private MetaPlanetUI planetUI;
     GeneralGameData _generalGameData;
-    [SerializeField] private MetaPlanetRules _metaPlanetRules;
-    [SerializeField] private SaveSystem _saveSystem;
+    [SerializeField] private GameRules _gameRules;
 
-    [Space(10)]
-    [SerializeField] private List<MetaVariantsController> _variantsControllerList;
+    [Header("Score Panel")]
+    [SerializeField] private ScorePanel _diamonds;
+    [SerializeField] private GameObject _objectPrefab;
+
+    [Header("Variant Planet Objects")]
+    [SerializeField] private RectTransform _variantObjectParent;
+    [SerializeField] private List<MetaVariantsController> _variants;
     [SerializeField] private List<MetaVariantItemData> _variantItemDataList;
+    private List<MetaObjectController> _variantObjectsList = new();
 
-    [SerializeField] private List<int> _variantItemCount = new();
-    [SerializeField] private List<MetaVariantItemController> _variantItemsList = new();
-    [SerializeField] private List<int> _variantIndex = new();
-
-    [Space(10)]
+    [Header("Upgrade Planet Objects")]
+    [SerializeField] private RectTransform _upgradeObjectParent;
+    [SerializeField] private List<MetaUpgradeItemController> _upgradeControllerList;
     [SerializeField] private List<MetaUpgradeItemData> _upgradeItemDataList;
-    [SerializeField] private List<int> _upgradeItemCount = new();
-    [SerializeField] private List<int> _upgradeLevel = new();
+    private List<MetaObjectController> _upgradeObjectsList = new();
 
-    private bool isGameSaved = true;
+    public event Action<int> OnVariantBuyButonClicked, OnUpgradeBuyButonClicked, OnVariantObjectAddButtonClicked, OnUpgradeObjectAddButtonClicked;
+    public event Action OnVariantOpened, OnUpgradeOpened;
+
 
     private void OnEnable()
     {
-        PrepareGameData();
+        PrepareVariantUI();
+        PrepareUpgradeUI();
         ConnectRulesToUI();
-
-        _metaPlanetRules.PrepareData(_generalGameData); 
     }
 
-    private void Start()
+    public void PrepareData(GeneralGameData generalData)
     {
-        if (isGameSaved)
-        {
-            LoadGeneralGameData();
-        }
-
-        // _gameUI.ActivatePurchasedCreationObject(_creationItemsCount);
-        // _gameUI.ActivatePurchasedUpgradeObject(_upgradeItemCount);
+        _generalGameData = generalData;
     }
 
-    private void PrepareGameData()
+    public void PrepareGameData(GeneralGameData generalGameData, GameData gameData)
     {
-        _generalGameData = new();
+        _generalGameData = generalGameData;
 
-        _generalGameData.VariantsControllerList = _variantsControllerList;
-
-        _generalGameData.VariantItemDataList = _variantItemDataList;
-
-        _variantItemCount = _generalGameData.VariantItemCount;
-        _variantIndex = _generalGameData.VariantIndex;
-
-        _generalGameData.UpgradeItemDataList = _upgradeItemDataList;
-        _upgradeItemCount = _generalGameData.UpgradeItemCount;
-        _upgradeLevel = _generalGameData.UpgradeLevel;
-
-
-        // if (_variantItemCount != null && _variantItemCount.Count != 0)
-        // {
-        //     for (int i = 0; i < _variantsControllerList.Count; i++)
-        //     {
-        //         int itemsCount = _variantsControllerList[i].variantControllerList.Count;
-        //         _variantItemCount.Add(itemsCount);
-        //     }
-        // }
-
-        planetUI.PrepareVariantUI(_variantItemDataList);
-        planetUI.PrepareUpgradeUI(_upgradeItemDataList);
+        foreach (var controller in _variants)
+            controller.PrepareData(_generalGameData);
     }
 
     private void ConnectRulesToUI()
     {
-        _metaPlanetRules.OnUpdateVariantData += planetUI.UpdateUI;
-        _metaPlanetRules.OnUpdateUpgradeData += planetUI.UpdateUI;
+        _gameRules.OnUpdateGameData += UpdateUI;
 
-        planetUI.OnVariantObjectAddButtonClicked += _metaPlanetRules.AddVariantObject;
-        planetUI.OnUpgradeObjectAddButtonClicked += _metaPlanetRules.AddUpgradeObject;
-
-        _metaPlanetRules.OnActivateVariantItem += planetUI.ActivateNewVariantObject;
-
-        // _metaPlanetRules.OnActivateUpgradeItem += _upgradeUI.UpdateState;
-
-        planetUI.OnVariantBuyButonClicked += _metaPlanetRules.HandleVariantItem;
-
-        planetUI.OnVariantOpened += _metaPlanetRules.SendItemsData;
-
-        _metaPlanetRules.OnToggleVariantItem += _variantUI.UpdateState;
-        _metaPlanetRules.OnToggleUpgradeItem += _upgradeUI.UpdateState;
+        foreach (var controller in _variants)
+            controller.OnVariantBuyButonClicked += _gameRules.HandleVariantItem;
     }
 
-    public void SaveGeneralGameData()
+    public void PrepareVariantUI()
     {
-        List<string> dataToSave = new()
+        _variantObjectsList.Clear();
+
+        for (int i = 0; i < _variantItemDataList.Count; i++)
         {
-            _generalGameData.GetSaveData()
-        };
-        _saveSystem.SaveTheGame(dataToSave);
+            MetaObjectController itemController = Instantiate(_objectPrefab, _variantObjectParent).GetComponent<MetaObjectController>();
+            _variantObjectsList.Add(itemController);
+            itemController.PrepareVariantObject(_variantItemDataList[i].Icon, _variantItemDataList[i].ItemName);
+
+            _variants[i].SetMetaObjectController(itemController);
+
+            itemController.OnObjectAddButtonClicked += UpdatePanelUI;
+        }
+
+        float _scrollItemGroupHeight = 165 * _variantItemDataList.Count;
+        _variantObjectParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
+
+        UpdatePanelUI();
     }
 
-    public void LoadGeneralGameData()
+    public void PrepareUpgradeUI()
     {
-        List<string> data = _saveSystem.LoadGame();
-        if (data.Count > 0)
+        _upgradeObjectsList.Clear();
+
+        for (int i = 0; i < _upgradeItemDataList.Count; i++)
         {
-            _metaPlanetRules.LoadMetaPlanet(data[0]);
+            MetaObjectController itemController = Instantiate(_objectPrefab, _upgradeObjectParent).GetComponent<MetaObjectController>();
+            _upgradeObjectsList.Add(itemController);
+            itemController.PrepareUpgradeObject(_upgradeItemDataList[i].Icon, _upgradeItemDataList[i].ItemName);
+
+            _upgradeControllerList[i].SetMetaObjectController(itemController);
+            
+            itemController.OnObjectAddButtonClicked += UpdatePanelUI;
+        }
+
+        float _scrollItemGroupHeight = 165 * _upgradeItemDataList.Count;
+        _upgradeObjectParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
+
+        OnUpgradeObjectAddButtonClicked += ActivateNewUpgradeObject;
+    }
+
+    private void ConnectEvents(int i, MetaObjectController itemController)
+    {
+        itemController.OnObjectAddButtonClicked += () => OnVariantObjectAddButtonClicked?.Invoke(i);
+    }
+
+    public void ActivateNewVariantObject(int i)
+    {
+        _variants[i].ActivateNextObject();
+    }
+
+    public void ActivateNewUpgradeObject(int i)
+    {
+        //_upgradeObjectActivator[i].ActivateNextObject();
+    }
+
+    public void UpdateUI(GeneralGameData data, GameData gameData)
+    {
+        _diamonds.SetDiamondsScore(data.Diamonds);
+
+        foreach (MetaVariantsController controller in _variants)
+        {
+            controller.PrepareData(data);
+            controller.MetaObjectUI();
+        }
+
+        for (int i = 0; i < _variantObjectsList.Count; i++)
+        {
+            _variantObjectsList[i].SetItemCount(_variants[i].ItemCount, _variantItemDataList[i].Quantity);
+
+            _variantObjectsList[i].DisableBuyPanel(_variants[i].ItemCount > 0 && _variants[i].ItemCount < _variantItemDataList[i].Quantity);
         }
     }
 
-        private void OnApplicationPause(bool pauseStatus)
+    public void UpdatePanelUI()
     {
-        if (pauseStatus)
+        for (int i = 0; i < _variantObjectsList.Count; i++)
         {
-            SaveGeneralGameData();
+            _variantObjectsList[i].SetItemCount(_variants[i].ItemCount, _variantItemDataList[i].Quantity);
+
+            _variantObjectsList[i].DisableBuyPanel(_variants[i].ItemCount >= 0 && _variants[i].ItemCount < _variantItemDataList[i].Quantity);
         }
-        else
+
+        for (int i = 0; i < _upgradeObjectsList.Count; i++)
         {
-            if (isGameSaved)
-            {
-                LoadGeneralGameData();
-            }
+            _upgradeObjectsList[i].SetItemCount(_variants[i].ItemCount, _variantItemDataList[i].Quantity);
+
+            _upgradeObjectsList[i].DisableBuyPanel(_variants[i].ItemCount >= 0 && _variants[i].ItemCount < _variantItemDataList[i].Quantity);
         }
     }
 
-    private void OnDisable()
-    {
-        if (!isGameSaved)
-        {
-            SaveGeneralGameData();
-        }
-    }
 
-    private void OnDestroy()
-    {
-        if (!isGameSaved)
-        {
-            SaveGeneralGameData();
-        }
-    }
-    
 }

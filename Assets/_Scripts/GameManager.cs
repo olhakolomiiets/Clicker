@@ -38,6 +38,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UIController _uiController;
     [SerializeField] private TutorialManager _tutorialManager;
 
+    [Space(10)]
+    [SerializeField] private MetaPlanetManager _metaPlanetManager;
+
     private bool isGameSaved = true;
 
     /// <summary>
@@ -57,6 +60,9 @@ public class GameManager : MonoBehaviour
             ConnectTutorialManager();
 
         _gameRules.PrepareGameData(_gameData, _generalGameData);
+
+        if (_metaPlanetManager != null)
+            _metaPlanetManager.PrepareData(_generalGameData);
 
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   _visualsController.InitializeVisual(_gameData);   
     }
@@ -105,6 +111,9 @@ public class GameManager : MonoBehaviour
     {
         _gameRules.OnUpdateGameData += _passiveIncome.PrepareGameData;
         _gameRules.OnUpdateGameData += _levelController.PrepareGameData;
+        
+        if (_metaPlanetManager != null)
+            _gameRules.OnUpdateGameData += _metaPlanetManager.PrepareGameData;
 
         _gameRules.OnActivatePassiveIncome += _passiveIncome.ActivatePassiveIncome;
 

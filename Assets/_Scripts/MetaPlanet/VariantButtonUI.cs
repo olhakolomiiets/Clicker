@@ -1,7 +1,8 @@
-using TMPro;
+ using TMPro;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using Lean.Localization;
 
 public class VariantButtonUI : MonoBehaviour
 {
@@ -10,45 +11,76 @@ public class VariantButtonUI : MonoBehaviour
     public TextMeshProUGUI itemName;
     private ItemVariant itemData;
     private int index;
+    public int Index => index;
     private MetaVariantItemController itemController;
+    private bool isActive;
+    private bool isBought;
+
+    private double price;
+    public double Price => price;
     [SerializeField] private Button button;
 
-    public event Action OnBuyButtonClicked;
+    public event Action<double> OnBuyButtonClicked;
 
-    private void Awake()
-    {
-        
-    }
-
-    public void Init(ItemVariant variant, int idx, MetaVariantItemController ctrl)
+    public void Init(ItemVariant variant, int idx, MetaVariantItemController ctrl, bool active, bool bought)
     {
         itemData = variant;
         index = idx;
         itemController = ctrl;
         icon.sprite = variant.ItemIcon;
         itemName.text = variant.VariantName;
-        priceText.text = variant.Price.ToString();
-        UpdateInteractable();
+        price = variant.Price;
+        isActive = active;
+        isBought = bought;
+
+        if (!isBought)
+        {
+            priceText.text = variant.Price.ToString();
+        }
+        if (isBought && !isActive)
+        {
+            icon.gameObject.SetActive(false);
+            priceText.text = LeanLocalization.GetTranslationText("Select");
+        }
+        if (isActive)
+        {
+            icon.gameObject.SetActive(false);
+            priceText.text = LeanLocalization.GetTranslationText("Selected");
+        }
 
         button.onClick.AddListener(HandleBuyButton);
-        //button.onClick.AddListener(OnClick);
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! VariantButtonUI /// Init /// index " + index);
     }
 
     public void ToggleBuyButton(bool val)
-        => button.interactable = val;
-
-    public void UpdateInteractable()
-    {
-        //bool bought = SaveSystem.IsVariantBought(controller.gameObject.name, index);
-        //bool canAfford = CurrencyManager.Instance.Coins >= data.price;
-        //GetComponent<Button>().interactable = bought || canAfford;
-        // ����� ������ ����/������ � ����������� �� bought/canAfford
+    {  
+        if (!isBought)
+        {
+            button.interactable = val;
+        }
     }
 
-    public void UpdateState(int index)
-    {
-        itemController.SelectVariant(index);
+    public void UpdateButtonText(bool active, bool bought)
+    {  
+        isActive = active;
+        isBought = bought;
+        if (isBought && !isActive)
+        {
+            icon.gameObject.SetActive(false);
+            priceText.text = LeanLocalization.GetTranslationText("Select");
+        }
+        if (isActive)
+        {
+            icon.gameObject.SetActive(false);
+            priceText.text = LeanLocalization.GetTranslationText("Selected");
+        }
     }
+
+    // public void UpdateState(int index)
+    // {
+    //     itemController.SelectVariant(index);
+    // }
 
     public void UpdateLanguage()
     {
@@ -59,13 +91,27 @@ public class VariantButtonUI : MonoBehaviour
         // _itemTitle.text = LeanLocalization.GetTranslationText(_translationText);
     }
 
-    void OnClick()
+    // void OnClick()
+    // {
+    //     itemController.SelectVariant(index);
+
+    //     foreach (var btn in transform.parent.GetComponentsInChildren<VariantButtonUI>())
+    //         btn.UpdateInteractable();
+    // }
+
+    private void HandleBuyButton()
     {
-        itemController.SelectVariant(index);
+        if (itemController.IsVariantBought(index) == false)
+        {
+            OnBuyButtonClicked?.Invoke(price);
+            itemController.OnBuyVariant(index);
+        }
 
-        foreach (var btn in transform.parent.GetComponentsInChildren<VariantButtonUI>())
-            btn.UpdateInteractable();
+        if (itemController.IsVariantBought(index) == true && itemController.IsVariantActive(index) == false)
+        {
+            itemController.SelectVariant(index);
+        }
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! VariantButtonUI /// HandleBuyButton /// index " + index);
     }
-
-    private void HandleBuyButton() => OnBuyButtonClicked?.Invoke();
+    
 }

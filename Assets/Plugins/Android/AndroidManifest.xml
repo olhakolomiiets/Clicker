@@ -1,20 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.NOCGames.IdlePlanetClicker" xmlns:tools="http://schemas.android.com/tools">
   <application android:name="androidx.multidex.MultiDexApplication" android:label="@string/app_name" android:icon="@drawable/app_icon">
-	  
-    <activity android:name="com.google.firebase.MessagingUnityPlayerActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:exported="true">
+    <activity android:name="com.google.firebase.MessagingUnityPlayerActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:exported="true" android:theme="@style/UnityThemeSelector">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
       <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
-	</activity>
-	  
+    </activity>
     <service android:name="com.google.firebase.messaging.MessageForwardingService" android:permission="android.permission.BIND_JOB_SERVICE" android:exported="true">
     </service>
-	  
     <!--This was added by the AnalyticsFixPropertyRemover. If you want to prevent the generation of this, have "AnalyticsFixPropertyRemover" included in a comment-->
     <property tools:node="removeAll" />
   </application>
-<uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+  <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 </manifest>

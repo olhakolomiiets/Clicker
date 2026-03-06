@@ -34,11 +34,17 @@ namespace GoogleMobileAds.Samples
                 #endif
             };
 
-            RequestConfiguration requestConfiguration = new RequestConfiguration.Builder()
-            .SetTestDeviceIds(deviceIds)
-            .SetTagForChildDirectedTreatment(TagForChildDirectedTreatment.True)
-            .SetTagForUnderAgeOfConsent(TagForUnderAgeOfConsent.True)
-            .build();
+            List<string> testDevices = new List<string>()
+            {
+                "YOUR_TEST_ID"
+            };
+
+            RequestConfiguration requestConfiguration = new RequestConfiguration
+            {
+                TestDeviceIds = testDevices,
+                TagForChildDirectedTreatment = TagForChildDirectedTreatment.True,
+                TagForUnderAgeOfConsent = TagForUnderAgeOfConsent.True
+            };
 
             MobileAds.SetRequestConfiguration(requestConfiguration);
 

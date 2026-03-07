@@ -48,7 +48,10 @@ public class MetaVariantItemController : MonoBehaviour
         if (!isActive)
         {
             if (box == null && itemData.BoxPrefab != null)
+            {
                 box = Instantiate(itemData.BoxPrefab, transform);
+                isActive = true;
+            }       
 
             if (variantsRoot != null)
                 variantsRoot.gameObject.SetActive(false);
@@ -164,7 +167,7 @@ public class MetaVariantItemController : MonoBehaviour
                 box = Instantiate(itemData.BoxPrefab, transform);
 
             if (box != null)
-                box.SetActive(true);
+                box.SetActive(true); 
 
             DisableAllInstances();
 

@@ -14146,7 +14146,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2080953347238636564, guid: 486848b2cd32f8b4583fe9dd14a86ef1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 915.00006
+      value: 1034.9998
       objectReference: {fileID: 0}
     - target: {fileID: 3963341225765521461, guid: 486848b2cd32f8b4583fe9dd14a86ef1, type: 3}
       propertyPath: m_AnchorMax.y
@@ -41340,7 +41340,7 @@ MonoBehaviour:
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
-  m_CameraType: 0
+  m_CameraType: 1
   m_Cameras: []
   m_RendererIndex: -1
   m_VolumeLayerMask:
@@ -41421,7 +41421,7 @@ Camera:
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
-  m_HDR: 1
+  m_HDR: 0
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
@@ -42089,7 +42089,8 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_Cameras: []
+  m_Cameras:
+  - {fileID: 2130271158}
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2

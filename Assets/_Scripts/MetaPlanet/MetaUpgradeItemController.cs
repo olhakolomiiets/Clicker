@@ -25,6 +25,10 @@ public class MetaUpgradeItemController : MonoBehaviour
     private const string ES3_FILE = "meta_upgrades.es3";
     private string Es3Key => $"upgrade.{(string.IsNullOrEmpty(upgradeId) ? gameObject.name : upgradeId)}";
 
+    private Vector3 mouseDownPosition;
+    private bool isDragging;
+    [SerializeField] private float dragThreshold = 15f;
+
     void Start()
     {
         ApplyLevel(currentLevel);
@@ -64,9 +68,27 @@ public class MetaUpgradeItemController : MonoBehaviour
             BuildInstance();
     }
 
+    //void OnMouseDown()
+    //{
+    //    panelUI.Open(this);
+    //}
+
     void OnMouseDown()
     {
-        panelUI.Open(this);
+        mouseDownPosition = Input.mousePosition;
+        isDragging = false;
+    }
+
+    void OnMouseDrag()
+    {
+        if (Vector3.Distance(Input.mousePosition, mouseDownPosition) > dragThreshold)
+            isDragging = true;
+    }
+
+    void OnMouseUpAsButton()
+    {
+        if (!isDragging)
+            panelUI.Open(this);
     }
 
     private void InstantiateBoxPrefab()

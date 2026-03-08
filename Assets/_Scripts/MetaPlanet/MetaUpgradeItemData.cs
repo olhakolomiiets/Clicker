@@ -10,7 +10,7 @@ public class MetaUpgradeItemData : ScriptableObject
     [SerializeField] public string ItemName;
     [SerializeField] public double Price;
     [SerializeField] public GameObject BoxPrefab;
-    [SerializeField] public GameObject BasePrefab;
+    [SerializeField] public List<GameObject> LevelPrefabs = new();
     [SerializeField] public Sprite Icon;
 
     [Header("Upgrade")]

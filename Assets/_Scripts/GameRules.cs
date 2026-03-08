@@ -393,6 +393,13 @@ public class GameRules : MonoBehaviour
         SendDataUpdate();
     }
 
+    public void GetDiamonds(int reward)
+    {
+        _currentGeneralData.Diamonds += reward;
+        SendDataUpdate();
+
+    }
+
     #region PASSIVE INCOME
 
     public void GetPassiveIncome(double income, double diamonds)

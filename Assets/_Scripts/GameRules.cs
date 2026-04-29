@@ -400,6 +400,14 @@ public class GameRules : MonoBehaviour
 
     }
 
+    public void GetExtraDiamonds(int reward)
+    {
+        _currentGeneralData.Diamonds += reward;
+        Debug.Log("Game Rules /// Add INT  " + reward + "  Diamonds");
+
+    }
+
+
     #region PASSIVE INCOME
 
     public void GetPassiveIncome(double income, double diamonds)

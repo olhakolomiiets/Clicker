@@ -1,14 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.ResourceManagement.ResourceProviders;
+// using UnityEngine.AddressableAssets;
+// using UnityEngine.ResourceManagement.AsyncOperations;
+// using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    private AsyncOperationHandle<SceneInstance> loadHandle;
+    //private AsyncOperationHandle<SceneInstance> loadHandle;
 
     public void LoadSceene(int level)
     {
@@ -18,8 +18,8 @@ public class UIManager : MonoBehaviour
         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! UIManager /// LoadSceene /// Scene Index: " + level);
     }
 
-    public void LoadRemoteSceene(string key)
-    {
-        loadHandle = Addressables.LoadSceneAsync(key, LoadSceneMode.Single);
-    }
+    // public void LoadRemoteSceene(string key)
+    // {
+    //     loadHandle = Addressables.LoadSceneAsync(key, LoadSceneMode.Single);
+    // }
 }

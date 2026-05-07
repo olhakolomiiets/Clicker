@@ -5,9 +5,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.ResourceManagement.ResourceProviders;
+//using UnityEngine.AddressableAssets;
+//using UnityEngine.ResourceManagement.AsyncOperations;
+//using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -31,7 +31,7 @@ public class LevelController : MonoBehaviour
     private GeneralGameData generalData;
     private GameData data;
 
-    private AsyncOperationHandle<SceneInstance> loadHandle;
+    //private AsyncOperationHandle<SceneInstance> loadHandle;
     public event Action<double> OnNextPlanetPurchased;
     private int level;
     private Coroutine _moneyChecker;
@@ -142,10 +142,10 @@ public class LevelController : MonoBehaviour
         }
     }
 
-    public void LoadRemoteSceene(string key)
-    {
-        loadHandle = Addressables.LoadSceneAsync(key, LoadSceneMode.Single);
-    }
+    // public void LoadRemoteSceene(string key)
+    // {
+    //     loadHandle = Addressables.LoadSceneAsync(key, LoadSceneMode.Single);
+    // }
 
     public void PrepareGameData(GeneralGameData generalGameData, GameData gameData)
     {

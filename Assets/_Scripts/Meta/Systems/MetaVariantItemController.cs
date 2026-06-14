@@ -13,6 +13,25 @@ public class MetaVariantItemController : MonoBehaviour
     private Transform variantsRoot;
 
     public List<ItemVariant> Variants => itemData != null ? itemData.Variants : null;
+    public Transform CurrentVisualTarget
+    {
+        get
+        {
+            if (box != null && box.activeInHierarchy)
+                return box.transform;
+
+            if (instances == null)
+                return null;
+
+            for (int i = 0; i < instances.Count; i++)
+            {
+                if (instances[i] != null && instances[i].activeInHierarchy)
+                    return instances[i].transform;
+            }
+
+            return null;
+        }
+    }
 
     public bool isActive;
     public bool isActiveVariant;
@@ -23,6 +42,7 @@ public class MetaVariantItemController : MonoBehaviour
 
     public event Action<MetaVariantItemController> OnVariantPanelOpened;
     public event Action OnSelectVariantItem;
+    public event Action<MetaVariantItemController, int> OnVariantPurchased;
 
     private Vector3 mouseDownPosition;
     private bool isDragging;
@@ -30,20 +50,10 @@ public class MetaVariantItemController : MonoBehaviour
 
     void Start()
     {
-        if (itemData == null || itemData.Variants == null)
-        {
-            Debug.LogWarning($"[MetaVariantItemController] itemData/Variants missing on '{name}'");
+        if (!EnsureVariantStateInitialized())
             return;
-        }
 
         EnsureVariantsRoot();
-
-        if (state == null || state.Count == 0)
-        {
-            state = new List<ItemVariantSaveData>();
-            foreach (var variant in itemData.Variants)
-                state.Add(new ItemVariantSaveData { isBought = false, isActive = false });
-        }
 
         if (!isActive)
         {
@@ -61,6 +71,32 @@ public class MetaVariantItemController : MonoBehaviour
 
         BuildInstancesIfNeeded();
         ApplyVisualStateFromFlags();
+    }
+
+    public bool EnsureVariantStateInitialized()
+    {
+        if (itemData == null || itemData.Variants == null)
+        {
+            Debug.LogWarning($"[MetaVariantItemController] itemData/Variants missing on '{name}'");
+            return false;
+        }
+
+        if (state == null)
+            state = new List<ItemVariantSaveData>();
+
+        while (state.Count < itemData.Variants.Count)
+            state.Add(new ItemVariantSaveData());
+
+        if (state.Count > itemData.Variants.Count)
+            state.RemoveRange(itemData.Variants.Count, state.Count - itemData.Variants.Count);
+
+        for (int i = 0; i < state.Count; i++)
+        {
+            if (state[i] == null)
+                state[i] = new ItemVariantSaveData();
+        }
+
+        return true;
     }
 
     private void EnsureVariantsRoot()
@@ -235,6 +271,7 @@ public class MetaVariantItemController : MonoBehaviour
 
         BuyVariant(index);
         SetActiveVariant(index);
+        OnVariantPurchased?.Invoke(this, index);
     }
 
     //void OnMouseDown()
@@ -326,6 +363,7 @@ public class MetaVariantItemController : MonoBehaviour
     public void BuyVariant(int index)
     {
         if (state == null || index < 0 || index >= state.Count) return;
+
         state[index].isBought = true;
     }
 

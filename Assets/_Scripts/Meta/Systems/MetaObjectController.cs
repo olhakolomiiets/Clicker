@@ -14,6 +14,8 @@ public class MetaObjectController : MonoBehaviour
 
     private string _translationText;
 
+    public GameObject BuyButtonGameObject => _buyButton != null ? _buyButton.gameObject : null;
+
     public event Action OnObjectAddButtonClicked;
 
     private void Awake()

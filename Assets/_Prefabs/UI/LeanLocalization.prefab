@@ -1,5 +1,63 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &24578569061889855
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6365463375232943004}
+  - component: {fileID: 8465060354108474005}
+  m_Layer: 0
+  m_Name: meta_tutorial_step6_open_shop_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6365463375232943004
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24578569061889855}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8465060354108474005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24578569061889855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041E\u0442\u043A\u0440\u043E\u0435\u043C \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u044F."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Open upgrades.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0412\u0456\u0434\u043A\u0440\u0438\u0439\u043C\u043E \u043F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Abre las mejoras.
+    Object: {fileID: 0}
 --- !u!1 &79398680518350359
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,6 +173,64 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: Select
+    Object: {fileID: 0}
+--- !u!1 &165857008767225570
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4079999781317162792}
+  - component: {fileID: 6539968515273167954}
+  m_Layer: 0
+  m_Name: meta_tutorial_step5_done_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4079999781317162792
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165857008767225570}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6539968515273167954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165857008767225570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041E\u0442\u043B\u0438\u0447\u043D\u043E."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Great.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0427\u0443\u0434\u043E\u0432\u043E."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Muy bien.
     Object: {fileID: 0}
 --- !u!1 &168429223381815443
 GameObject:
@@ -233,6 +349,128 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u041F\u0435\u0440\u0435\u0433\u043B\u044F\u043D\u044C \u0440\u0435\u043A\u043B\u0430\u043C\u0443
       \u2013 \u043E\u0442\u0440\u0438\u043C\u0430\u0439"
+    Object: {fileID: 0}
+--- !u!1 &488142556139411619
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3304319144233696449}
+  - component: {fileID: 521247064563299061}
+  m_Layer: 0
+  m_Name: meta_tutorial_step11_contract_description
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3304319144233696449
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 488142556139411619}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &521247064563299061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 488142556139411619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0446\u0438\u0432\u0438\u043B\u0438\u0437\u0430\u0446\u0438\u044E
+      \u0434\u043B\u044F \u043F\u0440\u043E\u0438\u0437\u0432\u043E\u0434\u0441\u0442\u0432\u0430
+      \u0434\u0435\u0442\u0430\u043B\u0435\u0439."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Create a civilization to produce parts.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0421\u0442\u0432\u043E\u0440\u0438\u0442\u0438 \u0446\u0438\u0432\u0456\u043B\u0456\u0437\u0430\u0446\u0456\u044E
+      \u0434\u043B\u044F \u0432\u0438\u0440\u043E\u0431\u043D\u0438\u0446\u0442\u0432\u0430
+      \u0434\u0435\u0442\u0430\u043B\u0435\u0439."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Crear una civilizaci\xF3n para fabricar piezas."
+    Object: {fileID: 0}
+--- !u!1 &503934437523092910
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8556779307584280252}
+  - component: {fileID: 4458231569937909997}
+  m_Layer: 0
+  m_Name: meta_tutorial_step11_dialog_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8556779307584280252
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503934437523092910}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4458231569937909997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503934437523092910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0422\u0432\u043E\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0437\u0430\u043A\u0430\u0437
+      \u0443\u0436\u0435 \u0436\u0434\u0451\u0442."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Your first order is waiting.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0422\u0432\u043E\u0454 \u043F\u0435\u0440\u0448\u0435 \u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F
+      \u0432\u0436\u0435 \u0447\u0435\u043A\u0430\u0454."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Tu primer pedido te espera.
     Object: {fileID: 0}
 --- !u!1 &641892144372982549
 GameObject:
@@ -468,6 +706,124 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u041A\u0430\u0442\u0430\u043C\u0430\u0440\u0430\u043D"
     Object: {fileID: 0}
+--- !u!1 &765355337795700745
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4434877556886964195}
+  - component: {fileID: 7692220188509802384}
+  m_Layer: 0
+  m_Name: meta_tutorial_step2_dialog_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4434877556886964195
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765355337795700745}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7692220188509802384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765355337795700745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0438\u043C
+      \u043D\u0430 \u0432\u0430\u0440\u0438\u0430\u043D\u0442\u044B \u043E\u0431\u044A\u0435\u043A\u0442\u043E\u0432."
+    Object: {fileID: 0}
+  - Language: English
+    Text: First, let us look at object variants.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0421\u043F\u0435\u0440\u0448\u0443 \u043F\u043E\u0434\u0438\u0432\u0438\u043C\u043E\u0441\u044F
+      \u043D\u0430 \u0432\u0430\u0440\u0456\u0430\u043D\u0442\u0438 \u043E\u0431'\u0454\u043A\u0442\u0456\u0432."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Primero veremos las variantes de objetos.
+    Object: {fileID: 0}
+--- !u!1 &772310493377867210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5471790781770985156}
+  - component: {fileID: 2077859529200435734}
+  m_Layer: 0
+  m_Name: UpgradeBtn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5471790781770985156
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 772310493377867210}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2077859529200435734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 772310493377867210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Upgrade
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u0423\u043B\u0443\u0447\u0448\u0438\u0442\u044C"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Mejorar
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u043E\u043A\u0440\u0430\u0449\u0438\u0442\u0438"
+    Object: {fileID: 0}
 --- !u!1 &808827963840648767
 GameObject:
   m_ObjectHideFlags: 0
@@ -525,6 +881,125 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0417\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F..."
+    Object: {fileID: 0}
+--- !u!1 &890575404634223029
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5807624533834926786}
+  - component: {fileID: 267931509436520979}
+  m_Layer: 0
+  m_Name: meta_tutorial_step7_done_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5807624533834926786
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 890575404634223029}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &267931509436520979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 890575404634223029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041E\u0442\u043B\u0438\u0447\u043D\u043E."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Great.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0427\u0443\u0434\u043E\u0432\u043E."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Muy bien.
+    Object: {fileID: 0}
+--- !u!1 &998651555909727479
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7319956293628617049}
+  - component: {fileID: 1149929985203689087}
+  m_Layer: 0
+  m_Name: meta_tutorial_step5_dialog_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7319956293628617049
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 998651555909727479}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1149929985203689087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 998651555909727479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041D\u043E \u0441\u0442\u0430\u043D\u0446\u0438\u044F \u0431\u0443\u0434\u0435\u0442
+      \u0432\u044B\u0433\u043B\u044F\u0434\u0435\u0442\u044C \u0433\u043E\u0440\u0430\u0437\u0434\u043E
+      \u043B\u0443\u0447\u0448\u0435."
+    Object: {fileID: 0}
+  - Language: English
+    Text: But the station will look much better.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0410\u043B\u0435 \u0441\u0442\u0430\u043D\u0446\u0456\u044F \u0432\u0438\u0433\u043B\u044F\u0434\u0430\u0442\u0438\u043C\u0435
+      \u0437\u043D\u0430\u0447\u043D\u043E \u043A\u0440\u0430\u0449\u0435."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Pero la estaci\xF3n se ver\xE1 mucho mejor."
     Object: {fileID: 0}
 --- !u!1 &1088254770149877917
 GameObject:
@@ -1025,6 +1500,129 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u041F\u0440\u043E\u0431\u0443\u0434\u0438 \u0436\u0438\u0442\u0442\u044F!"
     Object: {fileID: 0}
+--- !u!1 &1618245157075730795
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5395677283424491910}
+  - component: {fileID: 7361271887049592304}
+  m_Layer: 0
+  m_Name: meta_tutorial_step8_done_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5395677283424491910
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1618245157075730795}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7361271887049592304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1618245157075730795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u043E\u044D\u0442\u043E\u043C\u0443 \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u044F
+      \u0432\u0430\u0436\u043D\u0435\u0435 \u043A\u0440\u0430\u0441\u0438\u0432\u044B\u0445
+      \u0434\u043E\u043C\u043E\u0432."
+    Object: {fileID: 0}
+  - Language: English
+    Text: That is why upgrades matter more than pretty houses.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0422\u043E\u043C\u0443 \u043F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F
+      \u0432\u0430\u0436\u043B\u0438\u0432\u0456\u0448\u0456 \u0437\u0430 \u043A\u0440\u0430\u0441\u0438\u0432\u0456
+      \u0431\u0443\u0434\u0438\u043D\u043A\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Por eso las mejoras importan m\xE1s que las casas bonitas."
+    Object: {fileID: 0}
+--- !u!1 &1764515714127560891
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5368627083445395895}
+  - component: {fileID: 2216410203157541101}
+  m_Layer: 0
+  m_Name: meta_tutorial_step9_dialog_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5368627083445395895
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1764515714127560891}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2216410203157541101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1764515714127560891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041C\u043D\u0435 \u043D\u0443\u0436\u043D\u0430 \u043F\u043B\u0430\u043D\u0435\u0442\u0430
+      \u0441 \u0440\u0430\u0437\u0443\u043C\u043D\u044B\u043C\u0438 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0430\u043C\u0438."
+    Object: {fileID: 0}
+  - Language: English
+    Text: I require a planet with intelligent beings.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041C\u0435\u043D\u0456 \u043F\u043E\u0442\u0440\u0456\u0431\u043D\u0430
+      \u043F\u043B\u0430\u043D\u0435\u0442\u0430 \u0437 \u0440\u043E\u0437\u0443\u043C\u043D\u0438\u043C\u0438
+      \u0456\u0441\u0442\u043E\u0442\u0430\u043C\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Necesito un planeta con seres inteligentes.
+    Object: {fileID: 0}
 --- !u!1 &1801646753656421079
 GameObject:
   m_ObjectHideFlags: 0
@@ -1083,6 +1681,68 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u041C\u0456\u0441\u0442"
     Object: {fileID: 0}
+--- !u!1 &1923476752832022167
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5141802716589927602}
+  - component: {fileID: 2099588821720605477}
+  m_Layer: 0
+  m_Name: meta_tutorial_step7_intro_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5141802716589927602
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923476752832022167}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2099588821720605477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923476752832022167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041A\u0430\u0436\u0434\u043E\u0435 \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435
+      \u043F\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E\u0435
+      \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0439."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Each upgrade is its own research path.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041A\u043E\u0436\u043D\u0435 \u043F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F
+      \u043C\u0430\u0454 \u043E\u043A\u0440\u0435\u043C\u0438\u0439 \u043D\u0430\u043F\u0440\u044F\u043C
+      \u0434\u043E\u0441\u043B\u0456\u0434\u0436\u0435\u043D\u044C."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Cada mejora es una l\xEDnea de investigaci\xF3n."
+    Object: {fileID: 0}
 --- !u!1 &1977948616445031894
 GameObject:
   m_ObjectHideFlags: 0
@@ -1140,6 +1800,70 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0422\u0438 \u0437\u0430\u0440\u043E\u0431\u0438\u0432(\u043B\u0430)"
+    Object: {fileID: 0}
+--- !u!1 &1989134682707317259
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2930917267713977378}
+  - component: {fileID: 4425349728510943245}
+  m_Layer: 0
+  m_Name: meta_tutorial_step9_contract_description
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2930917267713977378
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1989134682707317259}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4425349728510943245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1989134682707317259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u043F\u043B\u0430\u043D\u0435\u0442\u0443
+      \u0441 \u0440\u0430\u0437\u0443\u043C\u043D\u044B\u043C\u0438 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0430\u043C\u0438
+      \u0434\u043B\u044F \u043F\u0440\u043E\u0438\u0437\u0432\u043E\u0434\u0441\u0442\u0432\u0430
+      \u0434\u0435\u0442\u0430\u043B\u0435\u0439."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Create a planet with intelligent beings to produce parts.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0421\u0442\u0432\u043E\u0440\u0438\u0442\u0438 \u043F\u043B\u0430\u043D\u0435\u0442\u0443
+      \u0437 \u0440\u043E\u0437\u0443\u043C\u043D\u0438\u043C\u0438 \u0456\u0441\u0442\u043E\u0442\u0430\u043C\u0438
+      \u0434\u043B\u044F \u0432\u0438\u0440\u043E\u0431\u043D\u0438\u0446\u0442\u0432\u0430
+      \u0434\u0435\u0442\u0430\u043B\u0435\u0439."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Crear un planeta con seres inteligentes para fabricar piezas.
     Object: {fileID: 0}
 --- !u!1 &2028968580451748316
 GameObject:
@@ -1381,6 +2105,139 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u041A\u043E\u0440\u0430\u0431\u043B\u0456"
     Object: {fileID: 0}
+--- !u!1 &2369468277471912481
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6111464119387260521}
+  - component: {fileID: 2710017746142204016}
+  m_Layer: 0
+  m_Name: meta_tutorial_step3_add_variant_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6111464119387260521
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2369468277471912481}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2710017746142204016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2369468277471912481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0414\u043B\u044F \u043D\u0430\u0447\u0430\u043B\u0430 \u0440\u0430\u0437\u043C\u0435\u0441\u0442\u0438\u043C
+      \u043D\u043E\u0432\u044B\u0439 \u043E\u0431\u044A\u0435\u043A\u0442.\n\u041F\u043E\u043A\u0430
+      \u044D\u0442\u043E \u043F\u0440\u043E\u0441\u0442\u043E \u043A\u043E\u0440\u043E\u0431\u043A\u0430
+      \u0441 \u0434\u043E\u0441\u0442\u0430\u0432\u043A\u043E\u0439.\n\u0421\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435
+      \u0443\u0437\u043D\u0430\u0435\u043C \u043F\u043E\u0441\u043B\u0435 \u0440\u0430\u0441\u043F\u0430\u043A\u043E\u0432\u043A\u0438."
+    Object: {fileID: 0}
+  - Language: English
+    Text: 'First, place a new object.
+
+      For now it is just a delivery box.
+
+      We
+      will see what is inside after unpacking.'
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0421\u043F\u0435\u0440\u0448\u0443 \u0440\u043E\u0437\u043C\u0456\u0441\u0442\u0438\u043C\u043E
+      \u043D\u043E\u0432\u0438\u0439 \u043E\u0431'\u0454\u043A\u0442.\n\u041F\u043E\u043A\u0438
+      \u0449\u043E \u0446\u0435 \u043F\u0440\u043E\u0441\u0442\u043E \u043A\u043E\u0440\u043E\u0431\u043A\u0430
+      \u0437 \u0434\u043E\u0441\u0442\u0430\u0432\u043A\u043E\u044E.\n\u0429\u043E
+      \u0432\u0441\u0435\u0440\u0435\u0434\u0438\u043D\u0456, \u0434\u0456\u0437\u043D\u0430\u0454\u043C\u043E\u0441\u044F
+      \u043F\u0456\u0441\u043B\u044F \u0440\u043E\u0437\u043F\u0430\u043A\u0443\u0432\u0430\u043D\u043D\u044F."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Primero coloca un objeto nuevo.\nPor ahora es solo una caja de entrega.\nVeremos
+      qu\xE9 hay dentro al abrirla."
+    Object: {fileID: 0}
+--- !u!1 &2444468701888919127
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4146551778831757852}
+  - component: {fileID: 6832840373672784157}
+  m_Layer: 0
+  m_Name: meta_tutorial_step9_dialog_7
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4146551778831757852
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2444468701888919127}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6832840373672784157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2444468701888919127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0427\u0442\u043E \u043C\u043E\u0436\u0435\u0442 \u043F\u043E\u0439\u0442\u0438
+      \u043D\u0435 \u0442\u0430\u043A?"
+    Object: {fileID: 0}
+  - Language: English
+    Text: What could go wrong?
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0429\u043E \u043C\u043E\u0436\u0435 \u043F\u0456\u0442\u0438 \u043D\u0435
+      \u0442\u0430\u043A?"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "\xBFQu\xE9 podr\xEDa salir mal?"
+    Object: {fileID: 0}
 --- !u!1 &2486956867788660162
 GameObject:
   m_ObjectHideFlags: 0
@@ -1440,6 +2297,125 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u0427\u0430\u0441 \u043F\u0430\u0441\u0438\u0432\u043D\u043E\u0433\u043E
       \u0434\u043E\u0445\u043E\u0434\u0443"
+    Object: {fileID: 0}
+--- !u!1 &2490158673353543750
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5622537283152718158}
+  - component: {fileID: 5656246409714119949}
+  m_Layer: 0
+  m_Name: meta_tutorial_step2_dialog_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5622537283152718158
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2490158673353543750}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5656246409714119949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2490158673353543750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041D\u043E \u0432\u044B\u0433\u043B\u044F\u0434\u044F\u0442 \u043A\u0440\u0430\u0441\u0438\u0432\u043E."
+    Object: {fileID: 0}
+  - Language: English
+    Text: But they look nice.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0417\u0430\u0442\u0435 \u0432\u0438\u0433\u043B\u044F\u0434\u0430\u044E\u0442\u044C
+      \u0433\u0430\u0440\u043D\u043E."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Pero se ven muy bien.
+    Object: {fileID: 0}
+--- !u!1 &2494493995461294572
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8732280101454927156}
+  - component: {fileID: 5038182465571452618}
+  m_Layer: 0
+  m_Name: meta_tutorial_step3_done_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8732280101454927156
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2494493995461294572}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5038182465571452618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2494493995461294572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0422\u0435\u043F\u0435\u0440\u044C \u043E\u0431\u044A\u0435\u043A\u0442
+      \u043F\u043E\u044F\u0432\u0438\u043B\u0441\u044F \u043D\u0430 \u0441\u0442\u0430\u043D\u0446\u0438\u0438."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Now the object is on the station.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0422\u0435\u043F\u0435\u0440 \u043E\u0431'\u0454\u043A\u0442 \u0437'\u044F\u0432\u0438\u0432\u0441\u044F
+      \u043D\u0430 \u0441\u0442\u0430\u043D\u0446\u0456\u0457."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Ahora el objeto est\xE1 en la estaci\xF3n."
     Object: {fileID: 0}
 --- !u!1 &2569658434303233399
 GameObject:
@@ -1569,6 +2545,66 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u0420\u0435\u0430\u043A\u0442\u0438\u0432\u043D\u0438\u0439 \u043B\u0456\u0442\u0430\u043A"
     Object: {fileID: 0}
+--- !u!1 &2582511422389859025
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8680514047280070864}
+  - component: {fileID: 5461496448878667911}
+  m_Layer: 0
+  m_Name: meta_tutorial_step5_done_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8680514047280070864
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2582511422389859025}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5461496448878667911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2582511422389859025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0422\u0435\u043F\u0435\u0440\u044C \u044D\u0442\u043E \u0432\u044B\u0433\u043B\u044F\u0434\u0438\u0442
+      \u043A\u0430\u043A \u043D\u0430\u0441\u0442\u043E\u044F\u0449\u0430\u044F \u0431\u0430\u0437\u0430."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Now it looks like a real base.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0422\u0435\u043F\u0435\u0440 \u0446\u0435 \u0441\u0445\u043E\u0436\u0435
+      \u043D\u0430 \u0441\u043F\u0440\u0430\u0432\u0436\u043D\u044E \u0431\u0430\u0437\u0443."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Ahora parece una base de verdad.
+    Object: {fileID: 0}
 --- !u!1 &2660139516510989252
 GameObject:
   m_ObjectHideFlags: 0
@@ -1630,6 +2666,66 @@ MonoBehaviour:
     Text: "\u0411\u0443\u0434\u044C \u043B\u0430\u0441\u043A\u0430, \u043D\u0430\u043F\u0438\u0448i\u0442\u044C
       \u0432\u0430\u0448i \u043F\u0440\u043E\u043F\u043E\u0437\u0438\u0446ii, \u043F\u0440\u0430\u0432\u043A\u0438
       \u0430\u0431\u043E \u0440\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0430\u0446ii"
+    Object: {fileID: 0}
+--- !u!1 &2711718433263547065
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4781609466235887837}
+  - component: {fileID: 1370554370538573715}
+  m_Layer: 0
+  m_Name: meta_tutorial_step10_dialog_5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4781609466235887837
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2711718433263547065}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1370554370538573715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2711718433263547065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041A\u0430\u0436\u0434\u0430\u044F \u043D\u043E\u0432\u0430\u044F \u043F\u043B\u0430\u043D\u0435\u0442\u0430
+      \u043E\u0442\u043B\u0438\u0447\u0430\u0435\u0442\u0441\u044F."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Every new planet is different.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041A\u043E\u0436\u043D\u0430 \u043D\u043E\u0432\u0430 \u043F\u043B\u0430\u043D\u0435\u0442\u0430
+      \u0432\u0456\u0434\u0440\u0456\u0437\u043D\u044F\u0454\u0442\u044C\u0441\u044F."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Cada planeta nuevo es distinto.
     Object: {fileID: 0}
 --- !u!1 &2849645754950938206
 GameObject:
@@ -1865,6 +2961,122 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u041A\u043E\u0441\u043C\u0456\u0447\u043D\u0438\u0439 \u0441\u0443\u043F\u0443\u0442\u043D\u0438\u043A"
     Object: {fileID: 0}
+--- !u!1 &3173189323523424926
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8834293126813515672}
+  - component: {fileID: 1656745473103214729}
+  m_Layer: 0
+  m_Name: meta_tutorial_step10_dialog_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8834293126813515672
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3173189323523424926}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1656745473103214729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3173189323523424926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0420\u0430\u0437\u0432\u0438\u0432\u0430\u0435\u043C \u0446\u0438\u0432\u0438\u043B\u0438\u0437\u0430\u0446\u0438\u0438."
+    Object: {fileID: 0}
+  - Language: English
+    Text: We grow civilizations.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0420\u043E\u0437\u0432\u0438\u0432\u0430\u0454\u043C\u043E \u0446\u0438\u0432\u0456\u043B\u0456\u0437\u0430\u0446\u0456\u0457."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Desarrollamos civilizaciones.
+    Object: {fileID: 0}
+--- !u!1 &3293461217878662115
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7041673864693621879}
+  - component: {fileID: 6433347361836494431}
+  m_Layer: 0
+  m_Name: meta_tutorial_step1_reward_title
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7041673864693621879
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3293461217878662115}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6433347361836494431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3293461217878662115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0421\u0442\u0430\u0440\u0442\u043E\u0432\u044B\u0439 \u0431\u044E\u0434\u0436\u0435\u0442"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Starting Budget
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0421\u0442\u0430\u0440\u0442\u043E\u0432\u0438\u0439 \u0431\u044E\u0434\u0436\u0435\u0442"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Presupuesto inicial
+    Object: {fileID: 0}
 --- !u!1 &3294465508697440090
 GameObject:
   m_ObjectHideFlags: 0
@@ -2063,6 +3275,183 @@ MonoBehaviour:
       \u043F\u043E\u0447\u0438\u043D\u0430\u0454\u0442\u044C\u0441\u044F \u0437 \u043E\u0434\u043D\u043E\u0433\u043E
       \u0434\u043E\u0442\u0438\u043A\u0443!"
     Object: {fileID: 0}
+--- !u!1 &3521600261843125481
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5263395852572219580}
+  - component: {fileID: 7035995243893134068}
+  m_Layer: 0
+  m_Name: meta_tutorial_step1_dialog_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5263395852572219580
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3521600261843125481}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7035995243893134068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3521600261843125481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041C\u043E\u0439 \u043B\u044E\u0431\u0438\u043C\u044B\u0439 \u0432\u0438\u0434
+      \u0430\u043B\u043C\u0430\u0437\u043E\u0432."
+    Object: {fileID: 0}
+  - Language: English
+    Text: My favorite kind of diamonds.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041C\u0456\u0439 \u0443\u043B\u044E\u0431\u043B\u0435\u043D\u0438\u0439
+      \u0432\u0438\u0434 \u0430\u043B\u043C\u0430\u0437\u0456\u0432."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Mi tipo favorito de diamantes.
+    Object: {fileID: 0}
+--- !u!1 &3531693772642229134
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4118370152751827552}
+  - component: {fileID: 5851557477816273350}
+  m_Layer: 0
+  m_Name: meta_tutorial_video_continue
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4118370152751827552
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3531693772642229134}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5851557477816273350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3531693772642229134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Continue
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u0440\u043E\u0434\u043E\u0432\u0436\u0438\u0442\u0438"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Continuar
+    Object: {fileID: 0}
+--- !u!1 &3561311335469621384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5892200898294337762}
+  - component: {fileID: 7143735042195255463}
+  m_Layer: 0
+  m_Name: meta_tutorial_step7_toast_added
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5892200898294337762
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3561311335469621384}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7143735042195255463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3561311335469621384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0418\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435
+      \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u043E"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Research added
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0414\u043E\u0441\u043B\u0456\u0434\u0436\u0435\u043D\u043D\u044F \u0434\u043E\u0434\u0430\u043D\u043E"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Investigaci\xF3n a\xF1adida"
+    Object: {fileID: 0}
 --- !u!1 &3624719737547370327
 GameObject:
   m_ObjectHideFlags: 0
@@ -2180,6 +3569,68 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u041F\u0435\u0440\u0435\u0433\u043B\u044F\u043D\u044C \u0440\u0435\u043A\u043B\u0430\u043C\u0443
       \u2013 \u0437\u0430\u0431\u0435\u0440\u0438"
+    Object: {fileID: 0}
+--- !u!1 &3678774105579007748
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4353756267338604678}
+  - component: {fileID: 6270965552942775577}
+  m_Layer: 0
+  m_Name: meta_tutorial_step1_reward_description
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4353756267338604678
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3678774105579007748}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6270965552942775577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3678774105579007748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u043E\u0434\u0440\u044F\u0434\u0447\u0438\u043A \u0432\u044B\u0434\u0435\u043B\u0438\u043B
+      \u0441\u0440\u0435\u0434\u0441\u0442\u0432\u0430 \u043D\u0430 \u0440\u0430\u0437\u0432\u0438\u0442\u0438\u0435
+      \u0441\u0442\u0430\u043D\u0446\u0438\u0438."
+    Object: {fileID: 0}
+  - Language: English
+    Text: The contractor assigned funds for station growth.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u0456\u0434\u0440\u044F\u0434\u043D\u0438\u043A \u0432\u0438\u0434\u0456\u043B\u0438\u0432
+      \u043A\u043E\u0448\u0442\u0438 \u043D\u0430 \u0440\u043E\u0437\u0432\u0438\u0442\u043E\u043A
+      \u0441\u0442\u0430\u043D\u0446\u0456\u0457."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "El contratista asign\xF3 fondos para desarrollar la estaci\xF3n."
     Object: {fileID: 0}
 --- !u!1 &3695912790869593986
 GameObject:
@@ -2310,6 +3761,66 @@ MonoBehaviour:
       \u0431\u0456\u043B\u044C\u0448\u0435 \u0436\u0438\u0442\u0442\u044F, \u0442\u0438\u043C
       \u0431\u0456\u043B\u044C\u0448\u0435 \u043C\u043E\u043D\u0435\u0442 \u0434\u043B\u044F
       \u043D\u043E\u0432\u0438\u0445 \u0432\u0456\u0434\u043A\u0440\u0438\u0442\u0442\u0456\u0432!"
+    Object: {fileID: 0}
+--- !u!1 &4103739362545944648
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7505073333360930992}
+  - component: {fileID: 4874398118552851447}
+  m_Layer: 0
+  m_Name: meta_tutorial_step5_dialog_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7505073333360930992
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4103739362545944648}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4874398118552851447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4103739362545944648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u042D\u0442\u043E \u043D\u0435 \u0432\u043B\u0438\u044F\u0435\u0442 \u043D\u0430
+      \u0431\u043E\u043D\u0443\u0441\u044B."
+    Object: {fileID: 0}
+  - Language: English
+    Text: This does not affect bonuses.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0426\u0435 \u043D\u0435 \u0432\u043F\u043B\u0438\u0432\u0430\u0454 \u043D\u0430
+      \u0431\u043E\u043D\u0443\u0441\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Esto no afecta a las bonificaciones.
     Object: {fileID: 0}
 --- !u!1 &4121947133575837938
 GameObject:
@@ -2546,6 +4057,185 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u0412\u0456\u0434\u043D\u043E\u0432\u043B\u0435\u043D\u043D\u044F \u043F\u043E\u043A\u0443\u043F\u043E\u043A"
     Object: {fileID: 0}
+--- !u!1 &4262014146099069254
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3369930222781213302}
+  - component: {fileID: 4662166928416458687}
+  m_Layer: 0
+  m_Name: meta_tutorial_step0_dialog_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3369930222781213302
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4262014146099069254}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4662166928416458687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4262014146099069254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0418 \u0438\u043D\u043E\u0433\u0434\u0430 \u043F\u0440\u043E\u0438\u0441\u0445\u043E\u0434\u044F\u0442
+      \u043D\u0430\u0443\u0447\u043D\u044B\u0435 \u043F\u0440\u043E\u0438\u0441\u0448\u0435\u0441\u0442\u0432\u0438\u044F."
+    Object: {fileID: 0}
+  - Language: English
+    Text: And sometimes, science gets a little messy.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0406\u043D\u043E\u0434\u0456 \u043D\u0430\u0443\u043A\u0430 \u0442\u0440\u043E\u0445\u0438
+      \u0432\u0438\u0445\u043E\u0434\u0438\u0442\u044C \u0437-\u043F\u0456\u0434
+      \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044E."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Y a veces la ciencia se desordena un poco.
+    Object: {fileID: 0}
+--- !u!1 &4432329989457928363
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7983984940942246694}
+  - component: {fileID: 1414798184174818196}
+  m_Layer: 0
+  m_Name: meta_tutorial_step6_open_upgrade_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7983984940942246694
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4432329989457928363}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1414798184174818196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4432329989457928363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041E\u0442\u043A\u0440\u043E\u0435\u043C \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u044F."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Open upgrades.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0412\u0456\u0434\u043A\u0440\u0438\u0439\u043C\u043E \u043F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Abre las mejoras.
+    Object: {fileID: 0}
+--- !u!1 &4449984773010077892
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1171332340473737122}
+  - component: {fileID: 8215075199214724674}
+  m_Layer: 0
+  m_Name: meta_tutorial_step10_dialog_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1171332340473737122
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4449984773010077892}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8215075199214724674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4449984773010077892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0412\u043E\u0442 \u043F\u0440\u0438\u043C\u0435\u0440\u043D\u043E \u044D\u0442\u0438\u043C
+      \u043C\u044B \u0438 \u0437\u0430\u043D\u0438\u043C\u0430\u0435\u043C\u0441\u044F."
+    Object: {fileID: 0}
+  - Language: English
+    Text: That is basically what we do here.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u0440\u0438\u0431\u043B\u0438\u0437\u043D\u043E \u0446\u0438\u043C
+      \u043C\u0438 \u0442\u0443\u0442 \u0456 \u0437\u0430\u0439\u043C\u0430\u0454\u043C\u043E\u0441\u044F."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Eso es b\xE1sicamente lo que hacemos aqu\xED."
+    Object: {fileID: 0}
 --- !u!1 &4474215443808662021
 GameObject:
   m_ObjectHideFlags: 0
@@ -2662,6 +4352,125 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u0414\u0435\u043A\u043E\u0440"
     Object: {fileID: 0}
+--- !u!1 &4755915427663035585
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8489377019833563983}
+  - component: {fileID: 9112299558714908304}
+  m_Layer: 0
+  m_Name: meta_tutorial_step9_contract_title
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8489377019833563983
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4755915427663035585}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9112299558714908304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4755915427663035585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u0435\u0440\u0432\u044B\u0439 \u0437\u0430\u043A\u0430\u0437"
+    Object: {fileID: 0}
+  - Language: English
+    Text: First Order
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u0435\u0440\u0448\u0435 \u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Primer pedido
+    Object: {fileID: 0}
+--- !u!1 &4773852993963792089
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6479780609766107592}
+  - component: {fileID: 6341579074723710486}
+  m_Layer: 0
+  m_Name: meta_tutorial_step5_done_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6479780609766107592
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4773852993963792089}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6341579074723710486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4773852993963792089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0418 \u0437\u043D\u0430\u0447\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+      \u043C\u0435\u043D\u044C\u0448\u0435 \u043D\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u0435\u0442
+      \u043A\u043E\u0440\u043E\u0431\u043A\u0443."
+    Object: {fileID: 0}
+  - Language: English
+    Text: And much less like a box.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0406 \u0437\u043D\u0430\u0447\u043D\u043E \u043C\u0435\u043D\u0448\u0435
+      \u0441\u0445\u043E\u0436\u0435 \u043D\u0430 \u043A\u043E\u0440\u043E\u0431\u043A\u0443."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Y mucho menos como una caja.
+    Object: {fileID: 0}
 --- !u!1 &4810472097101196618
 GameObject:
   m_ObjectHideFlags: 0
@@ -2719,6 +4528,124 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0412\u0456\u0442\u0440\u044F\u043D\u0430 \u0435\u043B\u0435\u043A\u0442\u0440\u043E\u0441\u0442\u0430\u043D\u0446\u0456\u044F"
+    Object: {fileID: 0}
+--- !u!1 &4814417168218690816
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4873598142141778547}
+  - component: {fileID: 1997655321262293260}
+  m_Layer: 0
+  m_Name: meta_tutorial_step9_dialog_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4873598142141778547
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4814417168218690816}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1997655321262293260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4814417168218690816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041A\u043E\u043D\u0435\u0447\u043D\u043E \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u043C."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Of course we do.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0417\u0432\u0456\u0441\u043D\u043E, \u043F\u0440\u0438\u0439\u043C\u0430\u0454\u043C\u043E."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Claro que s\xED."
+    Object: {fileID: 0}
+--- !u!1 &4838188076266992352
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4095294413925365084}
+  - component: {fileID: 4501598278660173141}
+  m_Layer: 0
+  m_Name: meta_tutorial_step2_dialog_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4095294413925365084
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4838188076266992352}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4501598278660173141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4838188076266992352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u0440\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0439
+      \u043F\u043E\u043B\u044C\u0437\u044B \u043D\u0435\u043C\u043D\u043E\u0433\u043E."
+    Object: {fileID: 0}
+  - Language: English
+    Text: They are not very practical.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u0440\u0430\u043A\u0442\u0438\u0447\u043D\u043E\u0457 \u043A\u043E\u0440\u0438\u0441\u0442\u0456
+      \u043D\u0435\u0431\u0430\u0433\u0430\u0442\u043E."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "No son muy pr\xE1cticos."
     Object: {fileID: 0}
 --- !u!1 &4865019328691112695
 GameObject:
@@ -3068,6 +4995,240 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u0422\u0430\u043A"
     Object: {fileID: 0}
+--- !u!1 &5281082495186347011
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1567086788323004707}
+  - component: {fileID: 1046278932990435658}
+  m_Layer: 0
+  m_Name: meta_tutorial_step11_contract_title
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1567086788323004707
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5281082495186347011}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1046278932990435658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5281082495186347011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u0435\u0440\u0432\u044B\u0439 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442"
+    Object: {fileID: 0}
+  - Language: English
+    Text: First Contract
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u0435\u0440\u0448\u0438\u0439 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Primer contrato
+    Object: {fileID: 0}
+--- !u!1 &5294853010465732602
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5498843116934376183}
+  - component: {fileID: 6148846919828005509}
+  m_Layer: 0
+  m_Name: meta_tutorial_step2_open_variant_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5498843116934376183
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5294853010465732602}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6148846919828005509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5294853010465732602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041D\u0430\u0436\u043C\u0438 \u0441\u044E\u0434\u0430."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Tap here.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041D\u0430\u0442\u0438\u0441\u043D\u0438 \u0442\u0443\u0442."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Toca aqu\xED."
+    Object: {fileID: 0}
+--- !u!1 &5354308605379796745
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3345824778392609633}
+  - component: {fileID: 875460388300998287}
+  m_Layer: 0
+  m_Name: meta_tutorial_step9_dialog_8
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3345824778392609633
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5354308605379796745}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &875460388300998287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5354308605379796745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041C\u0435\u043D\u044F \u043D\u0435\u043C\u043D\u043E\u0433\u043E \u043F\u0443\u0433\u0430\u0435\u0442
+      \u0432\u0430\u0448 \u044D\u043D\u0442\u0443\u0437\u0438\u0430\u0437\u043C."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Your enthusiasm is mildly concerning.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0412\u0430\u0448 \u0435\u043D\u0442\u0443\u0437\u0456\u0430\u0437\u043C
+      \u0442\u0440\u043E\u0445\u0438 \u043D\u0430\u0441\u0442\u043E\u0440\u043E\u0436\u0443\u0454."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Su entusiasmo me preocupa ligeramente.
+    Object: {fileID: 0}
+--- !u!1 &5369148870133566698
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8618720463024984845}
+  - component: {fileID: 3660577628951610970}
+  m_Layer: 0
+  m_Name: meta_tutorial_step10_dialog_8
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8618720463024984845
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5369148870133566698}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3660577628951610970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5369148870133566698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0421\u0432\u043E\u0438 \u043F\u0440\u043E\u0431\u043B\u0435\u043C\u044B."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Its own problems.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0421\u0432\u043E\u0457 \u043F\u0440\u043E\u0431\u043B\u0435\u043C\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Sus propios problemas.
+    Object: {fileID: 0}
 --- !u!1 &5441414897502760190
 GameObject:
   m_ObjectHideFlags: 0
@@ -3250,6 +5411,64 @@ MonoBehaviour:
       \u0434\u043E\u0445\u0456\u0434 \u0431\u0435\u0437 \u0442\u0432\u043E\u0454\u0457
       \u0443\u0447\u0430\u0441\u0442\u0456"
     Object: {fileID: 0}
+--- !u!1 &5571936268085711248
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8888970862444732612}
+  - component: {fileID: 333595658376723374}
+  m_Layer: 0
+  m_Name: meta_tutorial_step1_reward_button
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8888970862444732612
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5571936268085711248}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &333595658376723374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5571936268085711248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u043E\u043B\u0443\u0447\u0438\u0442\u044C"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Claim
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041E\u0442\u0440\u0438\u043C\u0430\u0442\u0438"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Recibir
+    Object: {fileID: 0}
 --- !u!1 &5599906283802797020
 GameObject:
   m_ObjectHideFlags: 0
@@ -3309,6 +5528,184 @@ MonoBehaviour:
     Text: "\u0417\u0431\u0456\u043B\u044C\u0448\u0443\u0439 \u0441\u0438\u043B\u0443
       \u0442\u0432\u043E\u0440\u0435\u043D\u043D\u044F!"
     Object: {fileID: 0}
+--- !u!1 &5621382540719063586
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3607812714919980194}
+  - component: {fileID: 5721823525306084979}
+  m_Layer: 0
+  m_Name: meta_tutorial_step5_box_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3607812714919980194
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5621382540719063586}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5721823525306084979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5621382540719063586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041D\u0430\u0436\u043C\u0438 \u043D\u0430 \u043A\u043E\u0440\u043E\u0431\u043A\u0443."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Tap the box.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041D\u0430\u0442\u0438\u0441\u043D\u0438 \u043D\u0430 \u043A\u043E\u0440\u043E\u0431\u043A\u0443."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Toca la caja.
+    Object: {fileID: 0}
+--- !u!1 &5670774643604904260
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1438068686449495463}
+  - component: {fileID: 4115634508192334681}
+  m_Layer: 0
+  m_Name: meta_tutorial_step0_dialog_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1438068686449495463
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5670774643604904260}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4115634508192334681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5670774643604904260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041D\u043E \u0441\u0435\u0433\u043E\u0434\u043D\u044F \u043C\u044B \u043F\u0440\u043E\u0441\u0442\u043E
+      \u043F\u043E\u0437\u043D\u0430\u043A\u043E\u043C\u0438\u043C\u0441\u044F \u0441
+      \u0431\u0430\u0437\u043E\u0439."
+    Object: {fileID: 0}
+  - Language: English
+    Text: But today, we just get to know the base.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0410\u043B\u0435 \u0441\u044C\u043E\u0433\u043E\u0434\u043D\u0456 \u043C\u0438
+      \u043F\u0440\u043E\u0441\u0442\u043E \u043F\u043E\u0437\u043D\u0430\u0439\u043E\u043C\u0438\u043C\u043E\u0441\u044F
+      \u0437 \u0431\u0430\u0437\u043E\u044E."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Pero hoy solo conoceremos la base.
+    Object: {fileID: 0}
+--- !u!1 &5687185942334121188
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6749387959324059080}
+  - component: {fileID: 9151720453232441027}
+  m_Layer: 0
+  m_Name: meta_tutorial_step3_done_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6749387959324059080
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5687185942334121188}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9151720453232441027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5687185942334121188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041E\u0442\u043B\u0438\u0447\u043D\u043E."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Great.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0427\u0443\u0434\u043E\u0432\u043E."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Muy bien.
+    Object: {fileID: 0}
 --- !u!1 &5690862783312844231
 GameObject:
   m_ObjectHideFlags: 0
@@ -3366,6 +5763,64 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u041E\u0442\u0440\u0438\u043C\u0430\u0442\u0438"
+    Object: {fileID: 0}
+--- !u!1 &5722085938017558457
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2321321879056709769}
+  - component: {fileID: 3608007102934777908}
+  m_Layer: 0
+  m_Name: meta_tutorial_step5_toast_built
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2321321879056709769
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5722085938017558457}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3608007102934777908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5722085938017558457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0414\u043E\u043C \u043F\u043E\u0441\u0442\u0440\u043E\u0435\u043D"
+    Object: {fileID: 0}
+  - Language: English
+    Text: House built
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0411\u0443\u0434\u0438\u043D\u043E\u043A \u043F\u043E\u0431\u0443\u0434\u043E\u0432\u0430\u043D\u043E"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Casa construida
     Object: {fileID: 0}
 --- !u!1 &5792673596743377241
 GameObject:
@@ -3428,6 +5883,66 @@ MonoBehaviour:
     Text: "\u0422\u0438 \u043D\u0430\u043A\u043E\u043F\u0438\u0447\u0438\u0432 \u0434\u043E\u0441\u0442\u0430\u0442\u043D\u044C\u043E
       \u043C\u043E\u043D\u0435\u0442, \u0449\u043E\u0431 \u0434\u043E\u0434\u0430\u0442\u0438
       \u043D\u043E\u0432\u0438\u0439 \u043E\u0431'\u0454\u043A\u0442"
+    Object: {fileID: 0}
+--- !u!1 &5969479768404483213
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7260584608693911774}
+  - component: {fileID: 5923512412098195672}
+  m_Layer: 0
+  m_Name: meta_tutorial_step8_done_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7260584608693911774
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5969479768404483213}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5923512412098195672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5969479768404483213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0425\u043E\u0442\u044F \u043A\u0440\u0430\u0441\u0438\u0432\u044B\u0435
+      \u0434\u043E\u043C\u0430 \u0442\u043E\u0436\u0435 \u0445\u043E\u0440\u043E\u0448\u0438."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Though pretty houses are nice too.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0425\u043E\u0447\u0430 \u043A\u0440\u0430\u0441\u0438\u0432\u0456 \u0431\u0443\u0434\u0438\u043D\u043A\u0438
+      \u0442\u0435\u0436 \u0445\u043E\u0440\u043E\u0448\u0456."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Aunque las casas bonitas tambi\xE9n ayudan."
     Object: {fileID: 0}
 --- !u!1 &5975309473472209402
 GameObject:
@@ -3555,6 +6070,315 @@ MonoBehaviour:
       \u0434\u043E\u043F\u043E\u043C\u043E\u0436\u0435 \u043D\u0430\u043C \u0437\u0440\u043E\u0431\u0438\u0442\u0438
       \u0433\u0440\u0443 \u043A\u0440\u0430\u0449\u0435."
     Object: {fileID: 0}
+--- !u!1 &6076752904070250987
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6865699165492275642}
+  - component: {fileID: 2796574765520163269}
+  m_Layer: 0
+  m_Name: meta_tutorial_step5_buy_variant_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6865699165492275642
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6076752904070250987}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2796574765520163269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6076752904070250987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0412\u044B\u0431\u0435\u0440\u0438 \u044D\u0442\u043E\u0442 \u0432\u0430\u0440\u0438\u0430\u043D\u0442."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Choose this variant.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0412\u0438\u0431\u0435\u0440\u0438 \u0446\u0435\u0439 \u0432\u0430\u0440\u0456\u0430\u043D\u0442."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Elige esta variante.
+    Object: {fileID: 0}
+--- !u!1 &6115629733161110041
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2286165535475179553}
+  - component: {fileID: 3740510714382516363}
+  m_Layer: 0
+  m_Name: meta_tutorial_step6_dialog_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2286165535475179553
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6115629733161110041}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3740510714382516363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6115629733161110041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0410 \u0432\u043E\u0442 \u044D\u0442\u043E \u0443\u0436\u0435 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+      \u043F\u043E\u043B\u0435\u0437\u043D\u043E."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Now this is truly useful.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0410 \u043E\u0441\u044C \u0446\u0435 \u0432\u0436\u0435 \u0441\u043F\u0440\u0430\u0432\u0434\u0456
+      \u043A\u043E\u0440\u0438\u0441\u043D\u043E."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Esto s\xED que es \xFAtil."
+    Object: {fileID: 0}
+--- !u!1 &6195453891984325821
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1532342228530474400}
+  - component: {fileID: 6771860392579373235}
+  m_Layer: 0
+  m_Name: meta_tutorial_step8_upgrade_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1532342228530474400
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6195453891984325821}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6771860392579373235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6195453891984325821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041A\u0430\u0436\u0434\u043E\u0435 \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435
+      \u043C\u043E\u0436\u043D\u043E \u043F\u0440\u043E\u043A\u0430\u0447\u0430\u0442\u044C
+      \u0434\u043E \u0442\u0440\u0451\u0445 \u0443\u0440\u043E\u0432\u043D\u0435\u0439.\n\u041A\u0430\u0436\u0434\u044B\u0439
+      \u0443\u0440\u043E\u0432\u0435\u043D\u044C \u0443\u0441\u0438\u043B\u0438\u0432\u0430\u0435\u0442
+      \u0431\u043E\u043D\u0443\u0441.\n\n\u042D\u0442\u0430 \u043A\u043D\u043E\u043F\u043A\u0430
+      \u0434\u0435\u043B\u0430\u0435\u0442 \u0446\u0438\u0444\u0440\u044B \u0431\u043E\u043B\u044C\u0448\u0435."
+    Object: {fileID: 0}
+  - Language: English
+    Text: 'Each upgrade has up to three levels.
+
+      Each level makes the bonus
+      stronger.
+
+
+      This button makes the numbers bigger.'
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041A\u043E\u0436\u043D\u0435 \u043F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F
+      \u043C\u043E\u0436\u043D\u0430 \u043F\u0456\u0434\u043D\u044F\u0442\u0438 \u0434\u043E
+      \u0442\u0440\u044C\u043E\u0445 \u0440\u0456\u0432\u043D\u0456\u0432.\n\u041A\u043E\u0436\u0435\u043D
+      \u0440\u0456\u0432\u0435\u043D\u044C \u043F\u043E\u0441\u0438\u043B\u044E\u0454
+      \u0431\u043E\u043D\u0443\u0441.\n\n\u0426\u044F \u043A\u043D\u043E\u043F\u043A\u0430
+      \u0440\u043E\u0431\u0438\u0442\u044C \u0447\u0438\u0441\u043B\u0430 \u0431\u0456\u043B\u044C\u0448\u0438\u043C\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Cada mejora tiene hasta tres niveles.\nCada nivel aumenta la bonificaci\xF3n.\n\nEste
+      bot\xF3n hace crecer los n\xFAmeros."
+    Object: {fileID: 0}
+--- !u!1 &6215063365853247041
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2235042145150395927}
+  - component: {fileID: 7753605494665396177}
+  m_Layer: 0
+  m_Name: meta_tutorial_step10_dialog_7
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2235042145150395927
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6215063365853247041}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7753605494665396177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6215063365853247041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0421\u0432\u043E\u0438 \u0436\u0438\u0442\u0435\u043B\u0438."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Its own people.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0421\u0432\u043E\u0457\u0445 \u0436\u0438\u0442\u0435\u043B\u0456\u0432."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Sus propios habitantes.
+    Object: {fileID: 0}
+--- !u!1 &6291161848389838634
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 91036209633601583}
+  - component: {fileID: 7644366885227051057}
+  m_Layer: 0
+  m_Name: meta_tutorial_step10_dialog_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &91036209633601583
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6291161848389838634}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7644366885227051057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6291161848389838634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0421\u043E\u0437\u0434\u0430\u0451\u043C \u043F\u043B\u0430\u043D\u0435\u0442\u044B."
+    Object: {fileID: 0}
+  - Language: English
+    Text: We create planets.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0421\u0442\u0432\u043E\u0440\u044E\u0454\u043C\u043E \u043F\u043B\u0430\u043D\u0435\u0442\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Creamos planetas.
+    Object: {fileID: 0}
 --- !u!1 &6308153681704200539
 GameObject:
   m_ObjectHideFlags: 0
@@ -3612,6 +6436,182 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: Selected
+    Object: {fileID: 0}
+--- !u!1 &6309910412605507858
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1631870731672748176}
+  - component: {fileID: 939569443615073924}
+  m_Layer: 0
+  m_Name: meta_tutorial_step10_dialog_9
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1631870731672748176
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6309910412605507858}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &939569443615073924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6309910412605507858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0418\u043D\u043E\u0433\u0434\u0430 \u043E\u0447\u0435\u043D\u044C \u0441\u0442\u0440\u0430\u043D\u043D\u044B\u0435."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Sometimes very strange ones.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0406\u043D\u043E\u0434\u0456 \u0434\u0443\u0436\u0435 \u0434\u0438\u0432\u043D\u0456."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: A veces, muy raros.
+    Object: {fileID: 0}
+--- !u!1 &6345133739816501143
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8476657072695726232}
+  - component: {fileID: 8069619127585732280}
+  m_Layer: 0
+  m_Name: meta_tutorial_step8_done_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8476657072695726232
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6345133739816501143}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8069619127585732280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6345133739816501143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0412\u0438\u0434\u0438\u0448\u044C?"
+    Object: {fileID: 0}
+  - Language: English
+    Text: See?
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0411\u0430\u0447\u0438\u0448?"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "\xBFVes?"
+    Object: {fileID: 0}
+--- !u!1 &6349451134705426727
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1049841093455729301}
+  - component: {fileID: 3522807656760344964}
+  m_Layer: 0
+  m_Name: meta_tutorial_step7_intro_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1049841093455729301
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6349451134705426727}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3522807656760344964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6349451134705426727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0440\u0430\u0437\u043C\u0435\u0441\u0442\u0438\u043C
+      \u0435\u0433\u043E \u043D\u0430 \u0441\u0442\u0430\u043D\u0446\u0438\u0438."
+    Object: {fileID: 0}
+  - Language: English
+    Text: First, place it on the station.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0421\u043F\u0435\u0440\u0448\u0443 \u0440\u043E\u0437\u043C\u0456\u0441\u0442\u0438\u043C\u043E
+      \u0439\u043E\u0433\u043E \u043D\u0430 \u0441\u0442\u0430\u043D\u0446\u0456\u0457."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Primero col\xF3cala en la estaci\xF3n."
     Object: {fileID: 0}
 --- !u!1 &6354683421427197460
 GameObject:
@@ -3741,6 +6741,66 @@ MonoBehaviour:
       \u0430\u043B\u0435 \u0449\u043E \u0437\u0430 \u0422\u0432\u043E\u0440\u0435\u0446\u044C
       \u0431\u0435\u0437 \u0435\u0441\u0442\u0435\u0442\u0438\u043A\u0438?"
     Object: {fileID: 0}
+--- !u!1 &6488038951256285588
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3359241289682072165}
+  - component: {fileID: 2448348989147842053}
+  m_Layer: 0
+  m_Name: meta_tutorial_step7_done_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3359241289682072165
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6488038951256285588}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2448348989147842053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6488038951256285588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0422\u0435\u043F\u0435\u0440\u044C \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435
+      \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E \u0434\u043B\u044F \u0440\u0430\u0437\u0432\u0438\u0442\u0438\u044F."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Now the upgrade can be developed.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0422\u0435\u043F\u0435\u0440 \u043F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F
+      \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0435 \u0434\u043B\u044F \u0440\u043E\u0437\u0432\u0438\u0442\u043A\u0443."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Ahora la mejora se puede desarrollar.
+    Object: {fileID: 0}
 --- !u!1 &6492295396406269566
 GameObject:
   m_ObjectHideFlags: 0
@@ -3857,6 +6917,66 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u0410\u0442\u043E\u043C\u043D\u0430 \u0435\u043B\u0435\u043A\u0442\u0440\u043E\u0441\u0442\u0430\u043D\u0446\u0456\u044F"
     Object: {fileID: 0}
+--- !u!1 &6705374562620833803
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 113115644097382153}
+  - component: {fileID: 1721120435974212549}
+  m_Layer: 0
+  m_Name: meta_tutorial_step10_dialog_11
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &113115644097382153
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6705374562620833803}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1721120435974212549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6705374562620833803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u043E\u044D\u0442\u043E\u043C\u0443 \u043D\u0435 \u0437\u0430\u0431\u044B\u0432\u0430\u0439
+      \u0432\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0442\u044C\u0441\u044F \u0441\u044E\u0434\u0430."
+    Object: {fileID: 0}
+  - Language: English
+    Text: So do not forget to come back here.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0422\u043E\u0436 \u043D\u0435 \u0437\u0430\u0431\u0443\u0432\u0430\u0439
+      \u043F\u043E\u0432\u0435\u0440\u0442\u0430\u0442\u0438\u0441\u044F \u0441\u044E\u0434\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "As\xED que no olvides volver aqu\xED."
+    Object: {fileID: 0}
 --- !u!1 &6715754376874278427
 GameObject:
   m_ObjectHideFlags: 0
@@ -3914,6 +7034,123 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0422\u043E\u0440\u043D\u0430\u0434\u043E"
+    Object: {fileID: 0}
+--- !u!1 &6775709325403934959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5206174296628405884}
+  - component: {fileID: 7702530377760886922}
+  m_Layer: 0
+  m_Name: meta_tutorial_step10_dialog_6
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5206174296628405884
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6775709325403934959}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7702530377760886922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6775709325403934959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0423 \u043A\u0430\u0436\u0434\u043E\u0439 \u0441\u0432\u043E\u0438 \u0440\u0435\u0441\u0443\u0440\u0441\u044B."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Each one has its own resources.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0423 \u043A\u043E\u0436\u043D\u043E\u0457 \u0441\u0432\u043E\u0457 \u0440\u0435\u0441\u0443\u0440\u0441\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Cada uno tiene sus propios recursos.
+    Object: {fileID: 0}
+--- !u!1 &6886376203072309005
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7267328610710355302}
+  - component: {fileID: 5097355331084544543}
+  m_Layer: 0
+  m_Name: meta_tutorial_step7_add_upgrade_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7267328610710355302
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6886376203072309005}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5097355331084544543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6886376203072309005}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0414\u043E\u0431\u0430\u0432\u0438\u043C \u043D\u043E\u0432\u043E\u0435
+      \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Add a new research item.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0414\u043E\u0434\u0430\u043C\u043E \u043D\u043E\u0432\u0435 \u0434\u043E\u0441\u043B\u0456\u0434\u0436\u0435\u043D\u043D\u044F."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "A\xF1ade una nueva investigaci\xF3n."
     Object: {fileID: 0}
 --- !u!1 &7016261279218168820
 GameObject:
@@ -4031,6 +7268,180 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u042F\u0434\u0435\u0440\u043D\u0430 \u0431\u043E\u043C\u0431\u0430"
     Object: {fileID: 0}
+--- !u!1 &7136033949625384494
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5551259484040563954}
+  - component: {fileID: 7142732554567580206}
+  m_Layer: 0
+  m_Name: meta_tutorial_step9_contract_button
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5551259484040563954
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7136033949625384494}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7142732554567580206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7136033949625384494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u0440\u0438\u043D\u044F\u0442\u044C \u0437\u0430\u043A\u0430\u0437"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Accept Order
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u0440\u0438\u0439\u043D\u044F\u0442\u0438 \u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Aceptar pedido
+    Object: {fileID: 0}
+--- !u!1 &7234349275125695308
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4904753423973001070}
+  - component: {fileID: 7130719124635069170}
+  m_Layer: 0
+  m_Name: meta_tutorial_step1_reward_amount
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4904753423973001070
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7234349275125695308}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7130719124635069170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7234349275125695308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "+{0:0} \u0430\u043B\u043C\u0430\u0437\u043E\u0432"
+    Object: {fileID: 0}
+  - Language: English
+    Text: +{0:0} diamonds
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "+{0:0} \u0430\u043B\u043C\u0430\u0437\u0456\u0432"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: +{0:0} diamantes
+    Object: {fileID: 0}
+--- !u!1 &7351714705784095956
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7676915268665403892}
+  - component: {fileID: 1552249343651918988}
+  m_Layer: 0
+  m_Name: meta_tutorial_step11_dialog_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7676915268665403892
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7351714705784095956}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1552249343651918988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7351714705784095956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041D\u0443 \u0447\u0442\u043E."
+    Object: {fileID: 0}
+  - Language: English
+    Text: All right.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041D\u0443 \u0449\u043E \u0436."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Muy bien.
+    Object: {fileID: 0}
 --- !u!1 &7373655914060733488
 GameObject:
   m_ObjectHideFlags: 0
@@ -4090,6 +7501,128 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u0438\u0439
       \u043E\u0444\u043B\u0430\u0439\u043D-\u0447\u0430\u0441:"
+    Object: {fileID: 0}
+--- !u!1 &7500017666658910449
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5176467904067875746}
+  - component: {fileID: 3938855929555301109}
+  m_Layer: 0
+  m_Name: meta_tutorial_step10_dialog_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5176467904067875746
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7500017666658910449}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3938855929555301109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7500017666658910449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0412\u044B\u043F\u043E\u043B\u043D\u044F\u0435\u043C \u0437\u0430\u043A\u0430\u0437\u044B
+      \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432."
+    Object: {fileID: 0}
+  - Language: English
+    Text: We complete client orders.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0412\u0438\u043A\u043E\u043D\u0443\u0454\u043C\u043E \u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F
+      \u043A\u043B\u0456\u0454\u043D\u0442\u0456\u0432."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Cumplimos pedidos de clientes.
+    Object: {fileID: 0}
+--- !u!1 &7506341927824502715
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 954110614655094181}
+  - component: {fileID: 3602656638313214188}
+  m_Layer: 0
+  m_Name: meta_tutorial_step8_done_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &954110614655094181
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7506341927824502715}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3602656638313214188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7506341927824502715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u042D\u0442\u043E\u0442 \u0431\u043E\u043D\u0443\u0441 \u0431\u0443\u0434\u0435\u0442
+      \u0440\u0430\u0431\u043E\u0442\u0430\u0442\u044C \u043D\u0430 \u0432\u0441\u0435\u0445
+      \u0431\u0443\u0434\u0443\u0449\u0438\u0445 \u043F\u043B\u0430\u043D\u0435\u0442\u0430\u0445."
+    Object: {fileID: 0}
+  - Language: English
+    Text: This bonus will help every future planet.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0426\u0435\u0439 \u0431\u043E\u043D\u0443\u0441 \u043F\u0440\u0430\u0446\u044E\u0432\u0430\u0442\u0438\u043C\u0435
+      \u043D\u0430 \u0432\u0441\u0456\u0445 \u043C\u0430\u0439\u0431\u0443\u0442\u043D\u0456\u0445
+      \u043F\u043B\u0430\u043D\u0435\u0442\u0430\u0445."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Esta bonificaci\xF3n ayudar\xE1 a todos los planetas futuros."
     Object: {fileID: 0}
 --- !u!1 &7509525832485177850
 GameObject:
@@ -4381,6 +7914,71 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u0427\u043E\u0440\u043D\u0430 \u0434\u0456\u0440\u0430"
     Object: {fileID: 0}
+--- !u!1 &7704839356141222367
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6324035207602960441}
+  - component: {fileID: 7126729987203598184}
+  m_Layer: 0
+  m_Name: meta_tutorial_step10_dialog_10
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6324035207602960441
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7704839356141222367}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7126729987203598184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7704839356141222367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0410 \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u044F \u043D\u0430
+      Meta Planet \u043F\u043E\u043C\u043E\u0433\u0430\u044E\u0442 \u0431\u044B\u0441\u0442\u0440\u0435\u0435
+      \u0440\u0430\u0437\u0432\u0438\u0432\u0430\u0442\u044C \u0432\u0441\u0435 \u0431\u0443\u0434\u0443\u0449\u0438\u0435
+      \u043C\u0438\u0440\u044B."
+    Object: {fileID: 0}
+  - Language: English
+    Text: And Meta Planet upgrades help every future world grow faster.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0410 \u043F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F \u043D\u0430
+      Meta Planet \u0434\u043E\u043F\u043E\u043C\u0430\u0433\u0430\u044E\u0442\u044C
+      \u0448\u0432\u0438\u0434\u0448\u0435 \u0440\u043E\u0437\u0432\u0438\u0432\u0430\u0442\u0438
+      \u0432\u0441\u0456 \u043C\u0430\u0439\u0431\u0443\u0442\u043D\u0456 \u0441\u0432\u0456\u0442\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Y las mejoras de Meta Planet ayudan a todos los mundos futuros a crecer
+      m\xE1s r\xE1pido."
+    Object: {fileID: 0}
 --- !u!1 &7706396540953783362
 GameObject:
   m_ObjectHideFlags: 0
@@ -4439,6 +8037,125 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0412\u043E\u0434\u043E\u043D\u0430\u043F\u0456\u0440\u043D\u0430 \u0432\u0435\u0436\u0430"
+    Object: {fileID: 0}
+--- !u!1 &7724526357042016771
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6285468871848132268}
+  - component: {fileID: 7653356370156829182}
+  m_Layer: 0
+  m_Name: meta_tutorial_step9_dialog_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6285468871848132268
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7724526357042016771}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7653356370156829182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7724526357042016771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0412\u044B \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u0442\u0435
+      \u0437\u0430\u043A\u0430\u0437\u044B \u043D\u0430 \u0441\u043E\u0437\u0434\u0430\u043D\u0438\u0435
+      \u043F\u043B\u0430\u043D\u0435\u0442?"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Do you accept orders for planet creation?
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0412\u0438 \u043F\u0440\u0438\u0439\u043C\u0430\u0454\u0442\u0435 \u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F
+      \u043D\u0430 \u0441\u0442\u0432\u043E\u0440\u0435\u043D\u043D\u044F \u043F\u043B\u0430\u043D\u0435\u0442?"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "\xBFAceptan pedidos para crear planetas?"
+    Object: {fileID: 0}
+--- !u!1 &7755955662459426603
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3755454561928120628}
+  - component: {fileID: 2522204919133834438}
+  m_Layer: 0
+  m_Name: meta_tutorial_step9_dialog_9
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3755454561928120628
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7755955662459426603}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2522204919133834438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7755955662459426603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041C\u0435\u043D\u044F \u0442\u043E\u0436\u0435."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Me too.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041C\u0435\u043D\u0435 \u0442\u0435\u0436."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "A m\xED tambi\xE9n."
     Object: {fileID: 0}
 --- !u!1 &7842044333228837078
 GameObject:
@@ -4556,6 +8273,64 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u041D\u0430\u043B\u0430\u0448\u0442\u0443\u0432\u0430\u043D\u043D\u044F"
     Object: {fileID: 0}
+--- !u!1 &7932760687155825327
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9098847103282299563}
+  - component: {fileID: 5254305756219539135}
+  m_Layer: 0
+  m_Name: meta_tutorial_step11_dialog_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9098847103282299563
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7932760687155825327}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5254305756219539135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7932760687155825327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0422\u0435\u043E\u0440\u0438\u044F \u0437\u0430\u043A\u043E\u043D\u0447\u0438\u043B\u0430\u0441\u044C."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Theory is over.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0422\u0435\u043E\u0440\u0456\u044F \u0437\u0430\u043A\u0456\u043D\u0447\u0438\u043B\u0430\u0441\u044F."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Se acab\xF3 la teor\xEDa."
+    Object: {fileID: 0}
 --- !u!1 &7952650784713504479
 GameObject:
   m_ObjectHideFlags: 0
@@ -4615,6 +8390,69 @@ MonoBehaviour:
     Text: "\u041F\u0440\u0438\u043A\u0440\u0430\u0441\u044C \u0441\u0432\u0456\u0439
       \u0432\u0441\u0435\u0441\u0432\u0456\u0442!"
     Object: {fileID: 0}
+--- !u!1 &8002235402208503795
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1052851391392485501}
+  - component: {fileID: 2559050467369547691}
+  m_Layer: 0
+  m_Name: meta_tutorial_step9_dialog_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1052851391392485501
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8002235402208503795}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2559050467369547691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8002235402208503795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u042D\u0442\u043E \u0431\u0443\u043A\u0432\u0430\u043B\u044C\u043D\u043E
+      \u0435\u0434\u0438\u043D\u0441\u0442\u0432\u0435\u043D\u043D\u0430\u044F \u043F\u0440\u0438\u0447\u0438\u043D\u0430
+      \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043E\u0432\u0430\u043D\u0438\u044F
+      \u044D\u0442\u043E\u0439 \u0441\u0442\u0430\u043D\u0446\u0438\u0438."
+    Object: {fileID: 0}
+  - Language: English
+    Text: That is literally why this station exists.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0426\u0435 \u0431\u0443\u043A\u0432\u0430\u043B\u044C\u043D\u043E \u0454\u0434\u0438\u043D\u0430
+      \u043F\u0440\u0438\u0447\u0438\u043D\u0430 \u0456\u0441\u043D\u0443\u0432\u0430\u043D\u043D\u044F
+      \u0446\u0456\u0454\u0457 \u0441\u0442\u0430\u043D\u0446\u0456\u0457."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Esa es literalmente la raz\xF3n de esta estaci\xF3n."
+    Object: {fileID: 0}
 --- !u!1 &8061117091937001485
 GameObject:
   m_ObjectHideFlags: 0
@@ -4672,6 +8510,68 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u041D\u0430\u0434\u0456\u0441\u043B\u0430\u0442\u0438 \u0432\u0456\u0434\u0433\u0443\u043A"
+    Object: {fileID: 0}
+--- !u!1 &8073988073458996912
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8333793444684043450}
+  - component: {fileID: 6471076968587069864}
+  m_Layer: 0
+  m_Name: meta_tutorial_step9_dialog_5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8333793444684043450
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8073988073458996912}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6471076968587069864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8073988073458996912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041E\u043D\u0438 \u0434\u043E\u043B\u0436\u043D\u044B \u043F\u0440\u043E\u0438\u0437\u0432\u043E\u0434\u0438\u0442\u044C
+      \u0434\u0435\u0442\u0430\u043B\u0438 \u0434\u043B\u044F \u0440\u0435\u043C\u043E\u043D\u0442\u0430
+      \u043C\u043E\u0435\u0433\u043E \u043A\u043E\u0440\u043F\u0443\u0441\u0430."
+    Object: {fileID: 0}
+  - Language: English
+    Text: They must produce parts to repair my frame.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0412\u043E\u043D\u0438 \u043C\u0430\u044E\u0442\u044C \u0432\u0438\u0440\u043E\u0431\u043B\u044F\u0442\u0438
+      \u0434\u0435\u0442\u0430\u043B\u0456 \u0434\u043B\u044F \u0440\u0435\u043C\u043E\u043D\u0442\u0443
+      \u043C\u043E\u0433\u043E \u043A\u043E\u0440\u043F\u0443\u0441\u0443."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Deben fabricar piezas para reparar mi chasis.
     Object: {fileID: 0}
 --- !u!1 &8106190244602424299
 GameObject:
@@ -4731,6 +8631,244 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u041D\u0435\u0436\u0438\u0442\u044C"
     Object: {fileID: 0}
+--- !u!1 &8205595419732414756
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4385203731136976540}
+  - component: {fileID: 3909031629529857116}
+  m_Layer: 0
+  m_Name: meta_tutorial_step0_dialog_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4385203731136976540
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8205595419732414756}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3909031629529857116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8205595419732414756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0417\u0434\u0435\u0441\u044C \u0441\u043E\u0437\u0434\u0430\u044E\u0442\u0441\u044F
+      \u0442\u0435\u0445\u043D\u043E\u043B\u043E\u0433\u0438\u0438 \u0434\u043B\u044F
+      \u0431\u0443\u0434\u0443\u0449\u0438\u0445 \u043F\u043B\u0430\u043D\u0435\u0442."
+    Object: {fileID: 0}
+  - Language: English
+    Text: This is where we build tech for future planets.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0422\u0443\u0442 \u043C\u0438 \u0441\u0442\u0432\u043E\u0440\u044E\u0454\u043C\u043E
+      \u0442\u0435\u0445\u043D\u043E\u043B\u043E\u0433\u0456\u0457 \u0434\u043B\u044F
+      \u043C\u0430\u0439\u0431\u0443\u0442\u043D\u0456\u0445 \u043F\u043B\u0430\u043D\u0435\u0442."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Aqu\xED creamos tecnolog\xEDa para planetas futuros."
+    Object: {fileID: 0}
+--- !u!1 &8232269886006360821
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4362655301511952015}
+  - component: {fileID: 6993280919619636087}
+  m_Layer: 0
+  m_Name: meta_tutorial_video_skip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4362655301511952015
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8232269886006360821}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6993280919619636087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8232269886006360821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u0440\u043E\u043F\u0443\u0441\u0442\u0438\u0442\u044C"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Skip
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u0440\u043E\u043F\u0443\u0441\u0442\u0438\u0442\u0438"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Omitir
+    Object: {fileID: 0}
+--- !u!1 &8267296186950771143
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4234793150336546160}
+  - component: {fileID: 5130397605096308232}
+  m_Layer: 0
+  m_Name: meta_tutorial_step1_dialog_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4234793150336546160
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8267296186950771143}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5130397605096308232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8267296186950771143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u043E\u043A\u0430\u0436\u0443, \u043A\u0443\u0434\u0430 \u0438\u0445
+      \u043C\u043E\u0436\u043D\u043E \u043F\u043E\u0442\u0440\u0430\u0442\u0438\u0442\u044C."
+    Object: {fileID: 0}
+  - Language: English
+    Text: I will show you where to spend them.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u043E\u043A\u0430\u0436\u0443, \u043A\u0443\u0434\u0438 \u0457\u0445
+      \u043C\u043E\u0436\u043D\u0430 \u0432\u0438\u0442\u0440\u0430\u0442\u0438\u0442\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Te ense\xF1ar\xE9 d\xF3nde gastarlos."
+    Object: {fileID: 0}
+--- !u!1 &8325094528726716811
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6952051082376771023}
+  - component: {fileID: 1097565468489550879}
+  m_Layer: 0
+  m_Name: meta_tutorial_step3_toast_added
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6952051082376771023
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8325094528726716811}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1097565468489550879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8325094528726716811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041E\u0431\u044A\u0435\u043A\u0442 \u0434\u043E\u0441\u0442\u0430\u0432\u043B\u0435\u043D"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Object delivered
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041E\u0431'\u0454\u043A\u0442 \u0434\u043E\u0441\u0442\u0430\u0432\u043B\u0435\u043D\u043E"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Objeto entregado
+    Object: {fileID: 0}
 --- !u!1 &8370783289515238962
 GameObject:
   m_ObjectHideFlags: 0
@@ -4788,6 +8926,70 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0445\u0432\u0438\u043B\u0438\u043D"
+    Object: {fileID: 0}
+--- !u!1 &8388062401566049992
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4340890498948699170}
+  - component: {fileID: 5870979370035918208}
+  m_Layer: 0
+  m_Name: meta_tutorial_step11_dialog_5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4340890498948699170
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8388062401566049992}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5870979370035918208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8388062401566049992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u043E\u0441\u0442\u0430\u0440\u0430\u0439\u0441\u044F \u043D\u0435
+      \u0443\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0437\u043E\u043C\u0431\u0438-\u0430\u043F\u043E\u043A\u0430\u043B\u0438\u043F\u0441\u0438\u0441
+      \u0440\u0430\u043D\u044C\u0448\u0435 \u0442\u0440\u0435\u0442\u044C\u0435\u0439
+      \u043F\u043E\u043F\u044B\u0442\u043A\u0438."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Try not to start a zombie apocalypse before the third attempt.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u043E\u0441\u0442\u0430\u0440\u0430\u0439\u0441\u044F \u043D\u0435
+      \u0432\u043B\u0430\u0448\u0442\u0443\u0432\u0430\u0442\u0438 \u0437\u043E\u043C\u0431\u0456-\u0430\u043F\u043E\u043A\u0430\u043B\u0456\u043F\u0441\u0438\u0441
+      \u0440\u0430\u043D\u0456\u0448\u0435 \u0442\u0440\u0435\u0442\u044C\u043E\u0457
+      \u0441\u043F\u0440\u043E\u0431\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Intenta no causar un apocalipsis zombi antes del tercer intento.
     Object: {fileID: 0}
 --- !u!1 &8411358150847241652
 GameObject:
@@ -4855,6 +9057,7 @@ Transform:
   - {fileID: 885532727152549457}
   - {fileID: 616618842110094718}
   - {fileID: 2958620493864219035}
+  - {fileID: 5471790781770985156}
   - {fileID: 4438510162785824663}
   - {fileID: 7486379621374817873}
   - {fileID: 592708173286451529}
@@ -4907,6 +9110,86 @@ Transform:
   - {fileID: 5069490680469492207}
   - {fileID: 8914517348255804487}
   - {fileID: 406275611587202104}
+  - {fileID: 6970875380884452658}
+  - {fileID: 4385203731136976540}
+  - {fileID: 3369930222781213302}
+  - {fileID: 1438068686449495463}
+  - {fileID: 7041673864693621879}
+  - {fileID: 4353756267338604678}
+  - {fileID: 4904753423973001070}
+  - {fileID: 8888970862444732612}
+  - {fileID: 2313739906766386377}
+  - {fileID: 5263395852572219580}
+  - {fileID: 4234793150336546160}
+  - {fileID: 4434877556886964195}
+  - {fileID: 4702889622771456262}
+  - {fileID: 4095294413925365084}
+  - {fileID: 5622537283152718158}
+  - {fileID: 5498843116934376183}
+  - {fileID: 6111464119387260521}
+  - {fileID: 6952051082376771023}
+  - {fileID: 6749387959324059080}
+  - {fileID: 8732280101454927156}
+  - {fileID: 3607812714919980194}
+  - {fileID: 7434763774901459171}
+  - {fileID: 7505073333360930992}
+  - {fileID: 7319956293628617049}
+  - {fileID: 6865699165492275642}
+  - {fileID: 2321321879056709769}
+  - {fileID: 4079999781317162792}
+  - {fileID: 8680514047280070864}
+  - {fileID: 6479780609766107592}
+  - {fileID: 6365463375232943004}
+  - {fileID: 7983984940942246694}
+  - {fileID: 2286165535475179553}
+  - {fileID: 8430123586820297456}
+  - {fileID: 4813542035373515229}
+  - {fileID: 7267328610710355302}
+  - {fileID: 5141802716589927602}
+  - {fileID: 1049841093455729301}
+  - {fileID: 5892200898294337762}
+  - {fileID: 5807624533834926786}
+  - {fileID: 3359241289682072165}
+  - {fileID: 1532342228530474400}
+  - {fileID: 3807852944939699900}
+  - {fileID: 8476657072695726232}
+  - {fileID: 954110614655094181}
+  - {fileID: 5395677283424491910}
+  - {fileID: 7260584608693911774}
+  - {fileID: 6285468871848132268}
+  - {fileID: 4873598142141778547}
+  - {fileID: 1052851391392485501}
+  - {fileID: 5368627083445395895}
+  - {fileID: 8333793444684043450}
+  - {fileID: 8553018480714956489}
+  - {fileID: 4146551778831757852}
+  - {fileID: 3345824778392609633}
+  - {fileID: 3755454561928120628}
+  - {fileID: 4923327860862999018}
+  - {fileID: 8489377019833563983}
+  - {fileID: 2930917267713977378}
+  - {fileID: 5551259484040563954}
+  - {fileID: 1171332340473737122}
+  - {fileID: 91036209633601583}
+  - {fileID: 8834293126813515672}
+  - {fileID: 5176467904067875746}
+  - {fileID: 4781609466235887837}
+  - {fileID: 5206174296628405884}
+  - {fileID: 2235042145150395927}
+  - {fileID: 8618720463024984845}
+  - {fileID: 1631870731672748176}
+  - {fileID: 6324035207602960441}
+  - {fileID: 113115644097382153}
+  - {fileID: 7676915268665403892}
+  - {fileID: 9098847103282299563}
+  - {fileID: 2368271615269956702}
+  - {fileID: 8556779307584280252}
+  - {fileID: 4340890498948699170}
+  - {fileID: 1567086788323004707}
+  - {fileID: 3304319144233696449}
+  - {fileID: 452209210714595014}
+  - {fileID: 4118370152751827552}
+  - {fileID: 4362655301511952015}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4487452411359540208
@@ -4926,6 +9209,248 @@ MonoBehaviour:
   defaultLanguage: English
   saveLoad: 1
   prefabs: []
+--- !u!1 &8437302879992734360
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8553018480714956489}
+  - component: {fileID: 4834412389214207660}
+  m_Layer: 0
+  m_Name: meta_tutorial_step9_dialog_6
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8553018480714956489
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8437302879992734360}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4834412389214207660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8437302879992734360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u0440\u0435\u043A\u0440\u0430\u0441\u043D\u044B\u0439 \u0437\u0430\u043A\u0430\u0437."
+    Object: {fileID: 0}
+  - Language: English
+    Text: A wonderful order.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0427\u0443\u0434\u043E\u0432\u0435 \u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Un pedido excelente.
+    Object: {fileID: 0}
+--- !u!1 &8452360689556658760
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4813542035373515229}
+  - component: {fileID: 5371779972029510703}
+  m_Layer: 0
+  m_Name: meta_tutorial_step6_dialog_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4813542035373515229
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8452360689556658760}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5371779972029510703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8452360689556658760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0418\u043C\u0435\u043D\u043D\u043E \u0437\u0434\u0435\u0441\u044C \u043D\u0430\u0447\u0438\u043D\u0430\u0435\u0442\u0441\u044F
+      \u043D\u0430\u0441\u0442\u043E\u044F\u0449\u0438\u0439 \u043F\u0440\u043E\u0433\u0440\u0435\u0441\u0441."
+    Object: {fileID: 0}
+  - Language: English
+    Text: This is where real progress begins.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0421\u0430\u043C\u0435 \u0442\u0443\u0442 \u043F\u043E\u0447\u0438\u043D\u0430\u0454\u0442\u044C\u0441\u044F
+      \u0441\u043F\u0440\u0430\u0432\u0436\u043D\u0456\u0439 \u043F\u0440\u043E\u0433\u0440\u0435\u0441."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Aqu\xED empieza el progreso de verdad."
+    Object: {fileID: 0}
+--- !u!1 &8540844767869329726
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6970875380884452658}
+  - component: {fileID: 865377135628446788}
+  m_Layer: 0
+  m_Name: meta_tutorial_step0_dialog_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6970875380884452658
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8540844767869329726}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &865377135628446788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8540844767869329726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0414\u043E\u0431\u0440\u043E \u043F\u043E\u0436\u0430\u043B\u043E\u0432\u0430\u0442\u044C
+      \u0432 \u043C\u043E\u0439 \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439
+      \u0446\u0435\u043D\u0442\u0440!"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Welcome to my research center!
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041B\u0430\u0441\u043A\u0430\u0432\u043E \u043F\u0440\u043E\u0441\u0438\u043C\u043E
+      \u0434\u043E \u043C\u043E\u0433\u043E \u0434\u043E\u0441\u043B\u0456\u0434\u043D\u0438\u0446\u044C\u043A\u043E\u0433\u043E
+      \u0446\u0435\u043D\u0442\u0440\u0443!"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Bienvenido a mi centro de investigaci\xF3n."
+    Object: {fileID: 0}
+--- !u!1 &8547437707391144853
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8430123586820297456}
+  - component: {fileID: 5712392800036623418}
+  m_Layer: 0
+  m_Name: meta_tutorial_step6_dialog_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8430123586820297456
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8547437707391144853}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5712392800036623418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8547437707391144853}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0423\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u044F \u0432\u043B\u0438\u044F\u044E\u0442
+      \u043D\u0430 \u0432\u0441\u0435 \u0431\u0443\u0434\u0443\u0449\u0438\u0435
+      \u043F\u043B\u0430\u043D\u0435\u0442\u044B."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Upgrades affect every future planet.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F \u0432\u043F\u043B\u0438\u0432\u0430\u044E\u0442\u044C
+      \u043D\u0430 \u0432\u0441\u0456 \u043C\u0430\u0439\u0431\u0443\u0442\u043D\u0456
+      \u043F\u043B\u0430\u043D\u0435\u0442\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Las mejoras afectan a todos los planetas futuros.
+    Object: {fileID: 0}
 --- !u!1 &8668166557699906286
 GameObject:
   m_ObjectHideFlags: 0
@@ -4983,6 +9508,122 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0411\u0443\u0434\u0456\u0432\u043B\u0456"
+    Object: {fileID: 0}
+--- !u!1 &8676196792551543306
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2313739906766386377}
+  - component: {fileID: 395332117777754512}
+  m_Layer: 0
+  m_Name: meta_tutorial_step1_dialog_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2313739906766386377
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8676196792551543306}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &395332117777754512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8676196792551543306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0411\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u044B\u0435 \u0430\u043B\u043C\u0430\u0437\u044B."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Free diamonds.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0411\u0435\u0437\u043A\u043E\u0448\u0442\u043E\u0432\u043D\u0456 \u0430\u043B\u043C\u0430\u0437\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Diamantes gratis.
+    Object: {fileID: 0}
+--- !u!1 &8807753850815856956
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3807852944939699900}
+  - component: {fileID: 4467501106617092788}
+  m_Layer: 0
+  m_Name: meta_tutorial_step8_toast_upgraded
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3807852944939699900
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8807753850815856956}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4467501106617092788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8807753850815856956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0414\u043E\u0445\u043E\u0434 \u043F\u043B\u0430\u043D\u0435\u0442 +10%"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Planet income +10%
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0414\u043E\u0445\u0456\u0434 \u043F\u043B\u0430\u043D\u0435\u0442 +10%"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Ingresos de planetas +10%
     Object: {fileID: 0}
 --- !u!1 &8873531916351792593
 GameObject:
@@ -5043,6 +9684,127 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u0422\u0438 \u0431\u0443\u0432(\u043B\u0430) \u0432\u0456\u0434\u0441\u0443\u0442\u043D\u0456\u0439(\u044F)
       \u043F\u0440\u043E\u0442\u044F\u0433\u043E\u043C"
+    Object: {fileID: 0}
+--- !u!1 &8907358139533618278
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4923327860862999018}
+  - component: {fileID: 5931539336702639977}
+  m_Layer: 0
+  m_Name: meta_tutorial_step9_dialog_10
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4923327860862999018
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8907358139533618278}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5931539336702639977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8907358139533618278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041D\u043E \u043E\u0431\u044B\u0447\u043D\u043E \u0443\u0436\u0435 \u0441\u043B\u0438\u0448\u043A\u043E\u043C
+      \u043F\u043E\u0437\u0434\u043D\u043E \u0447\u0442\u043E-\u043B\u0438\u0431\u043E
+      \u043C\u0435\u043D\u044F\u0442\u044C."
+    Object: {fileID: 0}
+  - Language: English
+    Text: But usually it is already too late to change anything.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0410\u043B\u0435 \u0437\u0430\u0437\u0432\u0438\u0447\u0430\u0439 \u0432\u0436\u0435
+      \u0437\u0430\u043F\u0456\u0437\u043D\u043E \u0449\u043E\u0441\u044C \u0437\u043C\u0456\u043D\u044E\u0432\u0430\u0442\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Pero normalmente ya es tarde para cambiar nada.
+    Object: {fileID: 0}
+--- !u!1 &8920616785284928020
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7434763774901459171}
+  - component: {fileID: 542832546520989316}
+  m_Layer: 0
+  m_Name: meta_tutorial_step5_dialog_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7434763774901459171
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8920616785284928020}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &542832546520989316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8920616785284928020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0422\u0435\u043F\u0435\u0440\u044C \u0432\u044B\u0431\u0435\u0440\u0435\u043C
+      \u0432\u043D\u0435\u0448\u043D\u0438\u0439 \u0432\u0438\u0434."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Now let us choose the look.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0422\u0435\u043F\u0435\u0440 \u0432\u0438\u0431\u0435\u0440\u0435\u043C\u043E
+      \u0437\u043E\u0432\u043D\u0456\u0448\u043D\u0456\u0439 \u0432\u0438\u0433\u043B\u044F\u0434."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Ahora elegiremos el aspecto.
     Object: {fileID: 0}
 --- !u!1 &8928117710933690583
 GameObject:
@@ -5162,6 +9924,64 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u0411\u0443\u0434\u0438\u043D\u043A\u0438"
     Object: {fileID: 0}
+--- !u!1 &8955506816677004604
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 452209210714595014}
+  - component: {fileID: 2804422627831601345}
+  m_Layer: 0
+  m_Name: meta_tutorial_step11_contract_button
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &452209210714595014
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8955506816677004604}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2804422627831601345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8955506816677004604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041D\u0430\u0447\u0430\u0442\u044C \u0440\u0430\u0431\u043E\u0442\u0443"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Start Work
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u043E\u0447\u0430\u0442\u0438 \u0440\u043E\u0431\u043E\u0442\u0443"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Empezar
+    Object: {fileID: 0}
 --- !u!1 &8974802354936179325
 GameObject:
   m_ObjectHideFlags: 0
@@ -5230,6 +10050,129 @@ MonoBehaviour:
       \u0442\u0432\u043E\u0457 \u0442\u0432\u043E\u0440\u0456\u043D\u043D\u044F \u0437\u043C\u043E\u0436\u0443\u0442\u044C
       \u043F\u0440\u0438\u043D\u043E\u0441\u0438\u0442\u0438 \u0434\u043E\u0445\u0456\u0434
       \u0431\u0435\u0437 \u0442\u0432\u043E\u0433\u043E \u0432\u0442\u0440\u0443\u0447\u0430\u043D\u043D\u044F."
+    Object: {fileID: 0}
+--- !u!1 &9048473871830783429
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4702889622771456262}
+  - component: {fileID: 1102172530248533634}
+  m_Layer: 0
+  m_Name: meta_tutorial_step2_dialog_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4702889622771456262
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9048473871830783429}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1102172530248533634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9048473871830783429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041E\u043D\u0438 \u043F\u043E\u0437\u0432\u043E\u043B\u044F\u044E\u0442
+      \u043C\u0435\u043D\u044F\u0442\u044C \u0432\u043D\u0435\u0448\u043D\u0438\u0439
+      \u0432\u0438\u0434 \u0441\u0442\u0430\u043D\u0446\u0438\u0438."
+    Object: {fileID: 0}
+  - Language: English
+    Text: They change how the station looks.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0412\u043E\u043D\u0438 \u0437\u043C\u0456\u043D\u044E\u044E\u0442\u044C
+      \u0432\u0438\u0433\u043B\u044F\u0434 \u0441\u0442\u0430\u043D\u0446\u0456\u0457."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Cambian el aspecto de la estaci\xF3n."
+    Object: {fileID: 0}
+--- !u!1 &9124211883585281471
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2368271615269956702}
+  - component: {fileID: 351297971343517922}
+  m_Layer: 0
+  m_Name: meta_tutorial_step11_dialog_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2368271615269956702
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9124211883585281471}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &351297971343517922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9124211883585281471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u043E\u0440\u0430 \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C,
+      \u0447\u0442\u043E \u0443 \u0442\u0435\u0431\u044F \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u0441\u044F
+      \u043D\u0430 \u043F\u0440\u0430\u043A\u0442\u0438\u043A\u0435."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Time to see what you can do in practice.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0427\u0430\u0441 \u043F\u043E\u0431\u0430\u0447\u0438\u0442\u0438, \u0449\u043E
+      \u0432 \u0442\u0435\u0431\u0435 \u0432\u0438\u0439\u0434\u0435 \u043D\u0430
+      \u043F\u0440\u0430\u043A\u0442\u0438\u0446\u0456."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Hora de ver qu\xE9 puedes hacer en la pr\xE1ctica."
     Object: {fileID: 0}
 --- !u!1001 &1128381588218093397
 PrefabInstance:

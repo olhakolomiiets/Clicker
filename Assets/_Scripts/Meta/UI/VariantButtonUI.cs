@@ -15,14 +15,23 @@ public class VariantButtonUI : MonoBehaviour
     private MetaVariantItemController itemController;
     private bool isActive;
     private bool isBought;
+    public bool IsBought => isBought;
 
     private double price;
     public double Price => price;
     [SerializeField] private Button button;
+    public GameObject BuyButtonGameObject => button != null ? button.gameObject : null;
 
     public event Action<double> OnBuyButtonClicked;
+    private Func<double, bool> _tryPurchase;
 
-    public void Init(ItemVariant variant, int idx, MetaVariantItemController ctrl, bool active, bool bought)
+    public void Init(
+        ItemVariant variant,
+        int idx,
+        MetaVariantItemController ctrl,
+        bool active,
+        bool bought,
+        Func<double, bool> tryPurchase = null)
     {
         itemData = variant;
         index = idx;
@@ -32,6 +41,7 @@ public class VariantButtonUI : MonoBehaviour
         price = variant.Price;
         isActive = active;
         isBought = bought;
+        _tryPurchase = tryPurchase;
 
         if (!isBought)
         {
@@ -104,7 +114,9 @@ public class VariantButtonUI : MonoBehaviour
         if (itemController.IsVariantBought(index) == false)
         {
             OnBuyButtonClicked?.Invoke(price);
-            itemController.OnBuyVariant(index);
+
+            if (_tryPurchase == null || _tryPurchase(price))
+                itemController.OnBuyVariant(index);
         }
 
         if (itemController.IsVariantBought(index) == true && itemController.IsVariantActive(index) == false)

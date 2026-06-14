@@ -6,6 +6,7 @@ using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
+using PlanetBuilder.Messages;
 
 public class MetaUIController : MonoBehaviour
 {
@@ -20,6 +21,23 @@ public class MetaUIController : MonoBehaviour
     [Header("Creation")]
     [SerializeField] private RectTransform _variantItemsParent;
     [SerializeField] private Button _variantButton;
+    public GameObject ToggleButtonGameObject
+    {
+        get
+        {
+            if (_toggleButton == null)
+                return null;
+
+            Button toggleButton = _toggleButton.GetComponent<Button>();
+
+            if (toggleButton == null)
+                toggleButton = _toggleButton.GetComponentInChildren<Button>(true);
+
+            return toggleButton != null ? toggleButton.gameObject : _toggleButton.gameObject;
+        }
+    }
+    public GameObject VariantTabButtonGameObject => _variantButton != null ? _variantButton.gameObject : null;
+    public GameObject UpgradeTabButtonGameObject => _upgradeButton != null ? _upgradeButton.gameObject : null;
 
     [Header("Upgrade")]
     [SerializeField] private RectTransform _upgradeItemsParent;
@@ -45,6 +63,9 @@ public class MetaUIController : MonoBehaviour
     [SerializeField] private float zoomDuration;
 
     private MetaObjectPlaceRotator _objectPlaceRotator;
+    private int _currentShopTabIndex = -1;
+
+    public bool IsUpgradeTabOpen => isDisplayed && _currentShopTabIndex == 1;
 
     public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnStorePanelDisplayed;
     public event Action<int> OnShowUpgradeOrShopTutorial, OnLoadTutorialStep;
@@ -54,6 +75,11 @@ public class MetaUIController : MonoBehaviour
     {
         _planetRotator = _planet.GetComponent<DragRotateGPT>();
         _objectPlaceRotator = _planet.GetComponent<MetaObjectPlaceRotator>();
+    }
+
+    private void OnDisable()
+    {
+        SetShopOpen(false);
     }
 
     public void OpenShop()
@@ -74,6 +100,7 @@ public class MetaUIController : MonoBehaviour
             _shopPanel.DOAnchorPosY(_panelTopPosY, _tweenDuration);
             _toggleButton.DORotate(new Vector3(0, 0, 180), _tweenDuration);
             isDisplayed = true;
+            SetShopOpen(true);
             _planetRotator.enabled = false;
             ShopsToggle(2);
         }            
@@ -92,6 +119,7 @@ public class MetaUIController : MonoBehaviour
             _shopPanel.DOAnchorPosY(_panelMiddlePosY, _tweenDuration);
             _toggleButton.DORotate(new Vector3(0, 0, 0), _tweenDuration);
             isDisplayed = false;
+            SetShopOpen(false);
             SetStartPos();
             if (!_objectPlaceRotator.isRotating)
             {
@@ -114,6 +142,7 @@ public class MetaUIController : MonoBehaviour
             _shopPanel.DOAnchorPosY(_panelTopPosY, _tweenDuration);
             _toggleButton.DORotate(new Vector3(0, 0, 180), _tweenDuration);
             isDisplayed = true;
+            SetShopOpen(true);
             ColorToggle(0);
             _planetRotator.enabled = false;
         }
@@ -177,6 +206,7 @@ public class MetaUIController : MonoBehaviour
         Vector3 visiblePos = new Vector3(0, -350, 0);
         Vector3 hidePos = new Vector3(0, -1130, 0);
 
+        _currentShopTabIndex = index;
         _variantItemsParent.DOAnchorPos(index == 0 ? visiblePos : hidePos, 0.25f);
         _upgradeItemsParent.DOAnchorPos(index == 1 ? visiblePos : hidePos, 0.25f);
         _shopItemsParent.DOAnchorPos(index == 2 ? visiblePos : hidePos, 0.25f);
@@ -200,8 +230,17 @@ public class MetaUIController : MonoBehaviour
     }
     private void SetStartPos()
     {
+        _currentShopTabIndex = -1;
         _variantItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
         _upgradeItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
         _shopItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
+    }
+
+    private static void SetShopOpen(bool isOpen)
+    {
+        MessageManager messageManager = MessageManager.Instance;
+
+        if (messageManager != null)
+            messageManager.SetShopOpen(isOpen);
     }
 }

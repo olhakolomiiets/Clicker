@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 659a60cc9e821d94e87d7dae96de7d7e, type: 3}
+  m_Name: CharacterDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::PlanetBuilder.Messages.Characters.CharacterDatabase
+  _characters:
+  - _speakerId: 1
+    _characterName: Professor
+    _portraits:
+    - _mood: 0
+      _prefab: {fileID: 2274218897106772520, guid: 8a9ae065eafda5245b3b91674fd9f767, type: 3}
+    - _mood: 1
+      _prefab: {fileID: 2274218897106772520, guid: 000059c7e0e1bf3468f5d97336bed029, type: 3}
+    - _mood: 2
+      _prefab: {fileID: 2274218897106772520, guid: dfddd8700bbf9b14b97e55a4cdffd68e, type: 3}
+    - _mood: 3
+      _prefab: {fileID: 2274218897106772520, guid: 8ceee60368cf7e341b85802cea3ba573, type: 3}
+  - _speakerId: 2
+    _characterName: Robot
+    _portraits:
+    - _mood: 2
+      _prefab: {fileID: 5542102677587356551, guid: 3c0efd11d45665a43a4de15a0e3f0f7f, type: 3}
+    - _mood: 6
+      _prefab: {fileID: 5542102677587356551, guid: 3c0efd11d45665a43a4de15a0e3f0f7f, type: 3}

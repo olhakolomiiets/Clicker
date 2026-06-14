@@ -11,7 +11,8 @@ public class MetaPlanetManager : MonoBehaviour
 
     [Header("Score Panel")]
     [SerializeField] private ScorePanel _diamonds;
-    [SerializeField] private GameObject _objectPrefab;
+    [SerializeField] private GameObject _variantObjectPrefab;
+    [SerializeField] private GameObject _upgradeObjectPrefab;
 
     [Header("Variant Planet Objects")]
     [SerializeField] private RectTransform _variantObjectParent;
@@ -23,10 +24,20 @@ public class MetaPlanetManager : MonoBehaviour
     [SerializeField] private RectTransform _upgradeObjectParent;
     [SerializeField] private List<MetaUpgradeItemController> _upgradeControllerList;
     [SerializeField] private List<MetaUpgradeItemData> _upgradeItemDataList;
-    private List<MetaObjectController> _upgradeObjectsList = new();
+    private List<MetaUpgradeObjectController> _upgradeObjectsList = new();
 
     public event Action<int> OnVariantBuyButonClicked, OnUpgradeBuyButonClicked, OnVariantObjectAddButtonClicked, OnUpgradeObjectAddButtonClicked;
     public event Action OnVariantOpened, OnUpgradeOpened;
+
+    public GameObject FirstVariantObjectButton =>
+        _variantObjectsList.Count > 0 && _variantObjectsList[0] != null
+            ? _variantObjectsList[0].BuyButtonGameObject
+            : null;
+
+    public GameObject FirstUpgradeObjectButton =>
+        _upgradeObjectsList.Count > 0 && _upgradeObjectsList[0] != null
+            ? _upgradeObjectsList[0].BuyButtonGameObject
+            : null;
 
 
     public void Initialize(GeneralGameData generalData)
@@ -38,6 +49,11 @@ public class MetaPlanetManager : MonoBehaviour
         ConnectRulesToUI();
 
         UpdateUI(_generalGameData, null);
+    }
+
+    void Start()
+    {
+        UpdatePanelUI();
     }
 
     public void PrepareData(GeneralGameData generalData)
@@ -58,7 +74,7 @@ public class MetaPlanetManager : MonoBehaviour
         _metaGameRules.OnUpdateGameData += UpdateUI;
 
         foreach (var controller in _variants)
-            controller.OnVariantBuyButonClicked += _metaGameRules.HandleVariantItem;
+            controller.SetMetaGameRules(_metaGameRules);
     }
 
     public void PrepareVariantUI()
@@ -67,7 +83,7 @@ public class MetaPlanetManager : MonoBehaviour
 
         for (int i = 0; i < _variantItemDataList.Count; i++)
         {
-            MetaObjectController itemController = Instantiate(_objectPrefab, _variantObjectParent).GetComponent<MetaObjectController>();
+            MetaObjectController itemController = Instantiate(_variantObjectPrefab, _variantObjectParent).GetComponent<MetaObjectController>();
             _variantObjectsList.Add(itemController);
             itemController.PrepareVariantObject(_variantItemDataList[i].Icon, _variantItemDataList[i].ItemName);
 
@@ -88,10 +104,11 @@ public class MetaPlanetManager : MonoBehaviour
 
         for (int i = 0; i < _upgradeItemDataList.Count; i++)
         {
-            MetaObjectController itemController = Instantiate(_objectPrefab, _upgradeObjectParent).GetComponent<MetaObjectController>();
+            MetaUpgradeObjectController itemController = Instantiate(_upgradeObjectPrefab, _upgradeObjectParent).GetComponent<MetaUpgradeObjectController>();
             _upgradeObjectsList.Add(itemController);
             itemController.PrepareUpgradeObject(_upgradeItemDataList[i].Icon, _upgradeItemDataList[i].ItemName);
 
+            _upgradeControllerList[i].SetMetaGameRules(_metaGameRules);
             _upgradeControllerList[i].SetMetaObjectController(itemController);
 
             itemController.OnObjectAddButtonClicked += UpdatePanelUI;
@@ -147,8 +164,6 @@ public class MetaPlanetManager : MonoBehaviour
 
         for (int i = 0; i < _upgradeObjectsList.Count; i++)
         {
-            _upgradeObjectsList[i].SetItemCount(_variants[i].ItemCount, _variantItemDataList[i].Quantity);
-
             _upgradeObjectsList[i].DisableBuyPanel(_variants[i].ItemCount >= 0 && _variants[i].ItemCount < _variantItemDataList[i].Quantity);
         }
     }

@@ -5,15 +5,24 @@ using UnityEngine.UI;
 public class UpgradePanelUI : MonoBehaviour
 {
     public TextMeshProUGUI LevelText, BonusDescription, CurrentBonusText, NextBonusText, NextBonusDescription, CostText;
+    public Image icon;
     public Button UpgradeButton;
 
     private MetaUpgradeItemController ctrl;
+
+    private DragRotateGPT _planetRotator;
+
+    void OnEnable()
+    {
+        _planetRotator = FindAnyObjectByType<DragRotateGPT>();
+    }
 
     public void Open(MetaUpgradeItemController controller)
     {
         ctrl = controller;
         Refresh();
         gameObject.SetActive(true);
+        _planetRotator.enabled = false;
         UpgradeButton.onClick.RemoveAllListeners();
         UpgradeButton.onClick.AddListener(OnUpgradeClicked);
     }
@@ -31,7 +40,16 @@ public class UpgradePanelUI : MonoBehaviour
         var lvl = ctrl.currentLevel;
         var data = ctrl.data.Upgrades;
 
-        LevelText.text = $"Level: {lvl}/{data.Count}";
+        if (icon != null && data != null && lvl >= 0 && lvl < data.Count)
+        {
+            int iconIndex = lvl < data.Count - 1
+                ? lvl + 1
+                : lvl;
+
+            icon.sprite = data[iconIndex].ItemIcon;
+        }
+
+        LevelText.text = $"Level: {lvl + 1}/{data.Count}";
         CurrentBonusText.text = $"Bonus: {data[lvl].BonusValue}";
         BonusDescription.text = data[lvl].BonusDescription;
 
@@ -59,6 +77,7 @@ public class UpgradePanelUI : MonoBehaviour
 
     public void Close()
     {
+        _planetRotator.enabled = true;
         gameObject.SetActive(false);
     }
 }

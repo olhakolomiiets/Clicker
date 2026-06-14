@@ -12,7 +12,9 @@ public class StandardPlanetMode : MonoBehaviour, IPlanetMode
     [SerializeField] private List<UpgradeItemData> _upgradeItemsDataList;
     [SerializeField] private List<int> _upgradeItemCount = new();
 
-    [SerializeField] private CurrencyUI _currencyUI;
+    [SerializeField] private PassiveIncome _passiveIncome;
+    [SerializeField] private LevelController _levelController;
+
 
     private GameData _gameData;
     private GeneralGameData _generalGameData;
@@ -79,7 +81,9 @@ public class StandardPlanetMode : MonoBehaviour, IPlanetMode
         _gameRules.OnUpdateData += _gameUI.UpdateUI;
         _gameRules.OnUpdateUpgradeData += _gameUI.UpdateUpgradeUI;
 
-        _gameRules.OnUpdateGameData += _currencyUI.UpdateCurrency;
+        _gameRules.OnUpdateGameData += _passiveIncome.PrepareGameData;
+        _gameRules.OnUpdateGameData += _levelController.PrepareGameData;
+
     }
 
     public void AddPurchasedPack(double coins, double diamonds)

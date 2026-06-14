@@ -235,6 +235,7 @@ GameObject:
   - component: {fileID: 1175807079346709979}
   - component: {fileID: 1175807079346709957}
   - component: {fileID: 7808025645725751972}
+  - component: {fileID: 7765260545564763287}
   - component: {fileID: 1175807079346709956}
   m_Layer: 5
   m_Name: GoogleReviewUI
@@ -287,6 +288,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d670541e9cda5864fb034fd7a5d7519d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7765260545564763287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1175807079346709978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a28ecb879b4c1484882ba19b84e9f5e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlanetBuilder.Messages.MessageDisplayModalBlocker
 --- !u!114 &1175807079346709956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -746,6 +759,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -989,6 +1003,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1361,7 +1376,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: No
+  m_Text: "\u041D\u0435\u0442"
 --- !u!114 &1175807080463892963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1917,7 +1932,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Yes
+  m_Text: "\u0414\u0430"
 --- !u!114 &1175807080874333536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2108,16 +2123,14 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Thank you for playing our game!
-
-
-
-    We appreciate your opinion and
-    would be glad if you leave a review about our app.
-
-
-
-    Did you like our game?'
+  m_Text: "\u0421\u043F\u0430\u0441\u0438\u0431\u043E, \u0447\u0442\u043E \u0438\u0433\u0440\u0430\u0435\u0442\u0435
+    \u0432 \u043D\u0430\u0448\u0443 \u0438\u0433\u0440\u0443!\r\n\r\n\u041C\u044B
+    \u0446\u0435\u043D\u0438\u043C \u0432\u0430\u0448\u0435 \u043C\u043D\u0435\u043D\u0438\u0435
+    \u0438 \u0431\u0443\u0434\u0435\u043C \u0440\u0430\u0434\u044B, \u0435\u0441\u043B\u0438
+    \u0432\u044B \u043E\u0441\u0442\u0430\u0432\u0438\u0442\u0435 \u043E\u0442\u0437\u044B\u0432
+    \u043E \u043D\u0430\u0448\u0435\u043C \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0438.\r\n\r\n\u0412\u0430\u043C
+    \u043F\u043E\u043D\u0440\u0430\u0432\u0438\u043B\u0430\u0441\u044C \u043D\u0430\u0448\u0430
+    \u0438\u0433\u0440\u0430?"
 --- !u!114 &1175807080936408387
 MonoBehaviour:
   m_ObjectHideFlags: 0

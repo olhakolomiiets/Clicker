@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bba064e2af808704681018f055fd5ffa, type: 3}
+  m_Name: DroneTree
+  m_EditorClassIdentifier: 
+  ItemName: UpgradeHouse_2
+  Price: 0
+  BoxPrefab: {fileID: 4506726933688281713, guid: fe173ee7422ad9849b0171e211e1e77c, type: 3}
+  LevelPrefabs: []
+  Icon: {fileID: 5454154466566246325, guid: e5dbefc30177b6b44b1bd4d4e9d7ae47, type: 3}
+  Upgrades:
+  - LevelName: Level 1
+    UpgradeCost: 1
+    BonusValue: 5
+    BonusDescription: +5 coins
+    ItemIcon: {fileID: 5454154466566246325, guid: e5dbefc30177b6b44b1bd4d4e9d7ae47, type: 3}
+  - LevelName: Level 2
+    UpgradeCost: 2
+    BonusValue: 10
+    BonusDescription: +10 coins
+    ItemIcon: {fileID: 3947505900017948565, guid: e5dbefc30177b6b44b1bd4d4e9d7ae47, type: 3}
+  - LevelName: Level 3
+    UpgradeCost: 3
+    BonusValue: 15
+    BonusDescription: +15 coins
+    ItemIcon: {fileID: 4652196793108687434, guid: e5dbefc30177b6b44b1bd4d4e9d7ae47, type: 3}

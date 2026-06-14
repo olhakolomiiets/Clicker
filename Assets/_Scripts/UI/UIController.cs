@@ -6,6 +6,7 @@ using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
+using PlanetBuilder.Messages;
 
 public class UIController : MonoBehaviour
 {
@@ -56,6 +57,11 @@ public class UIController : MonoBehaviour
         _objectPlaceRotator = _planet.GetComponent<ObjectPlaceRotator>();
     }
 
+    private void OnDisable()
+    {
+        SetShopOpen(false);
+    }
+
     public void OpenShop()
     {
         if (isDisplayed)
@@ -74,6 +80,7 @@ public class UIController : MonoBehaviour
             _shopPanel.DOAnchorPosY(_panelTopPosY, _tweenDuration);
             _toggleButton.DORotate(new Vector3(0, 0, 180), _tweenDuration);
             isDisplayed = true;
+            SetShopOpen(true);
             _planetRotator.enabled = false;
             ShopsToggle(2);
         }            
@@ -92,6 +99,7 @@ public class UIController : MonoBehaviour
             _shopPanel.DOAnchorPosY(_panelMiddlePosY, _tweenDuration);
             _toggleButton.DORotate(new Vector3(0, 0, 0), _tweenDuration);
             isDisplayed = false;
+            SetShopOpen(false);
             SetStartPos();
             if (!_objectPlaceRotator.isRotating)
             {
@@ -121,6 +129,7 @@ public class UIController : MonoBehaviour
             _shopPanel.DOAnchorPosY(_panelTopPosY, _tweenDuration);
             _toggleButton.DORotate(new Vector3(0, 0, 180), _tweenDuration);
             isDisplayed = true;
+            SetShopOpen(true);
             ColorToggle(0);
             _planetRotator.enabled = false;
 
@@ -245,5 +254,13 @@ public class UIController : MonoBehaviour
     {
         if (!isDisplayed && step == 5 && state == 1 || !isDisplayed && step == 6 && state == 1)
             OnTutorialNonCompleted.Invoke();
+    }
+
+    private static void SetShopOpen(bool isOpen)
+    {
+        MessageManager messageManager = MessageManager.Instance;
+
+        if (messageManager != null)
+            messageManager.SetShopOpen(isOpen);
     }
 }

@@ -20,11 +20,13 @@ public class MetaVariantsController : MonoBehaviour
     [Header("Variant Object Activator")]
     public MetaObjectController itemController;
     public List<PlanetObject> objectsToActivate = new();
-    [SerializeField] private int itemCount = 0;
+    [SerializeField] private int itemCount;
     public int ItemCount => itemCount;
     [SerializeField] private MetaObjectPlaceRotator objectPlaceRotator;
+    private DragRotateGPT _planetRotator;
 
     private GeneralGameData gameData;
+    private MetaGameRules _metaGameRules;
 
     public event Action OnVariantOpened;
     public event Action<double> OnVariantBuyButonClicked, OnVariantObjectAddButtonClicked;
@@ -36,6 +38,8 @@ public class MetaVariantsController : MonoBehaviour
 
     void OnEnable()
     {
+        _planetRotator = objectPlaceRotator.gameObject.GetComponent<DragRotateGPT>();
+
         objectsToActivate.Clear();
 
         foreach (MetaVariantItemController controller in items)
@@ -55,6 +59,7 @@ public class MetaVariantsController : MonoBehaviour
     {
         _variant = item;
         _variantPanel.SetActive(true);
+        _planetRotator.enabled = false;
 
         for (int i = 0; i < item.Variants.Count; i++)
         {
@@ -62,11 +67,21 @@ public class MetaVariantsController : MonoBehaviour
 
             _variantButtonList.Add(btn);
 
-            btn.Init(item.Variants[i], i, item, item.state[i].isActive, item.state[i].isBought);        
+            btn.Init(
+                item.Variants[i],
+                i,
+                item,
+                item.state[i].isActive,
+                item.state[i].isBought,
+                TryPurchaseVariant);
 
             if (gameData != null) btn.ToggleBuyButton(gameData.Diamonds >= item.Variants[i].Price);
             ConnectVariantEvents(btn);
         }
+
+        float _scrollItemGroupHeight = 165 * item.Variants.Count;
+        _variantItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
+
         _variant.OnSelectVariantItem += UpdateVariantUI;
 
         OnVariantOpened?.Invoke();
@@ -78,6 +93,8 @@ public class MetaVariantsController : MonoBehaviour
             Destroy(t.gameObject);
 
         _variantButtonList.Clear();
+        _variantPanel.SetActive(false);
+        _planetRotator.enabled = true;
     }
 
     public void PrepareData(GeneralGameData data)
@@ -90,6 +107,11 @@ public class MetaVariantsController : MonoBehaviour
     {
         itemController = item;
         itemController.OnObjectAddButtonClicked += ActivateNextObject;
+    }
+
+    public void SetMetaGameRules(MetaGameRules metaGameRules)
+    {
+        _metaGameRules = metaGameRules;
     }
 
     public void UpdateVariantUI()
@@ -112,6 +134,11 @@ public class MetaVariantsController : MonoBehaviour
     private void ConnectVariantEvents(VariantButtonUI variantButton)
     {
         variantButton.OnBuyButtonClicked += (price) => OnVariantBuyButonClicked?.Invoke(price);
+    }
+
+    private bool TryPurchaseVariant(double price)
+    {
+        return _metaGameRules != null && _metaGameRules.TryHandleVariantItem(price);
     }
 
     private void ConnectEvents(int i, MetaObjectController itemController)

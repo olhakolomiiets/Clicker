@@ -6,6 +6,7 @@ using GoogleMobileAds;
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Common;
 using UnityEngine.Events;
+using PlanetBuilder.Messages;
 
 namespace GoogleMobileAds.Sample
 {
@@ -120,18 +121,29 @@ namespace GoogleMobileAds.Sample
             };
             ad.OnAdFullScreenContentOpened += () =>
             {
+                SetAdvertisementOpen(true);
                 Debug.Log("Rewarded ad full screen content opened.");
             };
             ad.OnAdFullScreenContentClosed += () =>
             {
+                SetAdvertisementOpen(false);
                 OnAdClosedEvent.Invoke();
                 Debug.Log("Rewarded ad full screen content closed.");
             };
             ad.OnAdFullScreenContentFailed += (AdError error) =>
             {
+                SetAdvertisementOpen(false);
                 Debug.LogError("Rewarded ad failed to open full screen content with error : "
                     + error);
             };
+        }
+
+        private static void SetAdvertisementOpen(bool isOpen)
+        {
+            MessageManager messageManager = MessageManager.Instance;
+
+            if (messageManager != null)
+                messageManager.SetAdvertisementOpen(isOpen);
         }
     }
 }

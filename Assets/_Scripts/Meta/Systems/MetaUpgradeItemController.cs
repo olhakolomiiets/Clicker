@@ -18,12 +18,14 @@ public class MetaUpgradeItemController : MonoBehaviour
     [SerializeField] private UpgradePanelUI panelUI;
     public UpgradePanelUI PanelUI => panelUI;
 
-    public MetaObjectController itemController;
+    public MetaUpgradeObjectController itemController;
+    private MetaGameRules _metaGameRules;
 
     public List<PlanetObject> objectsToActivate;
     [SerializeField] private int itemCount = 0;
     [SerializeField] private MetaObjectPlaceRotator objectPlaceRotator;
     [HideInInspector] public int currentLevel;
+    [HideInInspector] public Sprite nextIcon;
     public bool isActive;
 
     [Header("Visual Mode")]
@@ -39,6 +41,8 @@ public class MetaUpgradeItemController : MonoBehaviour
     private bool isDragging;
     [SerializeField] private float dragThreshold = 15f;
 
+    public event Action OnUpgradePurchased;
+
     void Awake()
     {
         LoadFromES3();
@@ -50,27 +54,55 @@ public class MetaUpgradeItemController : MonoBehaviour
         BuildInstance();
     }
 
-    public void SetMetaObjectController(MetaObjectController item)
+    public void SetMetaObjectController(MetaUpgradeObjectController item)
     {
         itemController = item;
         itemController.OnObjectAddButtonClicked += InstantiateBoxPrefab;
     }
 
-    public bool CanUpgrade()
+    public void SetMetaGameRules(MetaGameRules metaGameRules)
     {
-        return data != null &&
-               data.Upgrades != null &&
-               data.Upgrades.Count > 0 &&
-               currentLevel < data.Upgrades.Count - 1;
+        _metaGameRules = metaGameRules;
     }
 
-    public void Upgrade()
+    public bool CanUpgrade()
     {
-        if (!CanUpgrade()) return;
+        return TryGetNextUpgradeCost(out double price) &&
+               _metaGameRules != null &&
+               _metaGameRules.CanAfford(price);
+    }
+
+    public bool Upgrade()
+    {
+        if (!TryGetNextUpgradeCost(out double price) ||
+            _metaGameRules == null ||
+            !_metaGameRules.TryHandleUpgradeLevel(price))
+        {
+            return false;
+        }
 
         currentLevel++;
         ApplyLevel(currentLevel);
         SaveToES3();
+        OnUpgradePurchased?.Invoke();
+        return true;
+    }
+
+    public bool TryGetNextUpgradeCost(out double price)
+    {
+        price = 0d;
+
+        if (data == null ||
+            data.Upgrades == null ||
+            data.Upgrades.Count == 0 ||
+            currentLevel < 0 ||
+            currentLevel >= data.Upgrades.Count - 1)
+        {
+            return false;
+        }
+
+        price = data.Upgrades[currentLevel + 1].UpgradeCost;
+        return price >= 0d;
     }
 
     void ApplyLevel(int lvl)

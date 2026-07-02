@@ -1,12 +1,17 @@
 {
   "format_version": 1,
   "project_name": "Planet Builder",
-  "automation_stage": "BOOTSTRAP-01",
+  "automation_stage": "BOOTSTRAP-02",
   "dry_run_default": true,
   "paths": {
     "automation_root": "CodexAutomation",
     "runtime_root": "CodexAutomation/runtime",
-    "reports_root": "CodexAutomation/runtime/reports"
+    "logs_root": "CodexAutomation/runtime/logs",
+    "reports_root": "CodexAutomation/runtime/reports",
+    "results_root": "CodexAutomation/runtime/results",
+    "prompts_root": "CodexAutomation/prompts",
+    "schemas_root": "CodexAutomation/schemas",
+    "tasks_root": "CodexAutomation/tasks"
   },
   "tools": {
     "python_command": "python",
@@ -15,6 +20,16 @@
       "codex.cmd",
       "codex"
     ]
+  },
+  "codex_runner": {
+    "commands": [
+      "codex.cmd",
+      "codex"
+    ],
+    "project_working_directory": ".",
+    "smoke_test_timeout_seconds": 180,
+    "safe_mode": "read_only",
+    "test_task_id": "TEST-001"
   },
   "unity": {
     "project_version_file": "ProjectSettings/ProjectVersion.txt",

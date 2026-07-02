@@ -1,0 +1,51 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "taskId",
+    "unityVersion",
+    "workflowId",
+    "workflowTaskCount",
+    "readOnlyConfirmed",
+    "summary",
+    "filesChanged"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "success"
+      ]
+    },
+    "taskId": {
+      "type": "string",
+      "const": "TEST-001"
+    },
+    "unityVersion": {
+      "type": "string"
+    },
+    "workflowId": {
+      "type": "string",
+      "const": "codex-automation-bootstrap"
+    },
+    "workflowTaskCount": {
+      "type": "integer",
+      "const": 1
+    },
+    "readOnlyConfirmed": {
+      "type": "boolean"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "filesChanged": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0,
+      "maxItems": 0
+    }
+  }
+}

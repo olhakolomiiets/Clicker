@@ -40,8 +40,15 @@ popd >nul
 exit /b 1
 
 :run_orchestrator
+set "ORCHESTRATOR_ARGS=%*"
+if "%ORCHESTRATOR_ARGS%"=="" set "ORCHESTRATOR_ARGS=--dry-run"
 echo Using Python launcher: %PYTHON_LAUNCHER%
-%PYTHON_LAUNCHER% "CodexAutomation\scripts\orchestrator.py" --dry-run
+%PYTHON_LAUNCHER% "CodexAutomation\scripts\orchestrator.py" %ORCHESTRATOR_ARGS%
 set "ORCHESTRATOR_EXIT_CODE=%errorlevel%"
+if not "%ORCHESTRATOR_EXIT_CODE%"=="0" (
+    echo.
+    echo Codex automation exited with code %ORCHESTRATOR_EXIT_CODE%.
+    pause
+)
 popd >nul
 exit /b %ORCHESTRATOR_EXIT_CODE%

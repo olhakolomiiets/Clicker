@@ -163,6 +163,13 @@ def unity_processes() -> list[dict[str, Any]]:
 
 def ensure_runtime_workflow(runtime_path: Path, seed_data: dict[str, Any]) -> bool:
     if runtime_path.exists():
+        try:
+            runtime_data = read_json(runtime_path)
+        except Exception:
+            return False
+        if isinstance(runtime_data, dict) and "id" not in runtime_data and "id" in seed_data:
+            write_json_atomic(runtime_path, seed_data)
+            return True
         return False
     write_json_atomic(runtime_path, seed_data)
     return True
@@ -186,6 +193,7 @@ def ensure_runtime_directories(automation_root: Path) -> list[str]:
     for relative_path in (
         Path("runtime/logs"),
         Path("runtime/reports"),
+        Path("runtime/results"),
         Path("runtime/audits"),
         Path("runtime/generated_tasks"),
     ):
@@ -273,9 +281,10 @@ def run_preflight(context: RepoContext) -> dict[str, Any]:
         state_error = str(exc)
 
     status = git_status(root)
+    stage = config.get("automation_stage", "BOOTSTRAP-01") if isinstance(config, dict) else "BOOTSTRAP-01"
     report: dict[str, Any] = {
         "format_version": 1,
-        "stage": "BOOTSTRAP-01",
+        "stage": stage,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "dry_run": context.dry_run,
         "repository": {
@@ -319,9 +328,9 @@ def run_preflight(context: RepoContext) -> dict[str, Any]:
             "error": state_error,
         },
         "notes": [
-            "Dirty worktree is reported but does not fail BOOTSTRAP-01 preflight.",
-            "Running Unity Editor is reported but does not fail BOOTSTRAP-01 preflight.",
-            "No Codex exec or Unity batchmode command is launched.",
+            "Dirty worktree is reported but does not fail preflight.",
+            "Running Unity Editor is reported but does not fail preflight.",
+            "No Codex exec or Unity batchmode command is launched by dry-run preflight.",
         ],
     }
 

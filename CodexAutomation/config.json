@@ -1,0 +1,23 @@
+{
+  "format_version": 1,
+  "project_name": "Planet Builder",
+  "automation_stage": "BOOTSTRAP-01",
+  "dry_run_default": true,
+  "paths": {
+    "automation_root": "CodexAutomation",
+    "runtime_root": "CodexAutomation/runtime",
+    "reports_root": "CodexAutomation/runtime/reports"
+  },
+  "tools": {
+    "python_command": "python",
+    "git_command": "git",
+    "codex_commands": [
+      "codex.cmd",
+      "codex"
+    ]
+  },
+  "unity": {
+    "project_version_file": "ProjectSettings/ProjectVersion.txt",
+    "hub_editor_root": "C:/Program Files/Unity/Hub/Editor"
+  }
+}

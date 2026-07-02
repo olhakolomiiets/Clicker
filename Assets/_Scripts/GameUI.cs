@@ -54,6 +54,31 @@ public class GameUI : MonoBehaviour
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime,
         OnManagerPurchased;
     public event Action OnTutorialStepCompleted, OnNewObjectPurchased;
+
+    public GameObject GetCreationProgressButtonTarget(int index)
+    {
+        ItemController itemController = GetCreationItemController(index);
+        return itemController != null ? itemController.ProgressButtonTarget : null;
+    }
+
+    public GameObject GetCreationBuyButtonTarget(int index)
+    {
+        ItemController itemController = GetCreationItemController(index);
+        return itemController != null ? itemController.BuyButtonTarget : null;
+    }
+
+    public GameObject GetManagerButtonTarget(int index)
+    {
+        UIManagerController managerController = GetManagerController(index);
+        return managerController != null ? managerController.ManagerButtonTarget : null;
+    }
+
+    public GameObject GetManagerBuyButtonTarget(int index)
+    {
+        UIManagerController managerController = GetManagerController(index);
+        return managerController != null ? managerController.ManagerBuyButtonTarget : null;
+    }
+
     public void PrepareCreationUI(List<ItemData> data)
     {
         _uiCreationItemsList.Clear();
@@ -250,6 +275,22 @@ public class GameUI : MonoBehaviour
         {
             obj.PlanetObjectsToggle();
         }
+    }
+
+    private ItemController GetCreationItemController(int index)
+    {
+        if (index < 0 || index >= _uiCreationItemsList.Count)
+            return null;
+
+        return _uiCreationItemsList[index];
+    }
+
+    private UIManagerController GetManagerController(int index)
+    {
+        if (index < 0 || index >= _managerControllers.Count)
+            return null;
+
+        return _managerControllers[index];
     }
 
     //public void TreesToggle()

@@ -48,8 +48,13 @@ public class UIController : MonoBehaviour
     private ObjectPlaceRotator _objectPlaceRotator;
 
     public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnStorePanelDisplayed;
+    public event Action OnShopOpened;
+    public event Action<int> OnShopTabSelected;
     public event Action<int> OnShowUpgradeOrShopTutorial, OnLoadTutorialStep;
     public event Action<int, int> OnLoadTutorialNextStep;
+
+    public GameObject ToggleButtonTarget => _toggleButton != null ? _toggleButton.gameObject : null;
+    public bool IsShopDisplayed => isDisplayed;
 
     private void Start()
     {
@@ -82,6 +87,7 @@ public class UIController : MonoBehaviour
             isDisplayed = true;
             SetShopOpen(true);
             _planetRotator.enabled = false;
+            OnShopOpened?.Invoke();
             ShopsToggle(2);
         }            
     }
@@ -130,18 +136,20 @@ public class UIController : MonoBehaviour
             _toggleButton.DORotate(new Vector3(0, 0, 180), _tweenDuration);
             isDisplayed = true;
             SetShopOpen(true);
+            OnShopOpened?.Invoke();
+            OnShopTabSelected?.Invoke(0);
             ColorToggle(0);
             _planetRotator.enabled = false;
 
-            if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
-            {
-                int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
-                if (tutorialStep == 0)
-                    OnTutorialStepCompleted.Invoke();
-                else
-                    OnLoadTutorialNextStep.Invoke(tutorialStep, 1);
-            }
-            else OnStorePanelDisplayed.Invoke();
+            // if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
+            // {
+            //     int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
+            //     if (tutorialStep == 0)
+            //         OnTutorialStepCompleted.Invoke();
+            //     else
+            //         OnLoadTutorialNextStep.Invoke(tutorialStep, 1);
+            // }
+            // else OnStorePanelDisplayed.Invoke();
         }
     }
 
@@ -206,6 +214,7 @@ public class UIController : MonoBehaviour
         _creationItemsParent.DOAnchorPos(index == 0 ? visiblePos : hidePos, 0.25f);
         _upgradeItemsParent.DOAnchorPos(index == 1 ? visiblePos : hidePos, 0.25f);
         _shopItemsParent.DOAnchorPos(index == 2 ? visiblePos : hidePos, 0.25f);
+        OnShopTabSelected?.Invoke(index);
 
         if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
         {

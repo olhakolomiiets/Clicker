@@ -10,10 +10,14 @@ public class GameRules : MonoBehaviour
     public event Action<int, bool> OnModifyManagerAvailability, OnToggleItemActivationState;
     public event Action<int, float> OnStartWorkOnItem, OnStartWorkOnUpgradeItem;
     public event Action<int> OnActivateItem, OnActivateUpgradeItem, OnAutomateItem, OnActivatePassiveIncome, OnUpgradeTutorialStepReady;
+    public event Action<int, double> OnItemIncomeEarned;
+    public event Action<int> OnManagerPurchasedConfirmed, OnItemFirstPurchaseConfirmed, OnItemUpgradedConfirmed;
     public event Action<int, GameData, GeneralGameData> OnUpdateData, OnPerformAction, OnUpdateUpgradeData;
     public event Action<GeneralGameData, GameData> OnUpdateGameData;
     public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnDataUpdated, OnRewardRecived;
     public event Action<int, int> OnTutorialStepReady, OnManagerAvailability, OnManagerNonAvailability, OnItemNotReadyToBuy, OnItemReadyToBuy;
+
+    public double CurrentMoney => _currentGameData != null ? _currentGameData.Money : 0d;
 
     private int timeAfterExit;
     private int itemIndex;
@@ -148,6 +152,8 @@ public class GameRules : MonoBehaviour
         HandleManager(index);
 
         _currentGameData.IsManagerPurchased += 1;
+        Debug.Log($"[PlanetTutorialTrace] manager purchase confirmed index={index}", this);
+        OnManagerPurchasedConfirmed?.Invoke(index);
 
         FirebaseAnalytics.LogEvent("auto_purchased");
     }
@@ -190,6 +196,8 @@ public class GameRules : MonoBehaviour
         isTipShown = false;
 
         ActivateItem(index);
+        Debug.Log($"[PlanetTutorialTrace] first item purchase confirmed index={index}", this);
+        OnItemFirstPurchaseConfirmed?.Invoke(index);
 
         FirebaseAnalytics.LogEvent("creation_category_purchased");
     }
@@ -215,6 +223,8 @@ public class GameRules : MonoBehaviour
             _currentGameData.Money += income;
             _currentGeneralData.TotalScore += income;
             _totalScore = _currentGeneralData.TotalScore;
+            Debug.Log($"[PlanetTutorialTrace] income confirmed index={index} income={income} money={_currentGameData.Money}", this);
+            OnItemIncomeEarned?.Invoke(index, income);
         }
 
         SendDataUpdate();
@@ -232,6 +242,8 @@ public class GameRules : MonoBehaviour
         _currentGameData.ItemCount[index] += 1;
 
         SendDataUpdate();
+        Debug.Log($"[PlanetTutorialTrace] item upgrade confirmed index={index} count={_currentGameData.ItemCount[index]}", this);
+        OnItemUpgradedConfirmed?.Invoke(index);
     }
 
     public void HandleDiamondsUpgrade(int index)

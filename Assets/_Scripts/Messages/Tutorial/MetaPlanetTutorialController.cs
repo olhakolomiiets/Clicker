@@ -347,10 +347,8 @@ namespace PlanetBuilder.Messages.Tutorial
                 "MetaPlanetTutorial.FirstVisit",
                 new[]
                 {
-                    Line(T("meta_tutorial_step0_dialog_1"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step0_dialog_2"), CharacterMood.Thinking),
-                    Line(T("meta_tutorial_step0_dialog_3"), CharacterMood.Confused),
-                    Line(T("meta_tutorial_step0_dialog_4"), CharacterMood.Happy)
+                    Line(T("meta_tutorial_step0_dialog_1") + "\n\n" + T("meta_tutorial_step0_dialog_2"), CharacterMood.Happy),
+                    Line(T("meta_tutorial_step0_dialog_3") + "\n\n" + T("meta_tutorial_step0_dialog_4"), CharacterMood.Confused)
                 },
                 () => AdvanceToStage(StageStartingBudget));
         }
@@ -389,8 +387,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 new[]
                 {
                     Line(T("meta_tutorial_step1_dialog_1"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step1_dialog_2"), CharacterMood.Excited),
-                    Line(T("meta_tutorial_step1_dialog_3"), CharacterMood.Thinking)
+                    Line(T("meta_tutorial_step1_dialog_2") + "\n\n" + T("meta_tutorial_step1_dialog_3"), CharacterMood.Excited)
                 },
                 () => AdvanceToStage(StageOpenVariantTab));
         }
@@ -402,10 +399,8 @@ namespace PlanetBuilder.Messages.Tutorial
                 "MetaPlanetTutorial.OpenVariantTab.Dialog",
                 new[]
                 {
-                    Line(T("meta_tutorial_step2_dialog_1"), CharacterMood.Thinking),
-                    Line(T("meta_tutorial_step2_dialog_2"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step2_dialog_3"), CharacterMood.Confused),
-                    Line(T("meta_tutorial_step2_dialog_4"), CharacterMood.Excited)
+                    Line(T("meta_tutorial_step2_dialog_1") + "\n\n" + T("meta_tutorial_step2_dialog_2"), CharacterMood.Thinking),
+                    Line(T("meta_tutorial_step2_dialog_3") + "\n\n" + T("meta_tutorial_step2_dialog_4"), CharacterMood.Confused)
                 },
                 StartOpenVariantTabStep);
         }
@@ -580,8 +575,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 new[]
                 {
                     Line(T("meta_tutorial_step5_dialog_1"), CharacterMood.Thinking),
-                    Line(T("meta_tutorial_step5_dialog_2"), CharacterMood.Confused),
-                    Line(T("meta_tutorial_step5_dialog_3"), CharacterMood.Happy)
+                    Line(T("meta_tutorial_step5_dialog_2") + "\n\n" + T("meta_tutorial_step5_dialog_3"), CharacterMood.Happy)
                 },
                 null);
         }
@@ -746,8 +740,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 new[]
                 {
                     Line(T("meta_tutorial_step6_dialog_1"), CharacterMood.Excited),
-                    Line(T("meta_tutorial_step6_dialog_2"), CharacterMood.Thinking),
-                    Line(T("meta_tutorial_step6_dialog_3"), CharacterMood.Happy)
+                    Line(T("meta_tutorial_step6_dialog_2") + "\n\n" + T("meta_tutorial_step6_dialog_3"), CharacterMood.Thinking)
                 },
                 () => Debug.Log("[MetaTutorialTrace] Step6 dialog completed", this));
         }
@@ -911,8 +904,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 "MetaPlanetTutorial.AddUpgradeObject.Done",
                 new[]
                 {
-                    Line(T("meta_tutorial_step7_done_1"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step7_done_2"), CharacterMood.Excited)
+                    Line(T("meta_tutorial_step7_done_1") + "\n\n" + T("meta_tutorial_step7_done_2"), CharacterMood.Happy)
                 },
                 () => StartDeferredAdvanceToStage(StageUpgradeObject));
         }
@@ -1052,15 +1044,11 @@ namespace PlanetBuilder.Messages.Tutorial
                 new[]
                 {
                     Line(T("meta_tutorial_step9_dialog_1"), CharacterMood.Thinking, _robotSpeakerId),
-                    Line(T("meta_tutorial_step9_dialog_2"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step9_dialog_3"), CharacterMood.Excited),
-                    Line(T("meta_tutorial_step9_dialog_4"), CharacterMood.Thinking, _robotSpeakerId),
-                    Line(T("meta_tutorial_step9_dialog_5"), CharacterMood.Thinking, _robotSpeakerId),
-                    Line(T("meta_tutorial_step9_dialog_6"), CharacterMood.Excited),
-                    Line(T("meta_tutorial_step9_dialog_7"), CharacterMood.Happy),
+                    Line(T("meta_tutorial_step9_dialog_2") + "\n\n" + T("meta_tutorial_step9_dialog_3"), CharacterMood.Happy),
+                    Line(T("meta_tutorial_step9_dialog_4") + "\n\n" + T("meta_tutorial_step9_dialog_5"), CharacterMood.Thinking, _robotSpeakerId),
+                    Line(T("meta_tutorial_step9_dialog_6") + "\n\n" + T("meta_tutorial_step9_dialog_7"), CharacterMood.Excited),
                     Line(T("meta_tutorial_step9_dialog_8"), CharacterMood.Angry, _robotSpeakerId),
-                    Line(T("meta_tutorial_step9_dialog_9"), CharacterMood.Confused),
-                    Line(T("meta_tutorial_step9_dialog_10"), CharacterMood.Happy)
+                    Line(T("meta_tutorial_step9_dialog_9"), CharacterMood.Confused)
                 },
                 () =>
                 {
@@ -1234,8 +1222,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 "MetaPlanetTutorial.AddVariantObject.Done",
                 new[]
                 {
-                    Line(T("meta_tutorial_step3_done_1"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step3_done_2"), CharacterMood.Excited)
+                    Line(T("meta_tutorial_step3_done_1") + "\n\n" + T("meta_tutorial_step3_done_2"), CharacterMood.Happy)
                 },
                 () => AdvanceToStage(StageBuyVariantObject));
         }
@@ -2670,8 +2657,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 "MetaPlanetTutorial.BuyVariantObject.Done",
                 new[]
                 {
-                    Line(T("meta_tutorial_step5_done_1"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step5_done_2"), CharacterMood.Excited),
+                    Line(T("meta_tutorial_step5_done_1") + "\n\n" + T("meta_tutorial_step5_done_2"), CharacterMood.Happy),
                     Line(T("meta_tutorial_step5_done_3"), CharacterMood.Confused)
                 },
                 () =>
@@ -2697,10 +2683,8 @@ namespace PlanetBuilder.Messages.Tutorial
                 "MetaPlanetTutorial.UpgradeObject.Done",
                 new[]
                 {
-                    Line(T("meta_tutorial_step8_done_1"), CharacterMood.Excited),
-                    Line(T("meta_tutorial_step8_done_2"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step8_done_3"), CharacterMood.Thinking),
-                    Line(T("meta_tutorial_step8_done_4"), CharacterMood.Happy)
+                    Line(T("meta_tutorial_step8_done_1") + "\n\n" + T("meta_tutorial_step8_done_2"), CharacterMood.Excited),
+                    Line(T("meta_tutorial_step8_done_3") + "\n\n" + T("meta_tutorial_step8_done_4"), CharacterMood.Thinking)
                 },
                 () => AdvanceToStage(StageFirstOrder));
         }

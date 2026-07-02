@@ -14,6 +14,8 @@ public class UIManagerController : MonoBehaviour
     [SerializeField] private RectTransform _panelTransform;
 
     public event Action<int> OnManagerPurchased;
+    public GameObject ManagerButtonTarget => _managerButton;
+    public GameObject ManagerBuyButtonTarget => _buyButton != null ? _buyButton.gameObject : null;
 
     private TutorialManager tutorialManager;
 

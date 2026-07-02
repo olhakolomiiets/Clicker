@@ -29,6 +29,8 @@ public class ItemController : MonoBehaviour
     private string _translationText;
     public event Action OnProgressButtonClicked, OnWorkFinished, OnPremiumItemWorkFinished, OnBuyButtonClicked, OnActivationPremium, OnFirstActivation;
     public bool isWorking => _progressButton.IsEnabled == false;
+    public GameObject ProgressButtonTarget => _progressButton != null ? _progressButton.gameObject : null;
+    public GameObject BuyButtonTarget => _buyButton != null ? _buyButton.gameObject : null;
     private void Awake()
     {
         _progressButton.OnButtonClicked.AddListener(HandleFirstClick);

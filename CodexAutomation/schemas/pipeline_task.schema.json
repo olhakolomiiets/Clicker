@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "description",
+    "mode",
+    "initialImplementationInstructions",
+    "acceptanceCriteria",
+    "allowedWritePaths",
+    "forbiddenWritePaths",
+    "maxRepairAttempts",
+    "validations",
+    "auditInstructions",
+    "nonGoals"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "mode": { "type": "string", "enum": ["pipeline_fake_test"] },
+    "initialImplementationInstructions": { "type": "string" },
+    "acceptanceCriteria": { "type": "array", "items": { "type": "string" } },
+    "allowedWritePaths": { "type": "array", "items": { "type": "string" } },
+    "forbiddenWritePaths": { "type": "array", "items": { "type": "string" } },
+    "maxRepairAttempts": { "type": "integer", "const": 0 },
+    "validations": { "type": "array", "items": { "type": "object" } },
+    "auditInstructions": { "type": "string" },
+    "nonGoals": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "taskId", "summary", "filesChanged", "testsAttempted", "knownIssues"],
+  "properties": {
+    "status": { "type": "string", "enum": ["implemented"] },
+    "taskId": { "type": "string" },
+    "summary": { "type": "string" },
+    "filesChanged": { "type": "array", "items": { "type": "string" } },
+    "testsAttempted": { "type": "array", "items": { "type": "string" } },
+    "knownIssues": { "type": "array", "items": { "type": "string" } }
+  }
+}

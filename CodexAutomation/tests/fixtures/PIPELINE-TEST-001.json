@@ -1,0 +1,69 @@
+{
+  "id": "PIPELINE-TEST-001",
+  "title": "Local fake pipeline artifact repair",
+  "description": "A local runtime-only fake task used to verify IMPLEMENT VALIDATE AUDIT REPAIR state transitions.",
+  "mode": "pipeline_fake_test",
+  "initialImplementationInstructions": "Create artifact.json with a value that requires validation-driven repair.",
+  "acceptanceCriteria": [
+    "artifact.json exists",
+    "artifact.json is valid JSON",
+    "artifact.json value is 42",
+    "artifact.json repairApplied is true"
+  ],
+  "allowedWritePaths": [
+    "artifact.json"
+  ],
+  "forbiddenWritePaths": [
+    "../*",
+    "Assets/**",
+    "Packages/**",
+    "ProjectSettings/**"
+  ],
+  "maxRepairAttempts": 0,
+  "validations": [
+    {
+      "type": "required_file",
+      "code": "ARTIFACT_REQUIRED",
+      "file": "artifact.json"
+    },
+    {
+      "type": "json_valid",
+      "code": "ARTIFACT_JSON_VALID",
+      "file": "artifact.json"
+    },
+    {
+      "type": "json_field_equals",
+      "code": "ARTIFACT_VALUE_INCORRECT",
+      "file": "artifact.json",
+      "field": "value",
+      "expected": 42
+    },
+    {
+      "type": "json_field_equals",
+      "code": "REPAIR_NOT_APPLIED",
+      "file": "artifact.json",
+      "field": "repairApplied",
+      "expected": true
+    },
+    {
+      "type": "exact_allowed_changed_paths",
+      "code": "CHANGED_PATHS_EXACT",
+      "paths": [
+        "artifact.json"
+      ]
+    },
+    {
+      "type": "no_unexpected_files",
+      "code": "NO_UNEXPECTED_FILES",
+      "paths": [
+        "artifact.json"
+      ]
+    }
+  ],
+  "auditInstructions": "Review artifact.json and return PASS only when acceptance criteria are met.",
+  "nonGoals": [
+    "Do not touch Unity project files",
+    "Do not create new tasks",
+    "Do not run Unity"
+  ]
+}

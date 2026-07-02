@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "executionStatus",
+    "role",
+    "taskId",
+    "startedAt",
+    "finishedAt",
+    "durationSeconds",
+    "errorCode",
+    "errorMessage",
+    "usageLimit",
+    "result"
+  ],
+  "properties": {
+    "executionStatus": { "type": "string", "enum": ["SUCCESS", "RATE_LIMITED", "TECHNICAL_ERROR"] },
+    "role": { "type": "string", "enum": ["implementer", "auditor", "repairer"] },
+    "taskId": { "type": "string" },
+    "startedAt": { "type": "string" },
+    "finishedAt": { "type": "string" },
+    "durationSeconds": { "type": "number" },
+    "errorCode": {},
+    "errorMessage": {},
+    "usageLimit": {},
+    "result": {}
+  }
+}

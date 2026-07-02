@@ -1,7 +1,7 @@
 {
   "format_version": 1,
   "project_name": "Planet Builder",
-  "automation_stage": "BOOTSTRAP-02",
+  "automation_stage": "BOOTSTRAP-03A",
   "dry_run_default": true,
   "paths": {
     "automation_root": "CodexAutomation",
@@ -30,6 +30,25 @@
     "smoke_test_timeout_seconds": 180,
     "safe_mode": "read_only",
     "test_task_id": "TEST-001"
+  },
+  "pipeline": {
+    "maxRepairAttemptsDefault": 3,
+    "pipelineSelfTestEnabled": true,
+    "runtimeWorkspaceRoot": "CodexAutomation/runtime/workspaces",
+    "pipelineReportRoot": "CodexAutomation/runtime/pipeline_runs",
+    "allowRealWorkspaceWrite": false,
+    "maxCodexInvocationsPerPipelineRun": 20,
+    "reserveInvocationsForFinalAudit": 2,
+    "maxAuditsPerTask": 4
+  },
+  "usageLimits": {
+    "enabled": true,
+    "maxRateLimitRetriesPerInvocation": 1,
+    "resetSafetyBufferSeconds": 60,
+    "maximumWaitSeconds": 7200,
+    "stopWhenResetTimeUnknown": true,
+    "allowAutomaticCreditUsage": false,
+    "allowAutomaticModelDowngrade": false
   },
   "unity": {
     "project_version_file": "ProjectSettings/ProjectVersion.txt",

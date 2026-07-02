@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["verdict", "taskId", "summary", "findings", "filesReviewed", "scopeViolations", "blockedReason"],
+  "properties": {
+    "verdict": { "type": "string", "enum": ["PASS", "FIX_REQUIRED", "BLOCKED"] },
+    "taskId": { "type": "string" },
+    "summary": { "type": "string" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "severity", "file", "symbol", "problem", "evidence", "requiredFix"],
+        "properties": {
+          "code": { "type": "string" },
+          "severity": { "type": "string", "enum": ["low", "medium", "high", "blocking"] },
+          "file": { "type": "string" },
+          "symbol": { "type": "string" },
+          "problem": { "type": "string" },
+          "evidence": { "type": "string" },
+          "requiredFix": { "type": "string" }
+        }
+      }
+    },
+    "filesReviewed": { "type": "array", "items": { "type": "string" } },
+    "scopeViolations": { "type": "array", "items": { "type": "string" } },
+    "blockedReason": {}
+  }
+}

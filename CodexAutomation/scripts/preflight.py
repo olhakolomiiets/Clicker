@@ -194,6 +194,8 @@ def ensure_runtime_directories(automation_root: Path) -> list[str]:
         Path("runtime/logs"),
         Path("runtime/reports"),
         Path("runtime/results"),
+        Path("runtime/workspaces"),
+        Path("runtime/pipeline_runs"),
         Path("runtime/audits"),
         Path("runtime/generated_tasks"),
     ):

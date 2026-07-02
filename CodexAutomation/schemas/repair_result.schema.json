@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "taskId", "summary", "filesChanged", "addressedFindingCodes", "remainingIssues"],
+  "properties": {
+    "status": { "type": "string", "enum": ["repaired"] },
+    "taskId": { "type": "string" },
+    "summary": { "type": "string" },
+    "filesChanged": { "type": "array", "items": { "type": "string" } },
+    "addressedFindingCodes": { "type": "array", "items": { "type": "string" } },
+    "remainingIssues": { "type": "array", "items": { "type": "string" } }
+  }
+}

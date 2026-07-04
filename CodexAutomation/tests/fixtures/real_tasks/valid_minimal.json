@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-001",
+  "title": "Plan Project Version Text",
+  "objective": "Plan a controlled isolated text change for the Unity project version file without executing it.",
+  "taskType": "isolated_code_change",
+  "sourcePaths": [
+    "ProjectSettings/ProjectVersion.txt"
+  ],
+  "allowedWritePaths": [
+    "ProjectSettings/ProjectVersion.txt"
+  ],
+  "allowedDeletePaths": [],
+  "expectedOutputs": [
+    {
+      "path": "ProjectSettings/ProjectVersion.txt",
+      "kind": "file",
+      "required": true
+    }
+  ],
+  "validationPlan": [
+    {
+      "id": "changed-paths",
+      "type": "changed_paths_exact",
+      "paths": [
+        "ProjectSettings/ProjectVersion.txt"
+      ]
+    },
+    {
+      "id": "no-conflicts",
+      "type": "no_conflict_markers",
+      "paths": [
+        "ProjectSettings/ProjectVersion.txt"
+      ]
+    }
+  ],
+  "completionCriteria": [
+    "The requested source change is present.",
+    "No files outside the allowed write paths are changed."
+  ],
+  "roleBudget": {
+    "maxInvocations": 3
+  },
+  "repairPolicy": {
+    "maxAttempts": 1
+  },
+  "limits": {
+    "maxChangedFiles": 50,
+    "maxChangedBytes": 10485760,
+    "maxSingleChangedFileBytes": 2097152
+  },
+  "metadata": {}
+}

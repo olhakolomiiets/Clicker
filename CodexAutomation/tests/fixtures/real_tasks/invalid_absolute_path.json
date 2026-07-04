@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-ABS",
+  "title": "Invalid Absolute",
+  "objective": "Invalid absolute path fixture.",
+  "taskType": "isolated_code_change",
+  "sourcePaths": [
+    "C:/outside.txt"
+  ],
+  "allowedWritePaths": [
+    "ProjectSettings/ProjectVersion.txt"
+  ],
+  "expectedOutputs": [
+    {
+      "path": "ProjectSettings/ProjectVersion.txt",
+      "kind": "file",
+      "required": true
+    }
+  ],
+  "validationPlan": [
+    {
+      "id": "exists",
+      "type": "file_exists",
+      "path": "ProjectSettings/ProjectVersion.txt"
+    }
+  ],
+  "completionCriteria": [
+    "Invalid fixture."
+  ]
+}

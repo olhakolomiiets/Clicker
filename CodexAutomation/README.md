@@ -1,8 +1,8 @@
 # Codex Automation Bootstrap
 
-This is BOOTSTRAP-03B-1 for the local Codex Automation system.
+This is BOOTSTRAP-03B-2A for the local Codex Automation system.
 
-The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, and BOOTSTRAP-03A fake pipeline behavior. BOOTSTRAP-03B-1 adds one explicit real-role self-test that may use `codex exec --sandbox workspace-write` only inside a newly created isolated runtime workspace under `CodexAutomation/runtime/real_role_workspaces/<run-id>/workspace/`. It does not launch Unity batchmode and does not change files inside `Assets`, `Packages`, or `ProjectSettings`.
+The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, BOOTSTRAP-03A fake pipeline behavior, and BOOTSTRAP-03B-1 real-role self-test behavior. BOOTSTRAP-03B-2A adds only strict generic real-task manifest validation and a no-model plan report mode. It does not launch Codex, does not run `codex sandbox`, does not create a real task workspace, does not copy source files, does not launch Unity batchmode, does not apply patches, and does not change files inside `Assets`, `Packages`, or `ProjectSettings`.
 
 ## Created Files
 
@@ -106,8 +106,13 @@ Smoke test runtime output is written to ignored runtime paths:
 - Read-only `codex exec` is started only by the explicit `--smoke-test` mode.
 - Fake pipeline self-tests use a local fake role adapter and do not start Codex.
 - Real-role self-test is started only by the explicit `--real-role-self-test` mode and is limited to an isolated runtime workspace.
+- Generic real-task manifest validation is started only by `--validate-task-manifest`.
+- Generic real-task planning is started only by `--real-task-plan`.
+- BOOTSTRAP-03B-2A has no `--real-task-run` mode.
+- The generic real-task validate/plan modes use a no-Codex preflight profile; they do not run `codex.cmd --version`, `codex --version`, `codex exec`, or `codex sandbox`.
 - No Unity code is changed.
 - No real implementer, repairer, or auditor may write to the Unity project.
+- No generic real-task implementer, repairer, or auditor is launched in BOOTSTRAP-03B-2A.
 - No automatic retry after rate limit is available.
 - No process-restart resume is available.
 - No task generator is available; BOOTSTRAP-04 will own task generation.
@@ -250,4 +255,76 @@ CodexAutomation/runtime/real_role_runs/<run-id>/
 
 Important BOOTSTRAP-03B-1 error codes include `BLOCKED_UNSUPPORTED_CODEX_CLI`, `ISOLATED_WORKSPACE_INVALID`, `ISOLATED_WORKSPACE_OUTSIDE_RUNTIME`, `REAL_PROJECT_WRITE_FORBIDDEN`, `REAL_ROLE_CONFIG_INVALID`, `REAL_ROLE_INVOCATION_LIMIT`, `REAL_ROLE_EXECUTION_FAILED`, `REAL_TEST_IMPLEMENTER_SKIPPED_REQUIRED_PRE_REPAIR_STATE`, `REAL_TEST_UNEXPECTED_FILE`, `REAL_TEST_AUDITOR_CHANGED_WORKSPACE`, `CODEX_JSONL_INVALID_LINE`, `CODEX_EXEC_SCHEMA_INVALID`, and `CODEX_EXEC_ERROR_UNCLASSIFIED`.
 
-BOOTSTRAP-03B-2 is not implemented. Future work can add known Codex rate-limit parsing variants, controlled resume after reset, and process-restart recovery. Future stages can also add generated task handling, Unity validation, Git integration, and long-running automation.
+## BOOTSTRAP-03B-2A Generic Real-Task Manifest and Plan
+
+BOOTSTRAP-03B-2A is a planning-only step for the future generic isolated real-task pipeline. It adds a strict manifest contract, host-only policy merge, source path safety checks, and a no-model plan report. It does not execute a task.
+
+The two BOOTSTRAP-03B-2A CLI modes use a no-Codex preflight profile. They may inspect Python, Git, repository state, Unity running state, manifest syntax, and source filesystem metadata, but they do not launch any Codex executable even for version inspection.
+
+Validate a manifest without requiring source files to exist:
+
+```bat
+python CodexAutomation/scripts/orchestrator.py --validate-task-manifest CodexAutomation/tests/fixtures/real_tasks/valid_minimal.json
+```
+
+Create a no-model plan report after validating source existence and source inventory:
+
+```bat
+python CodexAutomation/scripts/orchestrator.py --real-task-plan CodexAutomation/tests/fixtures/real_tasks/valid_minimal.json
+start_codex_pipeline.bat --real-task-plan CodexAutomation/tests/fixtures/real_tasks/valid_minimal.json
+```
+
+The plan report is written under:
+
+```text
+CodexAutomation/runtime/real_task_plans/<plan-id>/REAL_TASK_PLAN_REPORT.json
+```
+
+The report is diagnostic evidence only. A future real task run must recreate and revalidate its own trusted context; it must not trust an old plan report.
+
+### Real-Task Host Policy
+
+`config.json` contains a host-only `realTasks` section. In BOOTSTRAP-03B-2A, all dangerous behavior is disabled:
+
+- `allowExecution`: `false`
+- `allowParentProjectWrite`: `false`
+- `allowAutomaticApply`: `false`
+- `allowNetwork`: `false`
+- `allowPackageInstall`: `false`
+- `allowUnityLaunch`: `false`
+- `allowAutomaticRetry`: `false`
+- `allowAutomaticModelDowngrade`: `false`
+- `allowAutomaticCreditUsage`: `false`
+- `allowBinaryOutputs`: `false`
+
+The hard caps are `maxInvocations=3`, `maxRepairAttempts=1`, `maxChangedFiles=50`, `maxChangedBytes=10485760`, `maxSingleChangedFileBytes=2097152`, `maxSourceFiles=2000`, and `maxSourceBytes=104857600`. Manifest values may only lower applicable caps. The manifest cannot enable parent writes, network, package installation, Unity launch, automatic apply, automatic retry, model downgrade, credit usage, extra writable roots, sandbox policy, model/provider selection, or approval policy.
+
+### Manifest Fields
+
+Manifest version `1` supports `schemaVersion`, `taskId`, `title`, `objective`, `taskType`, `sourcePaths`, `allowedWritePaths`, `allowedDeletePaths`, `expectedOutputs`, `validationPlan`, `completionCriteria`, `roleBudget`, `repairPolicy`, `limits`, and `metadata`.
+
+User manifests must not include host-only policy fields such as `networkPolicy`, `packagePolicy`, `gitPolicy`, `unityPolicy`, `applyPolicy`, `sandboxPolicy`, `approvalPolicy`, `writableRoots`, `model`, `provider`, `credits`, or `retryPolicy`.
+
+### Path Restrictions
+
+Manifest paths are exact repository-relative paths. Wildcards and globs are forbidden. Paths may only live under `Assets`, `Packages`, or `ProjectSettings`. Forbidden source roots are `.git`, `.codex`, `CodexAutomation`, `Library`, `Temp`, `Logs`, `obj`, `Build`, `Builds`, and `UserSettings`.
+
+The validator rejects absolute paths, UNC paths, drive-relative paths, backslashes, colons or NTFS ADS syntax, `..`, dot components, empty components, control characters, trailing dot or space, Windows reserved device names, symlinks, junctions, and reparse points.
+
+`sourcePaths` must not overlap. Exact duplicates and parent/child pairs such as `Assets/Foo` plus `Assets/Foo/Bar.cs` are rejected with `REAL_TASK_SOURCE_OVERLAP`; prefix collisions such as `Assets/Foo` and `Assets/Foobar` are not treated as containment.
+
+Plan-mode source inventory is fail-closed. The host does not follow symlinks, junctions, or reparse points, counts each canonical repository-relative regular file at most once, and fails with `REAL_TASK_SOURCE_INVENTORY_FAILED` if a required stat, directory enumeration, or child entry inspection cannot be completed. Missing top-level source paths still use `REAL_TASK_SOURCE_MISSING`, reparse paths use `REAL_TASK_SOURCE_REPARSE`, and source cap violations use `REAL_TASK_SOURCE_LIMIT_EXCEEDED`.
+
+### Validators
+
+The manifest may request only host-approved validator types: `file_exists`, `file_absent`, `json_valid`, `json_schema`, `json_field_equals`, `text_contains`, `text_not_contains`, `changed_paths_exact`, `changed_paths_subset`, `no_unexpected_files`, `no_conflict_markers`, `max_file_size`, `max_changed_files`, and `extension_allowlist`.
+
+Command strings, executables, shell fields, environment fields, and network fields are forbidden in validator entries. `json_schema.schemaName` is a future host registry name, not a file path.
+
+### Dirty Parent Worktree
+
+Dirty parent worktree is allowed for validation and plan mode only after a successful Git snapshot. Plan mode records a structured `parentGitSnapshot` with status, HEAD, branch or detached-head state, staged paths, full porcelain status, dirty state, and bounded command diagnostics. The persisted plan schema and semantic report validation distinguish successful and failed Git snapshots: a successful snapshot requires a non-empty HEAD, explicit branch or detached-head state, boolean dirty state, and matching `dirtyParentWorktree`; a failed snapshot keeps dirty state unknown/null and cannot produce a PASS report. If any required Git command fails or the parent cannot be confirmed as a Git work tree, the plan fails with `REAL_TASK_GIT_SNAPSHOT_FAILED`; dirty state is reported as unknown/null rather than clean. Detached HEAD is represented explicitly with `detachedHead=true` and `branch=null`. Plan mode never cleans, restores, resets, stashes, or modifies parent Git state. A future real task run must block if the parent snapshot changes after its trusted run snapshot.
+
+### Deferred Stages
+
+BOOTSTRAP-03B-2B, BOOTSTRAP-03B-2C, and BOOTSTRAP-03B-2D are not implemented here. Source copying, isolated real-task workspace population, implementer/repairer/auditor execution, patch/result bundle production, and controlled real-task self-test remain future work. Automatic apply, merge, commit, push, PR creation, Unity launch, and Unity batchmode validation are still out of scope.

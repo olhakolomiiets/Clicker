@@ -1,7 +1,7 @@
 {
   "format_version": 1,
   "project_name": "Planet Builder",
-  "automation_stage": "BOOTSTRAP-03B-1",
+  "automation_stage": "BOOTSTRAP-03B-2A",
   "dry_run_default": true,
   "paths": {
     "automation_root": "CodexAutomation",
@@ -71,6 +71,62 @@
     "useOutputSchema": true,
     "useOutputLastMessage": true,
     "automaticRetryAfterRateLimit": false
+  },
+  "realTasks": {
+    "allowExecution": false,
+    "allowParentProjectWrite": false,
+    "allowAutomaticApply": false,
+    "allowNetwork": false,
+    "allowPackageInstall": false,
+    "allowUnityLaunch": false,
+    "allowAutomaticRetry": false,
+    "allowAutomaticModelDowngrade": false,
+    "allowAutomaticCreditUsage": false,
+    "allowDirtyParentWorktree": true,
+    "allowBinaryOutputs": false,
+    "maxInvocations": 3,
+    "maxRepairAttempts": 1,
+    "maxChangedFiles": 50,
+    "maxChangedBytes": 10485760,
+    "maxSingleChangedFileBytes": 2097152,
+    "maxSourceFiles": 2000,
+    "maxSourceBytes": 104857600,
+    "allowedSourceRoots": [
+      "Assets",
+      "Packages",
+      "ProjectSettings"
+    ],
+    "forbiddenSourceRoots": [
+      ".git",
+      ".codex",
+      "CodexAutomation",
+      "Library",
+      "Temp",
+      "Logs",
+      "obj",
+      "Build",
+      "Builds",
+      "UserSettings"
+    ],
+    "allowedTaskTypes": [
+      "isolated_code_change"
+    ],
+    "allowedValidatorTypes": [
+      "file_exists",
+      "file_absent",
+      "json_valid",
+      "json_schema",
+      "json_field_equals",
+      "text_contains",
+      "text_not_contains",
+      "changed_paths_exact",
+      "changed_paths_subset",
+      "no_unexpected_files",
+      "no_conflict_markers",
+      "max_file_size",
+      "max_changed_files",
+      "extension_allowlist"
+    ]
   },
   "unity": {
     "project_version_file": "ProjectSettings/ProjectVersion.txt",

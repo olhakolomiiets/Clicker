@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-WILD",
+  "title": "Invalid Wildcard",
+  "objective": "Invalid wildcard path fixture.",
+  "taskType": "isolated_code_change",
+  "sourcePaths": [
+    "Assets/*.cs"
+  ],
+  "allowedWritePaths": [
+    "Assets/*.cs"
+  ],
+  "expectedOutputs": [
+    {
+      "path": "Assets/*.cs",
+      "kind": "file",
+      "required": true
+    }
+  ],
+  "validationPlan": [
+    {
+      "id": "changed",
+      "type": "changed_paths_exact",
+      "paths": [
+        "Assets/*.cs"
+      ]
+    }
+  ],
+  "completionCriteria": [
+    "Invalid fixture."
+  ]
+}

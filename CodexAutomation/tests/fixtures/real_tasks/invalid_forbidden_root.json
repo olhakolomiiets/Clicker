@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-FORBIDDEN",
+  "title": "Invalid Forbidden Root",
+  "objective": "Invalid forbidden root fixture.",
+  "taskType": "isolated_code_change",
+  "sourcePaths": [
+    "CodexAutomation/config.json"
+  ],
+  "allowedWritePaths": [
+    "CodexAutomation/config.json"
+  ],
+  "expectedOutputs": [
+    {
+      "path": "CodexAutomation/config.json",
+      "kind": "file",
+      "required": true
+    }
+  ],
+  "validationPlan": [
+    {
+      "id": "exists",
+      "type": "file_exists",
+      "path": "CodexAutomation/config.json"
+    }
+  ],
+  "completionCriteria": [
+    "Invalid fixture."
+  ]
+}

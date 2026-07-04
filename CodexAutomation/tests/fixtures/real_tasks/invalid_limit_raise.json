@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-LIMIT",
+  "title": "Invalid Limit Raise",
+  "objective": "Invalid limit raise fixture.",
+  "taskType": "isolated_code_change",
+  "sourcePaths": [
+    "ProjectSettings/ProjectVersion.txt"
+  ],
+  "allowedWritePaths": [
+    "ProjectSettings/ProjectVersion.txt"
+  ],
+  "expectedOutputs": [
+    {
+      "path": "ProjectSettings/ProjectVersion.txt",
+      "kind": "file",
+      "required": true
+    }
+  ],
+  "validationPlan": [
+    {
+      "id": "max",
+      "type": "max_changed_files",
+      "maxFiles": 51
+    }
+  ],
+  "completionCriteria": [
+    "Invalid fixture."
+  ],
+  "limits": {
+    "maxChangedFiles": 51
+  }
+}

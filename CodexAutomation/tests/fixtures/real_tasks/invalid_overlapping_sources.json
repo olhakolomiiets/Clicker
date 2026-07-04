@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-OVERLAP",
+  "title": "Invalid Overlapping Sources",
+  "objective": "This fixture must be rejected because sourcePaths overlap.",
+  "taskType": "isolated_code_change",
+  "sourcePaths": [
+    "ProjectSettings",
+    "ProjectSettings/ProjectVersion.txt"
+  ],
+  "allowedWritePaths": [
+    "ProjectSettings/ProjectVersion.txt"
+  ],
+  "allowedDeletePaths": [],
+  "expectedOutputs": [
+    {
+      "path": "ProjectSettings/ProjectVersion.txt",
+      "kind": "file",
+      "required": true
+    }
+  ],
+  "validationPlan": [
+    {
+      "id": "changed-paths",
+      "type": "changed_paths_exact",
+      "paths": [
+        "ProjectSettings/ProjectVersion.txt"
+      ]
+    }
+  ],
+  "completionCriteria": [
+    "The manifest is rejected before execution."
+  ],
+  "roleBudget": {
+    "maxInvocations": 3
+  },
+  "repairPolicy": {
+    "maxAttempts": 1
+  },
+  "limits": {
+    "maxChangedFiles": 50,
+    "maxChangedBytes": 10485760,
+    "maxSingleChangedFileBytes": 2097152
+  },
+  "metadata": {}
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-BAD-VALIDATOR",
+  "title": "Invalid Validator",
+  "objective": "Invalid unsupported validator fixture.",
+  "taskType": "isolated_code_change",
+  "sourcePaths": [
+    "ProjectSettings/ProjectVersion.txt"
+  ],
+  "allowedWritePaths": [
+    "ProjectSettings/ProjectVersion.txt"
+  ],
+  "expectedOutputs": [
+    {
+      "path": "ProjectSettings/ProjectVersion.txt",
+      "kind": "file",
+      "required": true
+    }
+  ],
+  "validationPlan": [
+    {
+      "id": "command",
+      "type": "command",
+      "command": "python -m compileall ."
+    }
+  ],
+  "completionCriteria": [
+    "Invalid fixture."
+  ]
+}

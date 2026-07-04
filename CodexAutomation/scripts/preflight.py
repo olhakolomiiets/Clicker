@@ -213,7 +213,15 @@ def normalize_report_path(root: Path, path: Path) -> str:
         return str(path.resolve())
 
 
-def run_preflight(context: RepoContext) -> dict[str, Any]:
+def serialize_command_result(result: CommandResult, inspected: bool = True) -> dict[str, Any]:
+    data = result.__dict__.copy()
+    data["inspected"] = inspected
+    if not inspected:
+        data["found"] = None
+    return data
+
+
+def run_preflight(context: RepoContext, inspect_codex: bool = True) -> dict[str, Any]:
     root = context.root
     config_path = context.automation_root / "config.json"
     seed_path = context.automation_root / "workflow.seed.json"
@@ -232,19 +240,30 @@ def run_preflight(context: RepoContext) -> dict[str, Any]:
     tools_config = config.get("tools", {}) if isinstance(config, dict) else {}
     python_command = tools_config.get("python_command", "python")
     git_command = tools_config.get("git_command", "git")
-    codex_commands = tools_config.get("codex_commands", ["codex.cmd", "codex"])
-    if not isinstance(codex_commands, list) or not codex_commands:
-        codex_commands = ["codex.cmd", "codex"]
-
-    codex_version_commands = [[str(command), "--version"] for command in codex_commands if isinstance(command, str)]
-    if not codex_version_commands:
-        codex_version_commands = [["codex.cmd", "--version"], ["codex", "--version"]]
-
     command_results = [
         inspect_command("python", [[str(python_command), "--version"]], root),
         inspect_command("git", [[str(git_command), "--version"]], root),
-        inspect_command("codex", codex_version_commands, root),
     ]
+    if inspect_codex:
+        codex_commands = tools_config.get("codex_commands", ["codex.cmd", "codex"])
+        if not isinstance(codex_commands, list) or not codex_commands:
+            codex_commands = ["codex.cmd", "codex"]
+
+        codex_version_commands = [[str(command), "--version"] for command in codex_commands if isinstance(command, str)]
+        if not codex_version_commands:
+            codex_version_commands = [["codex.cmd", "--version"], ["codex", "--version"]]
+        command_results.append(inspect_command("codex", codex_version_commands, root))
+    else:
+        command_results.append(
+            CommandResult(
+                name="codex",
+                command=[],
+                found=False,
+                version=None,
+                path=None,
+                error="not_inspected",
+            )
+        )
 
     project_version_file = config.get("unity", {}).get("project_version_file", "ProjectSettings/ProjectVersion.txt") if isinstance(config, dict) else "ProjectSettings/ProjectVersion.txt"
     unity_version = read_unity_version(root / str(project_version_file))
@@ -303,7 +322,7 @@ def run_preflight(context: RepoContext) -> dict[str, Any]:
             "loaded": config_error is None,
             "error": config_error,
         },
-        "tools": [result.__dict__ for result in command_results],
+        "tools": [serialize_command_result(result, inspected=(result.error != "not_inspected")) for result in command_results],
         "python_runtime": {
             "executable": sys.executable,
             "version": sys.version.split()[0],
@@ -333,6 +352,7 @@ def run_preflight(context: RepoContext) -> dict[str, Any]:
             "Dirty worktree is reported but does not fail preflight.",
             "Running Unity Editor is reported but does not fail preflight.",
             "No Codex exec or Unity batchmode command is launched by dry-run preflight.",
+            "Codex executable version inspection is skipped for BOOTSTRAP-03B-2A real-task validate/plan modes.",
         ],
     }
 
@@ -363,7 +383,10 @@ def format_summary(report: dict[str, Any]) -> str:
         "Tools:",
     ]
     for tool in report["tools"]:
-        status = "found" if tool["found"] else "missing"
+        if tool.get("inspected") is False:
+            status = "not inspected"
+        else:
+            status = "found" if tool["found"] else "missing"
         detail = tool["version"] or tool["error"] or "no version output"
         lines.append(f"  - {tool['name']}: {status} ({detail})")
     lines.extend(

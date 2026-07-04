@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-DIRTY-PLAN",
+  "title": "Dirty Parent Plan Fixture",
+  "objective": "Plan a no-model task while preserving and reporting parent dirty state.",
+  "taskType": "isolated_code_change",
+  "sourcePaths": [
+    "ProjectSettings/ProjectVersion.txt"
+  ],
+  "allowedWritePaths": [
+    "ProjectSettings/ProjectVersion.txt"
+  ],
+  "allowedDeletePaths": [],
+  "expectedOutputs": [
+    {
+      "path": "ProjectSettings/ProjectVersion.txt",
+      "kind": "file",
+      "required": true
+    }
+  ],
+  "validationPlan": [
+    {
+      "id": "exists",
+      "type": "file_exists",
+      "path": "ProjectSettings/ProjectVersion.txt"
+    }
+  ],
+  "completionCriteria": [
+    "The plan records dirty parent state without failing only because it is dirty."
+  ],
+  "metadata": {}
+}

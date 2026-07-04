@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-BAD-OUTPUT",
+  "title": "Invalid Output Scope",
+  "objective": "Invalid expected output scope fixture.",
+  "taskType": "isolated_code_change",
+  "sourcePaths": [
+    "ProjectSettings/ProjectVersion.txt"
+  ],
+  "allowedWritePaths": [
+    "ProjectSettings/ProjectVersion.txt"
+  ],
+  "expectedOutputs": [
+    {
+      "path": "Assets/Other.txt",
+      "kind": "file",
+      "required": true
+    }
+  ],
+  "validationPlan": [
+    {
+      "id": "changed",
+      "type": "changed_paths_exact",
+      "paths": [
+        "Assets/Other.txt"
+      ]
+    }
+  ],
+  "completionCriteria": [
+    "Invalid fixture."
+  ]
+}

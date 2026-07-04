@@ -9,6 +9,7 @@ from models import RepoContext, find_task, validate_smoke_task, validate_workflo
 from pipeline_engine import run_pipeline_self_test, run_rate_limit_self_test
 from preflight import find_repo_root, format_summary, run_preflight
 from real_role_runner import run_real_role_plan, run_real_role_sandbox_probe, run_real_role_self_test
+from task_manifest_validator import validate_task_manifest_file, write_real_task_plan
 
 
 def parse_args() -> argparse.Namespace:
@@ -48,28 +49,56 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Run BOOTSTRAP-03B-1 local no-model Windows sandbox write probe.",
     )
+    parser.add_argument(
+        "--validate-task-manifest",
+        metavar="MANIFEST",
+        help="Validate a BOOTSTRAP-03B-2A generic real-task manifest without model, sandbox, workspace, or source copy.",
+    )
+    parser.add_argument(
+        "--real-task-plan",
+        metavar="MANIFEST",
+        help="Create a BOOTSTRAP-03B-2A no-model real-task plan report without model, sandbox, workspace, or source copy.",
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
+    selected_modes = [
+        args.dry_run,
+        args.smoke_test,
+        args.pipeline_self_test,
+        args.pipeline_rate_limit_self_test,
+        args.real_role_self_test_plan,
+        args.real_role_self_test,
+        args.real_role_sandbox_probe,
+        bool(args.validate_task_manifest),
+        bool(args.real_task_plan),
+    ]
+    if sum(1 for selected in selected_modes if selected) > 1:
+        print("Select exactly one explicit run mode.")
+        return 2
     script_path = Path(__file__).resolve()
     repo_root = find_repo_root(script_path.parent)
+    explicit_mode = (
+        args.smoke_test
+        or args.pipeline_self_test
+        or args.pipeline_rate_limit_self_test
+        or args.real_role_self_test_plan
+        or args.real_role_self_test
+        or args.real_role_sandbox_probe
+        or args.validate_task_manifest
+        or args.real_task_plan
+    )
     context = RepoContext(
         root=repo_root,
         automation_root=repo_root / "CodexAutomation",
-        dry_run=not (
-            args.smoke_test
-            or args.pipeline_self_test
-            or args.pipeline_rate_limit_self_test
-            or args.real_role_self_test_plan
-            or args.real_role_self_test
-            or args.real_role_sandbox_probe
-        ),
+        dry_run=not explicit_mode,
     )
-    report = run_preflight(context)
+    no_codex_preflight = bool(args.validate_task_manifest or args.real_task_plan)
+    report = run_preflight(context, inspect_codex=not no_codex_preflight)
     print(format_summary(report))
-    if not (args.smoke_test or args.pipeline_self_test or args.pipeline_rate_limit_self_test or args.real_role_self_test_plan or args.real_role_self_test or args.real_role_sandbox_probe):
+    if not explicit_mode:
         return 0 if report["ok"] else 1
 
     if not report["ok"]:
@@ -77,6 +106,40 @@ def main() -> int:
         return 1
 
     config = read_json(context.automation_root / "config.json")
+    if args.validate_task_manifest:
+        result = validate_task_manifest_file(repo_root, context.automation_root, config, Path(args.validate_task_manifest), inspect_sources=False)
+        print("Real Task Manifest Validation")
+        print(f"Valid: {result.ok}")
+        print(f"Manifest SHA-256: {result.manifestSha256 or 'none'}")
+        if result.errors:
+            for error in result.errors:
+                print(f"  - {error.code}: {error.message}")
+        return 0 if result.ok else 1
+
+    if args.real_task_plan:
+        result = validate_task_manifest_file(repo_root, context.automation_root, config, Path(args.real_task_plan), inspect_sources=True)
+        plan = result.effectivePlan or {}
+        if plan:
+            report_path, write_error = write_real_task_plan(repo_root, context.automation_root, plan)
+            if write_error:
+                print("Real Task Plan")
+                print("Final verdict: FAILED")
+                print(f"Error code: {write_error.code}")
+                return 1
+        else:
+            report_path = None
+        print("Real Task Plan")
+        print(f"Final verdict: {plan.get('finalVerdict', 'FAILED')}")
+        print(f"Manifest valid: {result.ok}")
+        print(f"Model invocation started: {plan.get('modelInvocationStarted', False)}")
+        print(f"Workspace created: {plan.get('workspaceCreated', False)}")
+        print(f"Source copied: {plan.get('sourceCopied', False)}")
+        print(f"Report: {report_path.resolve().relative_to(repo_root.resolve()).as_posix() if report_path else 'none'}")
+        if result.errors:
+            for error in result.errors:
+                print(f"  - {error.code}: {error.message}")
+        return 0 if result.ok and plan.get("finalVerdict") == "PASS" else 1
+
     if args.pipeline_self_test:
         task_path = context.automation_root / "tests" / "fixtures" / "PIPELINE-TEST-001.json"
         pipeline_report = run_pipeline_self_test(repo_root, context.automation_root, config, task_path)

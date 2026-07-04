@@ -1,0 +1,292 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contextVersion",
+    "runId",
+    "taskId",
+    "stage",
+    "createdAt",
+    "repositoryRoot",
+    "runtimeRoot",
+    "runDirectory",
+    "stagingDirectory",
+    "workspaceDirectory",
+    "evidenceDirectory",
+    "logsDirectory",
+    "manifestDisplayName",
+    "manifestPath",
+    "manifestSha256",
+    "effectiveHostPolicy",
+    "effectiveFoundationPolicy",
+    "sourcePaths",
+    "allowedWritePaths",
+    "allowedDeletePaths",
+    "sourceLimits",
+    "outputLimits",
+    "parentGitInitialSnapshot",
+    "noModel",
+    "noCodex",
+    "noSandbox",
+    "noUnity"
+  ],
+  "properties": {
+    "contextVersion": { "type": "integer", "const": 1 },
+    "runId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-A" },
+    "createdAt": { "type": "string" },
+    "repositoryRoot": { "type": "string" },
+    "runtimeRoot": { "type": "string" },
+    "runDirectory": { "type": "string" },
+    "stagingDirectory": { "type": "string" },
+    "workspaceDirectory": { "type": "string" },
+    "evidenceDirectory": { "type": "string" },
+    "logsDirectory": { "type": "string" },
+    "manifestDisplayName": { "type": ["string", "null"] },
+    "manifestPath": { "type": "string" },
+    "manifestSha256": { "type": "string" },
+    "effectiveHostPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowExecution",
+        "allowParentProjectWrite",
+        "allowAutomaticApply",
+        "allowNetwork",
+        "allowPackageInstall",
+        "allowUnityLaunch",
+        "allowAutomaticRetry",
+        "allowAutomaticModelDowngrade",
+        "allowAutomaticCreditUsage",
+        "allowDirtyParentWorktree",
+        "allowBinaryOutputs",
+        "maxInvocations",
+        "maxRepairAttempts",
+        "maxChangedFiles",
+        "maxChangedBytes",
+        "maxSingleChangedFileBytes",
+        "maxSourceFiles",
+        "maxSourceBytes",
+        "allowedSourceRoots",
+        "forbiddenSourceRoots",
+        "allowedTaskTypes",
+        "allowedValidatorTypes",
+        "effectiveMaxInvocations",
+        "effectiveMaxRepairAttempts",
+        "effectiveLimits",
+        "auditorRequired",
+        "parentWrite",
+        "network",
+        "packageInstall",
+        "unityLaunch",
+        "binaryOutputs",
+        "automaticApply",
+        "automaticRetry",
+        "automaticModelDowngrade",
+        "automaticCreditUsage"
+      ],
+      "properties": {
+        "allowExecution": { "type": "boolean", "const": false },
+        "allowParentProjectWrite": { "type": "boolean", "const": false },
+        "allowAutomaticApply": { "type": "boolean", "const": false },
+        "allowNetwork": { "type": "boolean", "const": false },
+        "allowPackageInstall": { "type": "boolean", "const": false },
+        "allowUnityLaunch": { "type": "boolean", "const": false },
+        "allowAutomaticRetry": { "type": "boolean", "const": false },
+        "allowAutomaticModelDowngrade": { "type": "boolean", "const": false },
+        "allowAutomaticCreditUsage": { "type": "boolean", "const": false },
+        "allowDirtyParentWorktree": { "type": "boolean" },
+        "allowBinaryOutputs": { "type": "boolean", "const": false },
+        "maxInvocations": { "type": "integer" },
+        "maxRepairAttempts": { "type": "integer" },
+        "maxChangedFiles": { "type": "integer" },
+        "maxChangedBytes": { "type": "integer" },
+        "maxSingleChangedFileBytes": { "type": "integer" },
+        "maxSourceFiles": { "type": "integer" },
+        "maxSourceBytes": { "type": "integer" },
+        "allowedSourceRoots": { "type": "array", "items": { "type": "string" } },
+        "forbiddenSourceRoots": { "type": "array", "items": { "type": "string" } },
+        "allowedTaskTypes": { "type": "array", "items": { "type": "string" } },
+        "allowedValidatorTypes": { "type": "array", "items": { "type": "string" } },
+        "effectiveMaxInvocations": { "type": "integer" },
+        "effectiveMaxRepairAttempts": { "type": "integer" },
+        "effectiveLimits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["maxChangedFiles", "maxChangedBytes", "maxSingleChangedFileBytes"],
+          "properties": {
+            "maxChangedFiles": { "type": "integer" },
+            "maxChangedBytes": { "type": "integer" },
+            "maxSingleChangedFileBytes": { "type": "integer" }
+          }
+        },
+        "auditorRequired": { "type": "boolean", "const": true },
+        "parentWrite": { "type": "boolean", "const": false },
+        "network": { "type": "boolean", "const": false },
+        "packageInstall": { "type": "boolean", "const": false },
+        "unityLaunch": { "type": "boolean", "const": false },
+        "binaryOutputs": { "type": "boolean", "const": false },
+        "automaticApply": { "type": "boolean", "const": false },
+        "automaticRetry": { "type": "boolean", "const": false },
+        "automaticModelDowngrade": { "type": "boolean", "const": false },
+        "automaticCreditUsage": { "type": "boolean", "const": false }
+      }
+    },
+    "effectiveFoundationPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtimeRoot",
+        "retainFailedStaging",
+        "preserveEmptyDirectories",
+        "autoPairUnityMeta",
+        "createStandaloneGit",
+        "createBaselineCommit",
+        "copyChunkBytes",
+        "maxInventoryEntries",
+        "maxReportBytes",
+        "textEncodings",
+        "utf16OutputsAllowed",
+        "extensionlessOutputsAllowed",
+        "binaryDeletionAllowed",
+        "renameRepresentation"
+      ],
+      "properties": {
+        "runtimeRoot": { "type": "string" },
+        "retainFailedStaging": { "type": "boolean", "const": true },
+        "preserveEmptyDirectories": { "type": "boolean", "const": true },
+        "autoPairUnityMeta": { "type": "boolean", "const": false },
+        "createStandaloneGit": { "type": "boolean", "const": true },
+        "createBaselineCommit": { "type": "boolean", "const": false },
+        "copyChunkBytes": { "type": "integer" },
+        "maxInventoryEntries": { "type": "integer" },
+        "maxReportBytes": { "type": "integer" },
+        "textEncodings": { "type": "array", "items": { "type": "string" } },
+        "utf16OutputsAllowed": { "type": "boolean", "const": false },
+        "extensionlessOutputsAllowed": { "type": "boolean", "const": false },
+        "binaryDeletionAllowed": { "type": "boolean", "const": false },
+        "renameRepresentation": { "type": "string", "const": "delete_add" }
+      }
+    },
+    "sourcePaths": { "type": "array", "items": { "type": "string" } },
+    "allowedWritePaths": { "type": "array", "items": { "type": "string" } },
+    "allowedDeletePaths": { "type": "array", "items": { "type": "string" } },
+    "sourceLimits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxSourceFiles", "maxSourceBytes", "maxInventoryEntries"],
+      "properties": {
+        "maxSourceFiles": { "type": "integer" },
+        "maxSourceBytes": { "type": "integer" },
+        "maxInventoryEntries": { "type": "integer" }
+      }
+    },
+    "outputLimits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxChangedFiles", "maxChangedBytes", "maxSingleChangedFileBytes"],
+      "properties": {
+        "maxChangedFiles": { "type": "integer" },
+        "maxChangedBytes": { "type": "integer" },
+        "maxSingleChangedFileBytes": { "type": "integer" }
+      }
+    },
+    "parentGitInitialSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "gitRepository",
+        "head",
+        "branch",
+        "detachedHead",
+        "stagedPaths",
+        "porcelainStatus",
+        "dirty",
+        "commandResults"
+      ],
+      "properties": {
+        "status": { "type": "string", "const": "success" },
+        "gitRepository": { "type": "boolean", "const": true },
+        "head": { "type": "string" },
+        "branch": { "type": ["string", "null"] },
+        "detachedHead": { "type": "boolean" },
+        "stagedPaths": { "type": "array", "items": { "type": "string" } },
+        "porcelainStatus": { "type": "array", "items": { "type": "string" } },
+        "dirty": { "type": "boolean" },
+        "commandResults": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["insideWorkTree", "porcelainStatus", "branch", "head", "stagedPaths"],
+          "properties": {
+            "insideWorkTree": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["command", "exitCode", "success", "stderr", "failure"],
+              "properties": {
+                "command": { "type": "array", "items": { "type": "string" } },
+                "exitCode": { "type": ["integer", "null"] },
+                "success": { "type": "boolean" },
+                "stderr": { "type": "string" },
+                "failure": { "type": ["string", "null"] }
+              }
+            },
+            "porcelainStatus": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["command", "exitCode", "success", "stderr", "failure"],
+              "properties": {
+                "command": { "type": "array", "items": { "type": "string" } },
+                "exitCode": { "type": ["integer", "null"] },
+                "success": { "type": "boolean" },
+                "stderr": { "type": "string" },
+                "failure": { "type": ["string", "null"] }
+              }
+            },
+            "branch": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["command", "exitCode", "success", "stderr", "failure"],
+              "properties": {
+                "command": { "type": "array", "items": { "type": "string" } },
+                "exitCode": { "type": ["integer", "null"] },
+                "success": { "type": "boolean" },
+                "stderr": { "type": "string" },
+                "failure": { "type": ["string", "null"] }
+              }
+            },
+            "head": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["command", "exitCode", "success", "stderr", "failure"],
+              "properties": {
+                "command": { "type": "array", "items": { "type": "string" } },
+                "exitCode": { "type": ["integer", "null"] },
+                "success": { "type": "boolean" },
+                "stderr": { "type": "string" },
+                "failure": { "type": ["string", "null"] }
+              }
+            },
+            "stagedPaths": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["command", "exitCode", "success", "stderr", "failure"],
+              "properties": {
+                "command": { "type": "array", "items": { "type": "string" } },
+                "exitCode": { "type": ["integer", "null"] },
+                "success": { "type": "boolean" },
+                "stderr": { "type": "string" },
+                "failure": { "type": ["string", "null"] }
+              }
+            }
+          }
+        }
+      }
+    },
+    "noModel": { "type": "boolean", "const": true },
+    "noCodex": { "type": "boolean", "const": true },
+    "noSandbox": { "type": "boolean", "const": true },
+    "noUnity": { "type": "boolean", "const": true }
+  }
+}

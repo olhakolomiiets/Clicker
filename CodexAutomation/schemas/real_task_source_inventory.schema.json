@@ -1,0 +1,136 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "inventoryVersion",
+    "rootKind",
+    "entries",
+    "fileCount",
+    "directoryCount",
+    "totalBytes",
+    "complete",
+    "errors",
+    "inventorySha256"
+  ],
+  "properties": {
+    "inventoryVersion": { "type": "integer", "const": 1 },
+    "runId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "rootKind": { "type": "string", "enum": ["source", "workspace"] },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "type",
+          "size",
+          "sha256",
+          "extension",
+          "serviceClassification",
+          "sourceRoot",
+          "symlink",
+          "reparse"
+        ],
+        "properties": {
+          "path": { "type": "string" },
+          "type": { "type": "string", "enum": ["file", "directory"] },
+          "size": { "type": "integer" },
+          "sha256": { "type": ["string", "null"] },
+          "extension": { "type": "string" },
+          "serviceClassification": { "type": "string" },
+          "sourceRoot": { "type": "string" },
+          "symlink": { "type": "boolean", "const": false },
+          "reparse": { "type": "boolean", "const": false }
+        }
+      }
+    },
+    "fileCount": { "type": "integer" },
+    "directoryCount": { "type": "integer" },
+    "totalBytes": { "type": "integer" },
+    "complete": { "type": "boolean", "const": true },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "path": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "inventorySha256": { "type": "string" },
+    "serviceRegistry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "kind",
+          "expectedType",
+          "expectedSha256",
+          "mutability",
+          "origin",
+          "workspacePath",
+          "evidencePath"
+        ],
+        "properties": {
+          "path": { "type": "string" },
+          "kind": { "type": "string", "enum": ["file", "directory"] },
+          "expectedType": { "type": "string", "enum": ["file", "directory", "missing"] },
+          "expectedSha256": { "type": ["string", "null"] },
+          "mutability": { "type": "string", "const": "immutable" },
+          "origin": {
+            "type": "string",
+            "enum": [
+              "host_generated",
+              "parent_evidence",
+              "ancestor_project_instruction",
+              "copied_project_instruction",
+              "task_snapshot",
+              "policy_snapshot",
+              "isolated_git",
+              "empty_agents_directory"
+            ]
+          },
+          "workspacePath": { "type": ["string", "null"] },
+          "evidencePath": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "isolatedGitFingerprint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gitDirectoryValid",
+        "gitFilePointerPresent",
+        "head",
+        "stagedPaths",
+        "remotes",
+        "refs",
+        "activeHooks",
+        "configSha256",
+        "baselineCommitCreated"
+      ],
+      "properties": {
+        "gitDirectoryValid": { "type": "boolean", "const": true },
+        "gitFilePointerPresent": { "type": "boolean", "const": false },
+        "head": { "type": ["string", "null"] },
+        "stagedPaths": { "type": "array", "items": { "type": "string" } },
+        "remotes": { "type": "array", "items": { "type": "string" } },
+        "refs": { "type": "array", "items": { "type": "string" } },
+        "activeHooks": { "type": "array", "items": { "type": "string" } },
+        "configSha256": { "type": ["string", "null"] },
+        "baselineCommitCreated": { "type": "boolean", "const": false },
+        "postPromotionVerified": { "type": "boolean", "const": true },
+        "stagingFingerprintSha256": { "type": "string" },
+        "workspaceFingerprintSha256": { "type": "string" }
+      }
+    }
+  }
+}

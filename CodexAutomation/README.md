@@ -1,8 +1,8 @@
 # Codex Automation Bootstrap
 
-This is BOOTSTRAP-03B-2A for the local Codex Automation system.
+This is BOOTSTRAP-03B-2B-A for the local Codex Automation system.
 
-The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, BOOTSTRAP-03A fake pipeline behavior, and BOOTSTRAP-03B-1 real-role self-test behavior. BOOTSTRAP-03B-2A adds only strict generic real-task manifest validation and a no-model plan report mode. It does not launch Codex, does not run `codex sandbox`, does not create a real task workspace, does not copy source files, does not launch Unity batchmode, does not apply patches, and does not change files inside `Assets`, `Packages`, or `ProjectSettings`.
+The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, BOOTSTRAP-03A fake pipeline behavior, BOOTSTRAP-03B-1 real-role self-test behavior, and BOOTSTRAP-03B-2A generic real-task manifest validation/plan behavior. BOOTSTRAP-03B-2B-A adds only the no-model foundation preparation layer: fresh trusted context creation, staging workspace lifecycle, immutable service files, full source pre/post inventories, verified allowlisted source copy, and workspace promotion after verification. It does not launch Codex, does not run `codex sandbox`, does not run a model, does not launch Unity batchmode, does not compute a generic final task diff, does not run a validator registry, does not apply patches, and does not change files inside `Assets`, `Packages`, or `ProjectSettings`.
 
 ## Created Files
 
@@ -28,6 +28,7 @@ The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 pre
 - `CodexAutomation/runtime/pipeline_runs/`
 - `CodexAutomation/runtime/real_role_workspaces/`
 - `CodexAutomation/runtime/real_role_runs/`
+- `CodexAutomation/runtime/real_task_foundation_runs/`
 - `CodexAutomation/runtime/audits/`
 - `CodexAutomation/runtime/generated_tasks/`
 
@@ -108,11 +109,12 @@ Smoke test runtime output is written to ignored runtime paths:
 - Real-role self-test is started only by the explicit `--real-role-self-test` mode and is limited to an isolated runtime workspace.
 - Generic real-task manifest validation is started only by `--validate-task-manifest`.
 - Generic real-task planning is started only by `--real-task-plan`.
-- BOOTSTRAP-03B-2A has no `--real-task-run` mode.
+- BOOTSTRAP-03B-2B-A has no `--real-task-run` mode.
+- BOOTSTRAP-03B-2B-A has no production `--real-task-prepare` mode. Future real-task execution stages must create a fresh trusted run context and fresh workspace inside their own run.
 - The generic real-task validate/plan modes use a no-Codex preflight profile; they do not run `codex.cmd --version`, `codex --version`, `codex exec`, or `codex sandbox`.
 - No Unity code is changed.
 - No real implementer, repairer, or auditor may write to the Unity project.
-- No generic real-task implementer, repairer, or auditor is launched in BOOTSTRAP-03B-2A.
+- No generic real-task implementer, repairer, or auditor is launched in BOOTSTRAP-03B-2B-A.
 - No automatic retry after rate limit is available.
 - No process-restart resume is available.
 - No task generator is available; BOOTSTRAP-04 will own task generation.
@@ -327,4 +329,66 @@ Dirty parent worktree is allowed for validation and plan mode only after a succe
 
 ### Deferred Stages
 
-BOOTSTRAP-03B-2B, BOOTSTRAP-03B-2C, and BOOTSTRAP-03B-2D are not implemented here. Source copying, isolated real-task workspace population, implementer/repairer/auditor execution, patch/result bundle production, and controlled real-task self-test remain future work. Automatic apply, merge, commit, push, PR creation, Unity launch, and Unity batchmode validation are still out of scope.
+BOOTSTRAP-03B-2B-B, BOOTSTRAP-03B-2B-C, BOOTSTRAP-03B-2C, and BOOTSTRAP-03B-2D are not implemented here. Generic final task diffing, validator registry execution, implementer/repairer/auditor execution, patch/result bundle production, and controlled real-task execution self-test remain future work. Automatic apply, merge, commit, push, PR creation, Unity launch, and Unity batchmode validation are still out of scope.
+
+## BOOTSTRAP-03B-2B-A Foundation Preparation
+
+BOOTSTRAP-03B-2B-A adds reusable host-controlled foundation APIs for future generic real-task runs. These APIs are internal production-path functions, not a production workspace preparation CLI.
+
+The foundation layer always recreates trust from current inputs:
+
+- Manifest and host policy are validated again.
+- Existing `REAL_TASK_PLAN_REPORT.json` files are never read as authorization.
+- A new trusted context is schema/semantic validated before write, written atomically as canonical JSON, reread, validated again, and later reports carry the reread canonical SHA-256.
+- Runtime output stays under `CodexAutomation/runtime/real_task_foundation_runs/<run-id>/`.
+
+The runtime layout for a foundation run is:
+
+```text
+CodexAutomation/runtime/real_task_foundation_runs/<run-id>/
+  TRUSTED_RUN_CONTEXT.json
+  SOURCE_PRE_INVENTORY.json
+  SOURCE_POST_INVENTORY.json
+  WORKSPACE_BASELINE_INVENTORY.json
+  WORKSPACE_PREPARATION_REPORT.json
+  SOURCE_COPY_REPORT.json
+  FINAL_WORKSPACE_PREPARATION_REPORT.json
+  evidence/
+  logs/
+  staging/
+  workspace/
+```
+
+`workspace/` is absent until staging is fully verified. On failure, `staging/` is retained as evidence, `workspaceReady=false` is reported, and no cleanup reuses or removes the failed staging directory.
+
+Source copy rules:
+
+- Only manifest source paths plus host-expanded applicable nested/ancestor `AGENTS.md` service inputs are copied.
+- Source pre-copy and post-copy inventories hash every regular file with SHA-256.
+- Empty directories are preserved and inventoried.
+- Bytes are copied exactly; line endings and encodings are not normalized.
+- Hidden files are included when they are inside an explicitly copied source directory.
+- No automatic Unity `.meta` pairing is performed. Explicit `.meta` files and `.meta` files inside copied directories are copied naturally.
+- Each source file component chain is revalidated immediately before opening the file and again before trusting the post-copy source hash.
+- Destination verification compares the full file and directory path set against verified source content, with only registered service paths and required ancestor directories allowed.
+- Symlinks, junctions, reparse points, special files, destination escapes, extra destination content, and hash mismatches fail closed.
+
+Service-file rules:
+
+- Workspace root `AGENTS.md` is generated by host code and contains immutable automation safety rules.
+- Parent root `AGENTS.md` is stored only as `evidence/PARENT_ROOT_AGENTS.md` with a hash; it is not active workspace instructions.
+- `.agents/` is an exact empty immutable directory.
+- `task.json` and `effective_policy.json` are immutable host snapshots.
+- Applicable ancestor and nested project `AGENTS.md` files are copied to their repo-relative paths and classified immutable.
+- Service metadata distinguishes host-expanded ancestor instructions from project instructions naturally copied by a declared source file or directory.
+- Host policy always overrides project instructions.
+
+Standalone isolated Git rules:
+
+- The workspace has a standalone `.git`.
+- Parent `.git` is not used.
+- No worktree links, remotes, staged paths, active hooks, submodule operations, `git add`, `git commit`, or baseline commit are created.
+- The isolated Git fingerprint is checked in staging and again after promotion to `workspace/`; mismatch blocks PASS.
+- Host inventories remain the source of truth; Git state is only protected service evidence.
+
+Foundation reports are strict, machine-readable JSON files validated by local schemas. Critical trusted context and inventory schemas reject unknown root and nested policy/Git fields. PASS requires source pre/post match, verified destination hashes and path sets, valid service files, post-promotion verified isolated Git, unchanged parent Git before/after snapshots, zero Codex invocations, no model start, no sandbox start, no Unity start, and no network use.

@@ -1,7 +1,7 @@
 {
   "format_version": 1,
   "project_name": "Planet Builder",
-  "automation_stage": "BOOTSTRAP-03B-2A",
+  "automation_stage": "BOOTSTRAP-03B-2B-A",
   "dry_run_default": true,
   "paths": {
     "automation_root": "CodexAutomation",
@@ -127,6 +127,17 @@
       "max_changed_files",
       "extension_allowlist"
     ]
+  },
+  "realTaskFoundation": {
+    "runtimeRoot": "CodexAutomation/runtime/real_task_foundation_runs",
+    "retainFailedStaging": true,
+    "preserveEmptyDirectories": true,
+    "autoPairUnityMeta": false,
+    "createStandaloneGit": true,
+    "createBaselineCommit": false,
+    "copyChunkBytes": 1048576,
+    "maxInventoryEntries": 5000,
+    "maxReportBytes": 4194304
   },
   "unity": {
     "project_version_file": "ProjectSettings/ProjectVersion.txt",

@@ -198,6 +198,7 @@ def ensure_runtime_directories(automation_root: Path) -> list[str]:
         Path("runtime/pipeline_runs"),
         Path("runtime/audits"),
         Path("runtime/generated_tasks"),
+        Path("runtime/real_task_foundation_runs"),
     ):
         directory = automation_root / relative_path
         if not directory.exists():

@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "reportVersion",
+    "runId",
+    "taskId",
+    "stage",
+    "stateHistory",
+    "trustedContextHash",
+    "stagingPath",
+    "workspacePath",
+    "evidencePath",
+    "logsPath",
+    "workspaceReady",
+    "finalState",
+    "errorCode",
+    "errorMessage"
+  ],
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "runId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-A" },
+    "stateHistory": { "type": "array", "items": { "type": "string" } },
+    "trustedContextHash": { "type": "string" },
+    "stagingPath": { "type": "string" },
+    "workspacePath": { "type": "string" },
+    "evidencePath": { "type": "string" },
+    "logsPath": { "type": "string" },
+    "workspaceReady": { "type": "boolean" },
+    "finalState": { "type": "string" },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

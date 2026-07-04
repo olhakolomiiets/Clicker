@@ -11,6 +11,7 @@ from pathlib import Path, PureWindowsPath
 from typing import Any
 
 from file_utils import read_json, write_json_atomic
+from parent_git_snapshot import parent_git_snapshot
 from real_task_models import ManifestValidationResult, REAL_TASK_STAGE, RealTaskError, RealTaskPolicy
 from schema_validator import validate
 
@@ -907,40 +908,7 @@ def _build_effective_plan(
 
 
 def _parent_git_snapshot(root: Path) -> tuple[dict[str, Any], list[RealTaskError]]:
-    commands = {
-        "insideWorkTree": ["git", "rev-parse", "--is-inside-work-tree"],
-        "porcelainStatus": ["git", "status", "--porcelain=v1", "--untracked-files=all"],
-        "branch": ["git", "branch", "--show-current"],
-        "head": ["git", "rev-parse", "HEAD"],
-        "stagedPaths": ["git", "diff", "--cached", "--name-only"],
-    }
-    results = {name: _run_git_command(root, command) for name, command in commands.items()}
-    errors: list[RealTaskError] = []
-    failed = [name for name, result in results.items() if not result["success"]]
-    inside = _git_single_line(results["insideWorkTree"])
-    head = _git_single_line(results["head"])
-    branch_value = _git_single_line(results["branch"])
-    if failed:
-        errors.append(_error("REAL_TASK_GIT_SNAPSHOT_FAILED", "Parent Git snapshot command failed.", "parentGitSnapshot"))
-    elif inside != "true":
-        errors.append(_error("REAL_TASK_GIT_SNAPSHOT_FAILED", "Parent repository is not a Git work tree.", "parentGitSnapshot"))
-    elif not head:
-        errors.append(_error("REAL_TASK_GIT_SNAPSHOT_FAILED", "Parent Git HEAD could not be determined.", "parentGitSnapshot"))
-
-    status_lines = _git_lines_from_result(results["porcelainStatus"])
-    staged_lines = _git_lines_from_result(results["stagedPaths"])
-    snapshot_failed = bool(errors)
-    return {
-        "status": "failed" if snapshot_failed else "success",
-        "gitRepository": None if snapshot_failed else True,
-        "head": head if head else None,
-        "branch": branch_value if branch_value else None,
-        "detachedHead": bool(results["branch"]["success"] and not branch_value),
-        "stagedPaths": staged_lines if not snapshot_failed else [],
-        "porcelainStatus": status_lines if not snapshot_failed else [],
-        "dirty": None if snapshot_failed else bool(status_lines),
-        "commandResults": {name: _public_git_result(result) for name, result in results.items()},
-    }, errors
+    return parent_git_snapshot(root)
 
 
 def _run_git_command(root: Path, command: list[str]) -> dict[str, Any]:

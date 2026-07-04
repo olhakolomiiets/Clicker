@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "reportVersion",
+    "runId",
+    "taskId",
+    "stage",
+    "trustedContextHash",
+    "sourcePrePostMatch",
+    "sourceCopyVerified",
+    "copiedFiles",
+    "copiedDirectories",
+    "copiedBytes",
+    "hostExpandedAncestorAgents",
+    "serviceRegistry",
+    "errorCode",
+    "errorMessage"
+  ],
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "runId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-A" },
+    "trustedContextHash": { "type": ["string", "null"] },
+    "sourcePrePostMatch": { "type": "boolean" },
+    "sourceCopyVerified": { "type": "boolean" },
+    "copiedFiles": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+    "copiedDirectories": { "type": "array", "items": { "type": "string" } },
+    "copiedBytes": { "type": "integer" },
+    "hostExpandedAncestorAgents": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+    "serviceRegistry": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

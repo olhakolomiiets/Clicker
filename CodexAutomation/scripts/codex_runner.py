@@ -284,6 +284,9 @@ def _validate_runner_config(config: dict[str, Any], root: Path) -> tuple[str, st
     return None
 
 
+POST_TERMINATION_WAIT_SECONDS = 5
+
+
 def run_process_with_timeout(command: list[str], cwd: Path, input_text: str, timeout_seconds: int) -> dict[str, Any]:
     process = subprocess.Popen(
         command,
@@ -295,16 +298,28 @@ def run_process_with_timeout(command: list[str], cwd: Path, input_text: str, tim
     )
     termination = _empty_termination_result()
     timed_out = False
+    stdout = ""
+    stderr = ""
     try:
         stdout, stderr = process.communicate(input=input_text, timeout=timeout_seconds)
     except subprocess.TimeoutExpired:
         timed_out = True
         termination = terminate_process_tree(process)
         try:
-            stdout, stderr = process.communicate(timeout=5)
+            stdout, stderr = process.communicate(timeout=POST_TERMINATION_WAIT_SECONDS)
         except subprocess.TimeoutExpired:
-            process.kill()
-            stdout, stderr = process.communicate()
+            termination["fallback_kill_attempted"] = True
+            try:
+                process.kill()
+            except OSError as exc:
+                termination["stderr"] = _append_stderr(termination["stderr"], str(exc))
+            try:
+                stdout, stderr = process.communicate(timeout=POST_TERMINATION_WAIT_SECONDS)
+            except subprocess.TimeoutExpired:
+                termination["incomplete"] = True
+                termination["succeeded"] = False
+                termination["stderr"] = _append_stderr(termination["stderr"], "process output collection timed out after kill.")
+                _close_process_pipes(process)
 
     return {
         "pid": process.pid,
@@ -316,30 +331,114 @@ def run_process_with_timeout(command: list[str], cwd: Path, input_text: str, tim
     }
 
 
-def terminate_process_tree(process: subprocess.Popen[str]) -> dict[str, Any]:
+def run_process_with_file_logs_and_timeout(
+    command: list[str],
+    cwd: Path,
+    stdout_path: Path,
+    stderr_path: Path,
+    timeout_seconds: int,
+    taskkill_timeout_seconds: int,
+    post_kill_wait_seconds: int,
+    status_callback: Any | None = None,
+) -> dict[str, Any]:
+    stdout_path.parent.mkdir(parents=True, exist_ok=True)
+    stderr_path.parent.mkdir(parents=True, exist_ok=True)
+    result: dict[str, Any] = {
+        "pid": None,
+        "exit_code": None,
+        "timed_out": False,
+        "termination": _empty_termination_result(),
+        "process_started": False,
+        "process_start_error": None,
+    }
+    process: subprocess.Popen[Any] | None = None
+    with stdout_path.open("w", encoding="utf-8", newline="\n") as stdout_file, stderr_path.open("w", encoding="utf-8", newline="\n") as stderr_file:
+        try:
+            process = subprocess.Popen(
+                command,
+                cwd=str(cwd),
+                stdin=subprocess.DEVNULL,
+                stdout=stdout_file,
+                stderr=stderr_file,
+                shell=False,
+                text=True,
+            )
+        except OSError as exc:
+            result["process_start_error"] = str(exc)
+            if status_callback is not None:
+                status_callback("start_failed", result)
+            return result
+        result["pid"] = process.pid
+        result["process_started"] = True
+        if status_callback is not None:
+            status_callback("started", result)
+        try:
+            result["exit_code"] = process.wait(timeout=timeout_seconds)
+            return result
+        except subprocess.TimeoutExpired:
+            result["timed_out"] = True
+            result["termination"]["attempted"] = True
+            if status_callback is not None:
+                status_callback("timeout", result)
+            result["termination"] = terminate_process_tree(process, taskkill_timeout_seconds)
+            result["termination"]["attempted"] = True
+            if status_callback is not None:
+                status_callback("taskkill_done", result)
+            try:
+                result["exit_code"] = process.wait(timeout=post_kill_wait_seconds)
+            except subprocess.TimeoutExpired:
+                result["termination"]["fallback_kill_attempted"] = True
+                if status_callback is not None:
+                    status_callback("fallback_kill", result)
+                try:
+                    process.kill()
+                except OSError as exc:
+                    result["termination"]["stderr"] = _append_stderr(result["termination"]["stderr"], str(exc))
+                try:
+                    result["exit_code"] = process.wait(timeout=post_kill_wait_seconds)
+                except subprocess.TimeoutExpired:
+                    result["termination"]["incomplete"] = True
+                    result["termination"]["succeeded"] = False
+                    result["termination"]["stderr"] = _append_stderr(result["termination"]["stderr"], "process did not exit after fallback kill.")
+                    if status_callback is not None:
+                        status_callback("termination_incomplete", result)
+            return result
+
+
+def terminate_process_tree(process: subprocess.Popen[str], taskkill_timeout_seconds: int = 10) -> dict[str, Any]:
     result = _empty_termination_result()
     result["attempted"] = True
 
     if platform.system().lower() == "windows":
         command = ["taskkill", "/PID", str(process.pid), "/T", "/F"]
         result["command"] = command
-        completed = subprocess.run(command, capture_output=True, text=True, check=False)
-        result["exit_code"] = completed.returncode
-        result["stderr"] = (completed.stderr or "").strip()
-        result["succeeded"] = completed.returncode == 0
+        try:
+            completed = subprocess.run(command, capture_output=True, text=True, check=False, timeout=taskkill_timeout_seconds)
+            result["exit_code"] = completed.returncode
+            result["stderr"] = (completed.stderr or "").strip()
+            result["succeeded"] = completed.returncode == 0
+        except subprocess.TimeoutExpired:
+            result["exit_code"] = None
+            result["stderr"] = "taskkill timed out."
+            result["succeeded"] = False
         return result
 
     try:
         process.terminate()
         result["command"] = ["terminate", str(process.pid)]
         try:
-            process.wait(timeout=5)
+            process.wait(timeout=POST_TERMINATION_WAIT_SECONDS)
         except subprocess.TimeoutExpired:
             process.kill()
-            process.wait(timeout=5)
+            result["fallback_kill_attempted"] = True
+            try:
+                process.wait(timeout=POST_TERMINATION_WAIT_SECONDS)
+            except subprocess.TimeoutExpired:
+                result["incomplete"] = True
+                result["stderr"] = "process did not exit after fallback kill."
             result["command"] = ["kill", str(process.pid)]
         result["exit_code"] = process.returncode
-        result["succeeded"] = process.returncode is not None
+        result["succeeded"] = process.returncode is not None and not result["incomplete"]
     except OSError as exc:
         result["stderr"] = str(exc)
         result["succeeded"] = False
@@ -353,7 +452,28 @@ def _empty_termination_result() -> dict[str, Any]:
         "command": [],
         "exit_code": None,
         "stderr": "",
+        "fallback_kill_attempted": False,
+        "incomplete": False,
     }
+
+
+def _append_stderr(current: str, addition: str) -> str:
+    if not current:
+        return addition
+    if not addition:
+        return current
+    return f"{current}\n{addition}"
+
+
+def _close_process_pipes(process: subprocess.Popen[Any]) -> None:
+    for pipe_name in ("stdin", "stdout", "stderr"):
+        pipe = getattr(process, pipe_name, None)
+        if pipe is None:
+            continue
+        try:
+            pipe.close()
+        except OSError:
+            pass
 
 
 def _build_prompt(prompt_path: Path, task_path: Path) -> str:

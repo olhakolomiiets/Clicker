@@ -1,0 +1,84 @@
+{
+  "id": "REAL-PIPELINE-TEST-001",
+  "title": "Isolated real Codex role pipeline self-test",
+  "description": "A runtime-only isolated workspace test for real implementer, repairer, and read-only auditor roles.",
+  "mode": "pipeline_fake_test",
+  "initialImplementationInstructions": "Create artifact.json in the controlled pre-repair state only.",
+  "acceptanceCriteria": [
+    "artifact.json exists",
+    "artifact.json is valid JSON",
+    "artifact.json taskId is REAL-PIPELINE-TEST-001",
+    "artifact.json value is 42",
+    "artifact.json repairApplied is true",
+    "artifact.json has no additional fields",
+    "Only artifact.json changes after workspace initialization"
+  ],
+  "allowedWritePaths": [
+    "artifact.json"
+  ],
+  "forbiddenWritePaths": [
+    "../*",
+    "Assets/**",
+    "Packages/**",
+    "ProjectSettings/**",
+    "CodexAutomation/**"
+  ],
+  "maxRepairAttempts": 0,
+  "validations": [
+    {
+      "type": "required_file",
+      "code": "ARTIFACT_REQUIRED",
+      "file": "artifact.json"
+    },
+    {
+      "type": "json_valid",
+      "code": "ARTIFACT_JSON_VALID",
+      "file": "artifact.json"
+    },
+    {
+      "type": "json_field_equals",
+      "code": "ARTIFACT_TASK_ID_INCORRECT",
+      "file": "artifact.json",
+      "field": "taskId",
+      "expected": "REAL-PIPELINE-TEST-001"
+    },
+    {
+      "type": "json_field_equals",
+      "code": "ARTIFACT_VALUE_INCORRECT",
+      "file": "artifact.json",
+      "field": "value",
+      "expected": 42
+    },
+    {
+      "type": "json_field_equals",
+      "code": "REPAIR_NOT_APPLIED",
+      "file": "artifact.json",
+      "field": "repairApplied",
+      "expected": true
+    },
+    {
+      "type": "exact_allowed_changed_paths",
+      "code": "CHANGED_PATHS_EXACT",
+      "paths": [
+        "artifact.json"
+      ]
+    },
+    {
+      "type": "no_unexpected_files",
+      "code": "NO_UNEXPECTED_FILES",
+      "paths": [
+        "artifact.json",
+        "AGENTS.md",
+        "task.json",
+        ".git/**"
+      ]
+    }
+  ],
+  "auditInstructions": "Review artifact.json and return PASS only when host validation passes and no scope violations exist.",
+  "nonGoals": [
+    "Do not read the Unity project",
+    "Do not create new tasks",
+    "Do not run Unity",
+    "Do not create commits"
+  ]
+}

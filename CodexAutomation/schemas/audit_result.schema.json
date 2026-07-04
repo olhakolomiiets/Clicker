@@ -25,6 +25,11 @@
     },
     "filesReviewed": { "type": "array", "items": { "type": "string" } },
     "scopeViolations": { "type": "array", "items": { "type": "string" } },
-    "blockedReason": {}
+    "blockedReason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
   }
 }

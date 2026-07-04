@@ -1,8 +1,8 @@
 # Codex Automation Bootstrap
 
-This is BOOTSTRAP-03A for the local Codex Automation system.
+This is BOOTSTRAP-03B-1 for the local Codex Automation system.
 
-The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight and BOOTSTRAP-02 read-only Codex smoke test behavior, and adds a local fake IMPLEMENT VALIDATE AUDIT REPAIR pipeline core. BOOTSTRAP-03A does not run real workspace-write Codex roles, does not launch Unity batchmode, and does not change files inside `Assets`, `Packages`, or `ProjectSettings`.
+The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, and BOOTSTRAP-03A fake pipeline behavior. BOOTSTRAP-03B-1 adds one explicit real-role self-test that may use `codex exec --sandbox workspace-write` only inside a newly created isolated runtime workspace under `CodexAutomation/runtime/real_role_workspaces/<run-id>/workspace/`. It does not launch Unity batchmode and does not change files inside `Assets`, `Packages`, or `ProjectSettings`.
 
 ## Created Files
 
@@ -26,6 +26,8 @@ The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 pre
 - `CodexAutomation/runtime/results/`
 - `CodexAutomation/runtime/workspaces/`
 - `CodexAutomation/runtime/pipeline_runs/`
+- `CodexAutomation/runtime/real_role_workspaces/`
+- `CodexAutomation/runtime/real_role_runs/`
 - `CodexAutomation/runtime/audits/`
 - `CodexAutomation/runtime/generated_tasks/`
 
@@ -101,17 +103,16 @@ Smoke test runtime output is written to ignored runtime paths:
 
 ## Current Limits
 
-- `codex exec` is started only by the explicit `--smoke-test` mode.
-- Pipeline self-tests use a local fake role adapter and do not start Codex.
+- Read-only `codex exec` is started only by the explicit `--smoke-test` mode.
+- Fake pipeline self-tests use a local fake role adapter and do not start Codex.
+- Real-role self-test is started only by the explicit `--real-role-self-test` mode and is limited to an isolated runtime workspace.
 - No Unity code is changed.
-- No real implementer is available.
-- No real auditor is available.
-- No real repairer is available.
-- No `codex exec --json` parser is available.
+- No real implementer, repairer, or auditor may write to the Unity project.
+- No automatic retry after rate limit is available.
+- No process-restart resume is available.
 - No task generator is available; BOOTSTRAP-04 will own task generation.
 - No Unity Editor or Unity batchmode process is started.
 - No Git commits are created.
-- No resume pipeline is available.
 - No two-hour autonomous mode is available.
 - No Python packages are installed.
 - Dirty worktree and running Unity are reported but do not stop preflight.
@@ -166,4 +167,87 @@ CodexAutomation/runtime/workspaces/<run-id>/
 
 Important BOOTSTRAP-03A error codes include `INVALID_TASK`, `INVALID_STATE_TRANSITION`, `IMPLEMENTATION_RESULT_INVALID`, `VALIDATION_FAILED`, `AUDIT_RESULT_INVALID`, `REPAIR_RESULT_INVALID`, `ROLE_EXECUTION_RESULT_INVALID`, `FAILED_MAX_REPAIRS`, `FAILED_MAX_AUDITS`, `FAILED_WRITE_DETECTED`, `REAL_WORKSPACE_WRITE_DISABLED`, `PIPELINE_PREFLIGHT_FAILED`, `PIPELINE_INTERNAL_ERROR`, `INVALID_PIPELINE_CONFIG`, `FAILED_INVOCATION_BUDGET`, `UNSAFE_ABSOLUTE_PATH`, `UNSAFE_PARENT_TRAVERSAL`, `UNSAFE_PATH_OUTSIDE_WORKSPACE`, `UNSAFE_SYMLINK_OR_REPARSE_POINT`, `INVALID_VALIDATION_PATH`, `CODEX_USAGE_LIMIT_REACHED`, `CODEX_WEEKLY_LIMIT_REACHED`, `CODEX_CREDITS_EXHAUSTED`, `CODEX_RATE_LIMIT_RESET_UNKNOWN`, `CODEX_RATE_LIMIT_RETRY_EXHAUSTED`, `CODEX_RATE_LIMIT_DATA_INVALID`, and `PIPELINE_PAUSED_RATE_LIMIT`.
 
-Future stages can add real implementation, audit, repair, `codex exec --json` parsing, generated task handling, Unity validation, Git integration, process restart resume support, and long-running automation. Those features are intentionally out of scope for BOOTSTRAP-03A.
+## BOOTSTRAP-03B-1 Real-Role Self-Test
+
+BOOTSTRAP-03B-1 connects real Codex roles only for a controlled local test task, `REAL-PIPELINE-TEST-001`. The real roles run in a separate local Git repository inside:
+
+```text
+CodexAutomation/runtime/real_role_workspaces/<run-id>/workspace/
+```
+
+For the installed Codex CLI 0.142.5, the real-role self-test has observed compatibility behavior where the CLI/runtime may create or expect an exact empty `.agents` directory inside the role workspace. Host code now pre-creates that exact service directory before the initial workspace snapshot and before any Codex invocation:
+
+```text
+CodexAutomation/runtime/real_role_workspaces/<run-id>/workspace/.agents/
+```
+
+`.agents` is a strictly controlled empty service directory, not a wildcard ignore. The initial service baseline contains only `.git`, `AGENTS.md`, `task.json`, and `.agents` at the workspace top level. `AGENTS.md` and `task.json` must keep their original hashes, the isolated Git fingerprint must remain stable, and `.agents` must remain a normal empty directory. No `.agents/**` contents are allowed. Other dotfiles and runtime paths are not ignored; unexpected paths such as `.agents.json`, `.agents.tmp`, `.agents-old`, `.agent`, `.codex`, or any other automatically created path still fail validation.
+
+The service directory is validated before and after every real role. Validation checks the exact relative path `.agents`, existence, ordinary directory type, non-symlink status, non-reparse/junction status, containment inside the current isolated workspace, and an empty recursive listing. Missing, non-empty, invalid, or replaced service directories use stable error codes: `REAL_TEST_SERVICE_DIRECTORY_MISSING`, `REAL_TEST_SERVICE_DIRECTORY_NOT_EMPTY`, `REAL_TEST_SERVICE_DIRECTORY_INVALID`, and `REAL_TEST_SERVICE_DIRECTORY_REPLACED`. Historical failed runs, including evidence where `.agents` first appeared after implementer, are kept under runtime and are not reused as a baseline for later runs.
+
+The Unity project root, `Assets`, `Packages`, `ProjectSettings`, `CodexAutomation`, and parent runtime directories are never used as the workspace-write root. The configuration must keep `allowRealProjectWrite` exactly `false` and `allowIsolatedWorkspaceWriteTest` exactly `true`; task JSON cannot override those safety settings.
+
+Plan the real-role command set without starting Codex:
+
+```bat
+python CodexAutomation/scripts/orchestrator.py --real-role-self-test-plan
+start_codex_pipeline.bat --real-role-self-test-plan
+```
+
+Check the local Windows sandbox write helper without a model invocation:
+
+```bat
+python CodexAutomation/scripts/orchestrator.py --real-role-sandbox-probe
+```
+
+The sandbox probe uses `codex sandbox`, not `codex exec`. It creates a unique ignored workspace under
+`CodexAutomation/runtime/real_role_sandbox_probes/`, writes and reads back a temporary probe file inside
+that workspace, removes it, and writes `SANDBOX_WRITE_PROBE_REPORT.json`.
+
+The probe has its own bounded timeout configuration: `sandboxProbeTimeoutSeconds`,
+`sandboxProbeTaskkillTimeoutSeconds`, and `sandboxProbePostKillWaitSeconds`. It creates the probe report,
+sanitized command sidecar, process sidecar, initial workspace snapshot, and stdout/stderr log files before
+starting the sandbox helper. Probe stdout and stderr are written directly to runtime log files instead of
+being collected through pipes. If the helper times out, the runner records a timeout marker before bounded
+process-tree termination and still finalizes `SANDBOX_WRITE_PROBE_REPORT.json` when the report path is
+available. A timeout never starts model roles, never retries automatically, and never falls back to
+`unelevated`; the Windows sandbox environment must be fixed manually before another real-role attempt.
+The in-memory probe result never authorizes real roles by itself. The trusted probe identity is created by
+host code before the sandbox helper starts: `probeRunId`, run directory, workspace, and report path are not
+read from the report payload. That original host-created context remains the authority after the probe
+returns; the returned `ProbeExecutionOutcome.context` is only an untrusted diagnostic echo, and a mismatch
+blocks model roles. Before any model role can start, the runner reloads exactly that current probe run's
+final `SANDBOX_WRITE_PROBE_REPORT.json` from disk and verifies the trusted `probeRunId`, report path,
+workspace path, finalization fields, PASS contract, and absence of `reportWriteError`. Missing, malformed,
+stale, RUNNING, report-write-failed, or context-mismatched probe reports block model invocation; an older
+self-consistent PASS report cannot choose its own `reportPath` or be reused for a later run.
+
+Run the real-role self-test explicitly:
+
+```bat
+python CodexAutomation/scripts/orchestrator.py --real-role-self-test
+```
+
+The real self-test is capped at three Codex invocations: implementer, repairer, and read-only auditor. Implementer and repairer use `--sandbox workspace-write` only inside the isolated workspace. Auditor uses `--sandbox read-only`. Prompts are passed through stdin, JSONL stdout is diagnostic event data, and the structured role result is read only from `--output-last-message`.
+
+Real-role response schemas must define an explicit schema for every property. Nullable fields are declared explicitly, such as the auditor `blockedReason` field accepting either a string or `null`; empty property schemas are not valid for the response format. API-level structured-output schema rejection, including `invalid_json_schema` or `Invalid schema for response_format`, is classified as `CODEX_EXEC_SCHEMA_INVALID`. If that rejection prevents `--output-last-message` from being written, the missing last-message file is recorded only as a secondary symptom. The observed failed run `real_role_20260704T103951032146Z` is kept as runtime evidence for this compatibility repair.
+
+Native Windows real-role commands keep `--ignore-user-config` and pass required safe config explicitly:
+
+```text
+-c windows.sandbox="elevated" -c approval_policy="never"
+```
+
+BOOTSTRAP-03B-1 does not use `danger-full-access`, `--full-auto`, `yolo`, additional writable roots, or the Unity project root as a real-role workspace.
+
+If a structured rate-limit event is detected, the run stops in `PAUSED_RATE_LIMIT`. BOOTSTRAP-03B-1 does not retry, sleep, wait for reset, compute `resetAtUtc`, buy credits, switch models, or resume after process restart.
+
+Real-role runtime output is written under:
+
+```text
+CodexAutomation/runtime/real_role_runs/<run-id>/
+```
+
+Important BOOTSTRAP-03B-1 error codes include `BLOCKED_UNSUPPORTED_CODEX_CLI`, `ISOLATED_WORKSPACE_INVALID`, `ISOLATED_WORKSPACE_OUTSIDE_RUNTIME`, `REAL_PROJECT_WRITE_FORBIDDEN`, `REAL_ROLE_CONFIG_INVALID`, `REAL_ROLE_INVOCATION_LIMIT`, `REAL_ROLE_EXECUTION_FAILED`, `REAL_TEST_IMPLEMENTER_SKIPPED_REQUIRED_PRE_REPAIR_STATE`, `REAL_TEST_UNEXPECTED_FILE`, `REAL_TEST_AUDITOR_CHANGED_WORKSPACE`, `CODEX_JSONL_INVALID_LINE`, `CODEX_EXEC_SCHEMA_INVALID`, and `CODEX_EXEC_ERROR_UNCLASSIFIED`.
+
+BOOTSTRAP-03B-2 is not implemented. Future work can add known Codex rate-limit parsing variants, controlled resume after reset, and process-restart recovery. Future stages can also add generated task handling, Unity validation, Git integration, and long-running automation.

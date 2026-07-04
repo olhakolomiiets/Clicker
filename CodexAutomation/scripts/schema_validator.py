@@ -70,6 +70,8 @@ def validate(instance: Any, schema: Any) -> list[str]:
 
 
 def _matches_type(instance: Any, expected_type: Any) -> bool:
+    if isinstance(expected_type, list):
+        return any(_matches_type(instance, item) for item in expected_type)
     if expected_type == "object":
         return isinstance(instance, dict)
     if expected_type == "array":

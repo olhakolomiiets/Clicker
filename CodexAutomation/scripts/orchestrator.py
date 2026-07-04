@@ -8,6 +8,7 @@ from file_utils import read_json
 from models import RepoContext, find_task, validate_smoke_task, validate_workflow
 from pipeline_engine import run_pipeline_self_test, run_rate_limit_self_test
 from preflight import find_repo_root, format_summary, run_preflight
+from real_role_runner import run_real_role_plan, run_real_role_sandbox_probe, run_real_role_self_test
 
 
 def parse_args() -> argparse.Namespace:
@@ -32,6 +33,21 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Run BOOTSTRAP-03A local fake rate-limit scenarios without Codex.",
     )
+    parser.add_argument(
+        "--real-role-self-test-plan",
+        action="store_true",
+        help="Plan BOOTSTRAP-03B-1 real-role self-test without launching Codex.",
+    )
+    parser.add_argument(
+        "--real-role-self-test",
+        action="store_true",
+        help="Run BOOTSTRAP-03B-1 isolated real-role Codex self-test.",
+    )
+    parser.add_argument(
+        "--real-role-sandbox-probe",
+        action="store_true",
+        help="Run BOOTSTRAP-03B-1 local no-model Windows sandbox write probe.",
+    )
     return parser.parse_args()
 
 
@@ -42,11 +58,18 @@ def main() -> int:
     context = RepoContext(
         root=repo_root,
         automation_root=repo_root / "CodexAutomation",
-        dry_run=not (args.smoke_test or args.pipeline_self_test or args.pipeline_rate_limit_self_test),
+        dry_run=not (
+            args.smoke_test
+            or args.pipeline_self_test
+            or args.pipeline_rate_limit_self_test
+            or args.real_role_self_test_plan
+            or args.real_role_self_test
+            or args.real_role_sandbox_probe
+        ),
     )
     report = run_preflight(context)
     print(format_summary(report))
-    if not (args.smoke_test or args.pipeline_self_test or args.pipeline_rate_limit_self_test):
+    if not (args.smoke_test or args.pipeline_self_test or args.pipeline_rate_limit_self_test or args.real_role_self_test_plan or args.real_role_self_test or args.real_role_sandbox_probe):
         return 0 if report["ok"] else 1
 
     if not report["ok"]:
@@ -72,6 +95,41 @@ def main() -> int:
         print(f"Sleep performed: {rate_report['sleepPerformed']}")
         print(f"Report: {rate_report['pipelineRunId']}")
         return 0 if rate_report["allPassed"] else 1
+
+    if args.real_role_self_test_plan:
+        plan_report = run_real_role_plan(repo_root, context.automation_root, config)
+        print("Real Role Self Test Plan")
+        print(f"Plan ok: {plan_report['ok']}")
+        print(f"Workspace: {plan_report.get('workspace')}")
+        print(f"Max real invocations: {plan_report.get('maxRealCodexInvocations')}")
+        for command in plan_report.get("commands", []):
+            print("Command: " + " ".join(command))
+        if plan_report.get("errors"):
+            for error in plan_report["errors"]:
+                print(f"  - {error}")
+        return 0 if plan_report["ok"] else 1
+
+    if args.real_role_sandbox_probe:
+        probe_report = run_real_role_sandbox_probe(repo_root, context.automation_root, config)
+        print("Real Role Sandbox Probe")
+        print(f"Final verdict: {probe_report['finalVerdict']}")
+        print(f"Exit code: {probe_report.get('exitCode')}")
+        print(f"Report: {probe_report['probeRunId']}")
+        if probe_report.get("errorCode"):
+            print(f"Error code: {probe_report['errorCode']}")
+        return 0 if probe_report["finalVerdict"] == "PASS" else 1
+
+    if args.real_role_self_test:
+        task_path = context.automation_root / "tests" / "fixtures" / "REAL-PIPELINE-TEST-001.json"
+        real_report = run_real_role_self_test(repo_root, context.automation_root, config, task_path)
+        print("Real Role Self Test")
+        print(f"Final state: {real_report['finalState']}")
+        print(f"Final verdict: {real_report['finalVerdict']}")
+        print(f"Codex invocations: {real_report['codexInvocationCount']}")
+        print(f"Report: {real_report['runId']}")
+        if real_report.get("errorCode"):
+            print(f"Error code: {real_report['errorCode']}")
+        return 0 if real_report["finalState"] == "COMPLETED" and real_report["finalVerdict"] == "PASS" else 1
 
     workflow = read_json(context.automation_root / "workflow.seed.json")
     workflow_errors = validate_workflow(workflow)

@@ -263,6 +263,190 @@ class PipelineValidationCheck(unittest.TestCase):
         config["usageLimits"].pop("allowAutomaticCreditUsage")
         self.assertTrue(parse_pipeline_settings(config)[1])
 
+    def test_required_file_missing_returns_failure_not_exception(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            result = self._run_single_file_validation(Path(temp), "required_file")
+            self.assertEqual(result["verdict"], "FIX_REQUIRED")
+            self.assertEqual(result["errorCode"], "REQUIRED_FILE_MISSING")
+
+    def test_json_valid_missing_returns_stable_code_not_exception(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            result = self._run_single_file_validation(Path(temp), "json_valid")
+            self.assertEqual(result["verdict"], "FIX_REQUIRED")
+            self.assertEqual(result["errorCode"], "JSON_FILE_MISSING")
+
+    def test_json_field_equals_missing_returns_stable_code_not_exception(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            result = self._run_single_file_validation(Path(temp), "json_field_equals", field="taskId", expected="PIPELINE-TEST-001")
+            self.assertEqual(result["verdict"], "FIX_REQUIRED")
+            self.assertEqual(result["errorCode"], "JSON_FILE_MISSING")
+
+    def test_json_field_type_missing_returns_stable_code_not_exception(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            result = self._run_single_file_validation(Path(temp), "json_field_type", field="taskId", expectedType="string")
+            self.assertEqual(result["verdict"], "FIX_REQUIRED")
+            self.assertEqual(result["errorCode"], "JSON_FILE_MISSING")
+
+    def test_json_path_directory_returns_not_file(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            (workspace / "artifact.json").mkdir()
+            result = self._run_single_file_validation(workspace, "json_valid")
+            self.assertEqual(result["verdict"], "FIX_REQUIRED")
+            self.assertEqual(result["errorCode"], "VALIDATION_PATH_NOT_FILE")
+
+    def test_json_invalid_utf8_returns_read_error(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            (workspace / "artifact.json").write_bytes(b"\xff\xfe\xfd")
+            result = self._run_single_file_validation(workspace, "json_valid")
+            self.assertEqual(result["verdict"], "FIX_REQUIRED")
+            self.assertEqual(result["errorCode"], "VALIDATION_FILE_READ_ERROR")
+
+    def test_json_invalid_json_returns_json_invalid(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            (workspace / "artifact.json").write_text("{not valid", encoding="utf-8")
+            result = self._run_single_file_validation(workspace, "json_valid")
+            self.assertEqual(result["verdict"], "FIX_REQUIRED")
+            self.assertEqual(result["errorCode"], "JSON_INVALID")
+
+    def test_json_read_permission_error_returns_read_error(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            (workspace / "artifact.json").write_text("{}", encoding="utf-8")
+            with mock.patch.object(Path, "read_text", side_effect=PermissionError("denied")):
+                result = self._run_single_file_validation(workspace, "json_valid")
+            self.assertEqual(result["verdict"], "FIX_REQUIRED")
+            self.assertEqual(result["errorCode"], "VALIDATION_FILE_READ_ERROR")
+
+    def test_no_conflict_markers_clean_file_passes(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            (workspace / "clean.txt").write_text("clean\n", encoding="utf-8")
+            result = self._run_no_conflict_validation(workspace)
+            self.assertEqual(result["verdict"], "PASS")
+
+    def test_no_conflict_markers_detects_git_markers(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            (workspace / "conflict.txt").write_text("<<<<<<< ours\n=======\n>>>>>>> theirs\n", encoding="utf-8")
+            result = self._run_no_conflict_validation(workspace)
+            self.assertEqual(result["verdict"], "BLOCKED")
+            self.assertEqual(result["errorCode"], "NO_CONFLICTS")
+            self.assertEqual(result["actual"], ["conflict.txt"])
+
+    def test_no_conflict_markers_permission_error_returns_read_error(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            (workspace / "locked.txt").write_text("clean", encoding="utf-8")
+            with mock.patch.object(Path, "read_text", side_effect=PermissionError("denied")):
+                result = self._run_no_conflict_validation(workspace)
+            self.assertEqual(result["verdict"], "BLOCKED")
+            self.assertEqual(result["errorCode"], "VALIDATION_FILE_READ_ERROR")
+            self.assertEqual(result["file"], "locked.txt")
+
+    def test_no_conflict_markers_os_error_returns_read_error(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            (workspace / "broken.txt").write_text("clean", encoding="utf-8")
+            with mock.patch.object(Path, "read_text", side_effect=OSError("boom")):
+                result = self._run_no_conflict_validation(workspace)
+            self.assertEqual(result["verdict"], "BLOCKED")
+            self.assertEqual(result["errorCode"], "VALIDATION_FILE_READ_ERROR")
+
+    def test_no_conflict_markers_invalid_utf8_returns_read_error(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            (workspace / "invalid.txt").write_bytes(b"\xff\xfe\xfd")
+            result = self._run_no_conflict_validation(workspace)
+            self.assertEqual(result["verdict"], "BLOCKED")
+            self.assertEqual(result["errorCode"], "VALIDATION_FILE_READ_ERROR")
+
+    def test_no_conflict_markers_directory_path_returns_not_file(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            (workspace / "artifact.json").mkdir()
+            result = self._run_no_conflict_validation(workspace, file_name="artifact.json")
+            self.assertEqual(result["verdict"], "BLOCKED")
+            self.assertEqual(result["errorCode"], "VALIDATION_PATH_NOT_FILE")
+
+    def test_no_conflict_markers_disappearing_file_returns_stable_failure(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            target = workspace / "gone.txt"
+            target.write_text("clean", encoding="utf-8")
+            original_read_text = Path.read_text
+
+            def disappearing_read_text(path: Path, *args: object, **kwargs: object) -> str:
+                if path.name == "gone.txt":
+                    target.unlink(missing_ok=True)
+                    raise FileNotFoundError("gone")
+                return original_read_text(path, *args, **kwargs)
+
+            with mock.patch.object(Path, "read_text", disappearing_read_text):
+                result = self._run_no_conflict_validation(workspace)
+            self.assertEqual(result["verdict"], "BLOCKED")
+            self.assertEqual(result["errorCode"], "VALIDATION_FILE_READ_ERROR")
+
+    def test_no_conflict_markers_symlink_or_reparse_entry_is_blocked(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            (workspace / "link.txt").write_text("clean", encoding="utf-8")
+
+            def fake_reparse(path: Path) -> bool:
+                return path.name == "link.txt"
+
+            with mock.patch.object(pipeline_validator, "_is_symlink_or_reparse", side_effect=fake_reparse):
+                result = self._run_no_conflict_validation(workspace)
+            self.assertEqual(result["verdict"], "BLOCKED")
+            self.assertEqual(result["errorCode"], "UNSAFE_SYMLINK_OR_REPARSE_POINT")
+            self.assertEqual(result["file"], "link.txt")
+
+    def test_no_conflict_markers_second_file_read_error_cannot_pass(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            (workspace / "a.txt").write_text("clean", encoding="utf-8")
+            (workspace / "b.txt").write_text("clean", encoding="utf-8")
+            original_read_text = Path.read_text
+
+            def read_text(path: Path, *args: object, **kwargs: object) -> str:
+                if path.name == "b.txt":
+                    raise OSError("unreadable")
+                return original_read_text(path, *args, **kwargs)
+
+            with mock.patch.object(Path, "read_text", read_text):
+                result = self._run_no_conflict_validation(workspace)
+            self.assertEqual(result["verdict"], "BLOCKED")
+            self.assertEqual(result["errorCode"], "VALIDATION_FILE_READ_ERROR")
+            self.assertEqual(result["file"], "b.txt")
+
+    def test_no_conflict_markers_read_errors_are_not_swallowed_by_continue(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime") as temp:
+            workspace = Path(temp)
+            (workspace / "unreadable.txt").write_text("clean", encoding="utf-8")
+            with mock.patch.object(Path, "read_text", side_effect=OSError("must fail")):
+                result = self._run_no_conflict_validation(workspace)
+            self.assertNotEqual(result["verdict"], "PASS")
+            self.assertEqual(result["errorCode"], "VALIDATION_FILE_READ_ERROR")
+
+    def _run_single_file_validation(self, workspace: Path, validator_type: str, **extra: object) -> dict[str, object]:
+        before = snapshot_workspace(workspace)
+        validation = {"type": validator_type, "code": "UNIT_VALIDATION", "file": "artifact.json"}
+        validation.update(extra)
+        task = {"validations": [validation]}
+        result = run_validations(task, workspace, before, snapshot_workspace(workspace))
+        return result["results"][0]
+
+    def _run_no_conflict_validation(self, workspace: Path, file_name: str | None = None) -> dict[str, object]:
+        before = snapshot_workspace(workspace)
+        validation = {"type": "no_conflict_markers", "code": "NO_CONFLICTS"}
+        if file_name is not None:
+            validation["file"] = file_name
+        task = {"validations": [validation]}
+        result = run_validations(task, workspace, before, snapshot_workspace(workspace))
+        return result["results"][0]
+
 
 if __name__ == "__main__":
     unittest.main()

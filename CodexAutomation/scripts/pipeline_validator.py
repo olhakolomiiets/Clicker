@@ -33,6 +33,11 @@ PATH_ERROR_CODES = {
     "INVALID_VALIDATION_PATH",
     "WORKSPACE_ROOT_NOT_FOUND",
     "WORKSPACE_ROOT_NOT_DIRECTORY",
+    "REQUIRED_FILE_MISSING",
+    "JSON_FILE_MISSING",
+    "VALIDATION_PATH_NOT_FILE",
+    "VALIDATION_FILE_READ_ERROR",
+    "JSON_INVALID",
 }
 
 WORKSPACE_ERROR_ENTRY = "__workspace_error__"
@@ -75,12 +80,15 @@ def snapshot_workspace(workspace: Path) -> dict[str, dict[str, Any]]:
         elif path.is_dir():
             snapshot[relative] = {"type": "directory", "size": 0, "sha256": None}
         elif path.is_file():
-            data = path.read_bytes()
-            snapshot[relative] = {
-                "type": "file",
-                "size": len(data),
-                "sha256": hashlib.sha256(data).hexdigest(),
-            }
+            try:
+                data = path.read_bytes()
+                snapshot[relative] = {
+                    "type": "file",
+                    "size": len(data),
+                    "sha256": hashlib.sha256(data).hexdigest(),
+                }
+            except OSError:
+                snapshot[relative] = {"type": "read_error", "size": 0, "sha256": None}
     return snapshot
 
 
@@ -105,6 +113,7 @@ def run_validations(task: dict[str, Any], workspace: Path, before_snapshot: dict
             snapshot_problem["message"],
             None,
             "safe workspace root",
+            snapshot_problem["errorCode"],
             snapshot_problem["errorCode"],
         )
         return {
@@ -142,22 +151,31 @@ def _run_validation(validation: dict[str, Any], workspace: Path, actual_changed:
     if validation_type in {"required_file", "forbidden_file", "json_valid", "json_field_equals", "json_field_type"}:
         resolved = resolve_workspace_path(workspace, raw_file)
         if resolved["errorCode"]:
-            return _result(code, "BLOCKED", resolved["errorCode"], raw_file if isinstance(raw_file, str) else None, "safe workspace path", resolved["errorCode"])
+            return _result(code, "BLOCKED", resolved["errorCode"], raw_file if isinstance(raw_file, str) else None, "safe workspace path", resolved["errorCode"], resolved["errorCode"])
         path = resolved["path"]
     else:
         path = workspace
     if validation_type == "required_file":
-        return _result(code, "PASS" if path.is_file() else "FIX_REQUIRED", "Required file exists.", file_name, True, path.is_file())
+        file_check = _validate_regular_file(path, missing_code="REQUIRED_FILE_MISSING")
+        if file_check:
+            return _result(code, "FIX_REQUIRED", "Required file is missing or invalid.", file_name, True, file_check, file_check)
+        return _result(code, "PASS", "Required file exists.", file_name, True, True)
     if validation_type == "forbidden_file":
-        return _result(code, "FIX_REQUIRED" if path.exists() else "PASS", "Forbidden file must not exist.", file_name, False, path.exists())
+        status = _path_status(path)
+        if status == "MISSING":
+            return _result(code, "PASS", "Forbidden file must not exist.", file_name, False, False)
+        if status == "PRESENT_FILE":
+            return _result(code, "FIX_REQUIRED", "Forbidden file must not exist.", file_name, False, True)
+        return _result(code, "BLOCKED", "Forbidden path could not be safely inspected.", file_name, False, status, status)
     if validation_type == "json_valid":
-        try:
-            json.loads(path.read_text(encoding="utf-8"))
-            return _result(code, "PASS", "JSON is valid.", file_name, "valid json", "valid json")
-        except Exception as exc:
-            return _result(code, "FIX_REQUIRED", "JSON is invalid.", file_name, "valid json", str(exc))
+        data, error = _read_json_file(path)
+        if error:
+            return _result(code, "FIX_REQUIRED", "JSON file is missing or invalid.", file_name, "valid json", error, error)
+        return _result(code, "PASS", "JSON is valid.", file_name, "valid json", "valid json")
     if validation_type in {"json_field_equals", "json_field_type"}:
-        data = json.loads(path.read_text(encoding="utf-8"))
+        data, error = _read_json_file(path)
+        if error:
+            return _result(code, "FIX_REQUIRED", "JSON file is missing or invalid.", file_name, "valid json", error, error)
         field = str(validation.get("field"))
         actual = data.get(field)
         if validation_type == "json_field_equals":
@@ -171,33 +189,32 @@ def _run_validation(validation: dict[str, Any], workspace: Path, actual_changed:
     if validation_type == "exact_allowed_changed_paths":
         expected = _safe_path_patterns(workspace, validation.get("paths", []))
         if expected["errorCode"]:
-            return _result(code, "BLOCKED", expected["errorCode"], None, "safe workspace paths", expected["errorCode"])
+            return _result(code, "BLOCKED", expected["errorCode"], None, "safe workspace paths", expected["errorCode"], expected["errorCode"])
         expected_paths = expected["patterns"]
         ok = _changed_paths_match_patterns(actual_changed, expected_paths, exact=True)
         return _result(code, "PASS" if ok else "FIX_REQUIRED", "Changed paths must match exactly.", None, expected_paths, actual_changed)
     if validation_type == "forbidden_changed_paths":
         forbidden_result = _safe_path_patterns(workspace, validation.get("paths", []))
         if forbidden_result["errorCode"]:
-            return _result(code, "BLOCKED", forbidden_result["errorCode"], None, "safe workspace paths", forbidden_result["errorCode"])
+            return _result(code, "BLOCKED", forbidden_result["errorCode"], None, "safe workspace paths", forbidden_result["errorCode"], forbidden_result["errorCode"])
         forbidden = forbidden_result["patterns"]
         found = sorted(path for path in actual_changed if _matches_any(path, forbidden))
         return _result(code, "PASS" if not found else "FIX_REQUIRED", "Forbidden paths must not change.", None, [], found)
     if validation_type == "no_conflict_markers":
-        found = []
-        root = workspace.resolve(strict=True)
-        for file_path in _safe_walk(workspace):
-            if file_path.is_file() and "<<<<<<<" in file_path.read_text(encoding="utf-8", errors="ignore"):
-                found.append(file_path.relative_to(root).as_posix())
-        return _result(code, "PASS" if not found else "BLOCKED", "No conflict markers.", None, [], found)
+        marker_result = _validate_no_conflict_markers(workspace, raw_file)
+        if marker_result["errorCode"]:
+            return _result(code, "BLOCKED", marker_result["message"], marker_result["path"], "readable text file", marker_result["errorCode"], marker_result["errorCode"])
+        found = marker_result["found"]
+        return _result(code, "PASS" if not found else "BLOCKED", "No conflict markers.", None, [], found, code if found else None)
     if validation_type == "no_unexpected_files":
         expected_result = _safe_path_patterns(workspace, validation.get("paths", []))
         if expected_result["errorCode"]:
-            return _result(code, "BLOCKED", expected_result["errorCode"], None, "safe workspace paths", expected_result["errorCode"])
+            return _result(code, "BLOCKED", expected_result["errorCode"], None, "safe workspace paths", expected_result["errorCode"], expected_result["errorCode"])
         expected = expected_result["patterns"]
         current_snapshot = snapshot_workspace(workspace)
         current_error = snapshot_error(current_snapshot)
         if current_error:
-            return _result(code, "BLOCKED", current_error["errorCode"], None, "safe workspace root", current_error["errorCode"])
+            return _result(code, "BLOCKED", current_error["errorCode"], None, "safe workspace root", current_error["errorCode"], current_error["errorCode"])
         actual = {path for path, info in current_snapshot.items() if info["type"] != "directory"}
         unexpected = sorted(path for path in actual if not _matches_any(path, expected))
         return _result(code, "PASS" if not unexpected else "FIX_REQUIRED", "No unexpected files.", None, sorted(expected), unexpected)
@@ -332,6 +349,113 @@ def _is_symlink_or_reparse(path: Path) -> bool:
     return bool(attrs & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400))
 
 
+def _path_status(path: Path) -> str:
+    try:
+        if path.exists() or path.is_symlink():
+            if _is_symlink_or_reparse(path):
+                return "UNSAFE_SYMLINK_OR_REPARSE_POINT"
+            if path.is_file():
+                return "PRESENT_FILE"
+            return "VALIDATION_PATH_NOT_FILE"
+        return "MISSING"
+    except OSError:
+        return "VALIDATION_FILE_READ_ERROR"
+
+
+def _validate_regular_file(path: Path, missing_code: str) -> str | None:
+    status = _path_status(path)
+    if status == "PRESENT_FILE":
+        return None
+    if status == "MISSING":
+        return missing_code
+    return status
+
+
+def _read_json_file(path: Path) -> tuple[dict[str, Any] | None, str | None]:
+    file_error = _validate_regular_file(path, missing_code="JSON_FILE_MISSING")
+    if file_error:
+        return None, file_error
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        return None, "VALIDATION_FILE_READ_ERROR"
+    except OSError:
+        return None, "VALIDATION_FILE_READ_ERROR"
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        return None, "JSON_INVALID"
+    if not isinstance(data, dict):
+        return None, "JSON_INVALID"
+    return data, None
+
+
+def _validate_no_conflict_markers(workspace: Path, raw_file: Any) -> dict[str, Any]:
+    snapshot = snapshot_workspace(workspace)
+    snapshot_problem = snapshot_error(snapshot)
+    if snapshot_problem:
+        return {"errorCode": snapshot_problem["errorCode"], "message": snapshot_problem["message"], "path": None, "found": []}
+    root = workspace.resolve(strict=True)
+    entries: list[tuple[str, dict[str, Any]]]
+    if isinstance(raw_file, str) and raw_file.strip():
+        resolved = resolve_workspace_path(workspace, raw_file)
+        if resolved["errorCode"]:
+            return {"errorCode": resolved["errorCode"], "message": "Conflict marker path could not be safely resolved.", "path": raw_file, "found": []}
+        relative = resolved["path"].resolve(strict=False).relative_to(root).as_posix()
+        info = snapshot.get(relative)
+        if info is None:
+            return {"errorCode": "VALIDATION_FILE_READ_ERROR", "message": "Conflict marker path disappeared before reading.", "path": relative, "found": []}
+        entries = [(relative, info)]
+    else:
+        entries = sorted(snapshot.items())
+
+    found: list[str] = []
+    for relative, info in entries:
+        entry_type = info.get("type")
+        if entry_type == "directory":
+            if isinstance(raw_file, str) and raw_file.strip():
+                return {"errorCode": "VALIDATION_PATH_NOT_FILE", "message": "Conflict marker path is not a regular file.", "path": relative, "found": []}
+            continue
+        if entry_type == "blocked_link":
+            return {"errorCode": "UNSAFE_SYMLINK_OR_REPARSE_POINT", "message": "Conflict marker path is a symlink or reparse point.", "path": relative, "found": []}
+        if entry_type != "file":
+            return {"errorCode": "VALIDATION_FILE_READ_ERROR", "message": "Conflict marker path is not readable.", "path": relative, "found": []}
+        file_path = root / relative
+        error = _safe_text_file_error(file_path)
+        if error:
+            return {"errorCode": error, "message": "Conflict marker file could not be safely read.", "path": relative, "found": []}
+        try:
+            text = file_path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            return {"errorCode": "VALIDATION_FILE_READ_ERROR", "message": "Conflict marker file disappeared before reading.", "path": relative, "found": []}
+        except PermissionError:
+            return {"errorCode": "VALIDATION_FILE_READ_ERROR", "message": "Conflict marker file permission denied.", "path": relative, "found": []}
+        except UnicodeDecodeError:
+            return {"errorCode": "VALIDATION_FILE_READ_ERROR", "message": "Conflict marker file is not valid UTF-8.", "path": relative, "found": []}
+        except IsADirectoryError:
+            return {"errorCode": "VALIDATION_PATH_NOT_FILE", "message": "Conflict marker path is not a regular file.", "path": relative, "found": []}
+        except OSError:
+            return {"errorCode": "VALIDATION_FILE_READ_ERROR", "message": "Conflict marker file could not be read.", "path": relative, "found": []}
+        if any(marker in text for marker in ("<<<<<<<", "=======", ">>>>>>>")):
+            found.append(relative)
+    return {"errorCode": None, "message": "No conflict markers.", "path": None, "found": found}
+
+
+def _safe_text_file_error(path: Path) -> str | None:
+    try:
+        if path.exists() or path.is_symlink():
+            if _is_symlink_or_reparse(path):
+                return "UNSAFE_SYMLINK_OR_REPARSE_POINT"
+            if path.is_dir():
+                return "VALIDATION_PATH_NOT_FILE"
+            if not path.is_file():
+                return "VALIDATION_PATH_NOT_FILE"
+            return None
+        return "VALIDATION_FILE_READ_ERROR"
+    except OSError:
+        return "VALIDATION_FILE_READ_ERROR"
+
+
 def _workspace_error(error_code: str, message: str) -> dict[str, dict[str, Any]]:
     return {WORKSPACE_ERROR_ENTRY: {"type": "error", "errorCode": error_code, "message": message}}
 
@@ -364,9 +488,10 @@ def _changed_paths_match_patterns(actual_paths: list[str], patterns: list[str], 
     return all(_matches_any(path, patterns) for path in actual_paths) and all(any(fnmatch.fnmatchcase(path, pattern) for path in actual_paths) for pattern in patterns)
 
 
-def _result(code: str, verdict: str, message: str, file_name: str | None, expected: Any, actual: Any) -> dict[str, Any]:
+def _result(code: str, verdict: str, message: str, file_name: str | None, expected: Any, actual: Any, error_code: str | None = None) -> dict[str, Any]:
     return {
         "code": code,
+        "errorCode": error_code,
         "verdict": verdict,
         "message": message,
         "evidence": f"expected={expected!r}; actual={actual!r}",
@@ -378,7 +503,7 @@ def _result(code: str, verdict: str, message: str, file_name: str | None, expect
 
 def _finding_from_validation(result: dict[str, Any]) -> dict[str, Any]:
     return {
-        "code": result["code"],
+        "code": result.get("errorCode") or result["code"],
         "severity": "blocking" if result["verdict"] == "BLOCKED" else "high",
         "file": result.get("file") or "",
         "symbol": "",

@@ -1,7 +1,7 @@
 {
   "format_version": 1,
   "project_name": "Planet Builder",
-  "automation_stage": "BOOTSTRAP-03A",
+  "automation_stage": "BOOTSTRAP-03B-1",
   "dry_run_default": true,
   "paths": {
     "automation_root": "CodexAutomation",
@@ -49,6 +49,28 @@
     "stopWhenResetTimeUnknown": true,
     "allowAutomaticCreditUsage": false,
     "allowAutomaticModelDowngrade": false
+  },
+  "realRoles": {
+    "enabled": true,
+    "allowRealProjectWrite": false,
+    "allowIsolatedWorkspaceWriteTest": true,
+    "isolatedWorkspaceRoot": "CodexAutomation/runtime/real_role_workspaces",
+    "realRoleReportRoot": "CodexAutomation/runtime/real_role_runs",
+    "maxRealCodexInvocationsPerTest": 3,
+    "implementerTimeoutSeconds": 600,
+    "repairerTimeoutSeconds": 600,
+    "auditorTimeoutSeconds": 600,
+    "sandboxProbeTimeoutSeconds": 30,
+    "sandboxProbeTaskkillTimeoutSeconds": 10,
+    "sandboxProbePostKillWaitSeconds": 5,
+    "approvalPolicy": "never",
+    "windowsSandboxImplementation": "elevated",
+    "requireSandboxWriteProbe": true,
+    "allowAutomaticUnelevatedFallback": false,
+    "useJsonEvents": true,
+    "useOutputSchema": true,
+    "useOutputLastMessage": true,
+    "automaticRetryAfterRateLimit": false
   },
   "unity": {
     "project_version_file": "ProjectSettings/ProjectVersion.txt",

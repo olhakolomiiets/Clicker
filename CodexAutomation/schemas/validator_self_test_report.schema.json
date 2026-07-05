@@ -1,0 +1,48 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reportVersion", "selfTestRunId", "stage", "cases", "expectedCaseCount", "actualCaseCount", "allExpectedOutcomesMatched", "codexInspected", "codexInvocationCount", "modelInvocationStarted", "sandboxStarted", "unityStarted", "networkUsed", "finalVerdict", "errorCode", "errorMessage"],
+  "properties": {
+    "reportVersion": { "type": "integer" },
+    "selfTestRunId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-C" },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["caseId", "expectedVerdict", "actualVerdict", "expectedValidatorCount", "actualValidatorCount", "expectedPassCount", "actualPassCount", "expectedFailCount", "actualFailCount", "expectedBlockedCount", "actualBlockedCount", "expectedFailedTypes", "actualFailedTypes", "finalValidationReportPath", "finalValidationReportHash", "matched"],
+        "properties": {
+          "caseId": { "type": "string" },
+          "expectedVerdict": { "type": "string", "enum": ["PASS", "FAIL"] },
+          "actualVerdict": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+          "expectedValidatorCount": { "type": "integer" },
+          "actualValidatorCount": { "type": "integer" },
+          "expectedPassCount": { "type": "integer" },
+          "actualPassCount": { "type": "integer" },
+          "expectedFailCount": { "type": "integer" },
+          "actualFailCount": { "type": "integer" },
+          "expectedBlockedCount": { "type": "integer" },
+          "actualBlockedCount": { "type": "integer" },
+          "expectedFailedTypes": { "type": "array", "items": { "type": "string" } },
+          "actualFailedTypes": { "type": "array", "items": { "type": "string" } },
+          "finalValidationReportPath": { "type": ["string", "null"] },
+          "finalValidationReportHash": { "type": "string" },
+          "matched": { "type": "boolean" }
+        }
+      }
+    },
+    "expectedCaseCount": { "type": "integer" },
+    "actualCaseCount": { "type": "integer" },
+    "allExpectedOutcomesMatched": { "type": "boolean" },
+    "codexInspected": { "type": "boolean" },
+    "codexInvocationCount": { "type": "integer" },
+    "modelInvocationStarted": { "type": "boolean" },
+    "sandboxStarted": { "type": "boolean" },
+    "unityStarted": { "type": "boolean" },
+    "networkUsed": { "type": "boolean" },
+    "finalVerdict": { "type": "string", "enum": ["PASS", "FAIL"] },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

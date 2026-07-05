@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["registryVersion", "stage", "validatorTypes", "registrySha256"],
+  "properties": {
+    "registryVersion": { "type": "integer" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-C" },
+    "validatorTypes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "version", "implementationId", "argumentContract", "needsWorkspaceRead", "needsDiff", "needsExpectedOutputs", "maxFilesRead", "allowedFailCodes", "noSideEffects"],
+        "properties": {
+          "type": { "type": "string" },
+          "version": { "type": "string" },
+          "implementationId": { "type": "string" },
+          "argumentContract": { "type": "string" },
+          "needsWorkspaceRead": { "type": "boolean" },
+          "needsDiff": { "type": "boolean" },
+          "needsExpectedOutputs": { "type": "boolean" },
+          "maxFilesRead": { "type": "integer" },
+          "allowedFailCodes": { "type": "array", "items": { "type": "string" } },
+          "noSideEffects": { "type": "boolean" }
+        }
+      }
+    },
+    "registrySha256": { "type": "string" }
+  }
+}

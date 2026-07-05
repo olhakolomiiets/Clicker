@@ -10,6 +10,7 @@ from pipeline_engine import run_pipeline_self_test, run_rate_limit_self_test
 from preflight import find_repo_root, format_summary, run_preflight
 from real_role_runner import run_real_role_plan, run_real_role_sandbox_probe, run_real_role_self_test
 from task_manifest_validator import validate_task_manifest_file, write_real_task_plan
+from validator_self_test_runner import run_validator_self_test
 
 
 def parse_args() -> argparse.Namespace:
@@ -59,6 +60,11 @@ def parse_args() -> argparse.Namespace:
         metavar="MANIFEST",
         help="Create a BOOTSTRAP-03B-2A no-model real-task plan report without model, sandbox, workspace, or source copy.",
     )
+    parser.add_argument(
+        "--real-task-validator-self-test",
+        action="store_true",
+        help="Run BOOTSTRAP-03B-2B-C controlled no-model validator self-test.",
+    )
     return parser.parse_args()
 
 
@@ -74,6 +80,7 @@ def main() -> int:
         args.real_role_sandbox_probe,
         bool(args.validate_task_manifest),
         bool(args.real_task_plan),
+        args.real_task_validator_self_test,
     ]
     if sum(1 for selected in selected_modes if selected) > 1:
         print("Select exactly one explicit run mode.")
@@ -89,13 +96,14 @@ def main() -> int:
         or args.real_role_sandbox_probe
         or args.validate_task_manifest
         or args.real_task_plan
+        or args.real_task_validator_self_test
     )
     context = RepoContext(
         root=repo_root,
         automation_root=repo_root / "CodexAutomation",
         dry_run=not explicit_mode,
     )
-    no_codex_preflight = bool(args.validate_task_manifest or args.real_task_plan)
+    no_codex_preflight = bool(args.validate_task_manifest or args.real_task_plan or args.real_task_validator_self_test)
     report = run_preflight(context, inspect_codex=not no_codex_preflight)
     print(format_summary(report))
     if not explicit_mode:
@@ -148,6 +156,16 @@ def main() -> int:
         print(f"Final verdict: {pipeline_report['finalVerdict']}")
         print(f"Report: {pipeline_report['pipelineRunId']}")
         return 0 if pipeline_report["finalState"] == "COMPLETED" and pipeline_report["finalVerdict"] == "PASS" else 1
+
+    if args.real_task_validator_self_test:
+        validator_report = run_validator_self_test(repo_root, context.automation_root, config)
+        print("Real Task Validator Self Test")
+        print(f"Final verdict: {validator_report['finalVerdict']}")
+        print(f"Cases: {validator_report['actualCaseCount']}/{validator_report['expectedCaseCount']}")
+        print(f"Codex inspected: {validator_report['codexInspected']}")
+        report_path = Path(str(validator_report.get("reportPath", "")))
+        print(f"Report: {report_path.resolve().relative_to(repo_root.resolve()).as_posix() if report_path else 'none'}")
+        return 0 if validator_report["finalVerdict"] == "PASS" else 1
 
     if args.pipeline_rate_limit_self_test:
         task_path = context.automation_root / "tests" / "fixtures" / "PIPELINE-TEST-001.json"

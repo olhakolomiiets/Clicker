@@ -1,0 +1,271 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reportVersion", "runId", "taskId", "stage", "stateHistory", "trustedContextHash", "manifestSha256", "changeFinalReportHash", "validatorRegistry", "schemaRegistry", "validatorRegistryReportHash", "validationPlanReportHash", "validatorResultsReportHash", "validationIntegrityReportHash", "validationPlan", "validationPlanHash", "results", "passCount", "failCount", "blockedCount", "integrity", "codexInvocationCount", "modelInvocationStarted", "sandboxStarted", "unityStarted", "networkUsed", "durationSeconds", "finalState", "finalVerdict", "errorCode", "errorMessage", "warnings"],
+  "properties": {
+    "reportVersion": { "type": "integer" },
+    "runId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-C" },
+    "stateHistory": { "type": "array", "items": { "type": "string" } },
+    "trustedContextHash": { "type": "string" },
+    "manifestSha256": { "type": "string" },
+    "changeFinalReportHash": { "type": "string" },
+    "validatorRegistry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registryVersion", "stage", "validatorTypes", "registrySha256"],
+      "properties": {
+        "registryVersion": { "type": "integer" },
+        "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-C" },
+        "validatorTypes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "version", "implementationId", "argumentContract", "needsWorkspaceRead", "needsDiff", "needsExpectedOutputs", "maxFilesRead", "allowedFailCodes", "noSideEffects"],
+            "properties": {
+              "type": { "type": "string" },
+              "version": { "type": "string" },
+              "implementationId": { "type": "string" },
+              "argumentContract": { "type": "string" },
+              "needsWorkspaceRead": { "type": "boolean" },
+              "needsDiff": { "type": "boolean" },
+              "needsExpectedOutputs": { "type": "boolean" },
+              "maxFilesRead": { "type": "integer" },
+              "allowedFailCodes": { "type": "array", "items": { "type": "string" } },
+              "noSideEffects": { "type": "boolean" }
+            }
+          }
+        },
+        "registrySha256": { "type": "string" }
+      }
+    },
+    "schemaRegistry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registryVersion", "schemas", "registrySha256"],
+      "properties": {
+        "registryVersion": { "type": "integer" },
+        "schemas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["schemaName", "schemaVersion", "relativePath", "canonicalSchemaSha256", "maxBytes"],
+            "properties": {
+              "schemaName": { "type": "string" },
+              "schemaVersion": { "type": "integer" },
+              "relativePath": { "type": "string" },
+              "canonicalSchemaSha256": { "type": "string" },
+              "maxBytes": { "type": "integer" }
+            }
+          }
+        },
+        "registrySha256": { "type": "string" }
+      }
+    },
+    "validatorRegistryReportHash": { "type": "string" },
+    "validationPlanReportHash": { "type": "string" },
+    "validatorResultsReportHash": { "type": "string" },
+    "validationIntegrityReportHash": { "type": "string" },
+    "validationPlan": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "path": { "type": "string" },
+          "paths": { "type": "array", "items": { "type": "string" } },
+          "schemaName": { "type": "string" },
+          "jsonPointer": { "type": "string" },
+          "expected": { "type": ["string", "integer", "boolean", "null"] },
+          "text": { "type": "string" },
+          "maxBytes": { "type": "integer" },
+          "maxFiles": { "type": "integer" },
+          "extensions": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "validationPlanHash": { "type": "string" },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["resultVersion", "validatorId", "validatorIndex", "validatorType", "validatorVersion", "status", "code", "message", "primaryPath", "relatedPaths", "expected", "actual", "filesRead", "bytesRead", "durationMilliseconds", "noSideEffects", "findings"],
+        "properties": {
+          "resultVersion": { "type": "integer" },
+          "validatorId": { "type": "string" },
+          "validatorIndex": { "type": "integer" },
+          "validatorType": { "type": "string" },
+          "validatorVersion": { "type": "string" },
+          "status": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+          "code": { "type": ["string", "null"] },
+          "message": { "type": "string" },
+          "primaryPath": { "type": ["string", "null"] },
+          "relatedPaths": { "type": "array", "items": { "type": "string" } },
+          "expected": { "type": ["string", "null"] },
+          "actual": { "type": ["string", "null"] },
+          "filesRead": { "type": "integer" },
+          "bytesRead": { "type": "integer" },
+          "durationMilliseconds": { "type": "integer" },
+          "noSideEffects": { "type": "boolean" },
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [],
+              "properties": {
+                "expected": { "type": ["string", "array", "integer", "boolean", "null"] },
+                "actual": { "type": ["string", "array", "integer", "boolean", "null"] },
+                "unexpected": { "type": "array", "items": { "type": "string" } },
+                "path": { "type": "string" },
+                "paths": { "type": "array", "items": { "type": "string" } },
+                "markers": { "type": "array", "items": { "type": "string" } },
+                "maxBytes": { "type": "integer" },
+                "maxFiles": { "type": "integer" },
+                "extension": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "passCount": { "type": "integer" },
+    "failCount": { "type": "integer" },
+    "blockedCount": { "type": "integer" },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reportVersion", "runId", "taskId", "stage", "trustedFinalInventoryHash", "freshWorkspaceInventoryHash", "workspaceUnchanged", "workspaceMatchesTrustedFinal", "serviceFilesValid", "agentsDirectoryValid", "isolatedGitValid", "parentGitChanged", "parentSourceChanged", "noValidatorWrites", "parentGitFinalSnapshot", "finalVerdict", "errorCode", "errorMessage"],
+      "properties": {
+        "reportVersion": { "type": "integer" },
+        "runId": { "type": "string" },
+        "taskId": { "type": "string" },
+        "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-C" },
+        "trustedFinalInventoryHash": { "type": "string" },
+        "freshWorkspaceInventoryHash": { "type": "string" },
+        "workspaceUnchanged": { "type": "boolean" },
+        "workspaceMatchesTrustedFinal": { "type": "boolean" },
+        "serviceFilesValid": { "type": "boolean" },
+        "agentsDirectoryValid": { "type": "boolean" },
+        "isolatedGitValid": { "type": "boolean" },
+        "parentGitChanged": { "type": "boolean" },
+        "parentSourceChanged": { "type": "boolean" },
+        "noValidatorWrites": { "type": "boolean" },
+        "parentGitFinalSnapshot": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "gitRepository", "head", "branch", "detachedHead", "stagedPaths", "porcelainStatus", "dirty", "commandResults"],
+          "properties": {
+            "status": { "type": "string" },
+            "gitRepository": { "type": "boolean" },
+            "head": { "type": ["string", "null"] },
+            "branch": { "type": ["string", "null"] },
+            "detachedHead": { "type": "boolean" },
+            "stagedPaths": { "type": "array", "items": { "type": "string" } },
+            "porcelainStatus": { "type": "array", "items": { "type": "string" } },
+            "dirty": { "type": "boolean" },
+            "commandResults": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["insideWorkTree", "porcelainStatus", "branch", "head", "stagedPaths"],
+              "properties": {
+                "insideWorkTree": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["command", "exitCode", "success", "stderr", "failure"],
+                  "properties": {
+                    "command": { "type": "array", "items": { "type": "string" } },
+                    "exitCode": { "type": ["integer", "null"] },
+                    "success": { "type": "boolean" },
+                    "stderr": { "type": "string" },
+                    "failure": { "type": ["string", "null"] }
+                  }
+                },
+                "porcelainStatus": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["command", "exitCode", "success", "stderr", "failure"],
+                  "properties": {
+                    "command": { "type": "array", "items": { "type": "string" } },
+                    "exitCode": { "type": ["integer", "null"] },
+                    "success": { "type": "boolean" },
+                    "stderr": { "type": "string" },
+                    "failure": { "type": ["string", "null"] }
+                  }
+                },
+                "branch": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["command", "exitCode", "success", "stderr", "failure"],
+                  "properties": {
+                    "command": { "type": "array", "items": { "type": "string" } },
+                    "exitCode": { "type": ["integer", "null"] },
+                    "success": { "type": "boolean" },
+                    "stderr": { "type": "string" },
+                    "failure": { "type": ["string", "null"] }
+                  }
+                },
+                "head": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["command", "exitCode", "success", "stderr", "failure"],
+                  "properties": {
+                    "command": { "type": "array", "items": { "type": "string" } },
+                    "exitCode": { "type": ["integer", "null"] },
+                    "success": { "type": "boolean" },
+                    "stderr": { "type": "string" },
+                    "failure": { "type": ["string", "null"] }
+                  }
+                },
+                "stagedPaths": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["command", "exitCode", "success", "stderr", "failure"],
+                  "properties": {
+                    "command": { "type": "array", "items": { "type": "string" } },
+                    "exitCode": { "type": ["integer", "null"] },
+                    "success": { "type": "boolean" },
+                    "stderr": { "type": "string" },
+                    "failure": { "type": ["string", "null"] }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "finalVerdict": { "type": "string", "enum": ["PASS", "BLOCKED"] },
+        "errorCode": { "type": ["string", "null"] },
+        "errorMessage": { "type": ["string", "null"] }
+      }
+    },
+    "codexInvocationCount": { "type": "integer" },
+    "modelInvocationStarted": { "type": "boolean" },
+    "sandboxStarted": { "type": "boolean" },
+    "unityStarted": { "type": "boolean" },
+    "networkUsed": { "type": "boolean" },
+    "durationSeconds": { "type": "number" },
+    "finalState": { "type": "string", "enum": ["COMPLETED", "FAILED", "BLOCKED"] },
+    "finalVerdict": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,8 +1,8 @@
 # Codex Automation Bootstrap
 
-This is BOOTSTRAP-03B-2B-B for the local Codex Automation system.
+This is BOOTSTRAP-03B-2B-C for the local Codex Automation system.
 
-The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, BOOTSTRAP-03A fake pipeline behavior, BOOTSTRAP-03B-1 real-role self-test behavior, BOOTSTRAP-03B-2A generic real-task manifest validation/plan behavior, and BOOTSTRAP-03B-2B-A foundation preparation behavior. BOOTSTRAP-03B-2B-B adds only the internal no-model change-analysis layer after a trusted B-A workspace has already been prepared. It creates a fresh change baseline, recursively inventories final workspace state, computes a deterministic no-rename diff, enforces write/delete scope, service-file immutability, text/binary policy, and change limits, then writes strict reports outside the isolated workspace. It does not launch Codex, does not run `codex sandbox`, does not run a model, does not launch Unity batchmode, does not run a validator registry, does not execute generic tasks, does not apply patches, and does not change files inside `Assets`, `Packages`, or `ProjectSettings`.
+The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, BOOTSTRAP-03A fake pipeline behavior, BOOTSTRAP-03B-1 real-role self-test behavior, BOOTSTRAP-03B-2A generic real-task manifest validation/plan behavior, BOOTSTRAP-03B-2B-A foundation preparation behavior, and BOOTSTRAP-03B-2B-B change analysis behavior. BOOTSTRAP-03B-2B-C adds only the internal no-model validation layer after a trusted B-B change analysis has already produced PASS. It reloads B-B artifacts, loads fixed host validator and schema registries, rereads the immutable `task.json` validation plan, runs only registered in-process read-only Python validators, rechecks workspace/service/Git integrity after validation, and writes strict validation reports outside the isolated workspace. It does not launch Codex, does not run `codex sandbox`, does not run a model, does not launch Unity batchmode, does not execute generic tasks, does not apply patches, and does not change files inside `Assets`, `Packages`, or `ProjectSettings`.
 
 ## Created Files
 
@@ -109,8 +109,8 @@ Smoke test runtime output is written to ignored runtime paths:
 - Real-role self-test is started only by the explicit `--real-role-self-test` mode and is limited to an isolated runtime workspace.
 - Generic real-task manifest validation is started only by `--validate-task-manifest`.
 - Generic real-task planning is started only by `--real-task-plan`.
-- BOOTSTRAP-03B-2B-B has no `--real-task-run` mode.
-- BOOTSTRAP-03B-2B-B has no production `--real-task-prepare` or public change-analysis CLI mode. Future real-task execution stages must create a fresh trusted run context and fresh workspace inside their own run.
+- BOOTSTRAP-03B-2B-C has no `--real-task-run` mode.
+- BOOTSTRAP-03B-2B-C has no production `--real-task-prepare`, public change-analysis CLI mode, or generic validation-run CLI. Future real-task execution stages must create a fresh trusted run context and fresh workspace inside their own run.
 - The generic real-task validate/plan modes use a no-Codex preflight profile; they do not run `codex.cmd --version`, `codex --version`, `codex exec`, or `codex sandbox`.
 - No Unity code is changed.
 - No real implementer, repairer, or auditor may write to the Unity project.
@@ -329,7 +329,7 @@ Dirty parent worktree is allowed for validation and plan mode only after a succe
 
 ### Deferred Stages
 
-BOOTSTRAP-03B-2B-B, BOOTSTRAP-03B-2B-C, BOOTSTRAP-03B-2C, and BOOTSTRAP-03B-2D are not implemented here. Generic final task diffing, validator registry execution, implementer/repairer/auditor execution, patch/result bundle production, and controlled real-task execution self-test remain future work. Automatic apply, merge, commit, push, PR creation, Unity launch, and Unity batchmode validation are still out of scope.
+BOOTSTRAP-03B-2C and BOOTSTRAP-03B-2D are not implemented here. Generic real-task execution, implementer/repairer/auditor execution, patch/result bundle production, and controlled real-task execution self-test remain future work. Automatic apply, merge, commit, push, PR creation, Unity launch, and Unity batchmode validation are still out of scope.
 
 ## BOOTSTRAP-03B-2B-A Foundation Preparation
 
@@ -438,4 +438,82 @@ The focused B-B regression matrix covers strict source schema and source-limit f
 
 Verdicts are intentionally distinct. `PASS` requires all safety and policy booleans true and no blocking findings. `FAIL` is used for deterministic task-policy failures such as forbidden writes/deletes, limits, binary/text violations, or missing expected outputs. `BLOCKED` is used for trust and unsafe state such as context mismatch, baseline substitution, service mutation, isolated Git mutation, parent Git/source changes, reparse paths, inventory failure, or report trust failure.
 
-BOOTSTRAP-03B-2B-C, BOOTSTRAP-03B-2C, and BOOTSTRAP-03B-2D remain deferred. Content validator registry execution, json_schema registry execution, generic task execution, implementer/repairer/auditor roles, patch apply, result bundles, automatic apply, merge, commit, push, PR creation, Unity launch, and Unity batchmode validation are not implemented here.
+BOOTSTRAP-03B-2C and BOOTSTRAP-03B-2D remain deferred. Generic task execution, implementer/repairer/auditor roles, patch apply, result bundles, automatic apply, merge, commit, push, PR creation, Unity launch, and Unity batchmode validation are not implemented here.
+
+## BOOTSTRAP-03B-2B-C Local Validator Registry
+
+BOOTSTRAP-03B-2B-C adds an internal production-path API:
+
+```text
+create_validation_prerequisite_handle(change_analysis_result) -> ValidationPrerequisiteHandle
+execute_validation_plan(validation_prerequisite_handle) -> ValidationExecutionResult
+```
+
+The API accepts only a process-local prerequisite handle minted from the trusted in-memory B-B result and rereads persisted artifacts from the B-B run directory. It does not accept an arbitrary workspace path, manifest path, registry, function map, command, executable, plugin, or user-supplied validation plan. B-B must have `finalState=COMPLETED`, `finalVerdict=PASS`, unchanged parent Git/source, valid service files and isolated `.git`, valid write/delete/change-limit/text/expected-output checks, and zero Codex/model/sandbox/Unity/network activity. Old plan reports are not authorization.
+
+The host-only `realTaskValidationPolicy` is strict. The allowed validator type list is exact and deterministic, capped at 64 validators and 256 findings. Command validators, regex validators, external schema paths, dynamic plugins, network, and Unity are all disabled. The manifest cannot override this policy.
+
+The fixed validator registry contains exactly:
+
+```text
+file_exists
+file_absent
+json_valid
+json_schema
+json_field_equals
+text_contains
+text_not_contains
+changed_paths_exact
+changed_paths_subset
+no_unexpected_files
+no_conflict_markers
+max_file_size
+max_changed_files
+extension_allowlist
+```
+
+Each validator definition records type, version, implementation id, argument contract, workspace/diff/expected-output needs, max files read, and `noSideEffects=true`. Implementations are statically imported in-process Python callables. There is no shell, subprocess, command string, dynamic import, environment mutation, package install, network call, Codex call, or Unity call.
+
+`json_schema` uses only the fixed host schema registry under `CodexAutomation/validator_schemas/`. The manifest passes a case-sensitive `schemaName`, never a filesystem path. Registry entries include `schemaName`, `schemaVersion`, contained relative path, canonical schema SHA-256, and byte cap. Unknown names, path traversal, absolute paths, symlinks/reparse points, malformed JSON, unsupported schema keywords, oversized schemas, and canonical hash mismatches are BLOCKED trust failures.
+
+Validator target paths are repository-relative paths inside the isolated workspace and must be inside an explicit immutable validation-readable scope descriptor. Each descriptor records normalized path, `FILE` or `DIRECTORY` scope kind, origin, recursive behavior, and service=false. `FILE` scopes authorize only the exact path. `DIRECTORY` scopes authorize descendants only when the trusted descriptor is recursive. Service paths such as `.git`, `.agents`, `AGENTS.md`, `task.json`, `effective_policy.json`, `.codex`, and `CodexAutomation` are blocked as validator targets. Text and JSON reads are bounded, UTF-8/UTF-8 BOM only, and strict JSON rejects duplicate keys, trailing data, NaN/Infinity, and NUL bytes.
+
+`task.json` and `effective_policy.json` remain immutable service artifacts. B-C validates their service registry type, workspace containment, regular-file disk type, Windows reparse/junction safety, inventory size where available, and SHA-256 before treating them as trusted snapshots. The current parent manifest/config cannot substitute those persisted workspace files.
+
+Validation integrity now exposes `agentsDirectoryValid` separately from `serviceFilesValid`. PASS and FAIL both require `agentsDirectoryValid=true`; otherwise the final verdict is BLOCKED. The expected B-A state is an immutable empty `.agents` directory with no symlink/reparse component and no children.
+
+Validator results use a fixed status/code contract. PASS requires `code=null`. FAIL codes are allowlisted per validator type in the fixed registry snapshot. BLOCKED codes are restricted to trust, path, read, execution, registry, plan, integrity, and report failures. Invalid result codes are converted to BLOCKED result-invalid failures.
+
+B-C report schemas are strict for nested validator registry entries, schema registry entries, validation-plan entries, validator results, integrity fields, self-test cases, and warnings. Unsupported schema keywords such as `$ref`, `oneOf`, `allOf`, and `anyOf` are not used.
+
+The controlled self-test Git helper resolves and validates the synthetic cwd under the ignored self-test runtime, rejects symlink/reparse components, and allows only fixed local `git init`, `git config --local`, `git add -- <seed paths>`, and `git commit` argv. It still does not run any remote Git command.
+
+Verdicts are intentionally distinct:
+
+- `PASS`: trusted B-B PASS, trusted registries, every validator result PASS, no workspace/service/Git/parent mutation, trusted reports written, and zero Codex/model/sandbox/Unity/network activity.
+- `FAIL`: registered validators safely executed and one or more assertions failed.
+- `BLOCKED`: trust mismatch, malformed artifacts, registry corruption, unsafe path, service target, symlink/reparse, read failure, invalid validator result, validator workspace mutation, parent Git/source mutation, or report trust/write failure.
+
+The strict final validation report is:
+
+```text
+FINAL_VALIDATION_REPORT.json
+```
+
+It contains deterministic registry snapshots and hashes, schema registry snapshot and hash, validation-plan hash, ordered per-validator results, recomputed pass/fail/blocked counts, read-only integrity evidence, final state/verdict, and no-execution fields.
+
+Run the controlled no-model validator self-test:
+
+```bat
+python CodexAutomation/scripts/orchestrator.py --real-task-validator-self-test
+```
+
+This is the only new public B-C CLI mode. It takes no additional arguments and uses a no-Codex preflight profile, so Codex executable/version inspection is skipped. Runtime output is written under:
+
+```text
+CodexAutomation/runtime/real_task_validator_self_tests/<run-id>/
+```
+
+The self-test creates synthetic parent Git repositories only inside that ignored runtime root, with local-only `git init`, local user config, initial `git add`, and initial `git commit`. It does not touch the actual Clicker parent project. The PASS case executes all 14 validators successfully. The expected FAIL case safely aggregates deterministic failures for `json_field_equals`, `text_not_contains`, `changed_paths_exact`, `no_conflict_markers`, `max_file_size`, and `extension_allowlist`; that case is considered successful when the expected FAIL verdict and failed validator types match.
+
+BOOTSTRAP-03B-2C and BOOTSTRAP-03B-2D remain deferred. Codex roles are not ready, generic real-task execution is not ready, patch apply is not ready, result bundle apply is not ready, Unity validation is not ready, automatic repair is not ready, and process-restart resume is not ready.

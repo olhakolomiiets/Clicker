@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["registryVersion", "schemas"],
+  "properties": {
+    "registryVersion": { "type": "integer", "const": 1 },
+    "schemas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schemaName", "schemaVersion", "relativePath", "canonicalSchemaSha256", "maxBytes"],
+        "properties": {
+          "schemaName": { "type": "string" },
+          "schemaVersion": { "type": "integer" },
+          "relativePath": { "type": "string" },
+          "canonicalSchemaSha256": { "type": "string" },
+          "maxBytes": { "type": "integer" }
+        }
+      }
+    }
+  }
+}

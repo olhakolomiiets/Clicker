@@ -1,7 +1,7 @@
 {
   "format_version": 1,
   "project_name": "Planet Builder",
-  "automation_stage": "BOOTSTRAP-03B-2B-B",
+  "automation_stage": "BOOTSTRAP-03B-2B-C",
   "dry_run_default": true,
   "paths": {
     "automation_root": "CodexAutomation",
@@ -193,6 +193,38 @@
       ".zip",
       ".7z"
     ]
+  },
+  "realTaskValidationPolicy": {
+    "enabled": true,
+    "allowedValidatorTypes": [
+      "file_exists",
+      "file_absent",
+      "json_valid",
+      "json_schema",
+      "json_field_equals",
+      "text_contains",
+      "text_not_contains",
+      "changed_paths_exact",
+      "changed_paths_subset",
+      "no_unexpected_files",
+      "no_conflict_markers",
+      "max_file_size",
+      "max_changed_files",
+      "extension_allowlist"
+    ],
+    "maxValidatorsPerTask": 64,
+    "maxFindings": 256,
+    "maxTextReadBytes": 2097152,
+    "maxJsonReadBytes": 2097152,
+    "maxSchemaBytes": 1048576,
+    "maxReportBytes": 4194304,
+    "failFast": false,
+    "allowCommandValidators": false,
+    "allowRegexValidators": false,
+    "allowExternalSchemaPaths": false,
+    "allowDynamicPlugins": false,
+    "allowNetwork": false,
+    "allowUnity": false
   },
   "unity": {
     "project_version_file": "ProjectSettings/ProjectVersion.txt",

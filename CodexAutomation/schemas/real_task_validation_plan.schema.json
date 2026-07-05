@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reportVersion", "runId", "taskId", "stage", "trustedContextHash", "changeFinalReportHash", "validatorRegistryHash", "validationPlan", "validationPlanHash", "validatorCount", "argumentValidationStatus", "errorCode", "errorMessage"],
+  "properties": {
+    "reportVersion": { "type": "integer" },
+    "runId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-C" },
+    "trustedContextHash": { "type": "string" },
+    "changeFinalReportHash": { "type": "string" },
+    "validatorRegistryHash": { "type": "string" },
+    "validationPlan": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "path": { "type": "string" },
+          "paths": { "type": "array", "items": { "type": "string" } },
+          "schemaName": { "type": "string" },
+          "jsonPointer": { "type": "string" },
+          "expected": { "type": ["string", "integer", "boolean", "null"] },
+          "text": { "type": "string" },
+          "maxBytes": { "type": "integer" },
+          "maxFiles": { "type": "integer" },
+          "extensions": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "validationPlanHash": { "type": "string" },
+    "validatorCount": { "type": "integer" },
+    "argumentValidationStatus": { "type": "string", "enum": ["PASS", "BLOCKED"] },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

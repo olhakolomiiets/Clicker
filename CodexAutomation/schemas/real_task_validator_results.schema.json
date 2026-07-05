@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reportVersion", "runId", "taskId", "stage", "results", "executedCount", "passCount", "failCount", "blockedCount", "executionComplete", "errorCode", "errorMessage"],
+  "properties": {
+    "reportVersion": { "type": "integer" },
+    "runId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-C" },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["resultVersion", "validatorId", "validatorIndex", "validatorType", "validatorVersion", "status", "code", "message", "primaryPath", "relatedPaths", "expected", "actual", "filesRead", "bytesRead", "durationMilliseconds", "noSideEffects", "findings"],
+        "properties": {
+          "resultVersion": { "type": "integer" },
+          "validatorId": { "type": "string" },
+          "validatorIndex": { "type": "integer" },
+          "validatorType": { "type": "string" },
+          "validatorVersion": { "type": "string" },
+          "status": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+          "code": { "type": ["string", "null"] },
+          "message": { "type": "string" },
+          "primaryPath": { "type": ["string", "null"] },
+          "relatedPaths": { "type": "array", "items": { "type": "string" } },
+          "expected": { "type": ["string", "null"] },
+          "actual": { "type": ["string", "null"] },
+          "filesRead": { "type": "integer" },
+          "bytesRead": { "type": "integer" },
+          "durationMilliseconds": { "type": "integer" },
+          "noSideEffects": { "type": "boolean" },
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [],
+              "properties": {
+                "expected": { "type": ["string", "array", "integer", "boolean", "null"] },
+                "actual": { "type": ["string", "array", "integer", "boolean", "null"] },
+                "unexpected": { "type": "array", "items": { "type": "string" } },
+                "path": { "type": "string" },
+                "paths": { "type": "array", "items": { "type": "string" } },
+                "markers": { "type": "array", "items": { "type": "string" } },
+                "maxBytes": { "type": "integer" },
+                "maxFiles": { "type": "integer" },
+                "extension": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "executedCount": { "type": "integer" },
+    "passCount": { "type": "integer" },
+    "failCount": { "type": "integer" },
+    "blockedCount": { "type": "integer" },
+    "executionComplete": { "type": "boolean" },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

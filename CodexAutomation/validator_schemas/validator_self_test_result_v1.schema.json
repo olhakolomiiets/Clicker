@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "count"],
+  "properties": {
+    "status": { "type": "string", "const": "ok" },
+    "count": { "type": "integer" }
+  }
+}

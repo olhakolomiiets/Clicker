@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "required": ["role", "status", "finalVerdict", "errorCode"],
+  "additionalProperties": false,
+  "properties": {
+    "role": { "type": "string", "const": "REPAIRER" },
+    "status": { "type": "string" },
+    "finalVerdict": { "type": "string" },
+    "errorCode": { "type": ["string", "null"] }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "required": ["reportVersion", "orchestrationRunId", "taskId", "stage", "bundleManifestHash", "bundleIntegrityValid", "errorCode", "errorMessage"],
+  "additionalProperties": false,
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "orchestrationRunId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2C" },
+    "bundleManifestHash": { "type": ["string", "null"] },
+    "bundleIntegrityValid": { "type": "boolean" },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

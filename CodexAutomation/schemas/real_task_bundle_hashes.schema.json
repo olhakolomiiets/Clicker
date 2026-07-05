@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "required": ["reportVersion", "entries", "totalFiles", "totalBytes", "aggregateHash", "excludedPaths"],
+  "additionalProperties": false,
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["relativePath", "size", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "relativePath": { "type": "string" },
+          "size": { "type": "integer" },
+          "sha256": { "type": "string" }
+        }
+      }
+    },
+    "totalFiles": { "type": "integer" },
+    "totalBytes": { "type": "integer" },
+    "aggregateHash": { "type": "string" },
+    "excludedPaths": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

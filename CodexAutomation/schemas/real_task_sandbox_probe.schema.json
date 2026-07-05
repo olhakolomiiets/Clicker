@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "required": ["probeRunId", "finalVerdict", "processStarted", "modelInvocationStarted", "sandboxStarted", "networkUsed", "errorCode", "errorMessage"],
+  "additionalProperties": false,
+  "properties": {
+    "probeRunId": { "type": "string" },
+    "finalVerdict": { "type": "string" },
+    "processStarted": { "type": "boolean" },
+    "modelInvocationStarted": { "type": "boolean" },
+    "sandboxStarted": { "type": "boolean" },
+    "networkUsed": { "type": "boolean" },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "required": ["reportVersion", "orchestrationRunId", "taskId", "stage", "stateHistory", "finalState", "finalVerdict", "errorCode", "errorMessage"],
+  "additionalProperties": false,
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "orchestrationRunId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2C" },
+    "stateHistory": { "type": "array", "items": { "type": "string" } },
+    "finalState": { "type": "string" },
+    "finalVerdict": { "type": "string" },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

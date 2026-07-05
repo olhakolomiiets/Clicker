@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "required": ["reportVersion", "orchestrationRunId", "taskId", "stage", "createdAt", "finalTaskVerdict", "eligibleForApply", "entries", "sha256SumsSha256", "sha256SumsSize", "sha256SumsExcludedPaths", "coveredFileCount", "coveredTotalBytes", "complete", "errorCode", "errorMessage"],
+  "additionalProperties": false,
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "orchestrationRunId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2C" },
+    "createdAt": { "type": "string" },
+    "finalTaskVerdict": { "type": "string" },
+    "eligibleForApply": { "type": "boolean", "const": false },
+    "parentRepositoryIdentity": {
+      "type": "object",
+      "required": ["repositoryRoot", "parentHead"],
+      "additionalProperties": false,
+      "properties": {
+        "repositoryRoot": { "type": "string" },
+        "parentHead": { "type": ["string", "null"] }
+      }
+    },
+    "parentHead": { "type": ["string", "null"] },
+    "parentGitSnapshotHash": { "type": "string" },
+    "manifestSha256": { "type": "string" },
+    "effectivePolicyHash": { "type": "string" },
+    "executionContextHash": { "type": "string" },
+    "foundationFinalReportHash": { "type": "string" },
+    "finalChangeAnalysisReportHash": { "type": "string" },
+    "finalValidationReportHash": { "type": "string" },
+    "auditReportHash": { "type": "string" },
+    "changedPathCount": { "type": "integer" },
+    "deletedPathCount": { "type": "integer" },
+    "copiedFileCount": { "type": "integer" },
+    "totalBundleBytes": { "type": "integer" },
+    "patchSha256": { "type": "string" },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["relativePath", "artifactType", "sourceTaskPath", "size", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "relativePath": { "type": "string" },
+          "artifactType": { "type": "string" },
+          "sourceTaskPath": { "type": ["string", "null"] },
+          "size": { "type": "integer" },
+          "sha256": { "type": "string" }
+        }
+      }
+    },
+    "sha256SumsSha256": { "type": "string" },
+    "sha256SumsSize": { "type": "integer" },
+    "sha256SumsExcludedPaths": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "coveredFileCount": { "type": "integer" },
+    "coveredTotalBytes": { "type": "integer" },
+    "complete": { "type": "boolean" },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

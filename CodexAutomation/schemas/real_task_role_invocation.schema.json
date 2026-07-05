@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "required": ["reportVersion", "role", "invocationId", "reservationId", "sequence", "executionContextHash", "status", "verdict", "promptHash", "result", "errorCode", "errorMessage"],
+  "additionalProperties": false,
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "role": { "type": "string" },
+    "invocationId": { "type": "string" },
+    "reservationId": { "type": "string" },
+    "sequence": { "type": "integer" },
+    "executionContextHash": { "type": "string" },
+    "status": { "type": "string" },
+    "verdict": { "type": "string" },
+    "promptHash": { "type": "string" },
+    "result": {
+      "type": "object",
+      "required": ["role", "status", "finalVerdict", "errorCode"],
+      "additionalProperties": false,
+      "properties": {
+        "role": { "type": "string" },
+        "status": { "type": "string" },
+        "finalVerdict": { "type": "string" },
+        "errorCode": { "type": ["string", "null"] }
+      }
+    },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

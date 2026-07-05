@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "required": ["reportVersion", "orchestrationRunId", "taskId", "stage", "diagnosticVerdict", "repairAllowed", "repairsUsed", "maxRepairAttempts", "decision", "shouldRepair", "authorization", "diagnosticReportHash", "diagnosticPayloadHash", "diagnosticArtifactHash", "diagnosticArtifactSize", "diagnosticAttemptNumber", "diagnosticReportRelativePath", "diagnosticReceiptConsumed", "executionContextHash", "originalBaselineInventoryHash", "blockedCount", "repairableFindingCount", "nonRepairableFindingCount", "repairEligible", "errorCode", "errorMessage"],
+  "additionalProperties": false,
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "orchestrationRunId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2C" },
+    "diagnosticVerdict": { "type": "string" },
+    "repairAllowed": { "type": "boolean" },
+    "repairsUsed": { "type": "integer" },
+    "maxRepairAttempts": { "type": "integer" },
+    "decision": { "type": "string" },
+    "shouldRepair": { "type": "boolean" },
+    "authorization": { "type": "boolean", "const": false },
+    "diagnosticReportHash": { "type": "string" },
+    "diagnosticPayloadHash": { "type": "string" },
+    "diagnosticArtifactHash": { "type": "string" },
+    "diagnosticArtifactSize": { "type": "integer" },
+    "diagnosticAttemptNumber": { "type": "integer" },
+    "diagnosticReportRelativePath": { "type": "string" },
+    "diagnosticReceiptConsumed": { "type": "boolean", "const": true },
+    "executionContextHash": { "type": "string" },
+    "originalBaselineInventoryHash": { "type": "string" },
+    "blockedCount": { "type": ["integer", "null"] },
+    "repairableFindingCount": { "type": ["integer", "null"] },
+    "nonRepairableFindingCount": { "type": ["integer", "null"] },
+    "repairEligible": { "type": ["boolean", "null"] },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

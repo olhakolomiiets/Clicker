@@ -1,0 +1,95 @@
+{
+  "type": "object",
+  "required": [
+    "contextVersion",
+    "orchestrationRunId",
+    "taskId",
+    "stage",
+    "createdAt",
+    "runDirectory",
+    "manifestPath",
+    "manifestSha256",
+    "effectivePolicyHash",
+    "foundationRunId",
+    "foundationRunDirectory",
+    "foundationFinalReportHash",
+    "trustedContextHash",
+    "workspaceIdentity",
+    "parentRepositoryIdentity",
+    "initialParentGitSnapshotHash",
+    "initialParentSourceInventoryHash",
+    "baselineInventoryHash",
+    "executionPolicyHash",
+    "invocationBudget",
+    "repairBudget",
+    "roleSequence",
+    "noParentWrite",
+    "noAutomaticApply",
+    "noNetwork",
+    "noPackageInstall",
+    "noUnity"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contextVersion": { "type": "integer", "const": 1 },
+    "orchestrationRunId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2C" },
+    "createdAt": { "type": "string" },
+    "runDirectory": { "type": "string" },
+    "manifestPath": { "type": "string" },
+    "manifestSha256": { "type": "string" },
+    "effectivePolicyHash": { "type": "string" },
+    "foundationRunId": { "type": "string" },
+    "foundationRunDirectory": { "type": "string" },
+    "foundationFinalReportHash": { "type": "string" },
+    "trustedContextHash": { "type": "string" },
+    "workspaceIdentity": {
+      "type": "object",
+      "required": ["workspaceDirectory", "workspaceBaselineInventoryHash", "isolatedGitValid"],
+      "additionalProperties": false,
+      "properties": {
+        "workspaceDirectory": { "type": "string" },
+        "workspaceBaselineInventoryHash": { "type": "string" },
+        "isolatedGitValid": { "type": "boolean" }
+      }
+    },
+    "parentRepositoryIdentity": {
+      "type": "object",
+      "required": ["repositoryRoot", "parentHead"],
+      "additionalProperties": false,
+      "properties": {
+        "repositoryRoot": { "type": "string" },
+        "parentHead": { "type": ["string", "null"] }
+      }
+    },
+    "initialParentGitSnapshotHash": { "type": "string" },
+    "initialParentSourceInventoryHash": { "type": "string" },
+    "baselineInventoryHash": { "type": "string" },
+    "executionPolicyHash": { "type": "string" },
+    "invocationBudget": {
+      "type": "object",
+      "required": ["maxRoleInvocations", "invocationsUsed"],
+      "additionalProperties": false,
+      "properties": {
+        "maxRoleInvocations": { "type": "integer" },
+        "invocationsUsed": { "type": "integer" }
+      }
+    },
+    "repairBudget": {
+      "type": "object",
+      "required": ["maxRepairAttempts", "repairsUsed"],
+      "additionalProperties": false,
+      "properties": {
+        "maxRepairAttempts": { "type": "integer" },
+        "repairsUsed": { "type": "integer" }
+      }
+    },
+    "roleSequence": { "type": "array", "items": { "type": "string" } },
+    "noParentWrite": { "type": "boolean", "const": true },
+    "noAutomaticApply": { "type": "boolean", "const": true },
+    "noNetwork": { "type": "boolean", "const": true },
+    "noPackageInstall": { "type": "boolean", "const": true },
+    "noUnity": { "type": "boolean", "const": true }
+  }
+}

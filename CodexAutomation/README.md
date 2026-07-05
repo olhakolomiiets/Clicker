@@ -1,8 +1,8 @@
 # Codex Automation Bootstrap
 
-This is BOOTSTRAP-03B-2B-C for the local Codex Automation system.
+This is BOOTSTRAP-03B-2C for the local Codex Automation system.
 
-The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, BOOTSTRAP-03A fake pipeline behavior, BOOTSTRAP-03B-1 real-role self-test behavior, BOOTSTRAP-03B-2A generic real-task manifest validation/plan behavior, BOOTSTRAP-03B-2B-A foundation preparation behavior, and BOOTSTRAP-03B-2B-B change analysis behavior. BOOTSTRAP-03B-2B-C adds only the internal no-model validation layer after a trusted B-B change analysis has already produced PASS. It reloads B-B artifacts, loads fixed host validator and schema registries, rereads the immutable `task.json` validation plan, runs only registered in-process read-only Python validators, rechecks workspace/service/Git integrity after validation, and writes strict validation reports outside the isolated workspace. It does not launch Codex, does not run `codex sandbox`, does not run a model, does not launch Unity batchmode, does not execute generic tasks, does not apply patches, and does not change files inside `Assets`, `Packages`, or `ProjectSettings`.
+The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, BOOTSTRAP-03A fake pipeline behavior, BOOTSTRAP-03B-1 real-role self-test behavior, BOOTSTRAP-03B-2A generic real-task manifest validation/plan behavior, BOOTSTRAP-03B-2B-A foundation preparation behavior, BOOTSTRAP-03B-2B-B change analysis behavior, and BOOTSTRAP-03B-2B-C validator execution behavior. BOOTSTRAP-03B-2C adds an internal generic real-task orchestration layer that creates a fresh B-A workspace, keeps the original B-B baseline across implementer and one optional repair, runs final B-B and B-C as host authority, then runs a read-only auditor and writes an immutable review bundle. It does not add a public generic task-run CLI, does not run a controlled real-model self-test, does not apply patches, and does not write to the parent Unity repository.
 
 ## Created Files
 
@@ -109,8 +109,8 @@ Smoke test runtime output is written to ignored runtime paths:
 - Real-role self-test is started only by the explicit `--real-role-self-test` mode and is limited to an isolated runtime workspace.
 - Generic real-task manifest validation is started only by `--validate-task-manifest`.
 - Generic real-task planning is started only by `--real-task-plan`.
-- BOOTSTRAP-03B-2B-C has no `--real-task-run` mode.
-- BOOTSTRAP-03B-2B-C has no production `--real-task-prepare`, public change-analysis CLI mode, or generic validation-run CLI. Future real-task execution stages must create a fresh trusted run context and fresh workspace inside their own run.
+- BOOTSTRAP-03B-2C has no `--real-task-run` mode.
+- BOOTSTRAP-03B-2C has no production `--real-task-prepare`, public change-analysis CLI mode, generic validation-run CLI, or public generic execution CLI. The internal production API is `execute_real_task(validated_manifest_path)`, and test code may use the private `_execute_real_task_with_test_adapter(...)` fake-adapter entry only for no-model integration tests.
 - The generic real-task validate/plan modes use a no-Codex preflight profile; they do not run `codex.cmd --version`, `codex --version`, `codex exec`, or `codex sandbox`.
 - No Unity code is changed.
 - No real implementer, repairer, or auditor may write to the Unity project.
@@ -516,4 +516,50 @@ CodexAutomation/runtime/real_task_validator_self_tests/<run-id>/
 
 The self-test creates synthetic parent Git repositories only inside that ignored runtime root, with local-only `git init`, local user config, initial `git add`, and initial `git commit`. It does not touch the actual Clicker parent project. The PASS case executes all 14 validators successfully. The expected FAIL case safely aggregates deterministic failures for `json_field_equals`, `text_not_contains`, `changed_paths_exact`, `no_conflict_markers`, `max_file_size`, and `extension_allowlist`; that case is considered successful when the expected FAIL verdict and failed validator types match.
 
-BOOTSTRAP-03B-2C and BOOTSTRAP-03B-2D remain deferred. Codex roles are not ready, generic real-task execution is not ready, patch apply is not ready, result bundle apply is not ready, Unity validation is not ready, automatic repair is not ready, and process-restart resume is not ready.
+## BOOTSTRAP-03B-2C Internal Real-Task Orchestration
+
+BOOTSTRAP-03B-2C adds an internal production-path API:
+
+```text
+execute_real_task(validated_manifest_path) -> RealTaskExecutionResult
+```
+
+The production entry accepts only a manifest path, reloads host config from the fixed automation location, revalidates the manifest from disk, and creates a fresh orchestration run under:
+
+```text
+CodexAutomation/runtime/real_task_runs/<run-id>/
+```
+
+The orchestration flow is:
+
+```text
+fresh B-A foundation -> execution context -> fresh sandbox probe -> implementer -> no-authority diagnostic -> optional one repair -> final B-B -> final B-C -> read-only auditor -> immutable result bundle -> final report
+```
+
+Host validation is the source of truth. Diagnostic reports are explicitly non-authorizing and cannot substitute for final B-B/B-C. The original B-B baseline is created before the implementer and is preserved across the optional repair so final cumulative analysis includes implementer plus repairer changes. The invocation budget is fixed at three role invocations: implementer, optional repairer, and auditor. The repair budget is at most one. Rate limits and timeouts are terminal for the current run; there is no automatic retry, sleep-and-retry, model downgrade, or credit fallback.
+
+The effective role budget may only be lowered by the manifest. Role invocations are reserved atomically in the process-local execution registry before the role starts, and each reservation records the expected role sequence, current handle state, invocation count, repair count, host-owned invocation id, and reservation time. Role invocation reports use the host-reserved id/role/sequence; adapter-claimed invocation identities must match or the run blocks before diagnostic/final stages. Exhausting the lowered budget blocks the run before the next role can start; it does not skip the mandatory auditor and still report PASS.
+
+The execution context is written through the trusted report writer as `REAL_TASK_EXECUTION_CONTEXT.json`, schema-validated, semantically checked, reread, and hash-compared before a usable handle is registered. Role, diagnostic, finalization, auditor integrity, and bundle code require a process-local `RealTaskExecutionHandle`; raw context dictionaries, reconstructed handles, copied handles, stale states, wrong run/task/workspace identities, wrong threads, terminal handles, and secret capability mismatches are rejected. Critical 2C APIs resolve their context by rereading the handle-bound execution-context report and comparing it with the registry hash and identity before use. Process-restart resume is not implemented.
+
+Before implementer, after implementer, before repair, after repair, before auditor, and after auditor, the host captures shared integrity snapshots covering the full task workspace content, immutable service files, exact empty `.agents/`, standalone `.git`, parent Git, parent source inventory, and runtime containment. The post-role gates block service, `.agents`, isolated Git, parent Git/source, containment, and no-progress repair failures before later roles or bundling can proceed.
+
+The diagnostic pass reruns the B-B/B-C logic against the original pre-implementer baseline. It rebuilds a final inventory and diff, evaluates the B-B change policy, runs the fixed local B-C validators, records validator result hashes, and writes `authorization=false`. The persisted diagnostic report is written through the trusted writer, registered in the process-local execution handle registry with its full artifact receipt, and then consumed once by repair decision. Repair decision does not accept an in-memory diagnostic as authority: it derives the attempt path from the handle-bound run directory, rereads the persisted report with duplicate-key-safe schema/semantic validation, verifies the diagnostic payload hash separately from the full artifact receipt hash, and checks run/task/context/baseline binding before evaluating repair eligibility. Repair eligibility is host-derived from the trusted diagnostic verdict, pass/fail/blocked counts, integrity status, a fixed repairable finding mapping, repair budget, and invocation budget; string heuristics such as checking for `INVALID` are not authority. A PASS diagnostic is only a repair decision input; the final authority remains the later final B-B and final B-C reports.
+
+All 2C trust reports are written through a bounded trusted writer: schema validation, semantic validation where applicable, canonical JSON serialization, size caps, atomic replace, duplicate-key-safe reread, second schema/semantic validation, and canonical hash comparison. Existing report paths are not overwritten.
+
+The production `CodexRealTaskRoleAdapter` is fixed-registration only. BOOTSTRAP-03B-2C keeps controlled real-model task execution disabled, so the adapter does not start Codex roles. No manifest can provide an executable, shell string, CLI flags, model, sandbox, approval policy, writable roots, dynamic plugin, validator registry, or prompt override. The no-model `FakeRealTaskRoleAdapter` exists only for private tests and does not start Codex, subprocess role execution, Unity, package installation, or network.
+
+Result bundles are immutable review artifacts only:
+
+```text
+result_bundle/
+  files/<changed task files>
+  changes.patch
+  RESULT_MANIFEST.json
+  SHA256SUMS.json
+```
+
+`RESULT_MANIFEST.json` always has `eligibleForApply=false`. `SHA256SUMS.json` is written through trusted persistence and covers copied payload files and `changes.patch`; it intentionally excludes `RESULT_MANIFEST.json` and `SHA256SUMS.json` to avoid circular/stale manifest hashes. The manifest records the trusted canonical SHA-256, size, covered file count, covered byte count, and fixed exclusion list for `SHA256SUMS.json`, and final bundle verification rechecks that binding after bundle promotion. BOOTSTRAP-03B-2C does not apply bundle contents to the parent repository and does not merge, commit, push, create a PR, launch Unity, or run Unity batchmode.
+
+BOOTSTRAP-03B-2D remains deferred. Controlled real-model task self-test, public generic execution, arbitrary manifest execution CLI, apply, restart resume, process recovery, command validators, network validators, package installation, Unity validation, merge, commit, push, and PR creation are not implemented here.

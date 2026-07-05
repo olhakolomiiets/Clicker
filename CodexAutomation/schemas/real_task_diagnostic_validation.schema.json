@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "required": ["reportVersion", "orchestrationRunId", "taskId", "stage", "authorization", "attemptNumber", "executionContextHash", "originalBaselineHash", "changeBaselineInventoryHash", "diagnosticFinalInventoryHash", "diagnosticDiffHash", "diagnosticPolicyHash", "validatorResultHash", "changePolicyVerdict", "validationVerdict", "passCount", "failCount", "blockedCount", "integrityPassed", "repairableFindingCount", "nonRepairableFindingCount", "repairEligible", "repairEligibilityCode", "findingsHash", "diagnosticReportHash", "parentGitChanged", "parentSourceChanged", "serviceFilesValid", "isolatedGitValid", "finalVerdict", "findings", "errorCode", "errorMessage", "durationSeconds"],
+  "additionalProperties": false,
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "orchestrationRunId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2C" },
+    "authorization": { "type": "boolean", "const": false },
+    "attemptNumber": { "type": "integer" },
+    "executionContextHash": { "type": "string" },
+    "originalBaselineHash": { "type": "string" },
+    "changeBaselineInventoryHash": { "type": "string" },
+    "diagnosticFinalInventoryHash": { "type": "string" },
+    "diagnosticDiffHash": { "type": "string" },
+    "diagnosticPolicyHash": { "type": "string" },
+    "validatorResultHash": { "type": "string" },
+    "changePolicyVerdict": { "type": "string" },
+    "validationVerdict": { "type": "string" },
+    "passCount": { "type": "integer" },
+    "failCount": { "type": "integer" },
+    "blockedCount": { "type": "integer" },
+    "integrityPassed": { "type": "boolean" },
+    "repairableFindingCount": { "type": "integer" },
+    "nonRepairableFindingCount": { "type": "integer" },
+    "repairEligible": { "type": "boolean" },
+    "repairEligibilityCode": { "type": "string" },
+    "findingsHash": { "type": "string" },
+    "diagnosticReportHash": { "type": "string" },
+    "parentGitChanged": { "type": "boolean" },
+    "parentSourceChanged": { "type": "boolean" },
+    "serviceFilesValid": { "type": "boolean" },
+    "isolatedGitValid": { "type": "boolean" },
+    "finalVerdict": { "type": "string" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "type": "string" },
+          "path": { "type": ["string", "null"] },
+          "message": { "type": "string" }
+        }
+      }
+    },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] },
+    "durationSeconds": { "type": "number" }
+  }
+}

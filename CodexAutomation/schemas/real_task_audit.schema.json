@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "required": ["reportVersion", "orchestrationRunId", "taskId", "stage", "auditorInvocationId", "auditorVerdict", "approved", "workspaceUnchangedAfterAuditor", "beforeWorkspaceHash", "afterWorkspaceHash", "serviceFilesValid", "agentsDirectoryValid", "isolatedGitValid", "parentGitChanged", "parentSourceChanged", "findings", "errorCode", "errorMessage"],
+  "additionalProperties": false,
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "orchestrationRunId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2C" },
+    "auditorInvocationId": { "type": "string" },
+    "auditorVerdict": { "type": "string" },
+    "approved": { "type": "boolean" },
+    "workspaceUnchangedAfterAuditor": { "type": "boolean" },
+    "beforeWorkspaceHash": { "type": "string" },
+    "afterWorkspaceHash": { "type": "string" },
+    "serviceFilesValid": { "type": "boolean" },
+    "agentsDirectoryValid": { "type": "boolean" },
+    "isolatedGitValid": { "type": "boolean" },
+    "parentGitChanged": { "type": "boolean" },
+    "parentSourceChanged": { "type": "boolean" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" }
+        }
+      }
+    },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

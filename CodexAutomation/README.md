@@ -1,8 +1,8 @@
 # Codex Automation Bootstrap
 
-This is BOOTSTRAP-03B-2B-A for the local Codex Automation system.
+This is BOOTSTRAP-03B-2B-B for the local Codex Automation system.
 
-The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, BOOTSTRAP-03A fake pipeline behavior, BOOTSTRAP-03B-1 real-role self-test behavior, and BOOTSTRAP-03B-2A generic real-task manifest validation/plan behavior. BOOTSTRAP-03B-2B-A adds only the no-model foundation preparation layer: fresh trusted context creation, staging workspace lifecycle, immutable service files, full source pre/post inventories, verified allowlisted source copy, and workspace promotion after verification. It does not launch Codex, does not run `codex sandbox`, does not run a model, does not launch Unity batchmode, does not compute a generic final task diff, does not run a validator registry, does not apply patches, and does not change files inside `Assets`, `Packages`, or `ProjectSettings`.
+The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, BOOTSTRAP-03A fake pipeline behavior, BOOTSTRAP-03B-1 real-role self-test behavior, BOOTSTRAP-03B-2A generic real-task manifest validation/plan behavior, and BOOTSTRAP-03B-2B-A foundation preparation behavior. BOOTSTRAP-03B-2B-B adds only the internal no-model change-analysis layer after a trusted B-A workspace has already been prepared. It creates a fresh change baseline, recursively inventories final workspace state, computes a deterministic no-rename diff, enforces write/delete scope, service-file immutability, text/binary policy, and change limits, then writes strict reports outside the isolated workspace. It does not launch Codex, does not run `codex sandbox`, does not run a model, does not launch Unity batchmode, does not run a validator registry, does not execute generic tasks, does not apply patches, and does not change files inside `Assets`, `Packages`, or `ProjectSettings`.
 
 ## Created Files
 
@@ -109,8 +109,8 @@ Smoke test runtime output is written to ignored runtime paths:
 - Real-role self-test is started only by the explicit `--real-role-self-test` mode and is limited to an isolated runtime workspace.
 - Generic real-task manifest validation is started only by `--validate-task-manifest`.
 - Generic real-task planning is started only by `--real-task-plan`.
-- BOOTSTRAP-03B-2B-A has no `--real-task-run` mode.
-- BOOTSTRAP-03B-2B-A has no production `--real-task-prepare` mode. Future real-task execution stages must create a fresh trusted run context and fresh workspace inside their own run.
+- BOOTSTRAP-03B-2B-B has no `--real-task-run` mode.
+- BOOTSTRAP-03B-2B-B has no production `--real-task-prepare` or public change-analysis CLI mode. Future real-task execution stages must create a fresh trusted run context and fresh workspace inside their own run.
 - The generic real-task validate/plan modes use a no-Codex preflight profile; they do not run `codex.cmd --version`, `codex --version`, `codex exec`, or `codex sandbox`.
 - No Unity code is changed.
 - No real implementer, repairer, or auditor may write to the Unity project.
@@ -392,3 +392,50 @@ Standalone isolated Git rules:
 - Host inventories remain the source of truth; Git state is only protected service evidence.
 
 Foundation reports are strict, machine-readable JSON files validated by local schemas. Critical trusted context and inventory schemas reject unknown root and nested policy/Git fields. PASS requires source pre/post match, verified destination hashes and path sets, valid service files, post-promotion verified isolated Git, unchanged parent Git before/after snapshots, zero Codex invocations, no model start, no sandbox start, no Unity start, and no network use.
+
+## BOOTSTRAP-03B-2B-B Change Analysis
+
+BOOTSTRAP-03B-2B-B adds internal production-path APIs only:
+
+```text
+begin_change_tracking(prepared_run_handle) -> ChangeTrackingHandle
+finalize_change_analysis(change_tracking_handle) -> ChangeAnalysisResult
+```
+
+There is no public prepare/analyze/run CLI in this stage. Test code may mutate only synthetic isolated workspaces between the two APIs. The host never runs Codex, a model, sandbox probing, Unity, package installation, network access, patch apply, or production task execution.
+
+The host-only `realTaskChangePolicy` in `config.json` is strict: rename detection is disabled, extensionless outputs are disabled, UTF-8 and UTF-8 BOM are the only accepted changed text encodings, UTF-16 is rejected, binary changes/deletes are rejected, changed text extensions are allowlisted, Unity serialized assets and common binary extensions are forbidden, and diff/report size limits are bounded. Manifests cannot override this policy.
+
+`begin_change_tracking()` accepts the in-memory B-A final preparation result only as the current run identity hint. Persisted artifacts are the authority. It rereads and semantically revalidates `TRUSTED_RUN_CONTEXT.json`, `FINAL_WORKSPACE_PREPARATION_REPORT.json`, `WORKSPACE_BASELINE_INVENTORY.json`, and `SOURCE_POST_INVENTORY.json`, including the persisted B-A PASS contract, no-execution flags, workspace identity, source-post hash, service registry semantics, workspace containment, service files, and isolated `.git`. It then writes a separate fresh `CHANGE_BASELINE_INVENTORY.json` and a host-created `CHANGE_TRACKING_REPORT.json`.
+
+The returned frozen handle records the tracking id, in-memory-only capability, trusted context hash, manifest hash, workspace directory, tracking report path/hash, baseline inventory path/hash, service registry hash, isolated Git fingerprint hash, source post-inventory hash, parent Git tracking-start snapshot, and fixed no-model/no-Codex/no-sandbox/no-Unity flags. The secret capability is not serialized in JSON reports. Finalization checks the process registry, capability, exact handle object identity, and persisted tracking report hash; manually constructed or copied handles are rejected. Process-restart resume is not implemented.
+
+`finalize_change_analysis()` accepts only the registry-bound handle returned by `begin_change_tracking()`. It rejects stale, substituted, wrong-run, wrong-task, wrong-context, changed-workspace, already-finalized, copied, unregistered, and baseline-substituted handles. It rereads the fresh baseline artifact, builds `CHANGE_FINAL_INVENTORY.json` from disk, recomputes service and isolated Git status, creates `WORKSPACE_DIFF_REPORT.json`, applies policy, rechecks parent Git, compares parent source against the persisted B-A source-post inventory with the same source projection, and writes `CHANGE_POLICY_REPORT.json` plus `FINAL_CHANGE_ANALYSIS_REPORT.json`.
+
+The B-B inventory entry model includes `path`, `canonicalPathKey`, `type`, `size`, `sha256`, `extension`, `contentKind`, `textEncoding`, `serviceKind`, `serviceOrigin`, `expectedMutability`, `sourceClassification`, `symlink=false`, and `reparse=false`. Hidden files and empty directories are included. `realTaskFoundation.maxInventoryEntries` is enforced during recursive traversal. `.git` is represented as a protected service fingerprint rather than task content. `.agents` must remain an exact empty immutable service directory. Path collisions from case-only or Unicode-normalization-only differences fail closed.
+
+The diff is deterministic and does not infer renames. A rename is represented as delete plus add. Categories are `added`, `modified`, `deleted`, `typeChanged`, and `unchanged`. Every category uses the same strict change-entry shape. `before` and `after` are either null or strict side objects matching the inventory side projection: path, canonical key, type, size, SHA-256, extension, content kind, encoding, service metadata, mutability, classification, and fixed symlink/reparse flags. `unchanged` entries now carry both baseline and final side evidence, so unchanged file hash/size equality and unchanged directory metadata can be independently checked. Summary formulas count changed files/directories/paths once per non-unchanged path, `totalChangedBytes` from added/modified/final file sides, `totalDeletedBytes` from deleted/original file sides, and `totalTouchedBytes` as changed plus deleted bytes. Type changes require both write and delete permission.
+
+Write scope uses deterministic permission descriptors derived from baseline/final inventory types and declared path relationships; it does not infer file-vs-directory from filename dots. Exact allowed file paths allow only the exact file and required ancestor directories, not unrelated sibling files. Directory grants allow descendants without prefix collisions. Delete scope is separate. Ancestor directory deletion is allowed only for explicit directory-tree grants or when every deleted descendant is separately allowed and there are no forbidden/unchanged descendants under that ancestor. Missing one side of permission rejects type changes. Temporary, backup, hidden, and extra files are not ignored.
+
+Service-file guards have priority over manifest permissions. Workspace root `AGENTS.md`, copied/nested `AGENTS.md`, `.agents`, `task.json`, `effective_policy.json`, `.git`, and B-A service registry entries are immutable. New `AGENTS.md` injection is blocked. `.agents/**` children and `.git` mutations are blocked. Parent Git and parent source inputs are rechecked before PASS.
+
+Reports are strict machine-readable artifacts outside the workspace:
+
+```text
+CHANGE_BASELINE_INVENTORY.json
+CHANGE_FINAL_INVENTORY.json
+WORKSPACE_DIFF_REPORT.json
+CHANGE_POLICY_REPORT.json
+FINAL_CHANGE_ANALYSIS_REPORT.json
+```
+
+Authorization-critical reports are schema-validated, semantically checked, size-capped, atomically written, reread, structurally and semantically validated again, and hash-compared. Report persistence failures, including report size-cap failures, existing report collisions, malformed final artifacts, leftover temp artifacts, reread validation failures, and canonical reread hash mismatches, are classified as `BLOCKED` trust failures rather than ordinary task-policy `FAIL`. Existing immutable reports are not overwritten. Diff change entries, nested diff side objects, unchanged entries, and final warnings use strict schemas rather than arbitrary objects. Diff semantic validation cross-checks each entry against the trusted change baseline and final inventories, verifies exact all-path coverage across the baseline/final union, and recomputes summary totals before the report is trusted and again after reread.
+
+Persisted B-A `SOURCE_POST_INVENTORY.json` is independently schema-validated, source-limit-checked, and semantically validated before use. The validator checks source inventory identity, completion, errors, deterministic sorting, path uniqueness, Unicode-normalized canonical uniqueness, file/directory size and hash contracts, exact integer counters, total bytes, symlink/reparse flags, optional source path-length caps, and the B-A canonical inventory hash formula. Parent source verification then rebuilds a fresh source inventory with the trusted context's source inventory cap and the same source projection, then compares the persisted and fresh inventories; the old self-compare path is not used.
+
+The focused B-B regression matrix covers strict source schema and source-limit failures, unchanged binary PASS behavior, extensionless and unknown-extension changes, Unity serialized extension failures, binary add/modify/delete/type-change failures, UTF-8/BOM/UTF-16/invalid UTF-8/NUL classification, `maxTextReadBytes` byte boundaries, numeric change-limit boundaries, report size caps, report persistence failures, and capability handle edge cases.
+
+Verdicts are intentionally distinct. `PASS` requires all safety and policy booleans true and no blocking findings. `FAIL` is used for deterministic task-policy failures such as forbidden writes/deletes, limits, binary/text violations, or missing expected outputs. `BLOCKED` is used for trust and unsafe state such as context mismatch, baseline substitution, service mutation, isolated Git mutation, parent Git/source changes, reparse paths, inventory failure, or report trust failure.
+
+BOOTSTRAP-03B-2B-C, BOOTSTRAP-03B-2C, and BOOTSTRAP-03B-2D remain deferred. Content validator registry execution, json_schema registry execution, generic task execution, implementer/repairer/auditor roles, patch apply, result bundles, automatic apply, merge, commit, push, PR creation, Unity launch, and Unity batchmode validation are not implemented here.

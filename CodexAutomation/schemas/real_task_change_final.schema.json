@@ -1,0 +1,52 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reportVersion", "runId", "taskId", "stage", "stateHistory", "trustedContextHash", "manifestSha256", "changeBaselineInventoryHash", "changeFinalInventoryHash", "diffReportHash", "policyReportHash", "sourcePrePostMatch", "parentGitChanged", "parentSourceChanged", "serviceFilesValid", "isolatedGitValid", "writeScopeValid", "deleteScopeValid", "changeLimitsValid", "binaryTextPolicyValid", "expectedOutputsValid", "diffSummary", "codexInvocationCount", "modelInvocationStarted", "sandboxStarted", "unityStarted", "networkUsed", "durationSeconds", "finalState", "finalVerdict", "errorCode", "errorMessage", "warnings"],
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "runId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-B" },
+    "stateHistory": { "type": "array", "items": { "type": "string" } },
+    "trustedContextHash": { "type": ["string", "null"] },
+    "manifestSha256": { "type": ["string", "null"] },
+    "changeBaselineInventoryHash": { "type": ["string", "null"] },
+    "changeFinalInventoryHash": { "type": ["string", "null"] },
+    "diffReportHash": { "type": ["string", "null"] },
+    "policyReportHash": { "type": ["string", "null"] },
+    "sourcePrePostMatch": { "type": "boolean" },
+    "parentGitChanged": { "type": ["boolean", "null"] },
+    "parentSourceChanged": { "type": ["boolean", "null"] },
+    "serviceFilesValid": { "type": "boolean" },
+    "isolatedGitValid": { "type": "boolean" },
+    "writeScopeValid": { "type": "boolean" },
+    "deleteScopeValid": { "type": "boolean" },
+    "changeLimitsValid": { "type": "boolean" },
+    "binaryTextPolicyValid": { "type": "boolean" },
+    "expectedOutputsValid": { "type": "boolean" },
+    "diffSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["totalChangedFiles", "totalChangedDirectories", "totalChangedPaths", "totalChangedBytes", "totalDeletedBytes", "totalTouchedBytes"],
+      "properties": {
+        "totalChangedFiles": { "type": "integer" },
+        "totalChangedDirectories": { "type": "integer" },
+        "totalChangedPaths": { "type": "integer" },
+        "totalChangedBytes": { "type": "integer" },
+        "totalDeletedBytes": { "type": "integer" },
+        "totalTouchedBytes": { "type": "integer" }
+      }
+    },
+    "codexInvocationCount": { "type": "integer", "const": 0 },
+    "modelInvocationStarted": { "type": "boolean", "const": false },
+    "sandboxStarted": { "type": "boolean", "const": false },
+    "unityStarted": { "type": "boolean", "const": false },
+    "networkUsed": { "type": "boolean", "const": false },
+    "durationSeconds": { "type": "number" },
+    "finalState": { "type": "string", "enum": ["COMPLETED", "FAILED", "BLOCKED"] },
+    "finalVerdict": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] },
+    "warnings": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["code", "message", "path"], "properties": { "code": { "type": "string" }, "message": { "type": "string" }, "path": { "type": ["string", "null"] } } } }
+  }
+}

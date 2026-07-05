@@ -1,0 +1,39 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reportVersion", "runId", "taskId", "stage", "trustedContextHash", "serviceGuardStatus", "isolatedGitStatus", "writeScopeStatus", "deleteScopeStatus", "limitsStatus", "binaryTextStatus", "expectedOutputsStatus", "parentGitStatus", "parentSourceStatus", "findings", "finalPolicyVerdict"],
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "runId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-B" },
+    "trustedContextHash": { "type": "string" },
+    "serviceGuardStatus": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "isolatedGitStatus": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "writeScopeStatus": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "deleteScopeStatus": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "limitsStatus": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "binaryTextStatus": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "expectedOutputsStatus": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "parentGitStatus": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "parentSourceStatus": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "category", "path", "blocking", "message", "expected", "actual"],
+        "properties": {
+          "code": { "type": "string" },
+          "category": { "type": "string" },
+          "path": { "type": ["string", "null"] },
+          "blocking": { "type": "boolean" },
+          "message": { "type": "string" },
+          "expected": { "type": ["string", "integer", "boolean", "array", "null"] },
+          "actual": { "type": ["string", "integer", "boolean", "array", "null"] }
+        }
+      }
+    },
+    "finalPolicyVerdict": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] }
+  }
+}

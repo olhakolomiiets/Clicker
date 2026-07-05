@@ -1,0 +1,79 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reportVersion", "runId", "taskId", "stage", "trustedContextHash", "inventoryKind", "workspacePath", "entries", "serviceRegistry", "isolatedGitFingerprint", "fileCount", "directoryCount", "totalBytes", "inventorySha256", "complete", "errorCode", "errorMessage"],
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "runId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-B" },
+    "trustedContextHash": { "type": "string" },
+    "inventoryKind": { "type": "string", "enum": ["change_baseline", "change_final"] },
+    "workspacePath": { "type": "string" },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "canonicalPathKey", "type", "size", "sha256", "extension", "contentKind", "textEncoding", "serviceKind", "serviceOrigin", "expectedMutability", "sourceClassification", "symlink", "reparse"],
+        "properties": {
+          "path": { "type": "string" },
+          "canonicalPathKey": { "type": "string" },
+          "type": { "type": "string", "enum": ["file", "directory"] },
+          "size": { "type": "integer" },
+          "sha256": { "type": ["string", "null"] },
+          "extension": { "type": "string" },
+          "contentKind": { "type": "string", "enum": ["text", "binary", "directory", "service"] },
+          "textEncoding": { "type": ["string", "null"], "enum": ["utf-8", "utf-8-bom", null] },
+          "serviceKind": { "type": ["string", "null"] },
+          "serviceOrigin": { "type": ["string", "null"] },
+          "expectedMutability": { "type": "string", "enum": ["mutable_task", "immutable_service"] },
+          "sourceClassification": { "type": "string" },
+          "symlink": { "type": "boolean", "const": false },
+          "reparse": { "type": "boolean", "const": false }
+        }
+      }
+    },
+    "serviceRegistry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "kind", "expectedType", "expectedSha256", "mutability", "origin", "workspacePath", "evidencePath"],
+        "properties": {
+          "path": { "type": "string" },
+          "kind": { "type": "string", "enum": ["file", "directory"] },
+          "expectedType": { "type": "string", "enum": ["file", "directory", "missing"] },
+          "expectedSha256": { "type": ["string", "null"] },
+          "mutability": { "type": "string", "const": "immutable" },
+          "origin": { "type": "string" },
+          "workspacePath": { "type": ["string", "null"] },
+          "evidencePath": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "isolatedGitFingerprint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gitDirectoryValid", "gitFilePointerPresent", "head", "stagedPaths", "remotes", "refs", "activeHooks", "configSha256", "baselineCommitCreated"],
+      "properties": {
+        "gitDirectoryValid": { "type": "boolean", "const": true },
+        "gitFilePointerPresent": { "type": "boolean", "const": false },
+        "head": { "type": ["string", "null"] },
+        "stagedPaths": { "type": "array", "items": { "type": "string" } },
+        "remotes": { "type": "array", "items": { "type": "string" } },
+        "refs": { "type": "array", "items": { "type": "string" } },
+        "activeHooks": { "type": "array", "items": { "type": "string" } },
+        "configSha256": { "type": ["string", "null"] },
+        "baselineCommitCreated": { "type": "boolean", "const": false }
+      }
+    },
+    "fileCount": { "type": "integer" },
+    "directoryCount": { "type": "integer" },
+    "totalBytes": { "type": "integer" },
+    "inventorySha256": { "type": "string" },
+    "complete": { "type": "boolean", "const": true },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

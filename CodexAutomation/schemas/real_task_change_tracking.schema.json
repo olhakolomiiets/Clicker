@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reportVersion", "trackingId", "runId", "taskId", "stage", "createdAt", "trustedContextHash", "manifestSha256", "workspaceDirectory", "baselineInventoryPath", "baselineInventoryHash", "serviceRegistryHash", "isolatedGitFingerprintHash", "sourcePostInventoryHash", "parentGitTrackingStartSnapshot", "noModel", "noCodex", "noSandbox", "noUnity", "finalized", "errorCode", "errorMessage"],
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "trackingId": { "type": "string" },
+    "runId": { "type": "string" },
+    "taskId": { "type": "string" },
+    "stage": { "type": "string", "const": "BOOTSTRAP-03B-2B-B" },
+    "createdAt": { "type": "string" },
+    "trustedContextHash": { "type": "string" },
+    "manifestSha256": { "type": "string" },
+    "workspaceDirectory": { "type": "string" },
+    "baselineInventoryPath": { "type": "string" },
+    "baselineInventoryHash": { "type": "string" },
+    "serviceRegistryHash": { "type": "string" },
+    "isolatedGitFingerprintHash": { "type": "string" },
+    "sourcePostInventoryHash": { "type": "string" },
+    "parentGitTrackingStartSnapshot": { "type": "object", "additionalProperties": true },
+    "noModel": { "type": "boolean", "const": true },
+    "noCodex": { "type": "boolean", "const": true },
+    "noSandbox": { "type": "boolean", "const": true },
+    "noUnity": { "type": "boolean", "const": true },
+    "finalized": { "type": "boolean", "const": false },
+    "errorCode": { "type": ["string", "null"] },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

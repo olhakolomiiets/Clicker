@@ -848,7 +848,7 @@ class RealTaskChangeCheck(unittest.TestCase):
             self.assertEqual(reused.report["errorCode"], "REAL_TASK_CHANGE_HANDLE_REUSED")
         with self.synthetic_parent() as parent:
             _, handle = self.prepared_handle(parent, "foundation_change_replacefail_12345678")
-            with mock.patch("pathlib.Path.replace", side_effect=OSError("replace failed")):
+            with mock.patch("file_utils.os.replace", side_effect=OSError("replace failed")):
                 result = finalize_change_analysis(handle, parent, ROOT / "CodexAutomation", CONFIG)
             self.assertEqual(result.finalVerdict, "BLOCKED")
             self.assertEqual(result.report["errorCode"], "REAL_TASK_CHANGE_REPORT_WRITE_FAILED")
@@ -968,7 +968,7 @@ class RealTaskChangeCheck(unittest.TestCase):
 
         with self.synthetic_parent() as parent:
             _, handle = self.prepared_handle(parent, "foundation_change_replaceassert_12345678")
-            with mock.patch("pathlib.Path.replace", side_effect=OSError("replace failed")):
+            with mock.patch("file_utils.os.replace", side_effect=OSError("replace failed")):
                 result = finalize_change_analysis(handle, parent, ROOT / "CodexAutomation", CONFIG)
             self.assertEqual(result.finalVerdict, "BLOCKED")
             self.assertEqual(result.report["errorCode"], "REAL_TASK_CHANGE_REPORT_WRITE_FAILED")

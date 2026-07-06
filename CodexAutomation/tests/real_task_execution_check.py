@@ -37,6 +37,7 @@ class RealTaskExecutionPolicyTests(unittest.TestCase):
         self.assertIsNotNone(policy)
         self.assertEqual(policy.maxRoleInvocations, 3)
         self.assertFalse(policy.publicRunCliEnabled)
+        self.assertTrue(policy.controlledRealModelSelfTestEnabled)
         cases = [
             ("unknown", "x", True),
             ("missing", "enabled", None),
@@ -45,7 +46,7 @@ class RealTaskExecutionPolicyTests(unittest.TestCase):
             ("too_many_invocations", "maxRoleInvocations", 4),
             ("too_many_repairs", "maxRepairAttempts", 2),
             ("public_cli", "publicRunCliEnabled", True),
-            ("self_test", "controlledRealModelSelfTestEnabled", True),
+            ("self_test_disabled", "controlledRealModelSelfTestEnabled", False),
             ("danger", "allowNetwork", True),
         ]
         for _name, field, value in cases:
@@ -114,7 +115,7 @@ class RealTaskExecutionContextTests(unittest.TestCase):
 
 
 class RealTaskRoleAdapterTests(unittest.TestCase):
-    def test_production_adapter_boundary_is_fixed_and_disabled_for_2c(self) -> None:
+    def test_production_adapter_boundary_is_fixed_and_disabled_without_capability(self) -> None:
         adapter = CodexRealTaskRoleAdapter()
         self.assertTrue(adapter.fixed_registration)
         self.assertFalse(adapter.shell)

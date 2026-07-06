@@ -1,8 +1,8 @@
 # Codex Automation Bootstrap
 
-This is BOOTSTRAP-03B-2C for the local Codex Automation system.
+This is BOOTSTRAP-03B-2D for the local Codex Automation system.
 
-The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, BOOTSTRAP-03A fake pipeline behavior, BOOTSTRAP-03B-1 real-role self-test behavior, BOOTSTRAP-03B-2A generic real-task manifest validation/plan behavior, BOOTSTRAP-03B-2B-A foundation preparation behavior, BOOTSTRAP-03B-2B-B change analysis behavior, and BOOTSTRAP-03B-2B-C validator execution behavior. BOOTSTRAP-03B-2C adds an internal generic real-task orchestration layer that creates a fresh B-A workspace, keeps the original B-B baseline across implementer and one optional repair, runs final B-B and B-C as host authority, then runs a read-only auditor and writes an immutable review bundle. It does not add a public generic task-run CLI, does not run a controlled real-model self-test, does not apply patches, and does not write to the parent Unity repository.
+The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, BOOTSTRAP-03A fake pipeline behavior, BOOTSTRAP-03B-1 real-role self-test behavior, BOOTSTRAP-03B-2A generic real-task manifest validation/plan behavior, BOOTSTRAP-03B-2B-A foundation preparation behavior, BOOTSTRAP-03B-2B-B change analysis behavior, BOOTSTRAP-03B-2B-C validator execution behavior, and BOOTSTRAP-03B-2C internal orchestration. BOOTSTRAP-03B-2D adds exactly one controlled fixed real-model real-task execution self-test. It does not add a public generic task-run CLI, user-supplied real-task execution, apply, resume, merge, commit, push, PR creation, Unity launch, package installation, or task sandbox network access.
 
 ## Created Files
 
@@ -109,7 +109,8 @@ Smoke test runtime output is written to ignored runtime paths:
 - Real-role self-test is started only by the explicit `--real-role-self-test` mode and is limited to an isolated runtime workspace.
 - Generic real-task manifest validation is started only by `--validate-task-manifest`.
 - Generic real-task planning is started only by `--real-task-plan`.
-- BOOTSTRAP-03B-2C has no `--real-task-run` mode.
+- BOOTSTRAP-03B-2D has no `--real-task-run` mode.
+- BOOTSTRAP-03B-2D adds only `--real-task-execution-self-test`; it accepts no manifest path, workspace path, prompt, model, sandbox, approval policy, or positional arguments.
 - BOOTSTRAP-03B-2C has no production `--real-task-prepare`, public change-analysis CLI mode, generic validation-run CLI, or public generic execution CLI. The internal production API is `execute_real_task(validated_manifest_path)`, and test code may use the private `_execute_real_task_with_test_adapter(...)` fake-adapter entry only for no-model integration tests.
 - The generic real-task validate/plan modes use a no-Codex preflight profile; they do not run `codex.cmd --version`, `codex --version`, `codex exec`, or `codex sandbox`.
 - No Unity code is changed.
@@ -548,7 +549,7 @@ The diagnostic pass reruns the B-B/B-C logic against the original pre-implemente
 
 All 2C trust reports are written through a bounded trusted writer: schema validation, semantic validation where applicable, canonical JSON serialization, size caps, atomic replace, duplicate-key-safe reread, second schema/semantic validation, and canonical hash comparison. Existing report paths are not overwritten.
 
-The production `CodexRealTaskRoleAdapter` is fixed-registration only. BOOTSTRAP-03B-2C keeps controlled real-model task execution disabled, so the adapter does not start Codex roles. No manifest can provide an executable, shell string, CLI flags, model, sandbox, approval policy, writable roots, dynamic plugin, validator registry, or prompt override. The no-model `FakeRealTaskRoleAdapter` exists only for private tests and does not start Codex, subprocess role execution, Unity, package installation, or network.
+The production `CodexRealTaskRoleAdapter` is fixed-registration only. It does not accept manifest-provided executable, shell string, CLI flags, model, sandbox, approval policy, writable roots, dynamic plugin, validator registry, or prompt override. Outside the BOOTSTRAP-03B-2D controlled self-test controller it remains closed. The no-model `FakeRealTaskRoleAdapter` exists only for private tests and does not start Codex, subprocess role execution, Unity, package installation, or network.
 
 Result bundles are immutable review artifacts only:
 
@@ -562,4 +563,28 @@ result_bundle/
 
 `RESULT_MANIFEST.json` always has `eligibleForApply=false`. `SHA256SUMS.json` is written through trusted persistence and covers copied payload files and `changes.patch`; it intentionally excludes `RESULT_MANIFEST.json` and `SHA256SUMS.json` to avoid circular/stale manifest hashes. The manifest records the trusted canonical SHA-256, size, covered file count, covered byte count, and fixed exclusion list for `SHA256SUMS.json`, and final bundle verification rechecks that binding after bundle promotion. BOOTSTRAP-03B-2C does not apply bundle contents to the parent repository and does not merge, commit, push, create a PR, launch Unity, or run Unity batchmode.
 
-BOOTSTRAP-03B-2D remains deferred. Controlled real-model task self-test, public generic execution, arbitrary manifest execution CLI, apply, restart resume, process recovery, command validators, network validators, package installation, Unity validation, merge, commit, push, and PR creation are not implemented here.
+## BOOTSTRAP-03B-2D Controlled Real-Model Real-Task Execution Self-Test
+
+BOOTSTRAP-03B-2D adds one fixed CLI mode:
+
+```bat
+python CodexAutomation/scripts/orchestrator.py --real-task-execution-self-test
+```
+
+The flag takes no arguments. It does not accept a manifest path, workspace path, prompt, model, sandbox, approval policy, or positional arguments. It is not a generic task runner.
+
+The controller creates a fresh ignored runtime root under:
+
+```text
+CodexAutomation/runtime/real_task_execution_self_tests/<selfTestRunId>/
+```
+
+Each run contains a synthetic parent Git repository under `parent/`, host-owned fixture inputs under `fixture/`, and the strict meta report under `reports/REAL_TASK_EXECUTION_SELF_TEST_REPORT.json`. The production 2C orchestration writes its own artifacts under the synthetic parent repository's `CodexAutomation/runtime/real_task_runs/<orchestrationRunId>/`, and B-A foundation artifacts under `CodexAutomation/runtime/real_task_foundation_runs/<foundationRunId>/`.
+
+The synthetic task is fixed. It starts with `TaskData/message.txt` containing a placeholder and `TaskData/reference.txt` containing the required stage/mode. The model may only replace `TaskData/message.txt` and create `TaskData/result.json`; allowed deletes are empty. The fixed objective requires the exact message `BOOTSTRAP-03B-2D CONTROLLED REAL MODEL SELF TEST PASSED` and a JSON result with `status=PASS`, `stage=BOOTSTRAP-03B-2D`, `mode=controlled-real-model-self-test`, and the same message.
+
+The controller generates and validates a host-owned manifest. It reuses the production 2C path: fresh B-A foundation, original B-B baseline, fresh sandbox probe, real implementer, host diagnostic, at most one real repairer, final B-B, final B-C, read-only real auditor, immutable result bundle, and final production report. A process-local self-test capability binds the CLI invocation, run id, task id, manifest hash, synthetic parent identity, self-test root, and single-run registry entry before orchestration starts.
+
+The production Codex adapter is selected only by this controller with fixed host config for executable identity, Windows sandbox implementation, and approval policy. It does not accept manifest-controlled model, sandbox, approval, executable, command, environment, network, Unity, package, retry, downgrade, or credit settings. Result bundles remain review-only with `eligibleForApply=false`; no automatic apply is implemented.
+
+Rate limits, timeouts, FAIL, and BLOCKED outcomes are terminal for the current invocation. The controller does not sleep, retry, run a second repair, switch models, use credits, or rerun the self-test automatically. Exit codes are `0=PASS`, `1=controller/internal error`, `2=FAIL`, `3=BLOCKED`, and `4=RATE_LIMITED`.

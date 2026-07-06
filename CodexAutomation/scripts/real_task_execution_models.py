@@ -13,6 +13,7 @@ from real_task_models import RealTaskError
 
 
 REAL_TASK_EXECUTION_STAGE = "BOOTSTRAP-03B-2C"
+REAL_TASK_EXECUTION_SELF_TEST_STAGE = "BOOTSTRAP-03B-2D"
 EXECUTION_CONTEXT_VERSION = 1
 EXECUTION_REPORT_VERSION = 1
 EXECUTION_HANDLE_VERSION = 1
@@ -72,6 +73,42 @@ class RealTaskExecutionPolicy:
     maxRoleMessageBytes: int
     maxEventLogBytes: int
     maxAuditFindings: int
+
+    def to_dict(self) -> dict[str, Any]:
+        return self.__dict__.copy()
+
+
+@dataclass(frozen=True)
+class RealTaskExecutionSelfTestPolicy:
+    enabled: bool
+    cliFlag: str
+    allowArguments: bool
+    allowUserManifest: bool
+    allowUserWorkspace: bool
+    allowUserPrompt: bool
+    allowUserModel: bool
+    allowUserSandbox: bool
+    allowUserApprovalPolicy: bool
+    requireSyntheticParent: bool
+    requireFreshFoundation: bool
+    requireFreshSandboxProbe: bool
+    requireRootRepositoryUnchanged: bool
+    requireSyntheticParentUnchanged: bool
+    maxRunsPerInvocation: int
+    maxRoleInvocations: int
+    maxRepairAttempts: int
+    allowAutomaticRetry: bool
+    allowRateLimitRetry: bool
+    allowModelDowngrade: bool
+    allowCreditUse: bool
+    allowTaskNetwork: bool
+    allowPackageInstall: bool
+    allowUnity: bool
+    allowAutomaticApply: bool
+    allowGitCommit: bool
+    allowGitPush: bool
+    allowPullRequest: bool
+    maxMetaReportBytes: int
 
     def to_dict(self) -> dict[str, Any]:
         return self.__dict__.copy()

@@ -27,6 +27,9 @@
     "unityStarted",
     "networkUsed",
     "sourceCopied",
+    "complete",
+    "finalReportRelativePath",
+    "finalReportReceipt",
     "durationSeconds",
     "finalState",
     "finalVerdict",
@@ -60,9 +63,23 @@
     "unityStarted": { "type": "boolean", "const": false },
     "networkUsed": { "type": "boolean", "const": false },
     "sourceCopied": { "type": "boolean" },
+    "complete": { "type": "boolean" },
+    "finalReportRelativePath": { "type": ["string", "null"] },
+    "finalReportReceipt": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["relativePath", "size", "sha256", "schemaName", "reportVersion"],
+      "properties": {
+        "relativePath": { "type": "string" },
+        "size": { "type": "integer" },
+        "sha256": { "type": "string" },
+        "schemaName": { "type": "string", "const": "real_task_workspace_final.schema.json" },
+        "reportVersion": { "type": "integer", "const": 1 }
+      }
+    },
     "durationSeconds": { "type": "number" },
     "finalState": { "type": "string" },
-    "finalVerdict": { "type": "string", "enum": ["PASS", "FAILED"] },
+    "finalVerdict": { "type": "string", "enum": ["PASS", "FAILED", "BLOCKED"] },
     "errorCode": { "type": ["string", "null"] },
     "errorMessage": { "type": ["string", "null"] },
     "warnings": { "type": "array", "items": { "type": "object", "additionalProperties": true } }

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import stat
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -39,23 +40,25 @@ def write_trusted_report(
     semantic_validator: Callable[[dict[str, Any]], list[str]] | None = None,
     max_bytes: int = 4_194_304,
 ) -> TrustedReportReceipt:
-    final_path = path.resolve(strict=False)
-    runtime = runtime_root.resolve(strict=False)
+    final_path = _logical_path(path)
+    runtime = _logical_path(runtime_root)
     try:
         final_path.relative_to(runtime)
     except ValueError as exc:
         raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_WRITE_FAILED", "Report path must stay under runtime root.") from exc
-    if _has_reparse_parent(final_path):
+    if _has_reparse_parent(final_path, "REAL_TASK_FINAL_REPORT_WRITE_FAILED"):
         raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_WRITE_FAILED", "Report path contains a symlink or reparse component.")
-    if final_path.exists():
-        raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_WRITE_FAILED", "Trusted report already exists.")
+    _reject_existing_target(final_path, "REAL_TASK_FINAL_REPORT_WRITE_FAILED")
     _validate_payload(automation_root, payload, schema_name, semantic_validator)
     encoded = canonical_json_bytes(payload)
     if len(encoded) > max_bytes:
         raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_WRITE_FAILED", "Trusted report exceeds size cap.")
     expected_hash = canonical_sha256(payload)
-    final_path.parent.mkdir(parents=True, exist_ok=True)
-    fd, temp_name = tempfile.mkstemp(prefix=f".{final_path.name}.", suffix=".tmp", dir=str(final_path.parent), text=False)
+    os.makedirs(_fs_path(final_path.parent), exist_ok=True)
+    if _has_reparse_parent(final_path, "REAL_TASK_FINAL_REPORT_WRITE_FAILED"):
+        raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_WRITE_FAILED", "Report path contains a symlink or reparse component.")
+    _reject_existing_target(final_path, "REAL_TASK_FINAL_REPORT_WRITE_FAILED")
+    fd, temp_name = tempfile.mkstemp(prefix=f".{final_path.name}.", suffix=".tmp", dir=_fs_path(final_path.parent), text=False)
     temp_path = Path(temp_name)
     try:
         with os.fdopen(fd, "wb") as handle:
@@ -63,20 +66,24 @@ def write_trusted_report(
             handle.write(b"\n")
             handle.flush()
             os.fsync(handle.fileno())
-        os.replace(temp_path, final_path)
+        _reject_existing_target(final_path, "REAL_TASK_FINAL_REPORT_WRITE_FAILED")
+        os.replace(_fs_path(temp_path), _fs_path(final_path))
     except Exception:
         try:
-            temp_path.unlink(missing_ok=True)
+            try:
+                os.unlink(_fs_path(temp_path))
+            except FileNotFoundError:
+                pass
         finally:
             raise
     reread = _read_json_no_duplicates(final_path)
     _validate_payload(automation_root, reread, schema_name, semantic_validator)
     if canonical_sha256(reread) != expected_hash:
         raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_WRITE_FAILED", "Trusted report reread hash mismatch.")
-    try:
-        size = final_path.stat().st_size
-    except OSError as exc:
-        raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_INVALID", f"Trusted report stat failed: {exc}") from exc
+    status = _stat_path_long_safe(final_path, follow_symlinks=False, error_code="REAL_TASK_FINAL_REPORT_INVALID", message="Trusted report stat failed.")
+    if status is None or not _is_regular_file(status) or _is_reparse_status(status):
+        raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_INVALID", "Trusted report target is missing or unsafe.")
+    size = status.st_size
     if size > max_bytes:
         raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_WRITE_FAILED", "Trusted report reread exceeds size cap.")
     return TrustedReportReceipt(
@@ -97,17 +104,22 @@ def read_trusted_report(
     semantic_validator: Callable[[dict[str, Any]], list[str]] | None = None,
     max_bytes: int = 4_194_304,
 ) -> dict[str, Any]:
-    final_path = path.resolve(strict=False)
-    runtime = runtime_root.resolve(strict=False)
+    final_path = _logical_path(path)
+    runtime = _logical_path(runtime_root)
     try:
         relative_path = final_path.relative_to(runtime).as_posix()
     except ValueError as exc:
         raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_INVALID", "Trusted report path must stay under runtime root.") from exc
     if relative_path != receipt.relativePath or schema_name != receipt.schemaName:
         raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_INVALID", "Trusted report receipt path or schema mismatch.")
-    if _has_reparse_parent(final_path):
+    if _has_reparse_parent(final_path, "REAL_TASK_FINAL_REPORT_INVALID"):
         raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_INVALID", "Trusted report path contains a symlink or reparse component.")
-    size = final_path.stat().st_size
+    status = _stat_path_long_safe(final_path, follow_symlinks=False, error_code="REAL_TASK_FINAL_REPORT_INVALID", message="Trusted report target inspection failed.")
+    if status is None:
+        raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_INVALID", "Trusted report is missing.")
+    if not _is_regular_file(status) or _is_reparse_status(status):
+        raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_INVALID", "Trusted report target is unsafe.")
+    size = status.st_size
     if size > max_bytes or size != receipt.size:
         raise RealTaskExecutionFailure("REAL_TASK_FINAL_REPORT_INVALID", "Trusted report size mismatch.")
     payload = _read_json_no_duplicates(final_path)
@@ -144,7 +156,8 @@ def _read_json_no_duplicates(path: Path) -> dict[str, Any]:
         return result
 
     try:
-        loaded = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=reject_duplicates)
+        with open(_fs_path(path), "r", encoding="utf-8") as handle:
+            loaded = json.load(handle, object_pairs_hook=reject_duplicates)
     except RealTaskExecutionFailure:
         raise
     except Exception as exc:
@@ -154,18 +167,57 @@ def _read_json_no_duplicates(path: Path) -> dict[str, Any]:
     return loaded
 
 
-def _has_reparse_parent(path: Path) -> bool:
+def ensure_trusted_directory(path: Path, error_code: str, message: str) -> None:
+    directory = _logical_path(path)
+    if _has_reparse_parent(directory / "__trusted_directory_probe__", error_code):
+        raise RealTaskExecutionFailure(error_code, message)
+    status = _stat_path_long_safe(directory, follow_symlinks=False, error_code=error_code, message=message)
+    if status is None or not stat.S_ISDIR(status.st_mode) or _is_reparse_status(status):
+        raise RealTaskExecutionFailure(error_code, message)
+
+
+def _reject_existing_target(path: Path, error_code: str) -> None:
+    status = _stat_path_long_safe(path, follow_symlinks=False, error_code=error_code, message="Trusted report target inspection failed.")
+    if status is not None:
+        raise RealTaskExecutionFailure(error_code, "Trusted report already exists.")
+
+
+def _stat_path_long_safe(path: Path, *, follow_symlinks: bool, error_code: str, message: str) -> os.stat_result | None:
+    try:
+        return os.stat(_fs_path(path), follow_symlinks=follow_symlinks)
+    except FileNotFoundError:
+        return None
+    except OSError as exc:
+        raise RealTaskExecutionFailure(error_code, f"{message}: {exc}") from exc
+
+
+def _is_regular_file(status: os.stat_result) -> bool:
+    return stat.S_ISREG(status.st_mode)
+
+
+def _is_reparse_status(status: os.stat_result) -> bool:
+    attrs = getattr(status, "st_file_attributes", 0)
+    return stat.S_ISLNK(status.st_mode) or bool(attrs & 0x400)
+
+
+def _has_reparse_parent(path: Path, error_code: str = "REAL_TASK_FINAL_REPORT_INVALID") -> bool:
     current = Path(path.anchor)
     for part in path.parts[1:-1]:
         current = current / part
-        if not current.exists():
+        status = _stat_path_long_safe(current, follow_symlinks=False, error_code=error_code, message="Trusted path ancestor inspection failed.")
+        if status is None:
             continue
-        try:
-            if current.is_symlink():
-                return True
-            attrs = getattr(os.stat(current, follow_symlinks=False), "st_file_attributes", 0)
-            if attrs & 0x400:
-                return True
-        except OSError:
+        if _is_reparse_status(status):
             return True
     return False
+
+
+def _fs_path(path: Path) -> str:
+    text = str(_logical_path(path))
+    if os.name == "nt" and not text.startswith("\\\\?\\"):
+        return "\\\\?\\" + text
+    return text
+
+
+def _logical_path(path: Path) -> Path:
+    return Path(os.path.abspath(os.fspath(path)))

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import hashlib
 import secrets
 import threading
@@ -21,7 +20,7 @@ from real_task_execution_models import (
     new_capability,
     utc_now,
 )
-from real_task_report_writer import TrustedReportReceipt, write_trusted_report
+from real_task_report_writer import TrustedReportReceipt, ensure_trusted_directory, read_trusted_report, write_trusted_report, _has_reparse_parent
 from schema_validator import validate
 
 
@@ -50,6 +49,7 @@ def create_execution_context(
     invocation_budget: dict[str, int],
 ) -> tuple[RealTaskExecutionContext, str]:
     foundation_run_dir = root / "CodexAutomation" / "runtime" / "real_task_foundation_runs" / str(foundation_report["runId"])
+    foundation_receipt, persisted_foundation_report = _validate_foundation_report_authority(root, automation_root, foundation_run_dir, foundation_report)
     trusted_context = read_json(foundation_run_dir / "TRUSTED_RUN_CONTEXT.json")
     baseline = read_json(foundation_run_dir / "WORKSPACE_BASELINE_INVENTORY.json")
     source_post = read_json(foundation_run_dir / "SOURCE_POST_INVENTORY.json")
@@ -70,7 +70,7 @@ def create_execution_context(
         effectivePolicyHash=canonical_sha256(effective_policy),
         foundationRunId=str(foundation_report["runId"]),
         foundationRunDirectory=str(foundation_run_dir.resolve(strict=True)),
-        foundationFinalReportHash=canonical_sha256(foundation_report),
+        foundationFinalReportHash=foundation_receipt.sha256,
         trustedContextHash=str(foundation_report["trustedContextHash"]),
         workspaceIdentity={
             "workspaceDirectory": str(workspace.resolve(strict=True)),
@@ -98,10 +98,60 @@ def create_execution_context(
     return context, context_hash
 
 
+def _validate_foundation_report_authority(
+    root: Path,
+    automation_root: Path,
+    foundation_run_dir: Path,
+    foundation_report: dict[str, Any],
+) -> tuple[TrustedReportReceipt, dict[str, Any]]:
+    if foundation_report.get("finalVerdict") != "PASS" or foundation_report.get("complete") is not True:
+        raise RealTaskExecutionFailure("REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID", "Foundation final report is not authoritative PASS.")
+    receipt_data = foundation_report.get("finalReportReceipt")
+    if not isinstance(receipt_data, dict):
+        raise RealTaskExecutionFailure("REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID", "Foundation final report receipt is missing.")
+    receipt = TrustedReportReceipt(
+        relativePath=str(receipt_data.get("relativePath", "")),
+        size=int(receipt_data.get("size", -1)) if isinstance(receipt_data.get("size"), int) and not isinstance(receipt_data.get("size"), bool) else -1,
+        sha256=str(receipt_data.get("sha256", "")),
+        schemaName=str(receipt_data.get("schemaName", "")),
+        reportVersion=int(receipt_data.get("reportVersion", -1)) if isinstance(receipt_data.get("reportVersion"), int) and not isinstance(receipt_data.get("reportVersion"), bool) else -1,
+    )
+    final_path = foundation_run_dir / "FINAL_WORKSPACE_PREPARATION_REPORT.json"
+    runtime = root / "CodexAutomation" / "runtime"
+    expected_relative = final_path.resolve(strict=False).relative_to(runtime.resolve(strict=False)).as_posix()
+    if receipt.relativePath != expected_relative or foundation_report.get("finalReportRelativePath") != final_path.resolve(strict=False).relative_to((foundation_run_dir.parent).resolve(strict=False)).as_posix():
+        raise RealTaskExecutionFailure("REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID", "Foundation final report path binding mismatch.")
+    persisted = read_trusted_report(
+        automation_root,
+        runtime,
+        final_path,
+        receipt,
+        "real_task_workspace_final.schema.json",
+        _validate_persisted_foundation_report,
+        64 * 1024 * 1024,
+    )
+    if persisted.get("runId") != foundation_report.get("runId") or persisted.get("finalVerdict") != "PASS" or persisted.get("complete") is not True:
+        raise RealTaskExecutionFailure("REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID", "Persisted foundation report authority mismatch.")
+    workspace = foundation_run_dir / "workspace"
+    ensure_trusted_directory(workspace, "REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID", "Foundation workspace identity is missing.")
+    return receipt, persisted
+
+
+def _validate_persisted_foundation_report(report: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    if report.get("finalVerdict") == "PASS":
+        for field in ("workspaceCreated", "workspaceReady", "serviceFilesValid", "isolatedGitValid", "sourceCopied", "sourceCopyVerified", "sourcePrePostMatch", "complete"):
+            if report.get(field) is not True:
+                errors.append(f"PASS requires {field}=true.")
+        if report.get("parentGitChanged") is not False:
+            errors.append("PASS requires parentGitChanged=false.")
+        if report.get("errorCode") is not None or report.get("errorMessage") is not None:
+            errors.append("PASS requires null error fields.")
+    return errors
+
+
 def write_execution_context(automation_root: Path, path: Path, context: RealTaskExecutionContext) -> str:
     payload = context.to_dict()
-    if path.exists():
-        raise RealTaskExecutionFailure("REAL_TASK_EXECUTION_CONTEXT_INVALID", "Execution context already exists.")
     receipt = write_trusted_report(
         automation_root,
         path.resolve(strict=False).parents[2],
@@ -423,19 +473,10 @@ def _validate_context_errors(automation_root: Path, payload: dict[str, Any]) -> 
 
 
 def _has_reparse_component(path: Path) -> bool:
-    current = path.anchor
-    for part in path.parts[1:]:
-        current_path = Path(current) / part
-        try:
-            if current_path.exists() and current_path.is_symlink():
-                return True
-            attrs = getattr(os.stat(current_path, follow_symlinks=False), "st_file_attributes", 0)
-            if attrs & 0x400:
-                return True
-        except OSError:
-            return False
-        current = str(current_path)
-    return False
+    try:
+        return _has_reparse_parent(path / "__trusted_context_probe__", "REAL_TASK_EXECUTION_CONTEXT_INVALID")
+    except RealTaskExecutionFailure:
+        return True
 
 
 def _head_from_snapshot(snapshot: dict[str, Any]) -> str | None:

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 from pathlib import Path
 from typing import Any
 
 from file_utils import read_json, write_json_atomic
 from parent_git_snapshot import parent_git_snapshot, snapshots_equal
+from real_task_execution_models import RealTaskExecutionFailure
 from real_task_foundation_models import (
     FOUNDATION_CONTEXT_VERSION,
     FOUNDATION_REPORT_VERSION,
@@ -20,6 +22,7 @@ from real_task_foundation_models import (
     utc_now,
 )
 from real_task_models import RealTaskError
+from real_task_report_writer import TrustedReportReceipt, read_trusted_report, write_trusted_report
 from real_task_workspace import (
     add_project_instruction_services,
     copy_sources,
@@ -36,6 +39,11 @@ from real_task_workspace import (
 from schema_validator import validate
 from task_manifest_validator import parse_real_task_policy, validate_task_manifest_file
 from workspace_inventory import InventoryError, build_source_inventory, build_workspace_inventory, compare_source_inventories
+
+
+FINAL_FOUNDATION_REPORT_NAME = "FINAL_WORKSPACE_PREPARATION_REPORT.json"
+FINAL_FOUNDATION_REPORT_SCHEMA = "real_task_workspace_final.schema.json"
+FINAL_FOUNDATION_REPORT_ERROR = "REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID"
 
 
 def prepare_foundation_workspace(root: Path, automation_root: Path, config: dict[str, Any], manifest_path: Path, run_id: str | None = None) -> dict[str, Any]:
@@ -297,9 +305,42 @@ def prepare_foundation_workspace(root: Path, automation_root: Path, config: dict
                 error_message=error_message,
                 warnings=warnings,
                 duration_seconds=round(time.monotonic() - started, 3),
+                final_report_relative_path=(run_paths.run_directory / FINAL_FOUNDATION_REPORT_NAME).resolve(strict=False).relative_to(run_paths.runtime_root.resolve(strict=False)).as_posix(),
             )
-            _safe_write(root, automation_root, run_paths.run_directory / "FINAL_WORKSPACE_PREPARATION_REPORT.json", final_report, config, warnings)
-            return final_report
+            try:
+                receipt = _write_trusted_final_foundation_report(root, automation_root, run_paths, final_report, config)
+                final_report = dict(final_report)
+                final_report["finalReportReceipt"] = receipt.to_dict()
+                if final_report.get("finalVerdict") == "PASS":
+                    _verify_final_foundation_authority(root, automation_root, run_paths, final_report, receipt, config)
+                return final_report
+            except _FoundationFailure as exc:
+                return _final_report(
+                    run_id=run_id,
+                    task_id=task_id,
+                    state_history=_terminal_history(state_history, FoundationState.BLOCKED),
+                    manifest_sha=manifest_sha,
+                    trusted_context_hash=trusted_context_hash,
+                    parent_initial=parent_initial,
+                    parent_final=parent_final,
+                    parent_changed=parent_changed,
+                    source_pre_post_match=source_pre_post_match,
+                    source_copy_verified=source_copy_verified,
+                    workspace_created=bool(run_paths and run_paths.workspace.exists()),
+                    staging_retained=staging_retained,
+                    workspace_ready=False,
+                    service_files_valid=service_files_valid,
+                    isolated_git_valid=isolated_git_valid,
+                    source_inventory_hash=source_post.get("inventorySha256") if source_post else (source_pre.get("inventorySha256") if source_pre else None),
+                    workspace_baseline_hash=workspace_baseline.get("inventorySha256") if workspace_baseline else None,
+                    source_copied=source_copied,
+                    final_state=FoundationState.BLOCKED.value,
+                    error_code=exc.code,
+                    error_message=exc.message,
+                    warnings=warnings,
+                    duration_seconds=round(time.monotonic() - started, 3),
+                    final_report_relative_path=(run_paths.run_directory / FINAL_FOUNDATION_REPORT_NAME).resolve(strict=False).relative_to(run_paths.runtime_root.resolve(strict=False)).as_posix(),
+                )
     raise RuntimeError("unreachable foundation preparation state")
 
 
@@ -314,6 +355,15 @@ def _transition(history: list[str], state: FoundationState) -> None:
     value = state.value
     if not history or history[-1] != value:
         history.append(value)
+
+
+def _terminal_history(history: list[str], terminal: FoundationState) -> list[str]:
+    copied = list(history)
+    if not copied or copied[-1] != FoundationState.REPORTING.value:
+        copied.append(FoundationState.REPORTING.value)
+    if copied[-1] != terminal.value:
+        copied.append(terminal.value)
+    return copied
 
 
 def _attach_report_identity(report: dict[str, Any], run_id: str, task_id: str) -> None:
@@ -495,6 +545,7 @@ def _final_report(
     error_message: str | None,
     warnings: list[dict[str, Any]],
     duration_seconds: float,
+    final_report_relative_path: str | None = None,
 ) -> dict[str, Any]:
     pass_ready = (
         workspace_ready
@@ -506,6 +557,7 @@ def _final_report(
         and isolated_git_valid
         and error_code is None
     )
+    final_verdict = "PASS" if pass_ready else ("BLOCKED" if final_state == FoundationState.BLOCKED.value or error_code == FINAL_FOUNDATION_REPORT_ERROR else "FAILED")
     return {
         "reportVersion": FOUNDATION_REPORT_VERSION,
         "runId": run_id,
@@ -532,17 +584,130 @@ def _final_report(
         "unityStarted": False,
         "networkUsed": False,
         "sourceCopied": source_copied,
+        "complete": pass_ready,
+        "finalReportRelativePath": final_report_relative_path,
+        "finalReportReceipt": None,
         "durationSeconds": duration_seconds,
         "finalState": FoundationState.COMPLETED.value if pass_ready else final_state,
-        "finalVerdict": "PASS" if pass_ready else "FAILED",
+        "finalVerdict": final_verdict,
         "errorCode": error_code,
         "errorMessage": error_message,
         "warnings": warnings,
     }
 
 
+def _write_trusted_final_foundation_report(
+    root: Path,
+    automation_root: Path,
+    run_paths: Any,
+    report: dict[str, Any],
+    config: dict[str, Any],
+) -> TrustedReportReceipt:
+    final_path = run_paths.run_directory / FINAL_FOUNDATION_REPORT_NAME
+    runtime_root = root / "CodexAutomation" / "runtime"
+    try:
+        expected_relative = final_path.resolve(strict=False).relative_to(run_paths.runtime_root.resolve(strict=False)).as_posix()
+    except ValueError as exc:
+        raise _FoundationFailure(FINAL_FOUNDATION_REPORT_ERROR, "Final foundation report path escapes foundation runtime root.") from exc
+    if report.get("finalReportRelativePath") != expected_relative:
+        raise _FoundationFailure(FINAL_FOUNDATION_REPORT_ERROR, "Final foundation report relative path mismatch.")
+    try:
+        receipt = write_trusted_report(
+            automation_root,
+            runtime_root,
+            final_path,
+            report,
+            FINAL_FOUNDATION_REPORT_SCHEMA,
+            lambda item: _validate_final_foundation_report(item, run_paths, expected_relative),
+            int(config["realTaskFoundation"]["maxReportBytes"]),
+        )
+        reread = read_trusted_report(
+            automation_root,
+            runtime_root,
+            final_path,
+            receipt,
+            FINAL_FOUNDATION_REPORT_SCHEMA,
+            lambda item: _validate_final_foundation_report(item, run_paths, expected_relative),
+            int(config["realTaskFoundation"]["maxReportBytes"]),
+        )
+    except RealTaskExecutionFailure as exc:
+        raise _FoundationFailure(FINAL_FOUNDATION_REPORT_ERROR, exc.message) from exc
+    except Exception as exc:
+        raise _FoundationFailure(FINAL_FOUNDATION_REPORT_ERROR, f"{type(exc).__name__}: {exc}") from exc
+    if receipt.relativePath != final_path.resolve(strict=False).relative_to(runtime_root.resolve(strict=False)).as_posix():
+        raise _FoundationFailure(FINAL_FOUNDATION_REPORT_ERROR, "Final foundation report receipt path mismatch.")
+    if reread.get("runId") != report.get("runId") or reread.get("taskId") != report.get("taskId"):
+        raise _FoundationFailure(FINAL_FOUNDATION_REPORT_ERROR, "Final foundation report reread identity mismatch.")
+    return receipt
+
+
+def _verify_final_foundation_authority(
+    root: Path,
+    automation_root: Path,
+    run_paths: Any,
+    report: dict[str, Any],
+    receipt: TrustedReportReceipt,
+    config: dict[str, Any],
+) -> None:
+    final_path = run_paths.run_directory / FINAL_FOUNDATION_REPORT_NAME
+    if report.get("finalVerdict") != "PASS" or report.get("complete") is not True:
+        raise _FoundationFailure(FINAL_FOUNDATION_REPORT_ERROR, "Foundation authority requires PASS and complete=true.")
+    if report.get("finalReportReceipt") != receipt.to_dict():
+        raise _FoundationFailure(FINAL_FOUNDATION_REPORT_ERROR, "Final foundation report receipt is not bound to result.")
+    persisted = read_trusted_report(
+        automation_root,
+        root / "CodexAutomation" / "runtime",
+        final_path,
+        receipt,
+        FINAL_FOUNDATION_REPORT_SCHEMA,
+        lambda item: _validate_final_foundation_report(item, run_paths, report.get("finalReportRelativePath")),
+        int(config["realTaskFoundation"]["maxReportBytes"]),
+    )
+    if persisted.get("finalVerdict") != "PASS" or persisted.get("complete") is not True:
+        raise _FoundationFailure(FINAL_FOUNDATION_REPORT_ERROR, "Persisted final foundation report is not authoritative PASS.")
+    if persisted.get("runId") != report.get("runId"):
+        raise _FoundationFailure(FINAL_FOUNDATION_REPORT_ERROR, "Persisted final foundation report run binding mismatch.")
+
+
+def _validate_final_foundation_report(report: dict[str, Any], run_paths: Any, expected_relative: str | None) -> list[str]:
+    errors: list[str] = []
+    if report.get("stage") != REAL_TASK_FOUNDATION_STAGE:
+        errors.append("Final foundation report stage mismatch.")
+    if expected_relative is not None and report.get("finalReportRelativePath") != expected_relative:
+        errors.append("Final foundation report path mismatch.")
+    if report.get("finalVerdict") == "PASS":
+        required_true = ("workspaceCreated", "workspaceReady", "serviceFilesValid", "isolatedGitValid", "sourceCopied", "sourceCopyVerified", "sourcePrePostMatch", "complete")
+        for field in required_true:
+            if report.get(field) is not True:
+                errors.append(f"PASS requires {field}=true.")
+        if report.get("parentGitChanged") is not False:
+            errors.append("PASS requires parentGitChanged=false.")
+        if report.get("errorCode") is not None or report.get("errorMessage") is not None:
+            errors.append("PASS requires null error fields.")
+        if report.get("finalState") != FoundationState.COMPLETED.value:
+            errors.append("PASS requires finalState=COMPLETED.")
+    elif report.get("complete") is not False:
+        errors.append("Non-PASS requires complete=false.")
+    if run_paths is not None and report.get("finalReportRelativePath"):
+        try:
+            final_path = run_paths.runtime_root / str(report["finalReportRelativePath"])
+            final_path.resolve(strict=False).relative_to(run_paths.run_directory.resolve(strict=False))
+        except ValueError:
+            errors.append("Final report relative path must stay in current foundation run.")
+    return errors
+
+
+def _fs_path(path: Path) -> str:
+    resolved = path.resolve(strict=False)
+    text = str(resolved)
+    if os.name == "nt" and not text.startswith("\\\\?\\"):
+        return "\\\\?\\" + text
+    return text
+
+
 def _write_report(root: Path, automation_root: Path, path: Path, report: dict[str, Any], config: dict[str, Any]) -> None:
     _validate_report(root, automation_root, path, report, config)
+    path.parent.mkdir(parents=True, exist_ok=True)
     write_json_atomic(path, report)
 
 

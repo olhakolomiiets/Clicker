@@ -9,6 +9,7 @@ from models import RepoContext, find_task, validate_smoke_task, validate_workflo
 from pipeline_engine import run_pipeline_self_test, run_rate_limit_self_test
 from preflight import find_repo_root, format_summary, run_preflight
 from real_role_runner import run_real_role_plan, run_real_role_sandbox_probe, run_real_role_self_test
+from real_task_execution_self_test import exit_code_for_self_test_verdict, run_real_task_execution_self_test
 from task_manifest_validator import validate_task_manifest_file, write_real_task_plan
 from validator_self_test_runner import run_validator_self_test
 
@@ -65,6 +66,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Run BOOTSTRAP-03B-2B-C controlled no-model validator self-test.",
     )
+    parser.add_argument(
+        "--real-task-execution-self-test",
+        action="count",
+        default=0,
+        help="Run BOOTSTRAP-03B-2D controlled fixed real-model real-task execution self-test.",
+    )
     return parser.parse_args()
 
 
@@ -81,9 +88,13 @@ def main() -> int:
         bool(args.validate_task_manifest),
         bool(args.real_task_plan),
         args.real_task_validator_self_test,
+        bool(args.real_task_execution_self_test),
     ]
     if sum(1 for selected in selected_modes if selected) > 1:
         print("Select exactly one explicit run mode.")
+        return 2
+    if args.real_task_execution_self_test > 1:
+        print("--real-task-execution-self-test may be specified only once.")
         return 2
     script_path = Path(__file__).resolve()
     repo_root = find_repo_root(script_path.parent)
@@ -97,6 +108,7 @@ def main() -> int:
         or args.validate_task_manifest
         or args.real_task_plan
         or args.real_task_validator_self_test
+        or args.real_task_execution_self_test
     )
     context = RepoContext(
         root=repo_root,
@@ -166,6 +178,20 @@ def main() -> int:
         report_path = Path(str(validator_report.get("reportPath", "")))
         print(f"Report: {report_path.resolve().relative_to(repo_root.resolve()).as_posix() if report_path else 'none'}")
         return 0 if validator_report["finalVerdict"] == "PASS" else 1
+
+    if args.real_task_execution_self_test:
+        self_test_report = run_real_task_execution_self_test(repo_root, context.automation_root, config)
+        print("Real Task Execution Self Test")
+        print(f"Self-test run: {self_test_report['selfTestRunId']}")
+        print(f"Production run: {self_test_report.get('productionOrchestrationRunId') or 'none'}")
+        print(f"Final verdict: {self_test_report['selfTestVerdict']}")
+        print(f"Invocations: {self_test_report['invocationsUsed']}")
+        print(f"Repairs: {self_test_report['repairsUsed']}")
+        print(f"Meta report: {Path(self_test_report.get('reportPath', '')).resolve().relative_to(repo_root.resolve()).as_posix() if self_test_report.get('reportPath') else 'none'}")
+        print(f"Production report: {self_test_report.get('productionFinalReportRelativePath') or 'none'}")
+        print(f"Bundle manifest: {self_test_report.get('resultBundleManifestRelativePath') or 'none'}")
+        print(f"Error code: {self_test_report.get('errorCode') or 'none'}")
+        return exit_code_for_self_test_verdict(str(self_test_report["selfTestVerdict"]))
 
     if args.pipeline_rate_limit_self_test:
         task_path = context.automation_root / "tests" / "fixtures" / "PIPELINE-TEST-001.json"

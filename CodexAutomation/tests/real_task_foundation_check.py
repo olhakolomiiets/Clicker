@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -17,8 +19,12 @@ sys.path.insert(0, str(SCRIPTS))
 from file_utils import read_json  # noqa: E402
 from parent_git_snapshot import parent_git_snapshot  # noqa: E402
 import real_task_foundation_runner  # noqa: E402
+import real_task_report_writer  # noqa: E402
+from real_task_execution_context import create_execution_context  # noqa: E402
+from real_task_execution_models import RealTaskExecutionFailure  # noqa: E402
 from real_task_foundation_models import canonical_sha256, new_foundation_run_id, parse_foundation_policy  # noqa: E402
 from real_task_foundation_runner import prepare_foundation_workspace, write_validated_trusted_context  # noqa: E402
+from real_task_report_writer import read_trusted_report  # noqa: E402
 from real_task_workspace import (  # noqa: E402
     WorkspacePaths,
     copy_sources,
@@ -819,6 +825,368 @@ class RealTaskFoundationCheck(unittest.TestCase):
         return False
 
 
+class RealTaskFoundationTrustedFinalReportTests(unittest.TestCase):
+    def test_deep_production_foundation_path_writes_trusted_final_report(self) -> None:
+        with self.synthetic_parent() as parent:
+            config = json.loads(json.dumps(CONFIG))
+            config["realTasks"]["allowedSourceRoots"] = list(config["realTasks"]["allowedSourceRoots"]) + ["TaskData"]
+            task_data = parent / "TaskData"
+            task_data.mkdir()
+            (task_data / "i.txt").write_text("line one\n", encoding="utf-8")
+            manifest = self.write_manifest(parent, ["TaskData/i.txt"], ["TaskData/i.txt"])
+            run_id = "foundation_deep_" + ("s" * 101)
+            report = prepare_foundation_workspace(parent, ROOT / "CodexAutomation", config, manifest, run_id)
+            run_dir = parent / config["realTaskFoundation"]["runtimeRoot"] / report["runId"]
+            final_path = run_dir / "FINAL_WORKSPACE_PREPARATION_REPORT.json"
+            receipt = report["finalReportReceipt"]
+            self.assertEqual(report["finalVerdict"], "PASS", report)
+            self.assertTrue(report["complete"])
+            self.assertTrue(os.path.isfile(self.fs_path(final_path)))
+            self.assertEqual(final_path.name, "FINAL_WORKSPACE_PREPARATION_REPORT.json")
+            self.assertGreater(len(str(final_path.resolve(strict=False))), 260)
+            self.assertEqual(report["finalReportRelativePath"], f"{report['runId']}/FINAL_WORKSPACE_PREPARATION_REPORT.json")
+            self.assertEqual(receipt["relativePath"], f"real_task_foundation_runs/{report['runId']}/FINAL_WORKSPACE_PREPARATION_REPORT.json")
+            self.assertEqual(receipt["size"], os.stat(self.fs_path(final_path)).st_size)
+            trusted = read_trusted_report(
+                ROOT / "CodexAutomation",
+                parent / "CodexAutomation" / "runtime",
+                final_path,
+                real_task_foundation_runner.TrustedReportReceipt(**receipt),
+                "real_task_workspace_final.schema.json",
+                lambda item: real_task_foundation_runner._validate_final_foundation_report(item, self.run_paths(parent, report["runId"]), report["finalReportRelativePath"]),
+                config["realTaskFoundation"]["maxReportBytes"],
+            )
+            self.assertEqual(trusted["finalVerdict"], "PASS")
+            self.assertFalse(list(final_path.parent.glob(".FINAL_WORKSPACE_PREPARATION_REPORT.json.*.tmp")))
+
+    def test_existing_final_report_blocks_without_overwrite(self) -> None:
+        with self.synthetic_parent() as parent:
+            manifest = self.write_manifest(parent)
+            original_create_run_paths = real_task_foundation_runner.create_run_paths
+            existing_text = "pre-existing authority placeholder"
+
+            def create_with_existing(root, policy, run_id):
+                paths = original_create_run_paths(root, policy, run_id)
+                paths.run_directory.mkdir(parents=True, exist_ok=True)
+                (paths.run_directory / "FINAL_WORKSPACE_PREPARATION_REPORT.json").write_text(existing_text, encoding="utf-8")
+                return paths
+
+            with mock.patch("real_task_foundation_runner.create_run_paths", side_effect=create_with_existing):
+                report = prepare_foundation_workspace(parent, ROOT / "CodexAutomation", CONFIG, manifest, "foundation_existing_final_12345678")
+            final_path = parent / CONFIG["realTaskFoundation"]["runtimeRoot"] / report["runId"] / "FINAL_WORKSPACE_PREPARATION_REPORT.json"
+            self.assertEqual(report["finalVerdict"], "BLOCKED")
+            self.assertEqual(report["errorCode"], "REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID")
+            self.assertEqual(final_path.read_text(encoding="utf-8"), existing_text)
+            self.assertIsNone(report["finalReportReceipt"])
+
+    def test_deep_existing_final_report_blocks_without_overwrite(self) -> None:
+        with self.synthetic_parent() as parent:
+            manifest = self.write_manifest(parent)
+            original_create_run_paths = real_task_foundation_runner.create_run_paths
+            existing_text = "deep pre-existing authority placeholder"
+            run_id = "foundation_deep_existing_" + ("d" * 96)
+
+            def create_with_existing(root, policy, requested_run_id):
+                paths = original_create_run_paths(root, policy, requested_run_id)
+                paths.run_directory.mkdir(parents=True, exist_ok=True)
+                final_path = paths.run_directory / "FINAL_WORKSPACE_PREPARATION_REPORT.json"
+                with open(self.fs_path(final_path), "w", encoding="utf-8") as handle:
+                    handle.write(existing_text)
+                return paths
+
+            with mock.patch("real_task_foundation_runner.create_run_paths", side_effect=create_with_existing):
+                report = prepare_foundation_workspace(parent, ROOT / "CodexAutomation", CONFIG, manifest, run_id)
+            final_path = parent / CONFIG["realTaskFoundation"]["runtimeRoot"] / report["runId"] / "FINAL_WORKSPACE_PREPARATION_REPORT.json"
+            self.assertGreater(len(str(final_path.resolve(strict=False))), 260)
+            self.assertEqual(report["finalVerdict"], "BLOCKED")
+            self.assertEqual(report["errorCode"], "REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID")
+            with open(self.fs_path(final_path), "r", encoding="utf-8") as handle:
+                self.assertEqual(handle.read(), existing_text)
+            self.assertIsNone(report["finalReportReceipt"])
+            self.assertFalse(list(final_path.parent.glob(".FINAL_WORKSPACE_PREPARATION_REPORT.json.*.tmp")))
+
+    def test_existing_directory_at_final_report_path_is_rejected(self) -> None:
+        with self.synthetic_parent() as parent:
+            paths = self.run_paths(parent, "foundation_existing_directory_12345678")
+            paths.run_directory.mkdir(parents=True, exist_ok=True)
+            final_path = paths.run_directory / "FINAL_WORKSPACE_PREPARATION_REPORT.json"
+            final_path.mkdir()
+            report = self.minimal_final_report(paths.run_directory.name, "foundation_existing_directory_12345678/FINAL_WORKSPACE_PREPARATION_REPORT.json")
+            with self.assertRaises(RealTaskExecutionFailure) as raised:
+                real_task_report_writer.write_trusted_report(ROOT / "CodexAutomation", parent / "CodexAutomation" / "runtime", final_path, report, "real_task_workspace_final.schema.json", None, CONFIG["realTaskFoundation"]["maxReportBytes"])
+            self.assertEqual(raised.exception.code, "REAL_TASK_FINAL_REPORT_WRITE_FAILED")
+            self.assertTrue(final_path.is_dir())
+
+    def test_existing_broken_symlink_at_final_report_path_is_rejected(self) -> None:
+        with self.synthetic_parent() as parent:
+            paths = self.run_paths(parent, "foundation_existing_broken_link_12345678")
+            paths.run_directory.mkdir(parents=True, exist_ok=True)
+            final_path = paths.run_directory / "FINAL_WORKSPACE_PREPARATION_REPORT.json"
+            try:
+                final_path.symlink_to(paths.run_directory / "missing.json")
+            except (OSError, NotImplementedError):
+                self.skipTest("Symlink creation is unavailable in this session.")
+            report = self.minimal_final_report(paths.run_directory.name, "foundation_existing_broken_link_12345678/FINAL_WORKSPACE_PREPARATION_REPORT.json")
+            with self.assertRaises(RealTaskExecutionFailure) as raised:
+                real_task_report_writer.write_trusted_report(ROOT / "CodexAutomation", parent / "CodexAutomation" / "runtime", final_path, report, "real_task_workspace_final.schema.json", None, CONFIG["realTaskFoundation"]["maxReportBytes"])
+            self.assertEqual(raised.exception.code, "REAL_TASK_FINAL_REPORT_WRITE_FAILED")
+            self.assertTrue(final_path.is_symlink())
+
+    def test_existing_symlink_or_reparse_target_metadata_is_rejected(self) -> None:
+        with self.synthetic_parent() as parent:
+            runtime = parent / "CodexAutomation" / "runtime"
+            run_id = "foundation_existing_reparse_target_12345678"
+            final_path = runtime / "real_task_foundation_runs" / run_id / "FINAL_WORKSPACE_PREPARATION_REPORT.json"
+            report = self.minimal_final_report(run_id, f"real_task_foundation_runs/{run_id}/FINAL_WORKSPACE_PREPARATION_REPORT.json")
+            original_stat = real_task_report_writer._stat_path_long_safe
+
+            class ReparseTargetStatus:
+                st_mode = stat.S_IFLNK
+                st_size = 0
+                st_file_attributes = 0x400
+
+            def fake_stat(path, *, follow_symlinks, error_code, message):
+                if path.name == "FINAL_WORKSPACE_PREPARATION_REPORT.json":
+                    return ReparseTargetStatus()
+                return original_stat(path, follow_symlinks=follow_symlinks, error_code=error_code, message=message)
+
+            with mock.patch("real_task_report_writer._stat_path_long_safe", side_effect=fake_stat), mock.patch("real_task_report_writer.os.replace") as replace_mock:
+                with self.assertRaises(RealTaskExecutionFailure) as raised:
+                    real_task_report_writer.write_trusted_report(ROOT / "CodexAutomation", runtime, final_path, report, "real_task_workspace_final.schema.json", None, CONFIG["realTaskFoundation"]["maxReportBytes"])
+            self.assertEqual(raised.exception.code, "REAL_TASK_FINAL_REPORT_WRITE_FAILED")
+            self.assertFalse(replace_mock.called)
+
+    def test_atomic_replace_failure_blocks_without_receipt(self) -> None:
+        with self.synthetic_parent() as parent:
+            manifest = self.write_manifest(parent)
+            with mock.patch("real_task_report_writer.os.replace", side_effect=OSError("replace failed")):
+                report = prepare_foundation_workspace(parent, ROOT / "CodexAutomation", CONFIG, manifest, "foundation_replace_fail_12345678")
+            self.assertEqual(report["finalVerdict"], "BLOCKED")
+            self.assertEqual(report["errorCode"], "REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID")
+            self.assertIsNone(report["finalReportReceipt"])
+
+    def test_final_report_path_escape_is_rejected_before_write(self) -> None:
+        with self.synthetic_parent() as parent:
+            policy = parse_foundation_policy(parent, CONFIG, parse_real_task_policy(CONFIG)[0])[0]
+            paths = create_run_paths(parent, policy, "foundation_escape_12345678")
+            report = self.minimal_final_report("foundation_escape_12345678", "../outside.json")
+            with self.assertRaises(Exception) as raised:
+                real_task_foundation_runner._write_trusted_final_foundation_report(parent, ROOT / "CodexAutomation", paths, report, CONFIG)
+            self.assertEqual(raised.exception.code, "REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID")
+            self.assertFalse((paths.run_directory.parent / "outside.json").exists())
+
+    def test_reparse_ancestor_blocks_foundation_authority(self) -> None:
+        with self.synthetic_parent() as parent:
+            manifest = self.write_manifest(parent)
+            with mock.patch("real_task_report_writer._has_reparse_parent", return_value=True):
+                report = prepare_foundation_workspace(parent, ROOT / "CodexAutomation", CONFIG, manifest, "foundation_reparse_12345678")
+            self.assertEqual(report["finalVerdict"], "BLOCKED")
+            self.assertEqual(report["errorCode"], "REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID")
+            self.assertIsNone(report["finalReportReceipt"])
+
+    def test_deep_reparse_ancestor_metadata_blocks_before_replace(self) -> None:
+        with self.synthetic_parent() as parent:
+            runtime = parent / "CodexAutomation" / "runtime"
+            run_id = "foundation_reparse_" + ("r" * 96)
+            final_path = runtime / "real_task_foundation_runs" / run_id / "reparse_marker" / "FINAL_WORKSPACE_PREPARATION_REPORT.json"
+            report = self.minimal_final_report(run_id, f"real_task_foundation_runs/{run_id}/reparse_marker/FINAL_WORKSPACE_PREPARATION_REPORT.json")
+            original_stat = real_task_report_writer._stat_path_long_safe
+            seen_paths: list[Path] = []
+
+            class ReparseStatus:
+                st_mode = stat.S_IFDIR
+                st_size = 0
+                st_file_attributes = 0x400
+
+            def fake_stat(path, *, follow_symlinks, error_code, message):
+                seen_paths.append(path)
+                if path.name == "reparse_marker":
+                    return ReparseStatus()
+                return original_stat(path, follow_symlinks=follow_symlinks, error_code=error_code, message=message)
+
+            with mock.patch("real_task_report_writer._stat_path_long_safe", side_effect=fake_stat), mock.patch("real_task_report_writer.os.replace") as replace_mock:
+                with self.assertRaises(RealTaskExecutionFailure) as raised:
+                    real_task_report_writer.write_trusted_report(ROOT / "CodexAutomation", runtime, final_path, report, "real_task_workspace_final.schema.json", None, CONFIG["realTaskFoundation"]["maxReportBytes"])
+            self.assertEqual(raised.exception.code, "REAL_TASK_FINAL_REPORT_WRITE_FAILED")
+            self.assertFalse(replace_mock.called)
+            self.assertTrue(any(path.name == "reparse_marker" for path in seen_paths))
+            self.assertGreater(len(str(final_path.resolve(strict=False))), 260)
+
+    def test_metadata_inspection_error_fails_closed_before_write(self) -> None:
+        with self.synthetic_parent() as parent:
+            runtime = parent / "CodexAutomation" / "runtime"
+            run_id = "foundation_metadata_error_12345678"
+            final_path = runtime / "real_task_foundation_runs" / run_id / "FINAL_WORKSPACE_PREPARATION_REPORT.json"
+            report = self.minimal_final_report(run_id, f"real_task_foundation_runs/{run_id}/FINAL_WORKSPACE_PREPARATION_REPORT.json")
+            original_stat = real_task_report_writer.os.stat
+
+            def failing_stat(path, *args, **kwargs):
+                if str(path).endswith("FINAL_WORKSPACE_PREPARATION_REPORT.json"):
+                    raise PermissionError("metadata denied")
+                return original_stat(path, *args, **kwargs)
+
+            with mock.patch("real_task_report_writer.os.stat", side_effect=failing_stat), mock.patch("real_task_report_writer.os.replace") as replace_mock:
+                with self.assertRaises(RealTaskExecutionFailure) as raised:
+                    real_task_report_writer.write_trusted_report(ROOT / "CodexAutomation", runtime, final_path, report, "real_task_workspace_final.schema.json", None, CONFIG["realTaskFoundation"]["maxReportBytes"])
+            self.assertEqual(raised.exception.code, "REAL_TASK_FINAL_REPORT_WRITE_FAILED")
+            self.assertFalse(replace_mock.called)
+
+    def test_late_target_appearance_blocks_without_replace(self) -> None:
+        with self.synthetic_parent() as parent:
+            runtime = parent / "CodexAutomation" / "runtime"
+            run_id = "foundation_late_target_12345678"
+            final_path = runtime / "real_task_foundation_runs" / run_id / "FINAL_WORKSPACE_PREPARATION_REPORT.json"
+            report = self.minimal_final_report(run_id, f"real_task_foundation_runs/{run_id}/FINAL_WORKSPACE_PREPARATION_REPORT.json")
+            original_reject = real_task_report_writer._reject_existing_target
+            checks = {"count": 0}
+            existing_text = "late authority placeholder"
+
+            def reject_with_late_target(path, error_code):
+                checks["count"] += 1
+                if checks["count"] == 3:
+                    with open(self.fs_path(path), "w", encoding="utf-8") as handle:
+                        handle.write(existing_text)
+                return original_reject(path, error_code)
+
+            with mock.patch("real_task_report_writer._reject_existing_target", side_effect=reject_with_late_target), mock.patch("real_task_report_writer.os.replace") as replace_mock:
+                with self.assertRaises(RealTaskExecutionFailure) as raised:
+                    real_task_report_writer.write_trusted_report(ROOT / "CodexAutomation", runtime, final_path, report, "real_task_workspace_final.schema.json", None, CONFIG["realTaskFoundation"]["maxReportBytes"])
+            self.assertEqual(raised.exception.code, "REAL_TASK_FINAL_REPORT_WRITE_FAILED")
+            self.assertFalse(replace_mock.called)
+            with open(self.fs_path(final_path), "r", encoding="utf-8") as handle:
+                self.assertEqual(handle.read(), existing_text)
+            self.assertFalse(list(final_path.parent.glob(".FINAL_WORKSPACE_PREPARATION_REPORT.json.*.tmp")))
+
+    def test_tampered_reread_hash_blocks_foundation_authority(self) -> None:
+        with self.synthetic_parent() as parent:
+            manifest = self.write_manifest(parent)
+            original_read = real_task_foundation_runner.read_trusted_report
+            calls = {"count": 0}
+
+            def tampered_read(*args, **kwargs):
+                loaded = original_read(*args, **kwargs)
+                calls["count"] += 1
+                if calls["count"] == 1:
+                    loaded = dict(loaded)
+                    loaded["runId"] = "tampered"
+                return loaded
+
+            with mock.patch("real_task_foundation_runner.read_trusted_report", side_effect=tampered_read):
+                report = prepare_foundation_workspace(parent, ROOT / "CodexAutomation", CONFIG, manifest, "foundation_tamper_12345678")
+            self.assertEqual(report["finalVerdict"], "BLOCKED")
+            self.assertEqual(report["errorCode"], "REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID")
+
+    def test_consumer_rejects_missing_foundation_receipt(self) -> None:
+        with self.synthetic_parent() as parent:
+            manifest = self.write_manifest(parent)
+            report = prepare_foundation_workspace(parent, ROOT / "CodexAutomation", CONFIG, manifest, "foundation_consumer_missing_12345678")
+            self.assertEqual(report["finalVerdict"], "PASS")
+            untrusted = dict(report)
+            untrusted["finalReportReceipt"] = None
+            run_dir = parent / "CodexAutomation" / "runtime" / "real_task_runs" / "consumer_missing"
+            run_dir.mkdir(parents=True)
+            with self.assertRaises(RealTaskExecutionFailure) as raised:
+                create_execution_context(parent, ROOT / "CodexAutomation", run_dir, "consumer_missing", manifest, "a" * 64, {}, CONFIG["realTaskExecutionPolicy"], untrusted, {"maxRoleInvocations": 3, "maxRepairAttempts": 1})
+            self.assertEqual(raised.exception.code, "REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID")
+
+    def test_deep_consumer_accepts_trusted_workspace_directory(self) -> None:
+        with self.synthetic_parent() as parent:
+            config = json.loads(json.dumps(CONFIG))
+            config["realTasks"]["allowedSourceRoots"] = list(config["realTasks"]["allowedSourceRoots"]) + ["TaskData"]
+            task_data = parent / "TaskData"
+            task_data.mkdir()
+            (task_data / "i.txt").write_text("line one\n", encoding="utf-8")
+            manifest = self.write_manifest(parent, ["TaskData/i.txt"], ["TaskData/i.txt"])
+            run_id = "foundation_consumer_deep_" + ("w" * 92)
+            report = prepare_foundation_workspace(parent, ROOT / "CodexAutomation", config, manifest, run_id)
+            self.assertEqual(report["finalVerdict"], "PASS", report)
+            run_dir = parent / "CodexAutomation" / "runtime" / "real_task_runs" / "consumer_deep"
+            run_dir.mkdir(parents=True)
+            with mock.patch("real_task_execution_context.ensure_trusted_directory", wraps=real_task_report_writer.ensure_trusted_directory) as directory_check:
+                context, context_hash = create_execution_context(parent, ROOT / "CodexAutomation", run_dir, "consumer_deep", manifest, "a" * 64, {}, config["realTaskExecutionPolicy"], report, {"maxRoleInvocations": 3, "maxRepairAttempts": 1})
+            self.assertEqual(context.foundationRunId, report["runId"])
+            self.assertEqual(len(context_hash), 64)
+            self.assertTrue(any(call.args[0].name == "workspace" for call in directory_check.call_args_list))
+
+    def test_consumer_rejects_workspace_file_instead_of_directory(self) -> None:
+        with self.synthetic_parent() as parent:
+            manifest = self.write_manifest(parent)
+            report = prepare_foundation_workspace(parent, ROOT / "CodexAutomation", CONFIG, manifest, "foundation_consumer_file_12345678")
+            self.assertEqual(report["finalVerdict"], "PASS", report)
+            workspace = parent / "CodexAutomation" / "runtime" / "real_task_foundation_runs" / report["runId"] / "workspace"
+            shutil.rmtree(self.fs_path(workspace))
+            workspace.write_text("not a directory", encoding="utf-8")
+            run_dir = parent / "CodexAutomation" / "runtime" / "real_task_runs" / "consumer_workspace_file"
+            run_dir.mkdir(parents=True)
+            with self.assertRaises(RealTaskExecutionFailure) as raised:
+                create_execution_context(parent, ROOT / "CodexAutomation", run_dir, "consumer_workspace_file", manifest, "a" * 64, {}, CONFIG["realTaskExecutionPolicy"], report, {"maxRoleInvocations": 3, "maxRepairAttempts": 1})
+            self.assertEqual(raised.exception.code, "REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID")
+
+    def test_ba_cannot_pass_without_final_report_artifact(self) -> None:
+        with self.synthetic_parent() as parent:
+            manifest = self.write_manifest(parent)
+            with mock.patch("real_task_foundation_runner._write_trusted_final_foundation_report", side_effect=real_task_foundation_runner._FoundationFailure("REAL_TASK_FOUNDATION_FINAL_REPORT_INVALID", "forced missing final report")):
+                report = prepare_foundation_workspace(parent, ROOT / "CodexAutomation", CONFIG, manifest, "foundation_missing_final_12345678")
+            self.assertEqual(report["finalVerdict"], "BLOCKED")
+            self.assertFalse(report["complete"])
+            self.assertIsNone(report["finalReportReceipt"])
+
+    def synthetic_parent(self):
+        return _SyntheticParent()
+
+    def write_manifest(self, parent: Path, source_paths: list[str] | None = None, write_paths: list[str] | None = None) -> Path:
+        return RealTaskFoundationCheck().write_manifest(parent, source_paths or ["Assets/TestFixture/input.txt"], write_paths or ["Assets/TestFixture/input.txt"])
+
+    def run_paths(self, parent: Path, run_id: str):
+        runtime_root = parent / CONFIG["realTaskFoundation"]["runtimeRoot"]
+        run_dir = runtime_root / run_id
+        return WorkspacePaths(parent, runtime_root, run_dir, run_dir / "staging", run_dir / "workspace", run_dir / "evidence", run_dir / "logs")
+
+    def minimal_final_report(self, run_id: str, relative_path: str) -> dict[str, object]:
+        return {
+            "reportVersion": 1,
+            "runId": run_id,
+            "taskId": "TASK-FOUNDATION-001",
+            "stage": "BOOTSTRAP-03B-2B-A",
+            "stateHistory": ["PENDING", "REPORTING", "COMPLETED"],
+            "manifestSha256": "a" * 64,
+            "trustedContextHash": "b" * 64,
+            "parentGitInitialSnapshot": {"status": "success"},
+            "parentGitFinalSnapshot": {"status": "success"},
+            "parentGitChanged": False,
+            "sourcePrePostMatch": True,
+            "sourceCopyVerified": True,
+            "workspaceCreated": True,
+            "stagingRetained": False,
+            "workspaceReady": True,
+            "serviceFilesValid": True,
+            "isolatedGitValid": True,
+            "sourceInventoryHash": "c" * 64,
+            "workspaceBaselineInventoryHash": "d" * 64,
+            "codexInvocationCount": 0,
+            "modelInvocationStarted": False,
+            "sandboxStarted": False,
+            "unityStarted": False,
+            "networkUsed": False,
+            "sourceCopied": True,
+            "complete": True,
+            "finalReportRelativePath": relative_path,
+            "finalReportReceipt": None,
+            "durationSeconds": 0.0,
+            "finalState": "COMPLETED",
+            "finalVerdict": "PASS",
+            "errorCode": None,
+            "errorMessage": None,
+            "warnings": [],
+        }
+
+    def fs_path(self, path: Path) -> str:
+        text = str(path.resolve(strict=False))
+        if os.name == "nt" and not text.startswith("\\\\?\\"):
+            return "\\\\?\\" + text
+        return text
+
+
 class _SyntheticParent:
     def __enter__(self) -> Path:
         self.temp = tempfile.TemporaryDirectory(dir=ROOT / "CodexAutomation" / "runtime")
@@ -836,7 +1204,17 @@ class _SyntheticParent:
         return self.root
 
     def __exit__(self, exc_type, exc, tb) -> None:
-        self.temp.cleanup()
+        try:
+            self.temp.cleanup()
+        except OSError:
+            shutil.rmtree(_fs_path(Path(self.temp.name)), ignore_errors=True)
+
+
+def _fs_path(path: Path) -> str:
+    text = str(path.resolve(strict=False))
+    if os.name == "nt" and not text.startswith("\\\\?\\"):
+        return "\\\\?\\" + text
+    return text
 
 
 if __name__ == "__main__":

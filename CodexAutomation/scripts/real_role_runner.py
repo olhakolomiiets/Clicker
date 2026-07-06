@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import hashlib
+import os
 import shutil
 import subprocess
 import stat
@@ -13,7 +14,7 @@ from typing import Any
 
 from codex_event_parser import classify_schema_invalid_text, parse_jsonl_events
 from codex_runner import run_process_with_file_logs_and_timeout, run_process_with_timeout
-from file_utils import read_json, write_json_atomic
+from file_utils import _fs_path, read_json, read_text_long_safe, write_json_atomic, write_text_long_safe
 from isolated_workspace import LOCAL_AGENTS_TEXT, create_isolated_workspace, relative_to_root, validate_initial_service_baseline, validate_service_directory
 from pipeline_models import ExecutionStatus, PipelineState
 from pipeline_result_validator import (
@@ -22,7 +23,7 @@ from pipeline_result_validator import (
     validate_repair_result,
     validate_role_execution,
 )
-from pipeline_validator import _read_json_file, changed_paths, run_validations, snapshot_error, snapshot_workspace
+from pipeline_validator import WORKSPACE_ERROR_ENTRY, _read_json_file, changed_paths, run_validations, snapshot_error, snapshot_workspace
 from usage_limit_models import utc_now
 
 
@@ -228,8 +229,8 @@ def _run_real_role_sandbox_probe_with_context(root: Path, automation_root: Path,
     _write_probe_report(report, probe_root)
     write_json_atomic(probe_root / "probe_command.json", {"sanitizedCommand": [], "workspacePath": report["workspacePath"]})
     write_json_atomic(probe_root / "probe_process.json", {"processStarted": False, "processId": None, "timedOut": False})
-    stdout_path.write_text("", encoding="utf-8", newline="\n")
-    stderr_path.write_text("", encoding="utf-8", newline="\n")
+    _initialize_probe_text_log(stdout_path)
+    _initialize_probe_text_log(stderr_path)
     final_verdict = "FAILED"
     error_code: str | None = None
     error_message: str | None = None
@@ -255,7 +256,7 @@ def _run_real_role_sandbox_probe_with_context(root: Path, automation_root: Path,
             error_code = workspace_error
             error_message = "Probe workspace is outside the allowed runtime boundary or unsafe."
             return report
-        initial_snapshot = snapshot_workspace(workspace)
+        initial_snapshot = _snapshot_probe_workspace(workspace)
         write_json_atomic(probe_root / "probe_workspace_initial_snapshot.json", initial_snapshot)
         command = build_sandbox_probe_command(workspace, settings)
         report["sanitizedCommand"] = sanitize_command(command)
@@ -302,7 +303,7 @@ def _run_real_role_sandbox_probe_with_context(root: Path, automation_root: Path,
         report["probeFileCreated"] = "PROBE_FILE_CREATED" in stdout_text
         report["probeFileReadBack"] = "PROBE_FILE_READ_BACK" in stdout_text
         report["probeFileRemoved"] = "PROBE_FILE_REMOVED" in stdout_text
-        final_snapshot = snapshot_workspace(workspace)
+        final_snapshot = _snapshot_probe_workspace(workspace)
         snapshot_problem = snapshot_error(final_snapshot)
         if snapshot_problem:
             error_code = snapshot_problem["errorCode"]
@@ -1142,8 +1143,8 @@ def _git_output(cwd: Path, command: list[str]) -> dict[str, Any]:
 def _create_probe_workspace(root: Path, workspace: Path) -> str | None:
     runtime_root = (root / "CodexAutomation" / "runtime").resolve()
     try:
-        workspace.parent.mkdir(parents=True, exist_ok=True)
-        workspace.mkdir()
+        shutil.rmtree(_fs_path(workspace), ignore_errors=True)
+        os.makedirs(_fs_path(workspace), exist_ok=False)
         resolved = workspace.resolve(strict=True)
         resolved.relative_to(runtime_root)
     except (OSError, ValueError):
@@ -1155,10 +1156,60 @@ def _create_probe_workspace(root: Path, workspace: Path) -> str | None:
     }
     if resolved in forbidden:
         return "WINDOWS_SANDBOX_PROBE_OUTSIDE_RUNTIME"
-    workspace_error = snapshot_error(snapshot_workspace(workspace))
+    workspace_error = snapshot_error(_snapshot_probe_workspace(workspace))
     if workspace_error:
         return workspace_error["errorCode"]
     return None
+
+
+def _snapshot_probe_workspace(workspace: Path) -> dict[str, dict[str, Any]]:
+    root_fs = _fs_path(workspace)
+    try:
+        if not os.path.exists(root_fs):
+            return _probe_workspace_error("WORKSPACE_ROOT_NOT_FOUND", "Workspace root does not exist.")
+        if not os.path.isdir(root_fs):
+            return _probe_workspace_error("WORKSPACE_ROOT_NOT_DIRECTORY", "Workspace root is not a directory.")
+    except OSError:
+        return _probe_workspace_error("WORKSPACE_ROOT_NOT_FOUND", "Workspace root does not exist.")
+
+    snapshot: dict[str, dict[str, Any]] = {}
+    for directory, dirnames, filenames in os.walk(root_fs):
+        for name in list(dirnames):
+            path = os.path.join(directory, name)
+            relative = os.path.relpath(path, root_fs).replace(os.sep, "/")
+            if _is_symlink_or_reparse_fs_path(path):
+                snapshot[relative] = {"type": "blocked_link", "size": 0, "sha256": None}
+                dirnames.remove(name)
+            else:
+                snapshot[relative] = {"type": "directory", "size": 0, "sha256": None}
+        for name in filenames:
+            path = os.path.join(directory, name)
+            relative = os.path.relpath(path, root_fs).replace(os.sep, "/")
+            if _is_symlink_or_reparse_fs_path(path):
+                snapshot[relative] = {"type": "blocked_link", "size": 0, "sha256": None}
+                continue
+            try:
+                with open(path, "rb") as handle:
+                    data = handle.read()
+                snapshot[relative] = {"type": "file", "size": len(data), "sha256": hashlib.sha256(data).hexdigest()}
+            except OSError:
+                snapshot[relative] = {"type": "read_error", "size": 0, "sha256": None}
+    return snapshot
+
+
+def _probe_workspace_error(error_code: str, message: str) -> dict[str, dict[str, Any]]:
+    return {WORKSPACE_ERROR_ENTRY: {"type": "error", "errorCode": error_code, "message": message}}
+
+
+def _is_symlink_or_reparse_fs_path(path: str) -> bool:
+    try:
+        status = os.lstat(path)
+    except OSError:
+        return True
+    if stat.S_ISLNK(status.st_mode):
+        return True
+    attrs = getattr(status, "st_file_attributes", 0)
+    return bool(attrs & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400))
 
 
 def _finish_probe(
@@ -1211,6 +1262,10 @@ def _write_probe_report(report: dict[str, Any], probe_root: Path) -> None:
     write_json_atomic(probe_root / "SANDBOX_WRITE_PROBE_REPORT.json", report)
 
 
+def _initialize_probe_text_log(path: Path) -> None:
+    write_text_long_safe(path, "", encoding="utf-8", newline="\n")
+
+
 def _update_probe_process_report(report: dict[str, Any], probe_root: Path, process_result: dict[str, Any]) -> None:
     termination = process_result.get("termination") or {}
     report["processStarted"] = bool(process_result.get("process_started") or report.get("processStarted"))
@@ -1257,7 +1312,7 @@ def _write_probe_termination_marker(probe_root: Path, report: dict[str, Any], pr
 
 def _read_text_if_exists(path: Path) -> str:
     try:
-        return path.read_text(encoding="utf-8")
+        return read_text_long_safe(path, encoding="utf-8", errors="replace")
     except OSError:
         return ""
 
@@ -1270,16 +1325,29 @@ def _sandbox_probe_powershell_script() -> str:
     return (
         "$ErrorActionPreference='Stop'; "
         "try { "
-        "$path=Join-Path (Get-Location) 'sandbox_write_probe.txt'; "
+        "function Convert-ToExtendedPath([string]$Path) { "
+        "$full=[System.IO.Path]::GetFullPath($Path); "
+        "if (-not [System.IO.Path]::IsPathRooted($full)) { throw 'PROBE_MARKER_PATH_NOT_ABSOLUTE' }; "
+        "if ($full.StartsWith('\\\\?\\')) { return $full }; "
+        "if ($full.StartsWith('\\\\')) { return '\\\\?\\UNC\\' + $full.Substring(2) }; "
+        "return '\\\\?\\' + $full "
+        "}; "
+        "$workspaceLogicalPath=[System.IO.Path]::GetFullPath((Get-Location).ProviderPath); "
+        "$markerLogicalPath=[System.IO.Path]::GetFullPath([System.IO.Path]::Combine($workspaceLogicalPath,'sandbox_write_probe.txt')); "
+        "if ([System.IO.Path]::GetFileName($markerLogicalPath) -ne 'sandbox_write_probe.txt') { throw 'PROBE_MARKER_NAME_INVALID' }; "
+        "$markerParent=[System.IO.Path]::GetDirectoryName($markerLogicalPath); "
+        "if (-not [string]::Equals($markerParent,$workspaceLogicalPath,[System.StringComparison]::OrdinalIgnoreCase)) { throw 'PROBE_MARKER_OUTSIDE_WORKSPACE' }; "
+        "$markerFilesystemPath=Convert-ToExtendedPath $markerLogicalPath; "
         "$expected='CODEX_SANDBOX_WRITE_OK'; "
-        "[System.IO.File]::WriteAllText($path,$expected,[System.Text.UTF8Encoding]::new($false)); "
-        "if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw 'PROBE_FILE_NOT_CREATED' }; "
+        "$utf8NoBom=[System.Text.UTF8Encoding]::new($false); "
+        "[System.IO.File]::WriteAllText($markerFilesystemPath,$expected,$utf8NoBom); "
+        "if (-not [System.IO.File]::Exists($markerFilesystemPath)) { throw 'PROBE_FILE_NOT_CREATED' }; "
         "Write-Output 'PROBE_FILE_CREATED'; "
-        "$actual=[System.IO.File]::ReadAllText($path,[System.Text.UTF8Encoding]::new($false)); "
+        "$actual=[System.IO.File]::ReadAllText($markerFilesystemPath,$utf8NoBom); "
         "if ($actual -ne $expected) { throw 'PROBE_READBACK_MISMATCH' }; "
         "Write-Output 'PROBE_FILE_READ_BACK'; "
-        "Remove-Item -LiteralPath $path; "
-        "if (Test-Path -LiteralPath $path) { throw 'PROBE_FILE_NOT_REMOVED' }; "
+        "[System.IO.File]::Delete($markerFilesystemPath); "
+        "if ([System.IO.File]::Exists($markerFilesystemPath)) { throw 'PROBE_FILE_NOT_REMOVED' }; "
         "Write-Output 'PROBE_FILE_REMOVED'; "
         "exit 0 "
         "} catch { Write-Error $_; exit 1 }"

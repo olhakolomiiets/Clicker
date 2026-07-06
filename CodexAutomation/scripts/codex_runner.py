@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from file_utils import read_json, write_json_atomic
+from file_utils import open_text_long_safe, read_json, write_json_atomic
 from schema_validator import validate
 
 
@@ -341,8 +341,6 @@ def run_process_with_file_logs_and_timeout(
     post_kill_wait_seconds: int,
     status_callback: Any | None = None,
 ) -> dict[str, Any]:
-    stdout_path.parent.mkdir(parents=True, exist_ok=True)
-    stderr_path.parent.mkdir(parents=True, exist_ok=True)
     result: dict[str, Any] = {
         "pid": None,
         "exit_code": None,
@@ -352,7 +350,7 @@ def run_process_with_file_logs_and_timeout(
         "process_start_error": None,
     }
     process: subprocess.Popen[Any] | None = None
-    with stdout_path.open("w", encoding="utf-8", newline="\n") as stdout_file, stderr_path.open("w", encoding="utf-8", newline="\n") as stderr_file:
+    with open_text_long_safe(stdout_path, "w", encoding="utf-8", newline="\n") as stdout_file, open_text_long_safe(stderr_path, "w", encoding="utf-8", newline="\n") as stderr_file:
         try:
             process = subprocess.Popen(
                 command,

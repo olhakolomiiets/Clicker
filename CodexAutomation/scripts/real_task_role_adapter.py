@@ -30,9 +30,9 @@ class RealTaskRoleAdapter(Protocol):
 class CodexRealTaskRoleAdapter:
     """Production boundary for controlled real model roles.
 
-    The public execute_real_task entry constructs this fixed adapter and does not accept
+    The private production wrapper constructs this fixed adapter and does not accept
     adapter/model/sandbox/approval overrides. By default direct construction remains
-    disabled; the BOOTSTRAP-03B-2D controller enables it only for the fixed self-test.
+    disabled; controlled runners enable it only through fixed internal entry points.
     """
 
     fixed_registration = True

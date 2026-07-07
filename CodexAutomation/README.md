@@ -1,8 +1,8 @@
 # Codex Automation Bootstrap
 
-This is BOOTSTRAP-03B-2D for the local Codex Automation system.
+This is BOOTSTRAP-03B-3A for the local Codex Automation system.
 
-The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, BOOTSTRAP-03A fake pipeline behavior, BOOTSTRAP-03B-1 real-role self-test behavior, BOOTSTRAP-03B-2A generic real-task manifest validation/plan behavior, BOOTSTRAP-03B-2B-A foundation preparation behavior, BOOTSTRAP-03B-2B-B change analysis behavior, BOOTSTRAP-03B-2B-C validator execution behavior, and BOOTSTRAP-03B-2C internal orchestration. BOOTSTRAP-03B-2D adds exactly one controlled fixed real-model real-task execution self-test. It does not add a public generic task-run CLI, user-supplied real-task execution, apply, resume, merge, commit, push, PR creation, Unity launch, package installation, or task sandbox network access.
+The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 preflight, BOOTSTRAP-02 read-only Codex smoke test behavior, BOOTSTRAP-03A fake pipeline behavior, BOOTSTRAP-03B-1 real-role self-test behavior, BOOTSTRAP-03B-2A generic real-task manifest validation/plan behavior, BOOTSTRAP-03B-2B-A foundation preparation behavior, BOOTSTRAP-03B-2B-B change analysis behavior, BOOTSTRAP-03B-2B-C validator execution behavior, BOOTSTRAP-03B-2C internal orchestration, and BOOTSTRAP-03B-2D controlled fixed real-model self-test behavior. BOOTSTRAP-03B-3A adds a host-gated public generic real-task CLI surface and production wrapper, but the repository config keeps public execution disabled by default. This stage does not run a public generic real task, apply, resume, merge, commit, push, create a PR, launch Unity, install packages, or enable task sandbox network access.
 
 ## Created Files
 
@@ -15,6 +15,7 @@ The current stage is still safe for the Unity project. It keeps BOOTSTRAP-01 pre
 - `CodexAutomation/scripts/orchestrator.py`
 - `CodexAutomation/scripts/preflight.py`
 - `CodexAutomation/scripts/codex_runner.py`
+- `CodexAutomation/scripts/real_task_public_runner.py`
 - `CodexAutomation/scripts/schema_validator.py`
 - `CodexAutomation/scripts/models.py`
 - `CodexAutomation/scripts/file_utils.py`
@@ -109,10 +110,11 @@ Smoke test runtime output is written to ignored runtime paths:
 - Real-role self-test is started only by the explicit `--real-role-self-test` mode and is limited to an isolated runtime workspace.
 - Generic real-task manifest validation is started only by `--validate-task-manifest`.
 - Generic real-task planning is started only by `--real-task-plan`.
-- BOOTSTRAP-03B-2D has no `--real-task-run` mode.
+- BOOTSTRAP-03B-3A adds `--real-task-run <manifest-path>`, but it is blocked unless both host gates are enabled: `realTasks.allowExecution=true` and `realTaskExecutionPolicy.publicGenericRealTaskRunEnabled=true`.
+- Public run manifests must be tracked, committed, repository-relative regular lower-case `.json` files under `CodexAutomation/tasks/real_tasks/`; absolute paths, wildcards, reparse/symlink paths, runtime paths, and non-JSON paths are rejected.
 - BOOTSTRAP-03B-2D adds only `--real-task-execution-self-test`; it accepts no manifest path, workspace path, prompt, model, sandbox, approval policy, or positional arguments.
-- BOOTSTRAP-03B-2C has no production `--real-task-prepare`, public change-analysis CLI mode, generic validation-run CLI, or public generic execution CLI. The internal production API is `execute_real_task(validated_manifest_path)`, and test code may use the private `_execute_real_task_with_test_adapter(...)` fake-adapter entry only for no-model integration tests.
-- The generic real-task validate/plan modes use a no-Codex preflight profile; they do not run `codex.cmd --version`, `codex --version`, `codex exec`, or `codex sandbox`.
+- BOOTSTRAP-03B-2C has no production `--real-task-prepare`, public change-analysis CLI mode, or generic validation-run CLI. The internal production API is `execute_real_task(validated_manifest_path)`, and test code may use the private `_execute_real_task_with_test_adapter(...)` fake-adapter entry only for no-model integration tests.
+- The generic real-task validate/plan/public-run modes use a no-Codex preflight profile while they are host-blocked; they do not run `codex.cmd --version`, `codex --version`, `codex exec`, or `codex sandbox`.
 - No Unity code is changed.
 - No real implementer, repairer, or auditor may write to the Unity project.
 - No generic real-task implementer, repairer, or auditor is launched in BOOTSTRAP-03B-2B-A.
@@ -588,3 +590,70 @@ The controller generates and validates a host-owned manifest. It reuses the prod
 The production Codex adapter is selected only by this controller with fixed host config for executable identity, Windows sandbox implementation, and approval policy. It does not accept manifest-controlled model, sandbox, approval, executable, command, environment, network, Unity, package, retry, downgrade, or credit settings. Result bundles remain review-only with `eligibleForApply=false`; no automatic apply is implemented.
 
 Rate limits, timeouts, FAIL, and BLOCKED outcomes are terminal for the current invocation. The controller does not sleep, retry, run a second repair, switch models, use credits, or rerun the self-test automatically. Exit codes are `0=PASS`, `1=controller/internal error`, `2=FAIL`, `3=BLOCKED`, and `4=RATE_LIMITED`.
+
+## BOOTSTRAP-03B-3A Host-Gated Public Generic Real-Task CLI
+
+BOOTSTRAP-03B-3A adds one public generic real-task CLI surface:
+
+```bat
+python CodexAutomation/scripts/orchestrator.py --real-task-run CodexAutomation/tasks/real_tasks/task.json
+```
+
+The mode accepts exactly one repository-relative manifest path and requires the exact long option name `--real-task-run`; long-option abbreviations such as `--real-task-r` or `--real-task-ru` are rejected with public CLI exit code `64`. It does not accept public options for model, provider, sandbox, approval, workspace, writable roots, prompt, role prompt, network, package installation, Unity, timeout override, retry, repair count, invocation budget, apply, commit, push, PR, credits, resume, previous run id, report destination, adapter, or process launcher. It is mutually exclusive with every other orchestrator mode. Combinations involving `--real-task-run` fail with public CLI exit code `64` before config execution, manifest preparation, foundation, sandbox, model, or production run creation.
+
+Public generic execution is allowed only when both host-owned config gates are exact true:
+
+```text
+realTasks.allowExecution == true
+realTaskExecutionPolicy.publicGenericRealTaskRunEnabled == true
+```
+
+The repository default keeps both disabled for public execution (`allowExecution=false`, `publicGenericRealTaskRunEnabled=false`), so BOOTSTRAP-03B-3A does not run a public actual model task. The legacy field `publicRunCliEnabled` is not accepted as an alias and is rejected as an unknown policy field. The public wrapper blocks disabled gates with exit code `65` before public lock acquisition, foundation workspace preparation, sandbox probing, Codex invocation, or result bundle creation.
+
+The public wrapper owns the production boundary. It validates the host gates, validates the manifest path, rereads and strictly validates the manifest, rejects duplicate manifest JSON keys, requires the manifest to be tracked in Git and byte-identical to the current HEAD blob, records the manifest file identity, acquires a single public execution lock under ignored runtime, verifies a fully clean parent repository, rereads the manifest after lock acquisition, compares exact bytes, SHA-256, HEAD binding, and physical file identity, creates the fixed production `CodexRealTaskRoleAdapter` internally, and calls the private production-only orchestration wrapper without accepting any adapter/factory/model/sandbox/prompt/workspace input from CLI. The wrapper does not use the BOOTSTRAP-03B-2D self-test capability.
+
+Public run manifests must be regular `.json` files under:
+
+```text
+CodexAutomation/tasks/real_tasks/
+```
+
+The manifest path must be repository-relative, use forward slashes, have exact lower-case `.json`, be bounded to 262144 bytes, be non-empty, non-reparse, non-symlink, and stay outside ignored runtime/output paths. Empty paths, absolute paths, UNC paths, extended Windows paths, drive-relative paths, backslashes, colons, `.`, `..`, wildcard characters (`*`, `?`, `[`, `]`), alternate data streams, uppercase or mixed-case JSON extensions, directories, symlinks, reparse points, reparse ancestors, and oversized files are rejected fail-closed. Existing plan reports are never authorization.
+
+Public manifests must be added to Git and committed before a public run. The working-tree bytes must match the current HEAD blob exactly. Untracked manifests fail with `PUBLIC_REAL_TASK_MANIFEST_NOT_TRACKED`; tracked but modified or staged manifests fail with `PUBLIC_REAL_TASK_MANIFEST_NOT_COMMITTED`. The parent repository must be fully clean: no staged, unstaged, or untracked files, and no merge, rebase, cherry-pick, revert, bisect, or sequencer operation in progress.
+
+Only one public generic real-task run may hold the global lock:
+
+```text
+CodexAutomation/runtime/locks/public_generic_real_task_run.lock
+```
+
+The lock is created with atomic exclusive create and structured JSON metadata containing the public run id, manifest path, manifest SHA-256, process id, start time, and an owner token hash. The plaintext owner token is process-local and is not printed or written to reports. The owner keeps a retained lock handle for the public run lifetime; on Windows the lock uses one lazy `Kernel32` binding loaded with `WinDLL("kernel32", use_last_error=True)`, explicit 64-bit-safe function signatures, and pointer-sized `HANDLE` values for `CreateFileW`, `WriteFile`, `ReadFile`, `SetFilePointerEx`, `FlushFileBuffers`, `GetFileSizeEx`, `GetFileInformationByHandle`, `SetFileInformationByHandle`, and `CloseHandle`. Windows last-error codes are captured immediately from that configured binding path. Windows release marks the exact acquired handle for deletion and then makes exactly one controlled `CloseHandle` attempt even if delete-by-handle fails; delete failure remains the primary release error, close failure can only be secondary, and either failure blocks PASS. There is no unsafe pathname deletion fallback after handle release. Lock release is owner-only; changed, replaced, foreign, stale, or release-failed locks prevent terminal PASS. A stale lock requires manual human investigation and removal.
+
+Each accepted public attempt gets a unique ignored runtime root:
+
+```text
+CodexAutomation/runtime/public_real_task_runs/<publicRunId>/
+```
+
+The trusted public report is written with the trusted report writer to:
+
+```text
+CodexAutomation/runtime/public_real_task_runs/<publicRunId>/PUBLIC_REAL_TASK_RUN_REPORT.json
+```
+
+An adjacent trusted receipt is written to `PUBLIC_REAL_TASK_RUN_REPORT.receipt.json`. The receipt binds `BOOTSTRAP-03B-3A`, the exact `publicRunId`, report relative path, report SHA-256, report byte size, schema name, and report version. Console and exit authority are derived only after the receipt is reread and used to verify the persisted public report through the trusted report reader. Public PASS additionally requires a verified persisted production `FINAL_REAL_TASK_REPORT.json`, a verified persisted `result_bundle/RESULT_MANIFEST.json`, SHA-256 closure over bundle payloads, matching production run/task/manifest identity, and `eligibleForApply=false`. Result bundles remain review-only; no automatic apply, copy-back, commit, push, PR, or resume is implemented.
+
+Public exit codes are:
+
+```text
+0  PASS
+1  internal/report/bundle failure
+2  deterministic task FAIL
+3  safety BLOCKED
+4  RATE_LIMITED
+64 invalid public CLI usage or mode combination
+65 invalid config, disabled gate, invalid manifest, or unsafe manifest path
+```
+
+No automatic retry, rate-limit retry, sleep, model downgrade, fallback provider, credit fallback, second repair, resume, automatic apply, copy-back, commit, push, or PR creation is implemented in 3A. Actual public CLI acceptance is deferred to BOOTSTRAP-03B-3B.

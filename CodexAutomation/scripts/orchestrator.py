@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 from codex_runner import PASS_VERDICT, run_smoke_test
@@ -10,12 +11,26 @@ from pipeline_engine import run_pipeline_self_test, run_rate_limit_self_test
 from preflight import find_repo_root, format_summary, run_preflight
 from real_role_runner import run_real_role_plan, run_real_role_sandbox_probe, run_real_role_self_test
 from real_task_execution_self_test import exit_code_for_self_test_verdict, run_real_task_execution_self_test
+from real_task_public_runner import PUBLIC_REAL_TASK_INVALID_CLI, run_public_real_task
 from task_manifest_validator import validate_task_manifest_file, write_real_task_plan
 from validator_self_test_runner import run_validator_self_test
 
 
+class PublicAwareArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        if _argv_has_public_real_task_intent(sys.argv[1:]):
+            self.print_usage(sys.stderr)
+            self.exit(PUBLIC_REAL_TASK_INVALID_CLI, f"{self.prog}: error: {message}\n")
+        super().error(message)
+
+
+def _argv_has_public_real_task_intent(argv: list[str]) -> bool:
+    public_prefixes = ("--real-task-r", "--public-real-task", "--public-run")
+    return any(arg == "--real-task-run" or arg.startswith(public_prefixes) for arg in argv)
+
+
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Codex Automation BOOTSTRAP orchestrator.")
+    parser = PublicAwareArgumentParser(description="Codex Automation BOOTSTRAP orchestrator.", allow_abbrev=False)
     parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -72,6 +87,11 @@ def parse_args() -> argparse.Namespace:
         default=0,
         help="Run BOOTSTRAP-03B-2D controlled fixed real-model real-task execution self-test.",
     )
+    parser.add_argument(
+        "--real-task-run",
+        metavar="MANIFEST",
+        help="Run BOOTSTRAP-03B-3A host-gated public generic real-task execution.",
+    )
     return parser.parse_args()
 
 
@@ -89,10 +109,11 @@ def main() -> int:
         bool(args.real_task_plan),
         args.real_task_validator_self_test,
         bool(args.real_task_execution_self_test),
+        bool(args.real_task_run),
     ]
     if sum(1 for selected in selected_modes if selected) > 1:
         print("Select exactly one explicit run mode.")
-        return 2
+        return PUBLIC_REAL_TASK_INVALID_CLI if args.real_task_run else 2
     if args.real_task_execution_self_test > 1:
         print("--real-task-execution-self-test may be specified only once.")
         return 2
@@ -109,13 +130,14 @@ def main() -> int:
         or args.real_task_plan
         or args.real_task_validator_self_test
         or args.real_task_execution_self_test
+        or args.real_task_run
     )
     context = RepoContext(
         root=repo_root,
         automation_root=repo_root / "CodexAutomation",
         dry_run=not explicit_mode,
     )
-    no_codex_preflight = bool(args.validate_task_manifest or args.real_task_plan or args.real_task_validator_self_test)
+    no_codex_preflight = bool(args.validate_task_manifest or args.real_task_plan or args.real_task_validator_self_test or args.real_task_run)
     report = run_preflight(context, inspect_codex=not no_codex_preflight)
     print(format_summary(report))
     if not explicit_mode:
@@ -126,6 +148,26 @@ def main() -> int:
         return 1
 
     config = read_json(context.automation_root / "config.json")
+    if args.real_task_run:
+        result = run_public_real_task(repo_root, context.automation_root, config, args.real_task_run)
+        public_report = result.report
+        print("Public Real Task Run")
+        print(f"Public run: {public_report.get('publicRunId') or 'none'}")
+        print(f"Task: {public_report.get('taskId') or 'unavailable'}")
+        print(f"Manifest: {public_report.get('manifestRelativePath') or 'none'}")
+        print(f"Production run: {public_report.get('productionOrchestrationRunId') or 'none'}")
+        print(f"Final verdict: {public_report.get('finalVerdict') or result.finalVerdict}")
+        print(f"Invocations: {public_report.get('invocationsUsed', 0)}")
+        print(f"Repairs: {public_report.get('repairsUsed', 0)}")
+        print(f"Auditor approved: {public_report.get('auditorApproved', False)}")
+        print(f"Bundle manifest: {public_report.get('bundleRelativePath') or 'none'}")
+        print(f"Eligible for apply: {public_report.get('eligibleForApply', False)}")
+        print(f"Report: {Path(result.reportPath).resolve().relative_to(repo_root.resolve()).as_posix() if result.reportPath else 'none'}")
+        print(f"Error code: {public_report.get('errorCode') or 'none'}")
+        if public_report.get("errorMessage"):
+            print(f"Error message: {public_report['errorMessage']}")
+        return result.exitCode
+
     if args.validate_task_manifest:
         result = validate_task_manifest_file(repo_root, context.automation_root, config, Path(args.validate_task_manifest), inspect_sources=False)
         print("Real Task Manifest Validation")

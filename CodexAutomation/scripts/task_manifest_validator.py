@@ -122,7 +122,7 @@ REQUIRED_GIT_SNAPSHOT_COMMANDS = (
 )
 
 
-def parse_real_task_policy(config: dict[str, Any]) -> tuple[RealTaskPolicy | None, list[RealTaskError]]:
+def parse_real_task_policy(config: dict[str, Any], allow_execution_enabled: bool = False) -> tuple[RealTaskPolicy | None, list[RealTaskError]]:
     raw = config.get("realTasks")
     errors: list[RealTaskError] = []
     if not isinstance(raw, dict):
@@ -133,9 +133,14 @@ def parse_real_task_policy(config: dict[str, Any]) -> tuple[RealTaskPolicy | Non
         errors.append(_error("REAL_TASK_CONFIG_INVALID", "Unknown realTasks field.", f"realTasks.{field}"))
     for field in missing:
         errors.append(_error("REAL_TASK_CONFIG_INVALID", "Missing realTasks field.", f"realTasks.{field}"))
-    for field in DANGEROUS_FALSE_FIELDS:
+    dangerous_false = set(DANGEROUS_FALSE_FIELDS)
+    if allow_execution_enabled:
+        dangerous_false.remove("allowExecution")
+    for field in dangerous_false:
         if raw.get(field) is not False:
             errors.append(_error("REAL_TASK_CONFIG_INVALID", f"{field} must be exact false for {REAL_TASK_STAGE}.", f"realTasks.{field}"))
+    if allow_execution_enabled and raw.get("allowExecution") is not True:
+        errors.append(_error("REAL_TASK_PUBLIC_RUN_DISABLED", "realTasks.allowExecution must be exact true for public real-task execution.", "realTasks.allowExecution"))
     if raw.get("allowDirtyParentWorktree") is not True:
         errors.append(_error("REAL_TASK_CONFIG_INVALID", "allowDirtyParentWorktree must be exact true for plan mode.", "realTasks.allowDirtyParentWorktree"))
     exact_ints = {
@@ -204,8 +209,9 @@ def validate_task_manifest_file(
     config: dict[str, Any],
     manifest_path: Path,
     inspect_sources: bool = False,
+    allow_execution_enabled: bool = False,
 ) -> ManifestValidationResult:
-    policy, policy_errors = parse_real_task_policy(config)
+    policy, policy_errors = parse_real_task_policy(config, allow_execution_enabled=allow_execution_enabled)
     manifest, manifest_hash, json_errors = _read_manifest(manifest_path)
     if policy_errors or json_errors or policy is None or manifest is None:
         return ManifestValidationResult(False, manifest, manifest_hash, None, tuple(policy_errors + json_errors))
@@ -422,12 +428,25 @@ def _read_manifest(path: Path) -> tuple[Any | None, str | None, list[RealTaskErr
         return None, None, [_error("REAL_TASK_MANIFEST_JSON_INVALID", f"Manifest could not be read: {type(exc).__name__}.")]
     digest = hashlib.sha256(raw).hexdigest()
     try:
-        data = json.loads(raw.decode("utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError):
+        data = json.loads(raw.decode("utf-8"), object_pairs_hook=_reject_duplicate_json_keys)
+    except UnicodeDecodeError:
         return None, digest, [_error("REAL_TASK_MANIFEST_JSON_INVALID", "Manifest is not valid UTF-8 JSON.")]
+    except json.JSONDecodeError:
+        return None, digest, [_error("REAL_TASK_MANIFEST_JSON_INVALID", "Manifest is not valid UTF-8 JSON.")]
+    except ValueError as exc:
+        return None, digest, [_error("REAL_TASK_MANIFEST_JSON_INVALID", str(exc))]
     if not isinstance(data, dict):
         return data, digest, [_error("REAL_TASK_MANIFEST_SCHEMA_INVALID", "Manifest root must be an object.")]
     return data, digest, []
+
+
+def _reject_duplicate_json_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"Duplicate JSON key in manifest: {key}")
+        result[key] = value
+    return result
 
 
 def _path_array(

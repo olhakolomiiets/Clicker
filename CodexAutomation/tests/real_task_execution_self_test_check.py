@@ -32,7 +32,7 @@ class RealTaskExecutionSelfTestPolicyTests(unittest.TestCase):
         execution_policy, execution_errors = parse_execution_policy(CONFIG)
         self.assertFalse(execution_errors, [error.to_dict() for error in execution_errors])
         self.assertTrue(execution_policy.controlledRealModelSelfTestEnabled)
-        self.assertFalse(execution_policy.publicRunCliEnabled)
+        self.assertFalse(execution_policy.publicGenericRealTaskRunEnabled)
         policy, errors = parse_execution_self_test_policy(CONFIG)
         self.assertFalse(errors, [error.to_dict() for error in errors])
         self.assertEqual(policy.cliFlag, "--real-task-execution-self-test")
@@ -75,7 +75,7 @@ class RealTaskExecutionSelfTestCliTests(unittest.TestCase):
         help_run = subprocess.run([sys.executable, "CodexAutomation/scripts/orchestrator.py", "--help"], cwd=str(ROOT), capture_output=True, text=True, check=False, timeout=30)
         self.assertEqual(help_run.returncode, 0)
         self.assertIn("--real-task-execution-self-test", help_run.stdout)
-        for forbidden in ("--real-task-run", "--execute-real-task", "--run-task-manifest", "--resume-real-task", "--apply-task-result"):
+        for forbidden in ("--execute-real-task", "--run-task-manifest", "--resume-real-task", "--apply-task-result"):
             self.assertNotIn(forbidden, help_run.stdout)
         extra = subprocess.run([sys.executable, "CodexAutomation/scripts/orchestrator.py", "--real-task-execution-self-test", "manifest.json"], cwd=str(ROOT), capture_output=True, text=True, check=False, timeout=30)
         self.assertNotEqual(extra.returncode, 0)

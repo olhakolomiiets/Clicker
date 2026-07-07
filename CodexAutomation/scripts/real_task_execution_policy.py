@@ -8,7 +8,7 @@ from real_task_models import RealTaskError
 
 REQUIRED_FIELDS = {
     "enabled",
-    "publicRunCliEnabled",
+    "publicGenericRealTaskRunEnabled",
     "controlledRealModelSelfTestEnabled",
     "maxRoleInvocations",
     "maxRepairAttempts",
@@ -41,7 +41,7 @@ REQUIRED_FIELDS = {
 }
 
 DANGEROUS_FALSE = {
-    "publicRunCliEnabled",
+    "publicGenericRealTaskRunEnabled",
     "allowParentWrite",
     "allowAutomaticApply",
     "allowGitCommit",
@@ -78,7 +78,7 @@ CAPS = {
 }
 
 
-def parse_execution_policy(config: dict[str, Any]) -> tuple[RealTaskExecutionPolicy | None, list[RealTaskError]]:
+def parse_execution_policy(config: dict[str, Any], allow_public_generic_real_task_run_enabled: bool = False) -> tuple[RealTaskExecutionPolicy | None, list[RealTaskError]]:
     raw = config.get("realTaskExecutionPolicy")
     errors: list[RealTaskError] = []
     if not isinstance(raw, dict):
@@ -90,9 +90,14 @@ def parse_execution_policy(config: dict[str, Any]) -> tuple[RealTaskExecutionPol
     for field in TRUE_FIELDS:
         if raw.get(field) is not True:
             errors.append(error("REAL_TASK_EXECUTION_POLICY_INVALID", f"{field} must be exact true.", f"realTaskExecutionPolicy.{field}"))
-    for field in DANGEROUS_FALSE:
+    dangerous_false = set(DANGEROUS_FALSE)
+    if allow_public_generic_real_task_run_enabled:
+        dangerous_false.remove("publicGenericRealTaskRunEnabled")
+    for field in dangerous_false:
         if raw.get(field) is not False:
             errors.append(error("REAL_TASK_EXECUTION_POLICY_INVALID", f"{field} must be exact false.", f"realTaskExecutionPolicy.{field}"))
+    if allow_public_generic_real_task_run_enabled and raw.get("publicGenericRealTaskRunEnabled") is not True:
+        errors.append(error("REAL_TASK_PUBLIC_RUN_DISABLED", "realTaskExecutionPolicy.publicGenericRealTaskRunEnabled must be exact true for public generic real-task execution.", "realTaskExecutionPolicy.publicGenericRealTaskRunEnabled"))
     if raw.get("controlledRealModelSelfTestEnabled") is not True:
         errors.append(error("REAL_TASK_EXECUTION_POLICY_INVALID", "controlledRealModelSelfTestEnabled must be exact true for BOOTSTRAP-03B-2D.", "realTaskExecutionPolicy.controlledRealModelSelfTestEnabled"))
     if raw.get("maxRoleInvocations") != 3 or isinstance(raw.get("maxRoleInvocations"), bool):
@@ -111,7 +116,7 @@ def parse_execution_policy(config: dict[str, Any]) -> tuple[RealTaskExecutionPol
         return None, errors
     return RealTaskExecutionPolicy(
         enabled=True,
-        publicRunCliEnabled=False,
+        publicGenericRealTaskRunEnabled=bool(raw["publicGenericRealTaskRunEnabled"]),
         controlledRealModelSelfTestEnabled=True,
         maxRoleInvocations=3,
         maxRepairAttempts=int(raw["maxRepairAttempts"]),

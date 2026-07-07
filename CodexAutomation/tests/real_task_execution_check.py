@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -21,9 +22,10 @@ from real_task_execution_context import create_execution_handle, mark_execution_
 from real_task_bundle import create_result_bundle  # noqa: E402
 from real_task_execution_models import RealTaskExecutionContext, RoleInvocationResult, canonical_sha256  # noqa: E402
 from real_task_execution_policy import apply_manifest_role_budget, parse_execution_policy  # noqa: E402
+from real_task_public_runner import PUBLIC_REAL_TASK_INVALID_INPUT, run_public_real_task  # noqa: E402
 from real_task_role_adapter import CodexRealTaskRoleAdapter, FakeRealTaskRoleAdapter  # noqa: E402
 from real_task_role_prompts import build_auditor_prompt, build_implementer_prompt, build_repair_prompt, prompt_hash  # noqa: E402
-from real_task_runner import _execute_real_task_with_test_adapter, execute_real_task  # noqa: E402
+from real_task_runner import _execute_real_task_with_production_adapter, _execute_real_task_with_test_adapter, execute_real_task  # noqa: E402
 from schema_validator import validate as validate_schema_instance  # noqa: E402
 
 
@@ -36,7 +38,7 @@ class RealTaskExecutionPolicyTests(unittest.TestCase):
         self.assertFalse(errors, [error.to_dict() for error in errors])
         self.assertIsNotNone(policy)
         self.assertEqual(policy.maxRoleInvocations, 3)
-        self.assertFalse(policy.publicRunCliEnabled)
+        self.assertFalse(policy.publicGenericRealTaskRunEnabled)
         self.assertTrue(policy.controlledRealModelSelfTestEnabled)
         cases = [
             ("unknown", "x", True),
@@ -45,7 +47,7 @@ class RealTaskExecutionPolicyTests(unittest.TestCase):
             ("zero_cap", "maxBundleFiles", 0),
             ("too_many_invocations", "maxRoleInvocations", 4),
             ("too_many_repairs", "maxRepairAttempts", 2),
-            ("public_cli", "publicRunCliEnabled", True),
+            ("public_cli", "publicGenericRealTaskRunEnabled", True),
             ("self_test_disabled", "controlledRealModelSelfTestEnabled", False),
             ("danger", "allowNetwork", True),
         ]
@@ -57,6 +59,17 @@ class RealTaskExecutionPolicyTests(unittest.TestCase):
                 bad["realTaskExecutionPolicy"][field] = value
             with self.subTest(field=field):
                 self.assertTrue(parse_execution_policy(bad)[1])
+
+    def test_public_execution_policy_requires_explicit_parser_mode(self) -> None:
+        enabled = json.loads(json.dumps(CONFIG))
+        enabled["realTaskExecutionPolicy"]["publicGenericRealTaskRunEnabled"] = True
+        default_policy, default_errors = parse_execution_policy(enabled)
+        self.assertIsNone(default_policy)
+        self.assertTrue(default_errors)
+        public_policy, public_errors = parse_execution_policy(enabled, allow_public_generic_real_task_run_enabled=True)
+        self.assertFalse(public_errors, [error.to_dict() for error in public_errors])
+        self.assertIsNotNone(public_policy)
+        self.assertTrue(public_policy.publicGenericRealTaskRunEnabled)
 
     def test_manifest_budget_can_only_lower_caps(self) -> None:
         policy = parse_execution_policy(CONFIG)[0]
@@ -449,6 +462,41 @@ class RealTaskOrchestrationTests(unittest.TestCase):
 
     def test_public_production_entry_does_not_accept_adapter_injection(self) -> None:
         self.assertEqual(execute_real_task.__code__.co_argcount, 1)
+        self.assertFalse(hasattr(real_task_runner, "execute_public_real_task"))
+
+    def test_public_wrapper_disabled_blocks_before_production_execution(self) -> None:
+        with mock.patch("real_task_public_runner._execute_real_task_with_production_adapter") as execute_mock:
+            result = run_public_real_task(ROOT, ROOT / "CodexAutomation", json.loads(json.dumps(CONFIG)), "CodexAutomation/tasks/real_tasks/task.json")
+        self.assertEqual(result.exitCode, PUBLIC_REAL_TASK_INVALID_INPUT)
+        self.assertEqual(result.report["errorCode"], "REAL_TASK_PUBLIC_RUN_DISABLED")
+        self.assertEqual(result.report["invocationsUsed"], 0)
+        execute_mock.assert_not_called()
+
+    def test_private_public_production_wrapper_constructs_fixed_real_adapter(self) -> None:
+        enabled = json.loads(json.dumps(CONFIG))
+        enabled["realTasks"]["allowExecution"] = True
+        enabled["realTaskExecutionPolicy"]["publicGenericRealTaskRunEnabled"] = True
+        captured = {}
+
+        def fake_execute(manifest, root, automation_root, config, adapter, allow_public_execution_policy=False, parent_integrity_checkpoint=None):
+            captured["manifest"] = manifest
+            captured["root"] = root
+            captured["automation_root"] = automation_root
+            captured["config"] = config
+            captured["adapter"] = adapter
+            captured["allow_public_execution_policy"] = allow_public_execution_policy
+            return "sentinel"
+
+        with mock.patch("real_task_runner._shared_execute_real_task_core", side_effect=fake_execute):
+            result = _execute_real_task_with_production_adapter(Path("CodexAutomation/tasks/real_tasks/task.json"), ROOT, ROOT / "CodexAutomation", enabled)
+        self.assertEqual(result, "sentinel")
+        self.assertIsInstance(captured["adapter"], CodexRealTaskRoleAdapter)
+        self.assertTrue(captured["adapter"].allow_real_execution)
+        self.assertIs(captured["config"], enabled)
+        self.assertTrue(captured["allow_public_execution_policy"])
+
+    def test_public_production_wrapper_is_separate_from_test_adapter_wrapper(self) -> None:
+        self.assertNotIn("_execute_real_task_with_test_adapter", inspect.getsource(_execute_real_task_with_production_adapter))
 
 
 class RealTaskReportTests(unittest.TestCase):

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from file_utils import read_json
 from parent_git_snapshot import parent_git_snapshot, snapshots_equal
@@ -38,12 +38,51 @@ def execute_real_task(validated_manifest_path: str | Path) -> RealTaskExecutionR
     return _execute_real_task_with_test_adapter(Path(validated_manifest_path), root, automation_root, config, CodexRealTaskRoleAdapter())
 
 
+def _execute_real_task_with_production_adapter(
+    validated_manifest_path: str | Path,
+    root: Path,
+    automation_root: Path,
+    config: dict[str, Any],
+    parent_integrity_checkpoint: Callable[[str], None] | None = None,
+) -> RealTaskExecutionResult:
+    adapter = CodexRealTaskRoleAdapter(root=root, automation_root=automation_root, config=config, allow_real_execution=True)
+    return _shared_execute_real_task_core(
+        Path(validated_manifest_path),
+        root,
+        automation_root,
+        config,
+        adapter,
+        allow_public_execution_policy=True,
+        parent_integrity_checkpoint=parent_integrity_checkpoint,
+    )
+
+
 def _execute_real_task_with_test_adapter(
     validated_manifest_path: str | Path,
     root: Path,
     automation_root: Path,
     config: dict[str, Any],
     adapter: RealTaskRoleAdapter,
+    allow_public_execution_policy: bool = False,
+) -> RealTaskExecutionResult:
+    return _shared_execute_real_task_core(
+        validated_manifest_path,
+        root,
+        automation_root,
+        config,
+        adapter,
+        allow_public_execution_policy=allow_public_execution_policy,
+    )
+
+
+def _shared_execute_real_task_core(
+    validated_manifest_path: str | Path,
+    root: Path,
+    automation_root: Path,
+    config: dict[str, Any],
+    adapter: RealTaskRoleAdapter,
+    allow_public_execution_policy: bool = False,
+    parent_integrity_checkpoint: Callable[[str], None] | None = None,
 ) -> RealTaskExecutionResult:
     started = time.monotonic()
     state_history = [ExecutionState.PENDING.value]
@@ -51,6 +90,15 @@ def _execute_real_task_with_test_adapter(
     run_dir = root / "CodexAutomation" / "runtime" / "real_task_runs" / run_id
     final_report_path = run_dir / "FINAL_REAL_TASK_REPORT.json"
     run_dir.mkdir(parents=True, exist_ok=False)
+    if isinstance(adapter, CodexRealTaskRoleAdapter):
+        if adapter.root is None:
+            adapter.root = root
+        if adapter.automation_root is None:
+            adapter.automation_root = automation_root
+        if not adapter.config:
+            adapter.config = config
+        if adapter.run_dir is None:
+            adapter.run_dir = run_dir
     warnings: list[dict[str, Any]] = []
     invocations: list[RoleInvocationResult] = []
     repairs_used = 0
@@ -80,11 +128,11 @@ def _execute_real_task_with_test_adapter(
     try:
         _transition(state_history, ExecutionState.MANIFEST_REVALIDATING)
         manifest_path = Path(validated_manifest_path)
-        manifest_result = validate_task_manifest_file(root, automation_root, config, manifest_path, inspect_sources=True)
+        manifest_result = validate_task_manifest_file(root, automation_root, config, manifest_path, inspect_sources=True, allow_execution_enabled=allow_public_execution_policy)
         if not manifest_result.ok or manifest_result.manifest is None or manifest_result.effectivePlan is None:
             first = manifest_result.errors[0]
             raise RealTaskExecutionFailure(first.code, first.message)
-        execution_policy, policy_errors = parse_execution_policy(config)
+        execution_policy, policy_errors = parse_execution_policy(config, allow_public_generic_real_task_run_enabled=allow_public_execution_policy)
         if policy_errors or execution_policy is None:
             first = policy_errors[0]
             raise RealTaskExecutionFailure(first.code, first.message)
@@ -96,10 +144,12 @@ def _execute_real_task_with_test_adapter(
         if git_errors:
             first = git_errors[0]
             raise RealTaskExecutionFailure(first.code, first.message)
+        _parent_checkpoint(parent_integrity_checkpoint, "after_lock_manifest_before_foundation")
         _transition(state_history, ExecutionState.FOUNDATION_PREPARING)
         foundation_report = prepare_foundation_workspace(root, automation_root, config, manifest_path)
         if foundation_report.get("finalVerdict") != "PASS":
             raise RealTaskExecutionFailure(foundation_report.get("errorCode") or "REAL_TASK_EXECUTION_CONTEXT_INVALID", foundation_report.get("errorMessage") or "B-A foundation did not PASS.")
+        _parent_checkpoint(parent_integrity_checkpoint, "after_foundation_before_sandbox_probe")
         _transition(state_history, ExecutionState.CONTEXT_CREATING)
         context, context_hash = create_execution_context(
             root,
@@ -126,6 +176,7 @@ def _execute_real_task_with_test_adapter(
         if probe.get("finalVerdict") != "PASS":
             raise RealTaskExecutionFailure("REAL_TASK_SANDBOX_PROBE_FAILED", "Fresh sandbox probe failed.")
         transition_execution_handle(handle, ("BASELINE_READY",), "PROBE_PASS")
+        _parent_checkpoint(parent_integrity_checkpoint, "after_sandbox_probe_before_implementer_reservation")
         _transition(state_history, ExecutionState.IMPLEMENTING)
         before_implementer_integrity = capture_integrity_snapshot(handle, root, automation_root, config, "before_implementer", ("PROBE_PASS",))
         if not trust_integrity_pass(before_implementer_integrity):
@@ -152,6 +203,7 @@ def _execute_real_task_with_test_adapter(
         if decision["shouldRepair"]:
             _transition(state_history, ExecutionState.REPAIRING)
             before_repair = capture_integrity_snapshot(handle, root, automation_root, config, "before_repair", ("DIAGNOSTIC_COMPLETE",))
+            _parent_checkpoint(parent_integrity_checkpoint, "before_repairer_reservation")
             repair_reservation = reserve_role_invocation(handle, "REPAIRER", ("DIAGNOSTIC_COMPLETE",))
             context_dict = resolve_execution_authority(handle, automation_root, ("REPAIRER_RESERVED",)).context
             repair_prompt = build_repair_prompt(manifest_result.manifest, context_dict, diagnostic)
@@ -187,6 +239,7 @@ def _execute_real_task_with_test_adapter(
         transition_execution_handle(handle, ("FINAL_BB_PASS",), "FINAL_BC_PASS")
         _transition(state_history, ExecutionState.AUDITING)
         before_audit = capture_auditor_integrity(handle, root, automation_root, config, "before_auditor", ("FINAL_BC_PASS",))
+        _parent_checkpoint(parent_integrity_checkpoint, "before_auditor_reservation")
         auditor_reservation = reserve_role_invocation(handle, "AUDITOR", ("FINAL_BC_PASS",))
         context_dict = resolve_execution_authority(handle, automation_root, ("AUDITOR_RESERVED",)).context
         auditor_prompt = build_auditor_prompt(manifest_result.manifest, context_dict, final_validation.report)
@@ -198,13 +251,16 @@ def _execute_real_task_with_test_adapter(
         complete_role_invocation(handle, auditor_reservation, _reservation_status(auditor), auditor.invocationId)
         after_audit = capture_auditor_integrity(handle, root, automation_root, config, "after_auditor", ("AUDITOR_SUCCESS", "AUDITOR_FAIL"))
         audit_report, report_hashes["auditReportHash"] = write_full_audit_report(handle, root, automation_root, config, auditor, before_audit, after_audit)
+        _parent_checkpoint(parent_integrity_checkpoint, "after_auditor")
         if not audit_report["approved"]:
             raise RealTaskExecutionFailure(audit_report["errorCode"] or "REAL_TASK_AUDIT_REJECTED", audit_report["errorMessage"] or "Audit rejected.", "FAIL" if audit_report["errorCode"] == "REAL_TASK_AUDIT_REJECTED" else "BLOCKED")
         transition_execution_handle(handle, ("AUDITOR_SUCCESS",), "AUDIT_APPROVED")
+        _parent_checkpoint(parent_integrity_checkpoint, "before_bundle_finalization")
         _transition(state_history, ExecutionState.BUNDLING)
         bundle_manifest, report_hashes["resultBundleManifestHash"] = create_result_bundle(handle, root, automation_root, final_change.report, final_validation.report, audit_report, execution_policy.to_dict())
         transition_execution_handle(handle, ("AUDIT_APPROVED",), "BUNDLE_COMPLETE")
         final_verdict = derive_final_real_task_verdict(context_dict, final_change.report, final_validation.report, audit_report, bundle_manifest, parent_git_changed=False, error_code=None)
+        _parent_checkpoint(parent_integrity_checkpoint, "before_public_terminal_pass")
         final_state = ExecutionState.COMPLETED.value
     except RealTaskExecutionFailure as exc:
         error_code = exc.code
@@ -259,6 +315,11 @@ def _execute_real_task_with_test_adapter(
         except Exception:
             pass
     return RealTaskExecutionResult(final_verdict, final_state, final_report, str(final_report_path), str(run_dir / "result_bundle" / "RESULT_MANIFEST.json") if bundle_manifest else None)
+
+
+def _parent_checkpoint(parent_integrity_checkpoint: Callable[[str], None] | None, checkpoint: str) -> None:
+    if parent_integrity_checkpoint is not None:
+        parent_integrity_checkpoint(checkpoint)
 
 
 def _transition(history: list[str], state: ExecutionState) -> None:

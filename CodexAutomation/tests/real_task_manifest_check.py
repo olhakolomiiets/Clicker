@@ -21,6 +21,7 @@ from file_utils import read_json  # noqa: E402
 import task_manifest_validator  # noqa: E402
 import orchestrator  # noqa: E402
 import preflight  # noqa: E402
+from real_task_public_runner import resolve_public_manifest_path  # noqa: E402
 from task_manifest_validator import (  # noqa: E402
     inspect_source_paths,
     parse_real_task_policy,
@@ -58,6 +59,17 @@ class RealTaskManifestCheck(unittest.TestCase):
         self.assertFalse(policy.allowBinaryOutputs)
         self.assertEqual(policy.maxInvocations, 3)
         self.assertEqual(policy.maxRepairAttempts, 1)
+
+    def test_public_execution_real_task_policy_requires_explicit_parser_mode(self) -> None:
+        enabled = json.loads(json.dumps(CONFIG))
+        enabled["realTasks"]["allowExecution"] = True
+        default_policy, default_errors = parse_real_task_policy(enabled)
+        self.assertIsNone(default_policy)
+        self.assertTrue(default_errors)
+        public_policy, public_errors = parse_real_task_policy(enabled, allow_execution_enabled=True)
+        self.assertFalse(public_errors, [error.to_dict() for error in public_errors])
+        self.assertIsNotNone(public_policy)
+        self.assertTrue(public_policy.allowExecution)
 
     def test_config_rejects_missing_unknown_string_bool_bool_int_dangerous_and_overlap(self) -> None:
         cases = []
@@ -106,6 +118,11 @@ class RealTaskManifestCheck(unittest.TestCase):
             non_object = temp_path / "non_object.json"
             non_object.write_text("[]", encoding="utf-8")
             self.assertFalse(validate_task_manifest_file(ROOT, ROOT / "CodexAutomation", CONFIG, non_object).ok)
+            duplicate = temp_path / "duplicate.json"
+            duplicate.write_text('{"schemaVersion":1,"schemaVersion":1}\n', encoding="utf-8")
+            duplicate_result = validate_task_manifest_file(ROOT, ROOT / "CodexAutomation", CONFIG, duplicate)
+            self.assertFalse(duplicate_result.ok)
+            self.assertTrue(any(error.code == "REAL_TASK_MANIFEST_JSON_INVALID" for error in duplicate_result.errors))
             base = read_json(VALID)
             cases = [
                 ("unknown top", {"extra": True}),
@@ -708,6 +725,82 @@ class RealTaskManifestCheck(unittest.TestCase):
             check=False,
         )
         self.assertEqual(result.returncode, 2)
+
+    def test_public_real_task_mode_combination_uses_public_cli_error_code(self) -> None:
+        with mock.patch.object(sys, "argv", ["orchestrator.py", "--real-task-run", "CodexAutomation/tasks/real_tasks/task.json", "extra.json"]):
+            with self.assertRaises(SystemExit) as raised:
+                orchestrator.parse_args()
+        self.assertEqual(raised.exception.code, 64)
+
+    def test_public_real_task_cli_exactness_and_abbreviations(self) -> None:
+        manifest = "CodexAutomation/tasks/real_tasks/task.json"
+        with mock.patch.object(sys, "argv", ["orchestrator.py", "--real-task-run", manifest]):
+            args = orchestrator.parse_args()
+        self.assertEqual(args.real_task_run, manifest)
+        for argv in (
+            ["orchestrator.py", "--real-task-r", manifest],
+            ["orchestrator.py", "--real-task-ru", manifest],
+            ["orchestrator.py", "--public-real-task-model", "x"],
+            ["orchestrator.py", "--real-task-run"],
+            ["orchestrator.py", "--real-task-run", manifest, "extra.json"],
+        ):
+            with self.subTest(argv=argv), mock.patch.object(sys, "argv", argv):
+                with self.assertRaises(SystemExit) as raised:
+                    orchestrator.parse_args()
+                self.assertEqual(raised.exception.code, 64)
+        with mock.patch.object(sys, "argv", ["orchestrator.py", "--real-task-run", manifest, "--dry-run"]):
+            self.assertEqual(orchestrator.main(), 64)
+
+    def test_public_real_task_preflight_skips_codex_and_disabled_gate_blocks(self) -> None:
+        commands: list[list[str]] = []
+
+        def fake_run(command: list[str], cwd: Path, timeout_seconds: int = 10):
+            commands.append(command)
+            if command[:2] == ["python", "--version"] or command[:2] == ["git", "--version"]:
+                return _completed(command, 0, "ok\n")
+            if command[:2] == ["git", "status"]:
+                return _completed(command, 0, "")
+            if command[:2] == ["git", "branch"]:
+                return _completed(command, 0, "codex/automation-bootstrap\n")
+            if command[:2] == ["git", "rev-parse"]:
+                return _completed(command, 0, "true\n")
+            if command and command[0] == "powershell":
+                return _completed(command, 0, "")
+            return _completed(command, 0, "ok\n")
+
+        with mock.patch("preflight.run_command", side_effect=fake_run):
+            context = self._temp_context()
+            report = preflight.run_preflight(context, inspect_codex=False)
+        self.assertTrue(report["ok"])
+        flattened = " ".join(" ".join(command).lower() for command in commands)
+        self.assertNotIn("codex", flattened)
+
+    def test_public_manifest_path_authority(self) -> None:
+        public_root = ROOT / "CodexAutomation" / "tasks" / "real_tasks"
+        public_root.mkdir(parents=True, exist_ok=True)
+        public_manifest = public_root / "unit_public_manifest.json"
+        public_manifest.write_text("{}", encoding="utf-8", newline="\n")
+        try:
+            accepted, error = resolve_public_manifest_path(ROOT, "CodexAutomation/tasks/real_tasks/unit_public_manifest.json")
+            self.assertIsNotNone(accepted)
+            self.assertIsNone(error)
+        finally:
+            public_manifest.unlink(missing_ok=True)
+            try:
+                public_root.rmdir()
+            except OSError:
+                pass
+        for item in (
+            str(VALID),
+            "CodexAutomation/tasks/real_tasks/not_json.txt",
+            "CodexAutomation/tasks/real_tasks/../task.json",
+            "C:/outside/task.json",
+            "CodexAutomation/runtime/task.json",
+        ):
+            with self.subTest(item=item):
+                path, error = resolve_public_manifest_path(ROOT, item)
+                self.assertIsNone(path)
+                self.assertIsNotNone(error)
 
     def test_fixture_invalid_files_are_rejected(self) -> None:
         for name in [

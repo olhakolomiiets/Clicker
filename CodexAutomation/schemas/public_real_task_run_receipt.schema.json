@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "required": [
+    "receiptVersion",
+    "automationStage",
+    "publicRunId",
+    "reportRelativePath",
+    "reportSha256",
+    "reportByteSize",
+    "reportSchemaName",
+    "reportVersion",
+    "createdAt",
+    "complete",
+    "trusted"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "receiptVersion": { "type": "integer", "const": 1 },
+    "automationStage": { "type": "string", "const": "BOOTSTRAP-03B-3A" },
+    "publicRunId": { "type": "string" },
+    "reportRelativePath": { "type": "string" },
+    "reportSha256": { "type": "string" },
+    "reportByteSize": { "type": "integer" },
+    "reportSchemaName": { "type": "string", "const": "public_real_task_run.schema.json" },
+    "reportVersion": { "type": "integer", "const": 1 },
+    "createdAt": { "type": "string" },
+    "complete": { "type": "boolean", "const": true },
+    "trusted": { "type": "boolean", "const": true }
+  }
+}

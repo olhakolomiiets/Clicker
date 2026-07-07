@@ -48,7 +48,7 @@ def run_real_task_execution_self_test(root: Path, automation_root: Path, config:
         if errors or execution_policy is None or self_policy is None:
             first = errors[0]
             raise RealTaskExecutionFailure(first.code, first.message)
-        if execution_policy.publicRunCliEnabled is not False or execution_policy.controlledRealModelSelfTestEnabled is not True:
+        if execution_policy.publicGenericRealTaskRunEnabled is not False or execution_policy.controlledRealModelSelfTestEnabled is not True:
             raise RealTaskExecutionFailure("REAL_TASK_SELF_TEST_POLICY_INVALID", "Only controlled self-test execution may be enabled.")
         root_before, root_errors = parent_git_snapshot(root)
         if root_errors:

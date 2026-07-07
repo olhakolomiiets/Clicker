@@ -43,7 +43,7 @@ class ExecutionState(str, Enum):
 @dataclass(frozen=True)
 class RealTaskExecutionPolicy:
     enabled: bool
-    publicRunCliEnabled: bool
+    publicGenericRealTaskRunEnabled: bool
     controlledRealModelSelfTestEnabled: bool
     maxRoleInvocations: int
     maxRepairAttempts: int

@@ -14,11 +14,12 @@ using UnityEngine.UI;
 public class LevelController : MonoBehaviour
 {
     [SerializeField] private List<Button> _buyButtons;
-    [SerializeField] private List<Button> _levelButtons;   
+    [SerializeField] private List<Button> _levelButtons;
     [SerializeField] private Color disabledColor = new Color(1, 1, 1, 0.5f);
     [SerializeField] private Color enabledColor = Color.white;
 
     [SerializeField] private GameObject levelInfo;
+    [SerializeField] private bool isMetaPlanet = false;
 
     private CanvasGroup tipCanvasGroup;
     private RectTransform tipRectTransform;
@@ -89,25 +90,28 @@ public class LevelController : MonoBehaviour
 
     private void UpdateBuyButtons()
     {
-        for (int i = 0; i < _buyButtons.Count; i++)
+        if (!isMetaPlanet)
         {
-            bool isTargetButton = i == level - 1;
-            bool isActive = isTargetButton && data.Money > nextPlanetPrice && generalData.ActivePlanet == level;
+            for (int i = 0; i < _buyButtons.Count; i++)
+            {
+                bool isTargetButton = i == level - 1;
+                bool isActive = isTargetButton && data.Money > nextPlanetPrice && generalData.ActivePlanet == level;
 
-            ColorBlock colors = _buyButtons[i].colors;
-            colors.normalColor = isActive ? Color.white : disabledColor;
-            colors.pressedColor = isActive ? enabledColor : disabledColor;
-            colors.highlightedColor = isActive ? enabledColor : disabledColor;
-            colors.selectedColor = isActive ? enabledColor : disabledColor;
-            colors.disabledColor = disabledColor;
+                ColorBlock colors = _buyButtons[i].colors;
+                colors.normalColor = isActive ? Color.white : disabledColor;
+                colors.pressedColor = isActive ? enabledColor : disabledColor;
+                colors.highlightedColor = isActive ? enabledColor : disabledColor;
+                colors.selectedColor = isActive ? enabledColor : disabledColor;
+                colors.disabledColor = disabledColor;
 
-            _buyButtons[i].colors = colors;
-        }
+                _buyButtons[i].colors = colors;
+            }
 
-        for (int i = 0; i < _buyButtons.Count; i++)
-        {
-            if (generalData.ActivePlanet - 1 > i)
-                _buyButtons[i].gameObject.SetActive(false);
+            for (int i = 0; i < _buyButtons.Count; i++)
+            {
+                if (generalData.ActivePlanet - 1 > i)
+                    _buyButtons[i].gameObject.SetActive(false);
+            }
         }
     }
 
@@ -179,7 +183,7 @@ public class LevelController : MonoBehaviour
     }
 
     private IEnumerator HideTip()
-    {       
+    {
         yield return new WaitForSeconds(2f);
         isHidingTip = true;
         Sequence sequence = DOTween.Sequence();

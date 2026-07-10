@@ -177,6 +177,7 @@ namespace PlanetBuilder.Messages.Dialogs
                 Channel = MessageChannel.Dialog,
                 Priority = _priority,
                 CanInterrupt = false,
+                CanDisplayOverModal = true,
                 UseTypingAnimation = _useTypingAnimation,
                 TypingSpeed = _typingSpeed,
                 CanSkipTyping = _canSkipTyping

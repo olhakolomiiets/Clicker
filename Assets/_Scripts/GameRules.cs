@@ -19,6 +19,55 @@ public class GameRules : MonoBehaviour
 
     public double CurrentMoney => _currentGameData != null ? _currentGameData.Money : 0d;
 
+    /// <summary>
+    /// True once <see cref="PrepareGameData"/> has assigned the active planet data.
+    /// Tutorial controllers use this to wait until item/economy state is available.
+    /// </summary>
+    public bool IsPrepared => _currentGameData != null;
+
+    /// <summary>Number of Creation objects of the given index the player currently owns.</summary>
+    public int GetItemCount(int index)
+    {
+        if (_currentGameData == null || _currentGameData.ItemCount == null)
+            return 0;
+
+        return index >= 0 && index < _currentGameData.ItemCount.Count ? _currentGameData.ItemCount[index] : 0;
+    }
+
+    /// <summary>True when at least one object of the given Creation index is owned.</summary>
+    public bool IsItemOwned(int index) => GetItemCount(index) > 0;
+
+    /// <summary>True when the automation manager for the given Creation index is purchased.</summary>
+    public bool IsManagerPurchased(int index)
+    {
+        if (_currentGameData == null || _currentGameData.Managers == null)
+            return false;
+
+        return index >= 0 && index < _currentGameData.Managers.Count && _currentGameData.Managers[index];
+    }
+
+    /// <summary>Cost (coins) to buy the next copy of the given Creation index at its current owned count.</summary>
+    public double GetItemUpgradeCost(int index)
+    {
+        if (_currentGameData == null || _currentGameData.ItemDataList == null)
+            return 0d;
+
+        return index >= 0 && index < _currentGameData.ItemDataList.Count
+            ? _currentGameData.ItemDataList[index].ItemUpgradePrice(GetItemCount(index))
+            : 0d;
+    }
+
+    /// <summary>Cost (coins) of the automation manager for the given Creation index.</summary>
+    public double GetManagerPrice(int index)
+    {
+        if (_currentGameData == null || _currentGameData.ItemDataList == null)
+            return 0d;
+
+        return index >= 0 && index < _currentGameData.ItemDataList.Count
+            ? _currentGameData.ItemDataList[index].ManagerPrice
+            : 0d;
+    }
+
     private int timeAfterExit;
     private int itemIndex;
     private bool isTipShown;

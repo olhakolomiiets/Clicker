@@ -47,14 +47,14 @@ public class MetaUIController : MonoBehaviour
     [SerializeField] private RectTransform _shopItemsParent;
     [SerializeField] private Button _shopButton;
 
-    // [Header("Planet Levels")]
-    // [SerializeField] private RectTransform _menuArrow;
-    // [SerializeField] private GameObject _bg;
-    // [SerializeField] private RectTransform _levelsPanel;
-    // [SerializeField] private float _levelsPanelTopPosX, _levelsPanelMiddlePosX;
+    [Header("Planet Levels")]
+    [SerializeField] private RectTransform _menuArrow;
+    [SerializeField] private GameObject _bg;
+    [SerializeField] private RectTransform _levelsPanel;
+    [SerializeField] private float _levelsPanelTopPosX, _levelsPanelMiddlePosX;
 
     [HideInInspector] public bool isDisplayed;
-    // [HideInInspector] public bool isLevelsDisplayed;
+    [HideInInspector] public bool isLevelsDisplayed;
 
     [SerializeField] private GameObject _planet;
 
@@ -148,42 +148,42 @@ public class MetaUIController : MonoBehaviour
         }
     }
 
-    // public void ToggleLevelsPanel()
-    // {
-    //     if (isLevelsDisplayed)
-    //     {
-    //         _bg.SetActive(false);
+    public void ToggleLevelsPanel()
+    {
+        if (isLevelsDisplayed)
+        {
+            _bg.SetActive(false);
 
-    //         if (_backgroundImage != null)
-    //         {
-    //             StartCoroutine(SmoothScaleBackground(1f));
-    //         }
+            if (_backgroundImage != null)
+            {
+                StartCoroutine(SmoothScaleBackground(1f));
+            }
 
-    //         _levelsPanel.DOAnchorPosX(_levelsPanelMiddlePosX, _tweenDuration);
-    //         _menuArrow.DORotate(new Vector3(0, 0, 0), _tweenDuration);
-    //         isLevelsDisplayed = false;
+            _levelsPanel.DOAnchorPosX(_levelsPanelMiddlePosX, _tweenDuration);
+            _menuArrow.DORotate(new Vector3(0, 0, 0), _tweenDuration);
+            isLevelsDisplayed = false;
 
-    //         if (!_objectPlaceRotator.isRotating)
-    //         {
-    //             _planetRotator.enabled = true;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         _bg.SetActive(true);
+            if (!_objectPlaceRotator.isRotating)
+            {
+                _planetRotator.enabled = true;
+            }
+        }
+        else
+        {
+            _bg.SetActive(true);
 
-    //         if (_backgroundImage != null)
-    //         {
-    //             StartCoroutine(SmoothScaleBackground(0.93f));
-    //         }
+            if (_backgroundImage != null)
+            {
+                StartCoroutine(SmoothScaleBackground(0.93f));
+            }
 
-    //         _levelsPanel.DOAnchorPosX(_levelsPanelTopPosX, _tweenDuration);
+            _levelsPanel.DOAnchorPosX(_levelsPanelTopPosX, _tweenDuration);
 
-    //         _menuArrow.DORotate(new Vector3(0, 0, 180), _tweenDuration);
-    //         isLevelsDisplayed = true;
-    //         _planetRotator.enabled = false;
-    //     }
-    // }
+            _menuArrow.DORotate(new Vector3(0, 0, 180), _tweenDuration);
+            isLevelsDisplayed = true;
+            _planetRotator.enabled = false;
+        }
+    }
 
     IEnumerator SmoothScaleBackground(float scale)
     {

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Firebase.Analytics;
 using MoreMountains.Feedbacks;
 using System;
@@ -77,6 +78,50 @@ public class GameUI : MonoBehaviour
     {
         UIManagerController managerController = GetManagerController(index);
         return managerController != null ? managerController.ManagerBuyButtonTarget : null;
+    }
+
+    /// <summary>Tutorial helper: returns the coin balance panel GameObject (may be null).</summary>
+    public GameObject GetCoinsBalanceTarget() => _coins != null ? _coins.gameObject : null;
+
+    /// <summary>
+    /// Tutorial helper: plays a brief pop animation on the coin balance panel.
+    /// Safe no-op when no coin panel is assigned. Uses the existing DOTween setup.
+    /// </summary>
+    public void PlayCoinsEarnedFeedback()
+    {
+        if (_coins == null)
+            return;
+
+        Transform coinsTransform = _coins.transform;
+        coinsTransform.DOKill(false);
+        coinsTransform.DOPunchScale(Vector3.one * 0.18f, 0.3f, 8, 0.6f);
+    }
+
+    /// <summary>Tutorial helper: forces the Creation progress (earn) button interactable state.</summary>
+    public void SetCreationProgressButtonEnabled(int index, bool value)
+    {
+        ItemController itemController = GetCreationItemController(index);
+
+        if (itemController != null)
+            itemController.ToggleActivation(value);
+    }
+
+    /// <summary>Tutorial helper: forces the Creation buy button interactable state.</summary>
+    public void SetCreationBuyButtonInteractable(int index, bool value)
+    {
+        ItemController itemController = GetCreationItemController(index);
+
+        if (itemController != null)
+            itemController.ToggleBuyButton(value);
+    }
+
+    /// <summary>Tutorial helper: forces the manager buy button interactable state.</summary>
+    public void SetManagerBuyButtonInteractable(int index, bool value)
+    {
+        UIManagerController managerController = GetManagerController(index);
+
+        if (managerController != null)
+            managerController.ToggleButton(index, value);
     }
 
     public void PrepareCreationUI(List<ItemData> data)

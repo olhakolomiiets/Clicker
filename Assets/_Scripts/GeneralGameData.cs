@@ -12,8 +12,8 @@ public class GeneralGameData
     public int PassiveIncomeTime { get; set;} = 1800;
     public int ExtraTimePurchasedCount { get; set; }
     public bool IsGameSaved { get; set; }
-    public int ActivePlanet { get; set; } = 1;
-    public int PlanetUnlocked { get; set; } = 1;
+    public int ActivePlanet { get; set; } = 2;
+    public int PlanetUnlocked { get; set; } = 2;
 
     public void SetData(string dataString)
     {

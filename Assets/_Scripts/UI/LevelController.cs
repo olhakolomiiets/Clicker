@@ -41,6 +41,9 @@ public class LevelController : MonoBehaviour
     [SerializeField] private GameObject _moneyDependentGO;
     [SerializeField] private float _checkInterval = 0.5f;
 
+    private const int FreeScenesCount = 2;
+    private const int FirstPaidSceneIndex = 2;
+
     private void Awake()
     {
         tipRectTransform = levelInfo.GetComponent<RectTransform>();
@@ -62,12 +65,19 @@ public class LevelController : MonoBehaviour
 
     private IEnumerator CheckMoneyRoutine()
     {
-        yield return new WaitUntil(() => data != null);
+        yield return new WaitUntil(() => data != null && generalData != null);
 
         while (true)
         {
-            bool hasEnough = data.Money >= nextPlanetPrice && generalData.ActivePlanet == level;
-            _moneyDependentGO.SetActive(hasEnough);
+            bool isPaidScene = level >= FirstPaidSceneIndex;
+
+            bool hasEnough =
+                isPaidScene &&
+                data.Money >= nextPlanetPrice &&
+                generalData.ActivePlanet == level;
+
+            if (_moneyDependentGO != null)
+                _moneyDependentGO.SetActive(hasEnough);
 
             yield return new WaitForSeconds(_checkInterval);
         }
@@ -75,81 +85,120 @@ public class LevelController : MonoBehaviour
 
     private void UpdateLevelButtons()
     {
+        if (generalData == null)
+            return;
+
         for (int i = 0; i < _levelButtons.Count; i++)
         {
-            bool isActive = generalData.ActivePlanet > i;
+            // В списке нет кнопки сцены 0:
+            // i = 0 → сцена 1
+            // i = 1 → сцена 2
+            // i = 2 → сцена 3
+            int sceneIndex = i + 1;
+
+            bool isFree = sceneIndex < FreeScenesCount;
+            bool isUnlocked = isFree || generalData.ActivePlanet > sceneIndex;
+
+            _levelButtons[i].interactable = isUnlocked;
+
             ColorBlock colors = _levelButtons[i].colors;
-            colors.normalColor = isActive ? Color.white : disabledColor;
-            colors.pressedColor = isActive ? enabledColor : disabledColor;
-            colors.highlightedColor = isActive ? enabledColor : disabledColor;
-            colors.selectedColor = isActive ? enabledColor : disabledColor;
+            colors.normalColor = isUnlocked ? enabledColor : disabledColor;
+            colors.pressedColor = isUnlocked ? enabledColor : disabledColor;
+            colors.highlightedColor = isUnlocked ? enabledColor : disabledColor;
+            colors.selectedColor = isUnlocked ? enabledColor : disabledColor;
             colors.disabledColor = disabledColor;
+
             _levelButtons[i].colors = colors;
         }
     }
 
     private void UpdateBuyButtons()
     {
-        if (!isMetaPlanet)
+        if (generalData == null || data == null)
+            return;
+
+        for (int i = 0; i < _buyButtons.Count; i++)
         {
-            for (int i = 0; i < _buyButtons.Count; i++)
-            {
-                bool isTargetButton = i == level - 1;
-                bool isActive = isTargetButton && data.Money > nextPlanetPrice && generalData.ActivePlanet == level;
+            // i = 0 → покупка сцены 2
+            // i = 1 → покупка сцены 3
+            int paidSceneIndex = FirstPaidSceneIndex + i;
 
-                ColorBlock colors = _buyButtons[i].colors;
-                colors.normalColor = isActive ? Color.white : disabledColor;
-                colors.pressedColor = isActive ? enabledColor : disabledColor;
-                colors.highlightedColor = isActive ? enabledColor : disabledColor;
-                colors.selectedColor = isActive ? enabledColor : disabledColor;
-                colors.disabledColor = disabledColor;
+            bool alreadyPurchased = generalData.ActivePlanet > paidSceneIndex;
+            bool isCurrentPurchase =
+                level == paidSceneIndex &&
+                generalData.ActivePlanet == paidSceneIndex;
 
-                _buyButtons[i].colors = colors;
-            }
+            bool hasEnoughMoney = data.Money >= nextPlanetPrice;
+            bool isActive = isCurrentPurchase && hasEnoughMoney;
 
-            for (int i = 0; i < _buyButtons.Count; i++)
-            {
-                if (generalData.ActivePlanet - 1 > i)
-                    _buyButtons[i].gameObject.SetActive(false);
-            }
+            _buyButtons[i].gameObject.SetActive(!alreadyPurchased);
+
+            ColorBlock colors = _buyButtons[i].colors;
+            colors.normalColor = isActive ? enabledColor : disabledColor;
+            colors.pressedColor = isActive ? enabledColor : disabledColor;
+            colors.highlightedColor = isActive ? enabledColor : disabledColor;
+            colors.selectedColor = isActive ? enabledColor : disabledColor;
+            colors.disabledColor = disabledColor;
+
+            _buyButtons[i].colors = colors;
         }
     }
-
 
     public void PurchaseNextPlanet()
     {
-        if (data.Money > nextPlanetPrice && generalData.ActivePlanet == level)
-        {
-            OnNextPlanetPurchased.Invoke(nextPlanetPrice);
-            _buyButtons[level - 1].gameObject.SetActive(false);
+        if (data == null || generalData == null)
+            return;
 
-            int planet = level + 1;
-            FirebaseAnalytics.LogEvent(name: "bought_planet_" + planet);
-        }
-        else
+        int buyButtonIndex = level - FirstPaidSceneIndex;
+
+        bool validButtonIndex =
+            buyButtonIndex >= 0 &&
+            buyButtonIndex < _buyButtons.Count;
+
+        bool canPurchase =
+            validButtonIndex &&
+            data.Money >= nextPlanetPrice &&
+            generalData.ActivePlanet == level;
+
+        if (!canPurchase)
         {
             ShowTip();
+            return;
         }
+
+        OnNextPlanetPurchased?.Invoke(nextPlanetPrice);
+        _buyButtons[buyButtonIndex].gameObject.SetActive(false);
+
+        int planetNumber = level + 1;
+        FirebaseAnalytics.LogEvent("bought_planet_" + planetNumber);
+
+        UpdateLevelButtons();
+        UpdateBuyButtons();
     }
 
-    public void LoadSceene(int level)
+    public void LoadSceene(int sceneIndex)
     {
-        if (generalData.ActivePlanet > level)
+        if (generalData == null)
+            return;
+
+        bool isFree = sceneIndex < FreeScenesCount;
+        bool isUnlocked = isFree || generalData.ActivePlanet > sceneIndex;
+
+        if (isUnlocked)
         {
-            SceneManager.LoadScene(level);
-            PlayerPrefs.SetInt("SavedScene", level);
-            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! UIManager /// LoadSceene /// Scene Index: " + level);
+            SceneManager.LoadScene(sceneIndex);
+            PlayerPrefs.SetInt("SavedScene", sceneIndex);
+
+            Debug.Log(
+                "LevelController /// LoadSceene /// Scene Index: " +
+                sceneIndex
+            );
         }
         else
         {
             ShowTip();
         }
     }
-
-    // public void LoadRemoteSceene(string key)
-    // {
-    //     loadHandle = Addressables.LoadSceneAsync(key, LoadSceneMode.Single);
-    // }
 
     public void PrepareGameData(GeneralGameData generalGameData, GameData gameData)
     {

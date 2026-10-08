@@ -9,13 +9,13 @@ public class GameRules : MonoBehaviour
 
     public event Action<int, bool> OnModifyManagerAvailability, OnToggleItemActivationState;
     public event Action<int, float> OnStartWorkOnItem, OnStartWorkOnUpgradeItem;
-    public event Action<int> OnActivateItem, OnActivateUpgradeItem, OnAutomateItem, OnActivatePassiveIncome, OnUpgradeTutorialStepReady;
+    public event Action<int> OnActivateItem, OnActivateUpgradeItem, OnAutomateItem, OnActivatePassiveIncome;
     public event Action<int, double> OnItemIncomeEarned;
     public event Action<int> OnManagerPurchasedConfirmed, OnItemFirstPurchaseConfirmed, OnItemUpgradedConfirmed;
     public event Action<int, GameData, GeneralGameData> OnUpdateData, OnPerformAction, OnUpdateUpgradeData;
     public event Action<GeneralGameData, GameData> OnUpdateGameData;
-    public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnDataUpdated, OnRewardRecived;
-    public event Action<int, int> OnTutorialStepReady, OnManagerAvailability, OnManagerNonAvailability, OnItemNotReadyToBuy, OnItemReadyToBuy;
+    public event Action OnDataUpdated, OnRewardRecived;
+    public event Action<int, int> OnManagerAvailability, OnManagerNonAvailability, OnItemNotReadyToBuy, OnItemReadyToBuy;
 
     public double CurrentMoney => _currentGameData != null ? _currentGameData.Money : 0d;
 
@@ -66,6 +66,16 @@ public class GameRules : MonoBehaviour
         return index >= 0 && index < _currentGameData.ItemDataList.Count
             ? _currentGameData.ItemDataList[index].ManagerPrice
             : 0d;
+    }
+
+    /// <summary>True when the given Creation item uses the premium currency path.</summary>
+    public bool IsItemPremium(int index)
+    {
+        if (_currentGameData == null || _currentGameData.ItemDataList == null)
+            return false;
+
+        return index >= 0 && index < _currentGameData.ItemDataList.Count &&
+               _currentGameData.ItemDataList[index].IsPremium;
     }
 
     private int timeAfterExit;
@@ -181,9 +191,6 @@ public class GameRules : MonoBehaviour
 
         OnUpdateGameData?.Invoke(_currentGeneralData, _currentGameData);
 
-        if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
-            CheckTutorialStep();
-
         OnDataUpdated?.Invoke();
     }
 
@@ -237,9 +244,6 @@ public class GameRules : MonoBehaviour
     {
         _currentGameData.Money -= _currentGameData.ItemDataList[index].ItemUpgradePrice(_currentGameData.ItemCount[index]);
         _currentGameData.ItemCount[index] = 1;
-
-        if (PlayerPrefs.GetInt("TutorialStep") == 3)
-            OnTutorialStepCompleted?.Invoke();
 
         OnItemNotReadyToBuy?.Invoke(index, 0);
         isTipShown = false;
@@ -491,21 +495,6 @@ public class GameRules : MonoBehaviour
         _currentGameData.IsBoosterPurchased = true;
 
         SendDataUpdate();
-    }
-
-    private void CheckTutorialStep()
-    {
-        int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
-
-        if (tutorialStep == 1 && _currentGameData.Money >= 5)
-            OnTutorialStepCompleted?.Invoke();
-
-        if ((tutorialStep == 3 && _currentGameData.Money >= moneyForTreeHint)
-            || (tutorialStep == 4 && _currentGameData.Money >= moneyForManagerHint)
-            || (tutorialStep == 5 && _currentGameData.Money >= moneyForUpgradeHint))
-        {
-            OnTutorialStepReady?.Invoke(tutorialStep, 1);
-        }
     }
 
     public void HandlePlanet(double planetPrice)

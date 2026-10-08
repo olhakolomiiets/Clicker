@@ -16,9 +16,13 @@ namespace PlanetBuilder.Messages.Tutorial
         [SerializeField] private string _continueTextKey = "meta_tutorial_video_continue";
         [SerializeField] private string _skipTextKey = "meta_tutorial_video_skip";
 
+        private const string StartWorkTextKey = "meta_tutorial_step11_contract_button";
+
+        private Action _onVideoCompleted;
         private Action _onCompleted;
         private bool _canSkip;
-        private bool _isFinished;
+        private bool _videoCompleted;
+        private bool _dialogCompleted;
 
         private void OnEnable()
         {
@@ -36,7 +40,7 @@ namespace PlanetBuilder.Messages.Tutorial
             MessageTutorialTrace.LogHide(
                 "MetaTutorialVideoView.OnDisable",
                 gameObject,
-                $"canSkip={_canSkip} isFinished={_isFinished}");
+                $"canSkip={_canSkip} videoCompleted={_videoCompleted} dialogCompleted={_dialogCompleted}");
 
             if (_skipButton != null)
                 _skipButton.onClick.RemoveListener(HandleButton);
@@ -48,34 +52,65 @@ namespace PlanetBuilder.Messages.Tutorial
             }
 
             SetModalOpen(false);
+            _onVideoCompleted = null;
             _onCompleted = null;
         }
 
-        public void Show(bool canSkip, Action onCompleted)
+        public void Show(bool canSkip, Action onVideoCompleted, Action onCompleted)
         {
             _canSkip = canSkip;
-            _isFinished = false;
+            _videoCompleted = false;
+            _dialogCompleted = false;
+            _onVideoCompleted = onVideoCompleted;
             _onCompleted = onCompleted;
             gameObject.SetActive(true);
             RefreshButton();
 
             if (_videoPlayer != null && _videoPlayer.clip != null)
+            {
+                _videoPlayer.isLooping = false;
                 _videoPlayer.Play();
+            }
             else
                 HandleVideoFinished(_videoPlayer);
         }
 
+        public void SetDialogCompleted()
+        {
+            _dialogCompleted = true;
+            RefreshButton();
+        }
+
         private void HandleButton()
         {
-            if (!_canSkip && !_isFinished)
-                return;
+            if (!_videoCompleted)
+            {
+                if (_canSkip)
+                    CompleteVideo();
 
-            Complete();
+                return;
+            }
+
+            if (_dialogCompleted)
+                Complete();
         }
 
         private void HandleVideoFinished(VideoPlayer source)
         {
-            _isFinished = true;
+            CompleteVideo();
+        }
+
+        private void CompleteVideo()
+        {
+            if (_videoCompleted)
+                return;
+
+            _videoCompleted = true;
+
+            if (_videoPlayer != null)
+                _videoPlayer.Pause();
+
+            _onVideoCompleted?.Invoke();
             RefreshButton();
         }
 
@@ -84,11 +119,12 @@ namespace PlanetBuilder.Messages.Tutorial
             if (_skipButton == null)
                 return;
 
-            bool buttonVisible = _canSkip || _isFinished;
+            bool buttonVisible = (!_videoCompleted && _canSkip) ||
+                                 (_videoCompleted && _dialogCompleted);
             _skipButton.gameObject.SetActive(buttonVisible);
 
             if (_skipButtonText != null)
-                _skipButtonText.text = T(_isFinished ? _continueTextKey : _skipTextKey);
+                _skipButtonText.text = T(_videoCompleted ? StartWorkTextKey : _skipTextKey);
         }
 
         private static string T(string key)
@@ -98,6 +134,9 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void Complete()
         {
+            if (!_videoCompleted || !_dialogCompleted)
+                return;
+
             Action completed = _onCompleted;
             MessageTutorialTrace.LogHide(
                 "MetaTutorialVideoView.Complete",

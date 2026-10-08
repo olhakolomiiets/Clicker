@@ -12,22 +12,20 @@ public class UIManagerController : MonoBehaviour
     [SerializeField] private GameObject _buyManagerButtonPrefab;
     [SerializeField] private UISquadLeadersButton _buyButton;
     [SerializeField] private RectTransform _panelTransform;
+    private int _managerIndex;
 
     public event Action<int> OnManagerPurchased;
-    public GameObject ManagerButtonTarget => _managerButton;
-    public GameObject ManagerBuyButtonTarget => _buyButton != null ? _buyButton.gameObject : null;
-
-    private TutorialManager tutorialManager;
+    public event Action<int> OnManagerPanelOpened;
+    public GameObject ManagerButtonTarget => _managerButton != null
+        ? _managerButton.GetComponentInChildren<Button>(true)?.gameObject
+        : null;
+    public GameObject ManagerBuyButtonTarget => _buyButton != null
+        ? _buyButton.ButtonTarget
+        : null;
 
     private void Awake()
     {
         _buyManagersPanel = GameObject.FindGameObjectWithTag("ManagersPanel");
-    }
-
-    private void Start()
-    {
-        if (PlayerPrefs.GetInt("TutorialStepsCompleted") < 7)
-            tutorialManager = FindAnyObjectByType<TutorialManager>();
     }
 
     public void AddButton(int index, float price, Sprite currency)
@@ -38,6 +36,7 @@ public class UIManagerController : MonoBehaviour
         _buyButton.SetValue(price, currency);
         int i = index;
         _buyButton.OnClicked += () => OnManagerPurchased?.Invoke(i);
+        _managerIndex = index;
         _buyButton.ToggleActive(false);
 
         _buyButton.gameObject.SetActive(false);
@@ -46,11 +45,10 @@ public class UIManagerController : MonoBehaviour
     { 
         _buyButton.gameObject.SetActive(!_buyButton.gameObject.activeSelf);
 
-        if (PlayerPrefs.GetInt("TutorialStep") == 4 && tutorialManager != null)
-            tutorialManager.AdvanceTutorial();
-
         if (_buyButton.gameObject.activeSelf == false)
             return;
+
+        OnManagerPanelOpened?.Invoke(_managerIndex);
     }
 
     public void ToggleButton(int index, bool val)

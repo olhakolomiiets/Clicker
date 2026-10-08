@@ -117,6 +117,27 @@ namespace PlanetBuilder.Messages
             ProcessAcceptedMessage(snapshot, submittedAt);
         }
 
+        public bool TryShowMessageImmediately(MessageData message)
+        {
+            if (message == null)
+                return false;
+
+            float submittedAt = Time.unscaledTime;
+            MessageData snapshot = message.CreateSnapshot();
+
+            if (IsMessageActiveOrQueued(snapshot.Id) ||
+                IsCooldownActive(snapshot.Id, submittedAt) ||
+                !CanDisplay(snapshot))
+            {
+                return false;
+            }
+
+            StartCooldown(snapshot, submittedAt);
+            DisplayMessage(snapshot, submittedAt);
+            return _activeMessages.TryGetValue(snapshot.Channel, out ActiveMessage activeMessage) &&
+                   activeMessage.Message.Id == snapshot.Id;
+        }
+
         private void ProcessAcceptedMessage(MessageData message, float submittedAt)
         {
             if (!_displayValidator.CanDisplay(message))

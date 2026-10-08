@@ -53,13 +53,19 @@ public class GameUI : MonoBehaviour
     #endregion
 
     public event Action<int> OnProgressButtonClicked, OnWorkFinished, OnFirstActivation, OnUpdateWorkFinished, OnBuyButonClicked, OnActivationPremium, OnUpgradeItemPurchased, OnPurchaseItemFirstTime,
-        OnManagerPurchased;
-    public event Action OnTutorialStepCompleted, OnNewObjectPurchased;
+        OnManagerPurchased, OnManagerPanelOpened;
+    public event Action OnNewObjectPurchased;
 
     public GameObject GetCreationProgressButtonTarget(int index)
     {
         ItemController itemController = GetCreationItemController(index);
         return itemController != null ? itemController.ProgressButtonTarget : null;
+    }
+
+    public GameObject GetCreationItemVisualTarget(int index)
+    {
+        ItemController itemController = GetCreationItemController(index);
+        return itemController != null ? itemController.gameObject : null;
     }
 
     public GameObject GetCreationBuyButtonTarget(int index)
@@ -79,6 +85,8 @@ public class GameUI : MonoBehaviour
         UIManagerController managerController = GetManagerController(index);
         return managerController != null ? managerController.ManagerBuyButtonTarget : null;
     }
+
+    public int CreationItemCount => _uiCreationItemsList.Count;
 
     /// <summary>Tutorial helper: returns the coin balance panel GameObject (may be null).</summary>
     public GameObject GetCoinsBalanceTarget() => _coins != null ? _coins.gameObject : null;
@@ -148,6 +156,7 @@ public class GameUI : MonoBehaviour
             _uiItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
 
             _managerControllers[i].OnManagerPurchased += PurchaseManager;
+            _managerControllers[i].OnManagerPanelOpened += ManagerPanelOpened;
         }
 
         OnBuyButonClicked += ActivateNextCreationObject;
@@ -166,12 +175,6 @@ public class GameUI : MonoBehaviour
     {
         _objectActivator[i].ActivateNextObject();
 
-        if (PlayerPrefs.GetInt("TutorialStep") == 2)
-        {
-            OnNewObjectPurchased.Invoke();
-            StartCoroutine(InvokeAction());
-            return;
-        }
         FirebaseAnalytics.LogEvent(name: "creation_object_purchased");
     }
 
@@ -180,11 +183,6 @@ public class GameUI : MonoBehaviour
         _objectActivator[i].ActivateNextObject();
     }
 
-    private IEnumerator InvokeAction()
-    {        
-        yield return new WaitForSeconds(3.25f);
-        OnTutorialStepCompleted.Invoke();         
-    }
 
     public void PrepareUpgradeUI(List<UpgradeItemData> data)
     {
@@ -224,6 +222,8 @@ public class GameUI : MonoBehaviour
         mmfPlayer.PlayFeedbacks();
         OnManagerPurchased?.Invoke(index);
     }
+
+    private void ManagerPanelOpened(int index) => OnManagerPanelOpened?.Invoke(index);
 
     private void ConnectEvents(int i, ItemController itemController)
     {
@@ -338,47 +338,4 @@ public class GameUI : MonoBehaviour
         return _managerControllers[index];
     }
 
-    //public void TreesToggle()
-    //{
-    //    foreach (var obj in _trees)
-    //    {
-    //        obj.SetActive(!isTreesDisplayed);
-    //    }
-
-    //    isTreesDisplayed = !isTreesDisplayed;
-    //}
-
-    //public void ExtraObjsToggle()
-    //{
-    //    foreach (var obj in _extraObjs)
-    //    {
-    //        obj.SetActive(!isExtraObjsDisplayed);
-    //    }
-
-    //    isExtraObjsDisplayed = !isExtraObjsDisplayed;
-    //}
-
-    //public void DecorationsToggle()
-    //{
-    //    _decorations.SetActive(!isDecorationsDisplayed);
-    //    isDecorationsDisplayed = !isDecorationsDisplayed;
-    //}
-
-    //public void BuildingsToggle()
-    //{
-    //    _buildings.SetActive(!isBuildingsDisplayed);
-    //    isBuildingsDisplayed = !isBuildingsDisplayed;
-    //}
-
-    //public void HumansToggle()
-    //{
-    //    _humans.SetActive(!isHumansDisplayed);
-    //    isHumansDisplayed = !isHumansDisplayed;
-    //}
-
-    //public void AnimalsToggle()
-    //{
-    //    _animals.SetActive(!isAnimalsDisplayed);
-    //    isAnimalsDisplayed = !isAnimalsDisplayed;
-    //}
 }

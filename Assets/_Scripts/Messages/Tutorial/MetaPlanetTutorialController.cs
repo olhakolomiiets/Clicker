@@ -7,6 +7,7 @@ using PlanetBuilder.Messages;
 using PlanetBuilder.Messages.Characters;
 using PlanetBuilder.Messages.Dialogs;
 using System.Diagnostics;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -36,6 +37,7 @@ namespace PlanetBuilder.Messages.Tutorial
         private const int StageExplainGoal = 10;
         private const int StageOpenFirstPlanet = 11;
         private const float Step5BoxTargetTimeout = 2f;
+        private const float DialogShowTimeout = 1f;
         private const float Step5ShopCloseSettleSeconds = 0.45f;
         private const float Step6ShopOpenSettleSeconds = 0.45f;
         private const string Step5OpenSourceBoxClick = "box click";
@@ -52,6 +54,7 @@ namespace PlanetBuilder.Messages.Tutorial
         private const string Step7UpgradeObjectGlowName = "RuntimeStep7UpgradeObjectGlow";
         private const string Step8UpgradeButtonGlowName = "RuntimeStep8UpgradeButtonGlow";
         private const string Step5BoxContourGlowName = "RuntimeStep5BoxContourGlow";
+        private const string OverlayGlowLayersName = "GlowLayers";
 
         [Header("Systems")]
         [SerializeField] private TutorialManager _tutorialManager;
@@ -140,6 +143,7 @@ namespace PlanetBuilder.Messages.Tutorial
         private readonly Vector3[] _step3ToggleWorldCorners = new Vector3[4];
         private readonly Vector3[] _step4AddVariantWorldCorners = new Vector3[4];
         private readonly Vector3[] _step5VariantBuyButtonWorldCorners = new Vector3[4];
+        private readonly Vector3[] _step6ToggleWorldCorners = new Vector3[4];
         private readonly Vector3[] _step6UpgradeTabWorldCorners = new Vector3[4];
         private readonly Vector3[] _step7UpgradeObjectWorldCorners = new Vector3[4];
         private readonly Vector3[] _step8UpgradeButtonWorldCorners = new Vector3[4];
@@ -310,10 +314,8 @@ namespace PlanetBuilder.Messages.Tutorial
                     StepTutorialVideo();
                     break;
                 case StageExplainGoal:
-                    StepExplainGoal();
-                    break;
                 case StageOpenFirstPlanet:
-                    StepOpenFirstPlanet();
+                    CompleteTutorialAndOpenFirstPlanet();
                     break;
                 default:
                     CompleteTutorialAndOpenFirstPlanet();
@@ -1039,33 +1041,20 @@ namespace PlanetBuilder.Messages.Tutorial
         private void StepFirstOrder()
         {
             SaveStage(StageFirstOrder);
-            ShowBlockingDialog(
-                "MetaPlanetTutorial.FirstOrder",
-                new[]
-                {
-                    Line(T("meta_tutorial_step9_dialog_1"), CharacterMood.Thinking, _robotSpeakerId),
-                    Line(T("meta_tutorial_step9_dialog_2") + "\n\n" + T("meta_tutorial_step9_dialog_3"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step9_dialog_4") + "\n\n" + T("meta_tutorial_step9_dialog_5"), CharacterMood.Thinking, _robotSpeakerId),
-                    Line(T("meta_tutorial_step9_dialog_6") + "\n\n" + T("meta_tutorial_step9_dialog_7"), CharacterMood.Excited),
-                    Line(T("meta_tutorial_step9_dialog_8"), CharacterMood.Angry, _robotSpeakerId),
-                    Line(T("meta_tutorial_step9_dialog_9"), CharacterMood.Confused)
-                },
-                () =>
-                {
-                    if (_contractView != null)
-                    {
-                        _contractView.Show(
-                            T("meta_tutorial_step9_contract_title"),
-                            T("meta_tutorial_step9_contract_description"),
-                            string.Empty,
-                            T("meta_tutorial_step9_contract_button"),
-                            () => AdvanceToStage(StageTutorialVideo));
-                    }
-                    else
-                    {
-                        AdvanceToStage(StageTutorialVideo);
-                    }
-                });
+
+            if (_contractView != null)
+            {
+                _contractView.Show(
+                    T("meta_tutorial_step9_contract_title"),
+                    T("meta_tutorial_step9_contract_description"),
+                    string.Empty,
+                    T("meta_tutorial_step9_contract_button"),
+                    () => AdvanceToStage(StageTutorialVideo));
+            }
+            else
+            {
+                AdvanceToStage(StageTutorialVideo);
+            }
         }
 
         private void StepTutorialVideo()
@@ -1076,68 +1065,30 @@ namespace PlanetBuilder.Messages.Tutorial
             if (_videoView == null)
             {
                 MarkVideoWatched();
-                AdvanceToStage(StageExplainGoal);
+                CompleteTutorialAndOpenFirstPlanet();
                 return;
             }
 
-            _videoView.Show(canSkip, () =>
-            {
-                MarkVideoWatched();
-                AdvanceToStage(StageExplainGoal);
-            });
-        }
-
-        private void StepExplainGoal()
-        {
-            SaveStage(StageExplainGoal);
-            ShowBlockingDialog(
-                "MetaPlanetTutorial.ExplainGameGoal",
-                new[]
-                {
-                    Line(T("meta_tutorial_step10_dialog_1"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step10_dialog_2"), CharacterMood.Excited),
-                    Line(T("meta_tutorial_step10_dialog_3"), CharacterMood.Thinking),
-                    Line(T("meta_tutorial_step10_dialog_4"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step10_dialog_5"), CharacterMood.Thinking),
-                    Line(T("meta_tutorial_step10_dialog_6"), CharacterMood.Thinking),
-                    Line(T("meta_tutorial_step10_dialog_7"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step10_dialog_8"), CharacterMood.Confused),
-                    Line(T("meta_tutorial_step10_dialog_9"), CharacterMood.Shocked),
-                    Line(T("meta_tutorial_step10_dialog_10"), CharacterMood.Excited),
-                    Line(T("meta_tutorial_step10_dialog_11"), CharacterMood.Happy)
-                },
-                () => AdvanceToStage(StageOpenFirstPlanet));
-        }
-
-        private void StepOpenFirstPlanet()
-        {
-            SaveStage(StageOpenFirstPlanet);
-
-            Action showDialog = () => ShowBlockingDialog(
-                "MetaPlanetTutorial.OpenFirstPlanet.Dialog",
-                new[]
-                {
-                    Line(T("meta_tutorial_step11_dialog_1"), CharacterMood.Thinking),
-                    Line(T("meta_tutorial_step11_dialog_2"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step11_dialog_3"), CharacterMood.Excited),
-                    Line(T("meta_tutorial_step11_dialog_4"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step11_dialog_5"), CharacterMood.Confused)
-                },
+            SetConversationViewsTopPlacement(
+                true,
+                "MetaPlanetTutorial.FirstOrder",
+                "tutorial video dialog");
+            _videoView.Show(
+                canSkip,
+                MarkVideoWatched,
                 CompleteTutorialAndOpenFirstPlanet);
-
-            if (_contractView != null)
-            {
-                _contractView.Show(
-                    T("meta_tutorial_step11_contract_title"),
-                    T("meta_tutorial_step11_contract_description"),
-                    string.Empty,
-                    T("meta_tutorial_step11_contract_button"),
-                    showDialog);
-            }
-            else
-            {
-                showDialog();
-            }
+            ShowNonBlockingDialog(
+                "MetaPlanetTutorial.FirstOrder",
+                new[]
+                {
+                    Line(T("meta_tutorial_step9_dialog_1"), CharacterMood.Thinking, _robotSpeakerId),
+                    Line(T("meta_tutorial_step9_dialog_2") + "\n\n" + T("meta_tutorial_step9_dialog_3"), CharacterMood.Happy),
+                    Line(T("meta_tutorial_step9_dialog_4") + "\n\n" + T("meta_tutorial_step9_dialog_5"), CharacterMood.Thinking, _robotSpeakerId),
+                    Line(T("meta_tutorial_step9_dialog_6") + "\n\n" + T("meta_tutorial_step9_dialog_7"), CharacterMood.Excited),
+                    Line(T("meta_tutorial_step9_dialog_8"), CharacterMood.Angry, _robotSpeakerId),
+                    Line(T("meta_tutorial_step9_dialog_9"), CharacterMood.Confused)
+                },
+                _videoView.SetDialogCompleted);
         }
         private void StartClickStep(string stepId, string hint, GameObject target, Action completed)
         {
@@ -1393,13 +1344,12 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void ShowBlockingDialog(string dialogId, DialogLine[] lines, Action completed)
         {
-            ShowBlocker();
             _dialogCallbacks[dialogId] = completed;
             RequestDialog(new DialogData
             {
                 DialogId = dialogId,
                 ListDialogLine = new List<DialogLine>(lines)
-            });
+            }, true);
         }
 
         private void ShowNonBlockingDialog(string dialogId, DialogLine[] lines, Action completed)
@@ -1410,7 +1360,7 @@ namespace PlanetBuilder.Messages.Tutorial
             {
                 DialogId = dialogId,
                 ListDialogLine = new List<DialogLine>(lines)
-            });
+            }, false);
         }
 
         private DialogLine Line(string text, CharacterMood mood, string speakerId = null)
@@ -1423,13 +1373,13 @@ namespace PlanetBuilder.Messages.Tutorial
             };
         }
 
-        private void RequestDialog(DialogData dialog)
+        private void RequestDialog(DialogData dialog, bool isBlocking)
         {
             StopDialogRetry();
-            _dialogRetryCoroutine = StartCoroutine(StartDialogWhenAvailable(dialog));
+            _dialogRetryCoroutine = StartCoroutine(StartDialogWhenAvailable(dialog, isBlocking));
         }
 
-        private IEnumerator StartDialogWhenAvailable(DialogData dialog)
+        private IEnumerator StartDialogWhenAvailable(DialogData dialog, bool isBlocking)
         {
             while (ShouldStartTutorial())
             {
@@ -1441,6 +1391,24 @@ namespace PlanetBuilder.Messages.Tutorial
                     dialogChannelFree &&
                     _dialogManager.StartDialog(dialog))
                 {
+                    if (isBlocking)
+                    {
+                        string messageId = $"Dialog.{dialog.DialogId}.0";
+                        float timeoutAt = Time.unscaledTime + DialogShowTimeout;
+
+                        while (ShouldStartTutorial() &&
+                               Time.unscaledTime < timeoutAt &&
+                               messageManager.GetCurrentMessage(MessageChannel.Dialog)?.Id != messageId)
+                        {
+                            yield return null;
+                        }
+
+                        if (messageManager.GetCurrentMessage(MessageChannel.Dialog)?.Id == messageId)
+                            ShowBlocker();
+                        else
+                            Debug.LogWarning($"[MetaTutorialTrace] Blocking dialog '{dialog.DialogId}' did not become active; blocker kept hidden.", this);
+                    }
+
                     _dialogRetryCoroutine = null;
                     yield break;
                 }
@@ -1527,8 +1495,8 @@ namespace PlanetBuilder.Messages.Tutorial
 
             if (_step3ToggleGlow != null)
             {
-                RectTransform glowRect = _step3ToggleGlow.transform as RectTransform;
-                CanvasGroup canvasGroup = _step3ToggleGlow.GetComponent<CanvasGroup>();
+                RectTransform glowRect = _step3ToggleGlow.transform.Find(OverlayGlowLayersName) as RectTransform;
+                CanvasGroup canvasGroup = glowRect != null ? glowRect.GetComponent<CanvasGroup>() : null;
 
                 if (canvasGroup != null)
                     canvasGroup.alpha = 0.35f;
@@ -1613,8 +1581,8 @@ namespace PlanetBuilder.Messages.Tutorial
 
             if (_step4AddVariantGlow != null)
             {
-                RectTransform glowRect = _step4AddVariantGlow.transform as RectTransform;
-                CanvasGroup canvasGroup = _step4AddVariantGlow.GetComponent<CanvasGroup>();
+                RectTransform glowRect = _step4AddVariantGlow.transform.Find(OverlayGlowLayersName) as RectTransform;
+                CanvasGroup canvasGroup = glowRect != null ? glowRect.GetComponent<CanvasGroup>() : null;
 
                 if (canvasGroup != null)
                     canvasGroup.alpha = 0.42f;
@@ -1702,8 +1670,8 @@ namespace PlanetBuilder.Messages.Tutorial
 
             if (_step5VariantBuyButtonGlow != null)
             {
-                RectTransform glowRect = _step5VariantBuyButtonGlow.transform as RectTransform;
-                CanvasGroup canvasGroup = _step5VariantBuyButtonGlow.GetComponent<CanvasGroup>();
+                RectTransform glowRect = _step5VariantBuyButtonGlow.transform.Find(OverlayGlowLayersName) as RectTransform;
+                CanvasGroup canvasGroup = glowRect != null ? glowRect.GetComponent<CanvasGroup>() : null;
 
                 if (canvasGroup != null)
                     canvasGroup.alpha = 0.42f;
@@ -1766,9 +1734,10 @@ namespace PlanetBuilder.Messages.Tutorial
                 return;
 
             DestroyExistingRuntimeGlow(_step6ToggleTarget, Step6ToggleGlowName);
+            DestroyExistingStep6ToggleOverlayGlow();
 
             _step6ToggleOriginalScale = _step6ToggleTarget.localScale;
-            _step6ToggleGlow = CreateRuntimeSpriteGlow(
+            _step6ToggleGlow = CreateOverlaySpriteGlow(
                 _step6ToggleTarget,
                 Step6ToggleGlowName,
                 new Color(1f, 0.72f, 0.24f, 0.16f),
@@ -1776,16 +1745,18 @@ namespace PlanetBuilder.Messages.Tutorial
                 1.16f,
                 1.08f,
                 "Step6 toggle");
+            RefreshOverlayGlowLayout(_step6ToggleTarget, _step6ToggleGlow, _step6ToggleWorldCorners);
 
             _step6TogglePulseSequence = DOTween.Sequence()
                 .Append(_step6ToggleTarget.DOScale(_step6ToggleOriginalScale * 1.06f, 0.55f).SetEase(Ease.InOutSine))
                 .Append(_step6ToggleTarget.DOScale(_step6ToggleOriginalScale, 0.55f).SetEase(Ease.InOutSine))
-                .SetLoops(-1);
+                .SetLoops(-1)
+                .OnUpdate(() => RefreshOverlayGlowLayout(_step6ToggleTarget, _step6ToggleGlow, _step6ToggleWorldCorners));
 
             if (_step6ToggleGlow != null)
             {
-                RectTransform glowRect = _step6ToggleGlow.transform as RectTransform;
-                CanvasGroup canvasGroup = _step6ToggleGlow.GetComponent<CanvasGroup>();
+                RectTransform glowRect = _step6ToggleGlow.transform.Find(OverlayGlowLayersName) as RectTransform;
+                CanvasGroup canvasGroup = glowRect != null ? glowRect.GetComponent<CanvasGroup>() : null;
 
                 if (canvasGroup != null)
                     canvasGroup.alpha = 0.38f;
@@ -1801,7 +1772,8 @@ namespace PlanetBuilder.Messages.Tutorial
                         .Join(canvasGroup != null
                             ? canvasGroup.DOFade(0.38f, 0.55f).SetEase(Ease.InOutSine)
                             : null)
-                        .SetLoops(-1);
+                        .SetLoops(-1)
+                        .OnUpdate(() => RefreshOverlayGlowLayout(_step6ToggleTarget, _step6ToggleGlow, _step6ToggleWorldCorners));
                 }
             }
 
@@ -1829,6 +1801,8 @@ namespace PlanetBuilder.Messages.Tutorial
 
             if (_step6ToggleGlow != null)
                 Destroy(_step6ToggleGlow);
+
+            DestroyExistingStep6ToggleOverlayGlow();
 
             _step6ToggleTarget = null;
             _step6ToggleGlow = null;
@@ -1868,8 +1842,8 @@ namespace PlanetBuilder.Messages.Tutorial
 
             if (_step6UpgradeTabGlow != null)
             {
-                RectTransform glowRect = _step6UpgradeTabGlow.transform as RectTransform;
-                CanvasGroup canvasGroup = _step6UpgradeTabGlow.GetComponent<CanvasGroup>();
+                RectTransform glowRect = _step6UpgradeTabGlow.transform.Find(OverlayGlowLayersName) as RectTransform;
+                CanvasGroup canvasGroup = glowRect != null ? glowRect.GetComponent<CanvasGroup>() : null;
 
                 if (canvasGroup != null)
                     canvasGroup.alpha = 0.42f;
@@ -1952,8 +1926,8 @@ namespace PlanetBuilder.Messages.Tutorial
 
             if (_step7UpgradeObjectGlow != null)
             {
-                RectTransform glowRect = _step7UpgradeObjectGlow.transform as RectTransform;
-                CanvasGroup canvasGroup = _step7UpgradeObjectGlow.GetComponent<CanvasGroup>();
+                RectTransform glowRect = _step7UpgradeObjectGlow.transform.Find(OverlayGlowLayersName) as RectTransform;
+                CanvasGroup canvasGroup = glowRect != null ? glowRect.GetComponent<CanvasGroup>() : null;
 
                 if (canvasGroup != null)
                     canvasGroup.alpha = 0.48f;
@@ -2036,8 +2010,8 @@ namespace PlanetBuilder.Messages.Tutorial
 
             if (_step8UpgradeButtonGlow != null)
             {
-                RectTransform glowRect = _step8UpgradeButtonGlow.transform as RectTransform;
-                CanvasGroup canvasGroup = _step8UpgradeButtonGlow.GetComponent<CanvasGroup>();
+                RectTransform glowRect = _step8UpgradeButtonGlow.transform.Find(OverlayGlowLayersName) as RectTransform;
+                CanvasGroup canvasGroup = glowRect != null ? glowRect.GetComponent<CanvasGroup>() : null;
 
                 if (canvasGroup != null)
                     canvasGroup.alpha = 0.48f;
@@ -2126,7 +2100,7 @@ namespace PlanetBuilder.Messages.Tutorial
 
             GameObject root = new(glowName, typeof(RectTransform), typeof(CanvasGroup), typeof(LayoutElement));
             RectTransform rootRect = root.GetComponent<RectTransform>();
-            CanvasGroup canvasGroup = root.GetComponent<CanvasGroup>();
+            CanvasGroup visualGroup = root.GetComponent<CanvasGroup>();
             LayoutElement layoutElement = root.GetComponent<LayoutElement>();
 
             rootRect.SetParent(overlayRoot, false);
@@ -2137,18 +2111,28 @@ namespace PlanetBuilder.Messages.Tutorial
             rootRect.localScale = Vector3.one;
             rootRect.SetAsLastSibling();
 
-            if (canvasGroup != null)
+            if (visualGroup != null)
             {
-                canvasGroup.interactable = false;
-                canvasGroup.blocksRaycasts = false;
-                canvasGroup.alpha = 0f;
+                visualGroup.alpha = 1f;
+                visualGroup.interactable = false;
+                visualGroup.blocksRaycasts = false;
+                visualGroup.ignoreParentGroups = true;
             }
 
             if (layoutElement != null)
                 layoutElement.ignoreLayout = true;
 
-            AddStep3SpriteGlow(rootRect, "OuterSpriteGlow", sourceImage, outerColor, outerScale);
-            AddStep3SpriteGlow(rootRect, "InnerSpriteGlow", sourceImage, innerColor, innerScale);
+            GameObject glowLayers = new(OverlayGlowLayersName, typeof(RectTransform), typeof(CanvasGroup));
+            RectTransform glowLayersRect = glowLayers.GetComponent<RectTransform>();
+            CanvasGroup glowGroup = glowLayers.GetComponent<CanvasGroup>();
+            StretchToParent(glowLayersRect, rootRect);
+            glowGroup.alpha = 0f;
+            glowGroup.interactable = false;
+            glowGroup.blocksRaycasts = false;
+
+            AddStep3SpriteGlow(glowLayersRect, "OuterSpriteGlow", sourceImage, outerColor, outerScale);
+            AddStep3SpriteGlow(glowLayersRect, "InnerSpriteGlow", sourceImage, innerColor, innerScale);
+            AddTargetVisualCopies(rootRect, target);
 
             Debug.Log(
                 $"[MetaTutorialTrace] {logLabel} overlay glow sprite={sourceImage.sprite.name} sourceImage={GetTransformPath(sourceImage.transform)} imageType={sourceImage.type}",
@@ -2175,6 +2159,11 @@ namespace PlanetBuilder.Messages.Tutorial
         private void DestroyExistingStep6UpgradeTabOverlayGlow()
         {
             DestroyExistingOverlayGlow(Step6UpgradeTabGlowName);
+        }
+
+        private void DestroyExistingStep6ToggleOverlayGlow()
+        {
+            DestroyExistingOverlayGlow(Step6ToggleGlowName);
         }
 
         private void DestroyExistingStep7UpgradeObjectOverlayGlow()
@@ -2283,51 +2272,6 @@ namespace PlanetBuilder.Messages.Tutorial
                 "Step3 toggle");
         }
 
-        private GameObject CreateRuntimeSpriteGlow(
-            RectTransform target,
-            string glowName,
-            Color outerColor,
-            Color innerColor,
-            float outerScale,
-            float innerScale,
-            string logLabel)
-        {
-            Image sourceImage = GetStep3ToggleGlowSourceImage(target);
-
-            if (sourceImage == null || sourceImage.sprite == null)
-                return null;
-
-            GameObject root = new(glowName, typeof(RectTransform), typeof(CanvasGroup));
-            RectTransform rootRect = root.GetComponent<RectTransform>();
-            CanvasGroup canvasGroup = root.GetComponent<CanvasGroup>();
-
-            rootRect.SetParent(target.parent, false);
-            rootRect.anchorMin = target.anchorMin;
-            rootRect.anchorMax = target.anchorMax;
-            rootRect.anchoredPosition = target.anchoredPosition;
-            rootRect.sizeDelta = target.sizeDelta;
-            rootRect.pivot = target.pivot;
-            rootRect.localRotation = target.localRotation;
-            rootRect.localScale = Vector3.one;
-            rootRect.SetSiblingIndex(target.GetSiblingIndex());
-
-            if (canvasGroup != null)
-            {
-                canvasGroup.interactable = false;
-                canvasGroup.blocksRaycasts = false;
-                canvasGroup.alpha = 0f;
-            }
-
-            AddStep3SpriteGlow(rootRect, "OuterSpriteGlow", sourceImage, outerColor, outerScale);
-            AddStep3SpriteGlow(rootRect, "InnerSpriteGlow", sourceImage, innerColor, innerScale);
-
-            Debug.Log(
-                $"[MetaTutorialTrace] {logLabel} glow sprite={sourceImage.sprite.name} sourceImage={GetTransformPath(sourceImage.transform)} imageType={sourceImage.type}",
-                this);
-
-            return root;
-        }
-
         private static Image GetStep3ToggleGlowSourceImage(RectTransform target)
         {
             if (target == null)
@@ -2385,6 +2329,112 @@ namespace PlanetBuilder.Messages.Tutorial
             image.pixelsPerUnitMultiplier = sourceImage.pixelsPerUnitMultiplier;
             image.color = color;
             image.raycastTarget = false;
+        }
+
+        private static void AddTargetVisualCopies(RectTransform parent, RectTransform target)
+        {
+            Graphic[] graphics = target.GetComponentsInChildren<Graphic>(false);
+
+            for (int i = 0; i < graphics.Length; i++)
+            {
+                Graphic source = graphics[i];
+
+                if (source == null || !source.enabled || !source.gameObject.activeInHierarchy)
+                    continue;
+
+                if (source is Image sourceImage)
+                {
+                    GameObject copyObject = new($"TargetCopy.{source.name}", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                    RectTransform copyRect = copyObject.GetComponent<RectTransform>();
+                    Image copy = copyObject.GetComponent<Image>();
+                    MatchTargetGraphicRect(copyRect, parent, target, source.rectTransform);
+                    CopyImagePresentation(sourceImage, copy);
+                }
+                else if (source is TMP_Text sourceText)
+                {
+                    GameObject copyObject = new($"TargetCopy.{source.name}", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+                    RectTransform copyRect = copyObject.GetComponent<RectTransform>();
+                    TextMeshProUGUI copy = copyObject.GetComponent<TextMeshProUGUI>();
+                    MatchTargetGraphicRect(copyRect, parent, target, source.rectTransform);
+                    CopyTextPresentation(sourceText, copy);
+                }
+            }
+        }
+
+        private static void StretchToParent(RectTransform rect, RectTransform parent)
+        {
+            rect.SetParent(parent, false);
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            rect.localScale = Vector3.one;
+        }
+
+        private static void MatchTargetGraphicRect(
+            RectTransform copy,
+            RectTransform parent,
+            RectTransform target,
+            RectTransform source)
+        {
+            Vector3[] corners = new Vector3[4];
+            source.GetWorldCorners(corners);
+            Vector2 min = target.InverseTransformPoint(corners[0]);
+            Vector2 max = min;
+
+            for (int i = 1; i < corners.Length; i++)
+            {
+                Vector2 point = target.InverseTransformPoint(corners[i]);
+                min = Vector2.Min(min, point);
+                max = Vector2.Max(max, point);
+            }
+
+            Rect targetRect = target.rect;
+            copy.SetParent(parent, false);
+            copy.anchorMin = new Vector2(
+                (min.x - targetRect.xMin) / targetRect.width,
+                (min.y - targetRect.yMin) / targetRect.height);
+            copy.anchorMax = new Vector2(
+                (max.x - targetRect.xMin) / targetRect.width,
+                (max.y - targetRect.yMin) / targetRect.height);
+            copy.offsetMin = Vector2.zero;
+            copy.offsetMax = Vector2.zero;
+            copy.localScale = Vector3.one;
+        }
+
+        private static void CopyImagePresentation(Image source, Image copy)
+        {
+            copy.sprite = source.sprite;
+            copy.type = source.type;
+            copy.preserveAspect = source.preserveAspect;
+            copy.fillCenter = source.fillCenter;
+            copy.fillMethod = source.fillMethod;
+            copy.fillAmount = source.fillAmount;
+            copy.fillClockwise = source.fillClockwise;
+            copy.fillOrigin = source.fillOrigin;
+            copy.useSpriteMesh = source.useSpriteMesh;
+            copy.pixelsPerUnitMultiplier = source.pixelsPerUnitMultiplier;
+            copy.color = source.color;
+            copy.raycastTarget = false;
+        }
+
+        private static void CopyTextPresentation(TMP_Text source, TextMeshProUGUI copy)
+        {
+            copy.text = source.text;
+            copy.font = source.font;
+            copy.fontSharedMaterial = source.fontSharedMaterial;
+            copy.fontSize = source.fontSize;
+            copy.fontStyle = source.fontStyle;
+            copy.alignment = source.alignment;
+            copy.enableAutoSizing = source.enableAutoSizing;
+            copy.fontSizeMin = source.fontSizeMin;
+            copy.fontSizeMax = source.fontSizeMax;
+            copy.enableWordWrapping = source.enableWordWrapping;
+            copy.overflowMode = source.overflowMode;
+            copy.richText = source.richText;
+            copy.margin = source.margin;
+            copy.color = source.color;
+            copy.raycastTarget = false;
         }
 
         private static void DestroyExistingStep3Glow(RectTransform target)
@@ -2956,6 +3006,12 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void CompleteTutorialAndOpenFirstPlanet()
         {
+            StopDialogRetry();
+
+            if (_dialogManager != null)
+                _dialogManager.CancelDialog();
+
+            SetConversationViewsTopPlacement(false, null, "tutorial completed");
             GrantFinalReward();
             HideBlocker();
 
@@ -3566,6 +3622,3 @@ namespace PlanetBuilder.Messages.Tutorial
         }
     }
 }
-
-
-

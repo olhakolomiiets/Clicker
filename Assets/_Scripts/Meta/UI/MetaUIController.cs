@@ -67,9 +67,7 @@ public class MetaUIController : MonoBehaviour
 
     public bool IsUpgradeTabOpen => isDisplayed && _currentShopTabIndex == 1;
 
-    public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnStorePanelDisplayed;
-    public event Action<int> OnShowUpgradeOrShopTutorial, OnLoadTutorialStep;
-    public event Action<int, int> OnLoadTutorialNextStep;
+    public event Action OnStorePanelDisplayed;
 
     private void Start()
     {

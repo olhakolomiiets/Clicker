@@ -17,9 +17,4 @@ public class UIManager : MonoBehaviour
 
         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! UIManager /// LoadSceene /// Scene Index: " + level);
     }
-
-    // public void LoadRemoteSceene(string key)
-    // {
-    //     loadHandle = Addressables.LoadSceneAsync(key, LoadSceneMode.Single);
-    // }
 }

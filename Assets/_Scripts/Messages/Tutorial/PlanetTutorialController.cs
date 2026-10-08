@@ -1,10 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using PlanetBuilder.Messages;
 using PlanetBuilder.Messages.Characters;
 using PlanetBuilder.Messages.Dialogs;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace PlanetBuilder.Messages.Tutorial
 {
@@ -30,16 +33,23 @@ namespace PlanetBuilder.Messages.Tutorial
         private const string SmallTreeBoughtKey = "PlanetTutorialSmallTreeBought";
         private const string BigTreeBoughtKey = "PlanetTutorialBigTreeBought";
         private const string SmallTreeManagerBoughtKey = "PlanetTutorialSmallTreeManagerBought";
+        private const string EarlyManagerDialogShownKey = "PlanetTutorialEarlyManagerDialogShown";
         private const string TutorialActionsCompletedKey = "PlanetTutorialActionsCompleted";
 
         private const int SmallTreeIndex = 0;
         private const int BigTreeIndex = 1;
+        private const float DialogShowTimeout = 1f;
+        private const float ManagerTargetRetryInterval = 0.25f;
+        private const float ManagerTargetRetryDuration = 10f;
+        private const string RuntimeGlowName = "PlanetTutorialRuntimeGlow";
+        private const string RuntimeGlowLayersName = "GlowLayers";
 
         // TutorialManager step ids (also used as current-step guards in the event handlers).
         private const string StepIdOpenCreation = "Planet.OpenCreationTab";
         private const string StepIdEarnCoins = "Planet.EarnCoinsSmallTree";
         private const string StepIdBuySmallTree = "Planet.BuySmallTree";
         private const string StepIdBuyBigTree = "Planet.BuyBigTree";
+        private const string StepIdOpenManager = "Planet.OpenSmallTreeManager";
         private const string StepIdBuyManager = "Planet.BuySmallTreeManager";
 
         // Hardcoded RU strings. Localization is intentionally not introduced yet to match the
@@ -54,6 +64,8 @@ namespace PlanetBuilder.Messages.Tutorial
         private const string DialogBigTreeBought = "Отлично. Теперь на планете есть деревья.";
         private const string HintBuyManager = "Теперь купим автоматизацию заработка.";
         private const string DialogManagerBought = "Отлично. Теперь планета будет развиваться гораздо быстрее.";
+        private const string DialogManagerEarlyOpen = "Менеджер заставит эти объекты работать автоматически.";
+        private const string DialogManagerNotEnoughMoney = "Но монет пока маловато. Придётся поработать активнее.";
         private const string HintEarnMore = "Заработай немного больше монет, чтобы продолжить.";
 
         public enum PlanetTutorialStage
@@ -79,10 +91,6 @@ namespace PlanetBuilder.Messages.Tutorial
         [SerializeField] private GameUI _gameUI;
         [SerializeField] private GameManager _gameManager; // reserved for future save hooks; not required.
 
-        [Header("Legacy Tutorial Optional")]
-        [Tooltip("Optional reference to the legacy global::TutorialManager. It is never disabled by this controller.")]
-        [SerializeField] private global::TutorialManager _legacyTutorialManager;
-
         [Header("Characters")]
         [SerializeField] private string _contractorSpeakerId = "1";
 
@@ -102,11 +110,22 @@ namespace PlanetBuilder.Messages.Tutorial
         private bool _isEarnPhaseActive;
         private double _earnTargetMoney;
         private bool _smallTreeFirstEarnShown;
+        private bool _isWaitingForManagerMoney;
+        private bool _isEarlyManagerDialogActive;
 
         private Coroutine _initializationCoroutine;
         private Coroutine _dialogRetryCoroutine;
         private Coroutine _stepCompletedCoroutine;
         private Coroutine _deferredStageAdvanceCoroutine;
+        private Coroutine _managerTargetRetryCoroutine;
+        private bool _isStartingManagerTutorialFlow;
+
+        private readonly Vector3[] _targetWorldCorners = new Vector3[4];
+        private RectTransform _polishTarget;
+        private Vector3 _polishOriginalScale = Vector3.one;
+        private GameObject _runtimeGlow;
+        private Sequence _targetPulse;
+        private Sequence _glowPulse;
 
         public static bool ShouldStartTutorial() => PlayerPrefs.GetInt(CompletedKey, 0) != 1;
 
@@ -135,6 +154,8 @@ namespace PlanetBuilder.Messages.Tutorial
             StopDialogRetry();
             StopStepCompletedCallback();
             StopDeferredStageAdvanceCoroutine();
+            StopManagerTargetRetry();
+            StopTargetPolish();
 
             if (_ownsTutorialSession)
             {
@@ -148,6 +169,9 @@ namespace PlanetBuilder.Messages.Tutorial
 
             _isRunning = false;
             _isEarnPhaseActive = false;
+            _isWaitingForManagerMoney = false;
+            _isEarlyManagerDialogActive = false;
+            SetConversationViewsTopPlacement(false, null, "controller disabled");
             Unsubscribe();
         }
 
@@ -215,9 +239,6 @@ namespace PlanetBuilder.Messages.Tutorial
                 yield break;
             }
 
-            if (_legacyTutorialManager != null)
-                Debug.Log("[PlanetTutorialTrace] legacy TutorialManager reference is set; it is not disabled by this controller", this);
-
             Debug.Log(
                 "[PlanetTutorialTrace] references resolved " +
                 $"tutorialManager={GetManagerName(_tutorialManager)} " +
@@ -277,6 +298,9 @@ namespace PlanetBuilder.Messages.Tutorial
 
             _isRunning = false;
             _isEarnPhaseActive = false;
+            _isWaitingForManagerMoney = false;
+            _isEarlyManagerDialogActive = false;
+            StopTargetPolish();
 
             if (_ownsTutorialSession && _tutorialManager != null)
                 _tutorialManager.CancelTutorial();
@@ -285,12 +309,14 @@ namespace PlanetBuilder.Messages.Tutorial
                 HideBlocker();
 
             _ownsTutorialSession = false;
+            SetConversationViewsTopPlacement(false, null, "tutorial completed");
 
             Debug.Log("[PlanetTutorialTrace] tutorial completed", this);
         }
 
         private void StartStage(PlanetTutorialStage stage)
         {
+            StopTargetPolish();
             _isRunning = true;
             _ownsTutorialSession = true;
             SaveStage(stage);
@@ -370,7 +396,7 @@ namespace PlanetBuilder.Messages.Tutorial
                     }
 
                     _tutorialStepCompleted = HandleCreationTabOpened;
-                    StartManualHighlightStep(StepIdOpenCreation, DialogOpenCreation, target, CharacterMood.Thinking);
+                    StartHighlightStep(StepIdOpenCreation, DialogOpenCreation, target, CharacterMood.Thinking);
                 });
         }
 
@@ -471,7 +497,7 @@ namespace PlanetBuilder.Messages.Tutorial
             ShowBlockingDialog(
                 "PlanetTutorial.BuyBigTree.Done",
                 new[] { Line(DialogBigTreeBought, CharacterMood.Happy) },
-                () => EarnUntilMoneyOrAdvance(GetSmallTreeManagerCost(), PlanetTutorialStage.BuySmallTreeManager));
+                () => AdvanceToStage(PlanetTutorialStage.BuySmallTreeManager));
         }
 
         // ================================================================
@@ -479,13 +505,13 @@ namespace PlanetBuilder.Messages.Tutorial
         // ================================================================
         private void StepBuySmallTreeManager()
         {
-            EnsureShopOpenOnCreationTab();
-
             if (PlayerPrefs.GetInt(SmallTreeManagerBoughtKey, 0) == 1 ||
                 (_gameRules != null && _gameRules.IsManagerPurchased(SmallTreeIndex)))
             {
-                Debug.Log("[PlanetTutorialTrace] BuySmallTreeManager skipped: manager already purchased", this);
-                CompleteTutorial();
+                _isWaitingForManagerMoney = false;
+                EnsureShopOpenOnCreationTab();
+                Debug.Log("[PlanetTutorialTrace] BuySmallTreeManager confirmed: showing final dialog", this);
+                ShowManagerBoughtDialog();
                 return;
             }
 
@@ -493,31 +519,158 @@ namespace PlanetBuilder.Messages.Tutorial
 
             if (managerCost > 0d && GetCurrentMoney() < managerCost)
             {
-                StartEarnPhase(managerCost, HintEarnMore, () => AdvanceToStage(PlanetTutorialStage.BuySmallTreeManager));
+                StartPassiveManagerWait(managerCost);
                 return;
             }
 
+            StartManagerTutorialFlow();
+        }
+
+        private void StartPassiveManagerWait(double managerCost)
+        {
+            _isWaitingForManagerMoney = true;
+            _tutorialStepCompleted = null;
+            _isEarnPhaseActive = false;
+            StopTargetPolish();
+
+            if (_tutorialManager != null && _tutorialManager.IsRunning)
+                _tutorialManager.CancelTutorial();
+
+            HideBlocker();
+            SetConversationViewsTopPlacement(false, null, "waiting for manager money");
+            Debug.Log($"[PlanetTutorial] BuySmallTreeManager waiting for money: current={GetCurrentMoney()}, required={managerCost}", this);
+        }
+
+        private void StartManagerTutorialFlow()
+        {
+            if (_isStartingManagerTutorialFlow)
+                return;
+
+            _isStartingManagerTutorialFlow = true;
+            StopManagerTargetRetry();
+            _isWaitingForManagerMoney = false;
+            _tutorialStepCompleted = null;
+
+            try
+            {
+                GameObject buyTarget = _gameUI != null ? _gameUI.GetManagerBuyButtonTarget(SmallTreeIndex) : null;
+
+                if (buyTarget != null && buyTarget.activeInHierarchy)
+                {
+                    ShowManagerBuyStep();
+                    return;
+                }
+
+                EnsureShopOpenOnCreationTab();
+
+                GameObject target = _gameUI != null ? _gameUI.GetManagerButtonTarget(SmallTreeIndex) : null;
+
+                if (target == null || !target.activeInHierarchy)
+                {
+                    Debug.LogWarning("[PlanetTutorialTrace] BuySmallTreeManager: manager panel target missing/inactive; retrying", this);
+                    StartManagerTargetRetry();
+                    return;
+                }
+
+                _tutorialStepCompleted = ShowManagerBuyStep;
+                StartHighlightStep(
+                    StepIdOpenManager,
+                    HintBuyManager,
+                    target,
+                    CharacterMood.Thinking,
+                    TutorialCompletionCondition.TargetUIClicked);
+            }
+            finally
+            {
+                _isStartingManagerTutorialFlow = false;
+            }
+        }
+
+        private void ShowManagerBuyStep()
+        {
             GameObject target = _gameUI != null ? _gameUI.GetManagerBuyButtonTarget(SmallTreeIndex) : null;
 
             if (target == null || !target.activeInHierarchy)
             {
-                Debug.LogWarning("[PlanetTutorialTrace] BuySmallTreeManager: manager buy target missing/inactive; completing tutorial to avoid deadlock", this);
-                CompleteTutorial();
+                Debug.LogWarning("[PlanetTutorialTrace] BuySmallTreeManager: manager buy target missing/inactive after opening panel; retrying", this);
+                StartManagerTargetRetry();
                 return;
             }
 
-            if (_gameUI != null)
-                _gameUI.SetManagerBuyButtonInteractable(SmallTreeIndex, true);
+            _gameUI.SetManagerBuyButtonInteractable(SmallTreeIndex, true);
 
             _tutorialStepCompleted = null; // Completed via OnManagerPurchasedConfirmed event.
-            StartManualHighlightStep(StepIdBuyManager, HintBuyManager, target, CharacterMood.Thinking);
+            StartHighlightStep(StepIdBuyManager, HintBuyManager, target, CharacterMood.Thinking);
+        }
+
+        private void StartManagerTargetRetry()
+        {
+            if (_managerTargetRetryCoroutine == null)
+                _managerTargetRetryCoroutine = StartCoroutine(RetryManagerTargetRoutine());
+        }
+
+        private IEnumerator RetryManagerTargetRoutine()
+        {
+            float deadline = Time.unscaledTime + ManagerTargetRetryDuration;
+
+            while (_isRunning &&
+                   !_isWaitingForManagerMoney &&
+                   _currentStage == PlanetTutorialStage.BuySmallTreeManager &&
+                   Time.unscaledTime < deadline)
+            {
+                GameObject buyTarget = _gameUI != null ? _gameUI.GetManagerBuyButtonTarget(SmallTreeIndex) : null;
+
+                if (buyTarget != null && buyTarget.activeInHierarchy)
+                {
+                    _managerTargetRetryCoroutine = null;
+                    ShowManagerBuyStep();
+                    yield break;
+                }
+
+                GameObject managerTarget = _gameUI != null ? _gameUI.GetManagerButtonTarget(SmallTreeIndex) : null;
+
+                if (managerTarget != null && managerTarget.activeInHierarchy)
+                {
+                    _managerTargetRetryCoroutine = null;
+                    _tutorialStepCompleted = ShowManagerBuyStep;
+                    StartHighlightStep(
+                        StepIdOpenManager,
+                        HintBuyManager,
+                        managerTarget,
+                        CharacterMood.Thinking,
+                        TutorialCompletionCondition.TargetUIClicked);
+                    yield break;
+                }
+
+                yield return new WaitForSecondsRealtime(ManagerTargetRetryInterval);
+            }
+
+            _managerTargetRetryCoroutine = null;
+            _tutorialStepCompleted = null;
+            Debug.LogWarning("[PlanetTutorialTrace] BuySmallTreeManager: manager targets stayed unavailable; tutorial remains pending", this);
+        }
+
+        private void StopManagerTargetRetry()
+        {
+            if (_managerTargetRetryCoroutine == null)
+                return;
+
+            StopCoroutine(_managerTargetRetryCoroutine);
+            _managerTargetRetryCoroutine = null;
         }
 
         private void HandleManagerBought()
         {
             Debug.Log("[PlanetTutorialTrace] SmallTree manager purchased", this);
+            _isWaitingForManagerMoney = false;
+            _tutorialStepCompleted = null;
             CompleteManualStep();
 
+            ShowManagerBoughtDialog();
+        }
+
+        private void ShowManagerBoughtDialog()
+        {
             ShowBlockingDialog(
                 "PlanetTutorial.BuySmallTreeManager.Done",
                 new[] { Line(DialogManagerBought, CharacterMood.Excited) },
@@ -539,6 +692,7 @@ namespace PlanetBuilder.Messages.Tutorial
             }
 
             GameObject target = _gameUI != null ? _gameUI.GetCreationProgressButtonTarget(SmallTreeIndex) : null;
+            GameObject visualTarget = _gameUI != null ? _gameUI.GetCreationItemVisualTarget(SmallTreeIndex) : null;
 
             if (target == null)
             {
@@ -552,7 +706,7 @@ namespace PlanetBuilder.Messages.Tutorial
 
             _isEarnPhaseActive = true;
             _tutorialStepCompleted = onReached;
-            StartManualHighlightStep(StepIdEarnCoins, hint, target, CharacterMood.Thinking);
+            StartHighlightStep(StepIdEarnCoins, hint, target, CharacterMood.Thinking, visualTarget: visualTarget);
 
             // Money may have already crossed the threshold between frames.
             if (_isEarnPhaseActive && GetCurrentMoney() >= _earnTargetMoney)
@@ -602,14 +756,20 @@ namespace PlanetBuilder.Messages.Tutorial
                     _gameUI.SetCreationProgressButtonEnabled(itemIndex, true);
             }
 
-            StartManualHighlightStep(stepId, hint, target, CharacterMood.Thinking);
+            StartHighlightStep(stepId, hint, target, CharacterMood.Thinking);
             return true;
         }
 
         // ================================================================
         // Tutorial step plumbing
         // ================================================================
-        private void StartManualHighlightStep(string stepId, string hint, GameObject target, CharacterMood mood)
+        private void StartHighlightStep(
+            string stepId,
+            string hint,
+            GameObject target,
+            CharacterMood mood,
+            TutorialCompletionCondition completionCondition = TutorialCompletionCondition.Manual,
+            GameObject visualTarget = null)
         {
             if (_tutorialManager == null)
             {
@@ -621,18 +781,22 @@ namespace PlanetBuilder.Messages.Tutorial
             HideBlocker();
             SetConversationViewsTopPlacement(ShouldUseTopPlacement(), stepId, "StartStep");
 
+            GameObject polishTarget = visualTarget != null ? visualTarget : target;
+            float pulseScale = visualTarget != null && visualTarget != target ? 1.05f : 1.08f;
+            bool usesRuntimePolish = StartTargetPolish(polishTarget, pulseScale);
+
             TutorialStepData stepData = new()
             {
                 StepId = stepId,
                 MessageText = hint,
                 TargetUI = target,
-                CompletionCondition = TutorialCompletionCondition.Manual,
+                CompletionCondition = completionCondition,
                 SpeakerId = _contractorSpeakerId,
                 CharacterMood = mood,
-                EnableHighlight = target != null,
-                EnablePulse = target != null,
-                ShowArrow = target != null,
-                DisableInteractionCutout = false
+                EnableHighlight = target != null && !usesRuntimePolish,
+                EnablePulse = target != null && !usesRuntimePolish,
+                ShowArrow = target != null && !usesRuntimePolish,
+                DisableInteractionCutout = true
             };
 
             _tutorialManager.Configure(
@@ -652,6 +816,7 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void HandleStepCompleted(TutorialStepData step)
         {
+            StopTargetPolish();
             Action completed = _tutorialStepCompleted;
             _tutorialStepCompleted = null;
             _stepCompletedCoroutine = StartCoroutine(InvokeStepCompletedNextFrame(completed));
@@ -684,7 +849,7 @@ namespace PlanetBuilder.Messages.Tutorial
         // ================================================================
         private void ShowBlockingDialog(string dialogId, DialogLine[] lines, Action completed)
         {
-            ShowBlocker();
+            SetConversationViewsTopPlacement(ShouldUseTopPlacement(), dialogId, "ShowBlockingDialog");
             _dialogCallbacks[dialogId] = completed;
             RequestDialog(new DialogData { DialogId = dialogId, ListDialogLine = new List<DialogLine>(lines) });
         }
@@ -718,6 +883,21 @@ namespace PlanetBuilder.Messages.Tutorial
                     dialogChannelFree &&
                     _dialogManager.StartDialog(dialog))
                 {
+                    string messageId = $"Dialog.{dialog.DialogId}.0";
+                    float timeoutAt = Time.unscaledTime + DialogShowTimeout;
+
+                    while (_isRunning &&
+                           Time.unscaledTime < timeoutAt &&
+                           messageManager.GetCurrentMessage(MessageChannel.Dialog)?.Id != messageId)
+                    {
+                        yield return null;
+                    }
+
+                    if (messageManager.GetCurrentMessage(MessageChannel.Dialog)?.Id == messageId)
+                        ShowBlocker();
+                    else
+                        Debug.LogWarning($"[PlanetTutorialTrace] Blocking dialog '{dialog.DialogId}' did not become active; blocker kept hidden.", this);
+
                     _dialogRetryCoroutine = null;
                     yield break;
                 }
@@ -794,6 +974,9 @@ namespace PlanetBuilder.Messages.Tutorial
             if (messageManager == null)
                 return;
 
+            if (useTopPlacement && _uiController != null && _uiController.isDisplayed)
+                messageManager.SetShopOpen(false);
+
             messageManager.SetConversationViewsTopPlacement(useTopPlacement, stepId, reason);
         }
 
@@ -821,7 +1004,19 @@ namespace PlanetBuilder.Messages.Tutorial
             TutorialStepData current = _tutorialManager != null ? _tutorialManager.CurrentStep : null;
 
             if (current == null || current.StepId != StepIdOpenCreation)
+            {
+                if (_isRunning &&
+                    !_isWaitingForManagerMoney &&
+                    !_isStartingManagerTutorialFlow &&
+                    _managerTargetRetryCoroutine == null &&
+                    _currentStage == PlanetTutorialStage.BuySmallTreeManager &&
+                    (_tutorialManager == null || !_tutorialManager.IsRunning))
+                {
+                    StartManagerTutorialFlow();
+                }
+
                 return;
+            }
 
             Debug.Log("[PlanetTutorialTrace] shop opened during OpenCreationTab step", this);
             CompleteManualStep();
@@ -829,15 +1024,24 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void HandleShopTabSelected(int index)
         {
-            // Informational only.
+            if (index == 0 &&
+                _isRunning &&
+                !_isWaitingForManagerMoney &&
+                !_isStartingManagerTutorialFlow &&
+                _managerTargetRetryCoroutine == null &&
+                _currentStage == PlanetTutorialStage.BuySmallTreeManager &&
+                (_tutorialManager == null || !_tutorialManager.IsRunning))
+            {
+                StartManagerTutorialFlow();
+            }
         }
 
         private void HandleItemIncomeEarned(int index, double income)
         {
-            if (index != SmallTreeIndex || income <= 0d)
+            if (income <= 0d)
                 return;
 
-            if (!_smallTreeFirstEarnShown)
+            if (index == SmallTreeIndex && !_smallTreeFirstEarnShown)
             {
                 _smallTreeFirstEarnShown = true;
                 SaveFlag(CoinsEarnedFromSmallTreeKey);
@@ -849,12 +1053,88 @@ namespace PlanetBuilder.Messages.Tutorial
                 Debug.Log("[PlanetTutorialTrace] first coins earned from SmallTree", this);
             }
 
-            if (_isEarnPhaseActive && GetCurrentMoney() >= _earnTargetMoney)
+            if (index == SmallTreeIndex && _isEarnPhaseActive && GetCurrentMoney() >= _earnTargetMoney)
             {
                 Debug.Log($"[PlanetTutorialTrace] earn target reached money={GetCurrentMoney()} target={_earnTargetMoney}", this);
                 _isEarnPhaseActive = false;
                 CompleteManualStep();
             }
+
+            TryResumeManagerTutorial();
+        }
+
+        private void HandleGameDataUpdated()
+        {
+            TryResumeManagerTutorial();
+        }
+
+        private void TryResumeManagerTutorial()
+        {
+            if (!_isRunning ||
+                !_isWaitingForManagerMoney ||
+                _isEarlyManagerDialogActive ||
+                _currentStage != PlanetTutorialStage.BuySmallTreeManager)
+            {
+                return;
+            }
+
+            double managerCost = GetSmallTreeManagerCost();
+
+            if (managerCost > 0d && GetCurrentMoney() < managerCost)
+                return;
+
+            Debug.Log("[PlanetTutorial] Manager money requirement reached. Resuming tutorial.", this);
+            StartManagerTutorialFlow();
+        }
+
+        private void HandleManagerPanelOpened(int index)
+        {
+            if (index == SmallTreeIndex &&
+                _isRunning &&
+                !_isWaitingForManagerMoney &&
+                !_isStartingManagerTutorialFlow &&
+                _managerTargetRetryCoroutine == null &&
+                _currentStage == PlanetTutorialStage.BuySmallTreeManager &&
+                (_tutorialManager == null || !_tutorialManager.IsRunning))
+            {
+                StartManagerTutorialFlow();
+                return;
+            }
+
+            if (index != SmallTreeIndex ||
+                !_isRunning ||
+                !_isWaitingForManagerMoney ||
+                _currentStage != PlanetTutorialStage.BuySmallTreeManager)
+            {
+                return;
+            }
+
+            double managerCost = GetSmallTreeManagerCost();
+
+            if (managerCost <= 0d || GetCurrentMoney() >= managerCost)
+            {
+                TryResumeManagerTutorial();
+                return;
+            }
+
+            if (_isEarlyManagerDialogActive || PlayerPrefs.GetInt(EarlyManagerDialogShownKey, 0) == 1)
+                return;
+
+            Debug.Log("[PlanetTutorial] Manager opened before enough money.", this);
+            _isEarlyManagerDialogActive = true;
+            ShowBlockingDialog(
+                "PlanetTutorial.BuySmallTreeManager.Early",
+                new[]
+                {
+                    Line(DialogManagerEarlyOpen, CharacterMood.Thinking),
+                    Line(DialogManagerNotEnoughMoney, CharacterMood.Thinking)
+                },
+                () =>
+                {
+                    SaveFlag(EarlyManagerDialogShownKey);
+                    _isEarlyManagerDialogActive = false;
+                    TryResumeManagerTutorial();
+                });
         }
 
         private void HandleItemFirstPurchaseConfirmed(int index)
@@ -881,12 +1161,12 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void HandleManagerPurchasedConfirmed(int index)
         {
-            if (index == SmallTreeIndex)
-                SaveFlag(SmallTreeManagerBoughtKey);
+            if (index != SmallTreeIndex)
+                return;
 
-            TutorialStepData current = _tutorialManager != null ? _tutorialManager.CurrentStep : null;
+            SaveFlag(SmallTreeManagerBoughtKey);
 
-            if (current != null && current.StepId == StepIdBuyManager && index == SmallTreeIndex)
+            if (_isRunning && _currentStage == PlanetTutorialStage.BuySmallTreeManager)
                 HandleManagerBought();
         }
 
@@ -916,10 +1196,14 @@ namespace PlanetBuilder.Messages.Tutorial
             if (_gameRules != null)
             {
                 _gameRules.OnItemIncomeEarned += HandleItemIncomeEarned;
+                _gameRules.OnDataUpdated += HandleGameDataUpdated;
                 _gameRules.OnItemFirstPurchaseConfirmed += HandleItemFirstPurchaseConfirmed;
                 _gameRules.OnItemUpgradedConfirmed += HandleItemUpgradedConfirmed;
                 _gameRules.OnManagerPurchasedConfirmed += HandleManagerPurchasedConfirmed;
             }
+
+            if (_gameUI != null)
+                _gameUI.OnManagerPanelOpened += HandleManagerPanelOpened;
 
             _isSubscribed = true;
         }
@@ -947,10 +1231,14 @@ namespace PlanetBuilder.Messages.Tutorial
             if (_gameRules != null)
             {
                 _gameRules.OnItemIncomeEarned -= HandleItemIncomeEarned;
+                _gameRules.OnDataUpdated -= HandleGameDataUpdated;
                 _gameRules.OnItemFirstPurchaseConfirmed -= HandleItemFirstPurchaseConfirmed;
                 _gameRules.OnItemUpgradedConfirmed -= HandleItemUpgradedConfirmed;
                 _gameRules.OnManagerPurchasedConfirmed -= HandleManagerPurchasedConfirmed;
             }
+
+            if (_gameUI != null)
+                _gameUI.OnManagerPanelOpened -= HandleManagerPanelOpened;
 
             _isSubscribed = false;
         }
@@ -962,6 +1250,316 @@ namespace PlanetBuilder.Messages.Tutorial
 
             if (_dialogManager != null)
                 _dialogManager.SetTypingSettings(true, _typingSpeed, true);
+        }
+
+        private bool StartTargetPolish(GameObject target, float pulseScale)
+        {
+            StopTargetPolish();
+
+            _polishTarget = target != null ? target.GetComponent<RectTransform>() : null;
+
+            if (_polishTarget == null)
+                return false;
+
+            _polishOriginalScale = _polishTarget.localScale;
+            _runtimeGlow = CreateRuntimeGlow(_polishTarget);
+
+            if (_runtimeGlow == null)
+            {
+                _polishTarget = null;
+                _polishOriginalScale = Vector3.one;
+                return false;
+            }
+
+            RefreshRuntimeGlowLayout();
+
+            _targetPulse = DOTween.Sequence()
+                .Append(_polishTarget.DOScale(_polishOriginalScale * pulseScale, 0.6f).SetEase(Ease.InOutSine))
+                .Append(_polishTarget.DOScale(_polishOriginalScale, 0.6f).SetEase(Ease.InOutSine))
+                .SetLoops(-1)
+                .SetUpdate(true)
+                .OnUpdate(RefreshRuntimeGlowLayout);
+
+            if (_runtimeGlow != null)
+            {
+                RectTransform glowRect = _runtimeGlow.transform.Find(RuntimeGlowLayersName) as RectTransform;
+                CanvasGroup canvasGroup = glowRect != null ? glowRect.GetComponent<CanvasGroup>() : null;
+
+                if (glowRect != null && canvasGroup != null)
+                {
+                    canvasGroup.alpha = 0.42f;
+                    _glowPulse = DOTween.Sequence()
+                        .Append(glowRect.DOScale(Vector3.one * 1.06f, 0.6f).SetEase(Ease.InOutSine))
+                        .Join(canvasGroup.DOFade(0.78f, 0.6f).SetEase(Ease.InOutSine))
+                        .Append(glowRect.DOScale(Vector3.one, 0.6f).SetEase(Ease.InOutSine))
+                        .Join(canvasGroup.DOFade(0.42f, 0.6f).SetEase(Ease.InOutSine))
+                        .SetLoops(-1)
+                        .SetUpdate(true)
+                        .OnUpdate(RefreshRuntimeGlowLayout);
+                }
+            }
+
+            return true;
+        }
+
+        private void StopTargetPolish()
+        {
+            _targetPulse?.Kill(false);
+            _targetPulse = null;
+            _glowPulse?.Kill(false);
+            _glowPulse = null;
+
+            if (_polishTarget != null)
+                _polishTarget.localScale = _polishOriginalScale;
+
+            if (_runtimeGlow != null)
+                Destroy(_runtimeGlow);
+
+            _polishTarget = null;
+            _runtimeGlow = null;
+            _polishOriginalScale = Vector3.one;
+        }
+
+        private GameObject CreateRuntimeGlow(RectTransform target)
+        {
+            RectTransform overlayRoot = _interactionOverlay != null
+                ? _interactionOverlay.transform as RectTransform
+                : null;
+            Image sourceImage = GetTargetImage(target);
+
+            if (overlayRoot == null || sourceImage == null || sourceImage.sprite == null)
+                return null;
+
+            Transform existingGlow = overlayRoot.Find(RuntimeGlowName);
+
+            if (existingGlow != null)
+                Destroy(existingGlow.gameObject);
+
+            GameObject glow = new(RuntimeGlowName, typeof(RectTransform), typeof(CanvasGroup), typeof(LayoutElement));
+            RectTransform glowRect = glow.GetComponent<RectTransform>();
+            CanvasGroup visualGroup = glow.GetComponent<CanvasGroup>();
+            LayoutElement layoutElement = glow.GetComponent<LayoutElement>();
+
+            glowRect.SetParent(overlayRoot, false);
+            glowRect.anchorMin = new Vector2(0.5f, 0.5f);
+            glowRect.anchorMax = new Vector2(0.5f, 0.5f);
+            glowRect.pivot = new Vector2(0.5f, 0.5f);
+            glowRect.localRotation = Quaternion.identity;
+            glowRect.localScale = Vector3.one;
+            glowRect.SetAsLastSibling();
+            visualGroup.alpha = 1f;
+            visualGroup.interactable = false;
+            visualGroup.blocksRaycasts = false;
+            visualGroup.ignoreParentGroups = true;
+            layoutElement.ignoreLayout = true;
+
+            GameObject glowLayers = new(RuntimeGlowLayersName, typeof(RectTransform), typeof(CanvasGroup));
+            RectTransform glowLayersRect = glowLayers.GetComponent<RectTransform>();
+            CanvasGroup glowGroup = glowLayers.GetComponent<CanvasGroup>();
+            StretchToParent(glowLayersRect, glowRect);
+            glowGroup.alpha = 0f;
+            glowGroup.interactable = false;
+            glowGroup.blocksRaycasts = false;
+
+            AddGlowLayer(glowLayersRect, "OuterGlow", sourceImage, new Color(1f, 0.72f, 0.24f, 0.18f), 1.22f);
+            AddGlowLayer(glowLayersRect, "InnerGlow", sourceImage, new Color(1f, 0.82f, 0.36f, 0.38f), 1.08f);
+            AddTargetVisualCopies(glowRect, target);
+            return glow;
+        }
+
+        private void RefreshRuntimeGlowLayout()
+        {
+            if (_polishTarget == null || _runtimeGlow == null || _interactionOverlay == null)
+                return;
+
+            RectTransform glowRect = _runtimeGlow.transform as RectTransform;
+            RectTransform overlayRoot = _interactionOverlay.transform as RectTransform;
+            Canvas targetCanvas = _polishTarget.GetComponentInParent<Canvas>();
+            Canvas overlayCanvas = overlayRoot != null ? overlayRoot.GetComponentInParent<Canvas>() : null;
+
+            if (glowRect == null || overlayRoot == null || targetCanvas == null || overlayCanvas == null)
+                return;
+
+            Camera targetCamera = targetCanvas.renderMode != RenderMode.ScreenSpaceOverlay ? targetCanvas.worldCamera : null;
+            Camera overlayCamera = overlayCanvas.renderMode != RenderMode.ScreenSpaceOverlay ? overlayCanvas.worldCamera : null;
+            _polishTarget.GetWorldCorners(_targetWorldCorners);
+
+            Vector2 min = new(float.MaxValue, float.MaxValue);
+            Vector2 max = new(float.MinValue, float.MinValue);
+
+            for (int i = 0; i < _targetWorldCorners.Length; i++)
+            {
+                Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(targetCamera, _targetWorldCorners[i]);
+
+                if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        overlayRoot,
+                        screenPoint,
+                        overlayCamera,
+                        out Vector2 localPoint))
+                {
+                    return;
+                }
+
+                min = Vector2.Min(min, localPoint);
+                max = Vector2.Max(max, localPoint);
+            }
+
+            glowRect.anchoredPosition = (min + max) * 0.5f;
+            glowRect.sizeDelta = max - min;
+            glowRect.SetAsLastSibling();
+        }
+
+        private static Image GetTargetImage(RectTransform target)
+        {
+            Button button = target != null ? target.GetComponent<Button>() : null;
+
+            if (button != null && button.targetGraphic is Image buttonImage && buttonImage.sprite != null)
+                return buttonImage;
+
+            Image image = target != null ? target.GetComponent<Image>() : null;
+
+            if (image != null && image.sprite != null)
+                return image;
+
+            Image[] childImages = target != null ? target.GetComponentsInChildren<Image>(true) : null;
+
+            if (childImages == null)
+                return null;
+
+            for (int i = 0; i < childImages.Length; i++)
+            {
+                if (childImages[i] != null && childImages[i].sprite != null)
+                    return childImages[i];
+            }
+
+            return null;
+        }
+
+        private static void AddGlowLayer(RectTransform parent, string name, Image source, Color color, float scale)
+        {
+            GameObject layer = new(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            RectTransform rect = layer.GetComponent<RectTransform>();
+            Image image = layer.GetComponent<Image>();
+
+            rect.SetParent(parent, false);
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            rect.localScale = Vector3.one * scale;
+
+            image.sprite = source.sprite;
+            image.type = source.type;
+            image.preserveAspect = source.preserveAspect;
+            image.fillCenter = source.fillCenter;
+            image.color = color;
+            image.raycastTarget = false;
+        }
+
+        private static void AddTargetVisualCopies(RectTransform parent, RectTransform target)
+        {
+            Graphic[] graphics = target.GetComponentsInChildren<Graphic>(false);
+
+            for (int i = 0; i < graphics.Length; i++)
+            {
+                Graphic source = graphics[i];
+
+                if (source == null || !source.enabled || !source.gameObject.activeInHierarchy)
+                    continue;
+
+                if (source is Image sourceImage)
+                {
+                    GameObject copyObject = new($"TargetCopy.{source.name}", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                    RectTransform copyRect = copyObject.GetComponent<RectTransform>();
+                    Image copy = copyObject.GetComponent<Image>();
+                    MatchTargetGraphicRect(copyRect, parent, target, source.rectTransform);
+                    CopyImagePresentation(sourceImage, copy);
+                }
+                else if (source is TMP_Text sourceText)
+                {
+                    GameObject copyObject = new($"TargetCopy.{source.name}", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+                    RectTransform copyRect = copyObject.GetComponent<RectTransform>();
+                    TextMeshProUGUI copy = copyObject.GetComponent<TextMeshProUGUI>();
+                    MatchTargetGraphicRect(copyRect, parent, target, source.rectTransform);
+                    CopyTextPresentation(sourceText, copy);
+                }
+            }
+        }
+
+        private static void StretchToParent(RectTransform rect, RectTransform parent)
+        {
+            rect.SetParent(parent, false);
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            rect.localScale = Vector3.one;
+        }
+
+        private static void MatchTargetGraphicRect(
+            RectTransform copy,
+            RectTransform parent,
+            RectTransform target,
+            RectTransform source)
+        {
+            Vector3[] corners = new Vector3[4];
+            source.GetWorldCorners(corners);
+            Vector2 min = target.InverseTransformPoint(corners[0]);
+            Vector2 max = min;
+
+            for (int i = 1; i < corners.Length; i++)
+            {
+                Vector2 point = target.InverseTransformPoint(corners[i]);
+                min = Vector2.Min(min, point);
+                max = Vector2.Max(max, point);
+            }
+
+            Rect targetRect = target.rect;
+            copy.SetParent(parent, false);
+            copy.anchorMin = new Vector2(
+                (min.x - targetRect.xMin) / targetRect.width,
+                (min.y - targetRect.yMin) / targetRect.height);
+            copy.anchorMax = new Vector2(
+                (max.x - targetRect.xMin) / targetRect.width,
+                (max.y - targetRect.yMin) / targetRect.height);
+            copy.offsetMin = Vector2.zero;
+            copy.offsetMax = Vector2.zero;
+            copy.localScale = Vector3.one;
+        }
+
+        private static void CopyImagePresentation(Image source, Image copy)
+        {
+            copy.sprite = source.sprite;
+            copy.type = source.type;
+            copy.preserveAspect = source.preserveAspect;
+            copy.fillCenter = source.fillCenter;
+            copy.fillMethod = source.fillMethod;
+            copy.fillAmount = source.fillAmount;
+            copy.fillClockwise = source.fillClockwise;
+            copy.fillOrigin = source.fillOrigin;
+            copy.useSpriteMesh = source.useSpriteMesh;
+            copy.pixelsPerUnitMultiplier = source.pixelsPerUnitMultiplier;
+            copy.color = source.color;
+            copy.raycastTarget = false;
+        }
+
+        private static void CopyTextPresentation(TMP_Text source, TextMeshProUGUI copy)
+        {
+            copy.text = source.text;
+            copy.font = source.font;
+            copy.fontSharedMaterial = source.fontSharedMaterial;
+            copy.fontSize = source.fontSize;
+            copy.fontStyle = source.fontStyle;
+            copy.alignment = source.alignment;
+            copy.enableAutoSizing = source.enableAutoSizing;
+            copy.fontSizeMin = source.fontSizeMin;
+            copy.fontSizeMax = source.fontSizeMax;
+            copy.enableWordWrapping = source.enableWordWrapping;
+            copy.overflowMode = source.overflowMode;
+            copy.richText = source.richText;
+            copy.margin = source.margin;
+            copy.color = source.color;
+            copy.raycastTarget = false;
         }
 
         private void StartDeferredAdvanceToStage(PlanetTutorialStage stage)

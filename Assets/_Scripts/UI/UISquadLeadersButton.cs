@@ -13,6 +13,7 @@ public class UISquadLeadersButton : MonoBehaviour
     [SerializeField] private Image _currency;
 
     public event Action OnClicked;
+    public GameObject ButtonTarget => _buyButton != null ? _buyButton.gameObject : null;
     private string _translationText;
 
     private void Awake()

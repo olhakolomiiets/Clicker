@@ -47,13 +47,12 @@ public class UIController : MonoBehaviour
 
     private ObjectPlaceRotator _objectPlaceRotator;
 
-    public event Action OnTutorialStepCompleted, OnTutorialNonCompleted, OnStorePanelDisplayed;
+    public event Action OnStorePanelDisplayed;
     public event Action OnShopOpened;
     public event Action<int> OnShopTabSelected;
-    public event Action<int> OnShowUpgradeOrShopTutorial, OnLoadTutorialStep;
-    public event Action<int, int> OnLoadTutorialNextStep;
 
     public GameObject ToggleButtonTarget => _toggleButton != null ? _toggleButton.gameObject : null;
+    public GameObject UpgradeButtonTarget => _upgradeButton != null ? _upgradeButton.gameObject : null;
     public bool IsShopDisplayed => isDisplayed;
 
     private void Start()
@@ -111,14 +110,6 @@ public class UIController : MonoBehaviour
             {
                 _planetRotator.enabled = true;
             }
-
-            if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
-            {
-                int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
-                int stepState = PlayerPrefs.GetInt("TutorialStepState");
-                if (tutorialStep < 3 || tutorialStep == 3 && stepState == 1 || tutorialStep == 4 && stepState == 1)
-                    OnTutorialNonCompleted.Invoke();
-            }
         }
         else
         {
@@ -140,16 +131,6 @@ public class UIController : MonoBehaviour
             OnShopTabSelected?.Invoke(0);
             ColorToggle(0);
             _planetRotator.enabled = false;
-
-            // if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
-            // {
-            //     int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
-            //     if (tutorialStep == 0)
-            //         OnTutorialStepCompleted.Invoke();
-            //     else
-            //         OnLoadTutorialNextStep.Invoke(tutorialStep, 1);
-            // }
-            // else OnStorePanelDisplayed.Invoke();
         }
     }
 
@@ -216,25 +197,6 @@ public class UIController : MonoBehaviour
         _shopItemsParent.DOAnchorPos(index == 2 ? visiblePos : hidePos, 0.25f);
         OnShopTabSelected?.Invoke(index);
 
-        if (PlayerPrefs.GetInt("TutorialCompleted") == 0)
-        {
-            if (index == 1 && PlayerPrefs.GetInt("UpgradeTutorialShown") == 0)
-            {
-                OnShowUpgradeOrShopTutorial.Invoke(5);               
-            }
-
-            if (index == 2 && PlayerPrefs.GetInt("ShopTutorialShown") == 0)
-            {
-                OnShowUpgradeOrShopTutorial.Invoke(6);
-            }
-            
-            if (index == 0 && PlayerPrefs.GetInt("TutorialCompleted") == 0)
-            {
-                int tutorialStep = PlayerPrefs.GetInt("TutorialStep");
-                OnLoadTutorialStep.Invoke(tutorialStep);
-            }
-        }
-
         ColorToggle(index);
     }
 
@@ -257,12 +219,6 @@ public class UIController : MonoBehaviour
         _creationItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
         _upgradeItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
         _shopItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
-    }
-
-    public void ShowTutorialHint(int step, int state)
-    {
-        if (!isDisplayed && step == 5 && state == 1 || !isDisplayed && step == 6 && state == 1)
-            OnTutorialNonCompleted.Invoke();
     }
 
     private static void SetShopOpen(bool isOpen)

@@ -18,6 +18,7 @@ namespace PlanetBuilder.Messages
         public float Cooldown;
         public bool CanInterrupt;
         public bool CanDisplayOverModal;
+        public bool CanDisplayOverShop;
         public bool UseTypingAnimation;
         public float TypingSpeed;
         public bool CanSkipTyping;
@@ -45,6 +46,7 @@ namespace PlanetBuilder.Messages
             Cooldown = source.Cooldown;
             CanInterrupt = source.CanInterrupt;
             CanDisplayOverModal = source.CanDisplayOverModal;
+            CanDisplayOverShop = source.CanDisplayOverShop;
             UseTypingAnimation = source.UseTypingAnimation;
             TypingSpeed = source.TypingSpeed;
             CanSkipTyping = source.CanSkipTyping;

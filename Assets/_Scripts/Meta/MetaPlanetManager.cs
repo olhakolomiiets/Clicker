@@ -108,8 +108,13 @@ public class MetaPlanetManager : MonoBehaviour
             _upgradeObjectsList.Add(itemController);
             itemController.PrepareUpgradeObject(_upgradeItemDataList[i].Icon, _upgradeItemDataList[i].ItemName);
 
-            _upgradeControllerList[i].SetMetaGameRules(_metaGameRules);
-            _upgradeControllerList[i].SetMetaObjectController(itemController);
+            MetaUpgradeItemController upgradeController = _upgradeControllerList[i];
+
+            if (upgradeController.data != null)
+                itemController.SetBuyPrice(upgradeController.data.Price);
+
+            upgradeController.SetMetaGameRules(_metaGameRules);
+            upgradeController.SetMetaObjectController(itemController);
 
             itemController.OnObjectAddButtonClicked += UpdatePanelUI;
         }
@@ -118,6 +123,8 @@ public class MetaPlanetManager : MonoBehaviour
         _upgradeObjectParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
 
         OnUpgradeObjectAddButtonClicked += ActivateNewUpgradeObject;
+
+        UpdatePanelUI();
     }
 
     private void ConnectEvents(int i, MetaObjectController itemController)
@@ -145,12 +152,7 @@ public class MetaPlanetManager : MonoBehaviour
             controller.MetaObjectUI();
         }
 
-        for (int i = 0; i < _variantObjectsList.Count; i++)
-        {
-            _variantObjectsList[i].SetItemCount(_variants[i].ItemCount, _variantItemDataList[i].Quantity);
-
-            _variantObjectsList[i].DisableBuyPanel(_variants[i].ItemCount >= 0 && _variants[i].ItemCount < _variantItemDataList[i].Quantity);
-        }
+        UpdatePanelUI();
     }
 
     public void UpdatePanelUI()
@@ -164,9 +166,10 @@ public class MetaPlanetManager : MonoBehaviour
 
         for (int i = 0; i < _upgradeObjectsList.Count; i++)
         {
-            _upgradeObjectsList[i].DisableBuyPanel(_variants[i].ItemCount >= 0 && _variants[i].ItemCount < _variantItemDataList[i].Quantity);
+            MetaUpgradeItemController controller = _upgradeControllerList[i];
+
+            _upgradeObjectsList[i].DisableBuyPanel(!controller.isActive);
+            _upgradeObjectsList[i].ToggleBuyButton(controller.CanAdd());
         }
     }
-
-
 }

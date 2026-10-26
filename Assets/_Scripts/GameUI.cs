@@ -260,15 +260,60 @@ public class GameUI : MonoBehaviour
 
         if (gameData.ItemDataList[index].IsPremium)
         {
-            _uiCreationItemsList[index].SetIncomePerSec(gameData.ItemDataList[index].DiamondsIncomePerHour(gameData.ItemCount[index]), " / hour");
+            ItemData itemData = gameData.ItemDataList[index];
+
+            double incomePerCycle = itemData.DiamondsIncome(
+                gameData.ItemCount[index]);
+
+            double incomeMultiplier =
+                generalData?.MetaUpgradeEffects?.GetIncomeMultiplier(itemData) ?? 1d;
+
+            double timeMultiplier =
+                generalData?.MetaUpgradeEffects?.GetTimeMultiplier(itemData) ?? 1d;
+
+            float effectiveDelay = Mathf.Max(
+                0.1f,
+                (float)(itemData.Delay * timeMultiplier)
+            );
+
+            _uiCreationItemsList[index].SetIncomePerSec(
+                incomePerCycle * incomeMultiplier / effectiveDelay * 3600d,
+                " / hour");
             _diamonds.SetDiamondsScore(generalData.Diamonds);
         }
         else
         {
+            ItemData itemData = gameData.ItemDataList[index];
+
+            double metaMultiplier =
+                generalData?.MetaUpgradeEffects?.GetIncomeMultiplier(itemData) ?? 1d;
+
             if (gameData.Managers[index])
-                _uiCreationItemsList[index].SetIncomePerSec(gameData.ItemDataList[index].ItemIncomePerSec(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]), " / sec");
+            {
+                double incomePerCycle = itemData.ItemIncome(
+                    gameData.ItemCount[index],
+                    gameData.ItemBonusMultiplayer[index]);
+
+                double timeMultiplier =
+                    generalData?.MetaUpgradeEffects?.GetTimeMultiplier(itemData) ?? 1d;
+
+                float effectiveDelay = Mathf.Max(
+                    0.1f,
+                    (float)(itemData.Delay * timeMultiplier)
+                );
+
+                _uiCreationItemsList[index].SetIncomePerSec(
+                    incomePerCycle * metaMultiplier / effectiveDelay,
+                    " / sec");
+            }
             else
-                _uiCreationItemsList[index].SetIncome(gameData.ItemDataList[index].ItemIncome(gameData.ItemCount[index], gameData.ItemBonusMultiplayer[index]));
+            {
+                double income = itemData.ItemIncome(
+                    gameData.ItemCount[index],
+                    gameData.ItemBonusMultiplayer[index]);
+
+                _uiCreationItemsList[index].SetIncome(income * metaMultiplier);
+            }
 
             _coins.SetScore(gameData.Money);
             _diamonds.SetDiamondsScore(generalData.Diamonds);

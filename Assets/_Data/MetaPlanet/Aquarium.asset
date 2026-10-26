@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Aquarium
   m_EditorClassIdentifier: 
   ItemName: Aquarium
-  Price: 0
+  Price: 10
   BoxPrefab: {fileID: 2069837434399488012, guid: 05087f6d2d6068a4d975e1c1c0366512, type: 3}
   LevelPrefabs:
   - {fileID: 7240266931305441411, guid: 1bd5fc76c5d343249a2cbca4db46a174, type: 3}
@@ -22,16 +22,25 @@ MonoBehaviour:
   Upgrades:
   - LevelName: Level 1
     UpgradeCost: 1
-    BonusValue: 5
-    BonusDescription: +5 coins
+    BonusValue: 0.9
+    BonusDescription: 10% Time Reduction for Plants
     ItemIcon: {fileID: -7331022596549726919, guid: e5dbefc30177b6b44b1bd4d4e9d7ae47, type: 3}
   - LevelName: Level 2
     UpgradeCost: 2
-    BonusValue: 10
-    BonusDescription: +10 coins
+    BonusValue: 0.75
+    BonusDescription: 25% Time Reduction for Plants
     ItemIcon: {fileID: 6759633915377934974, guid: e5dbefc30177b6b44b1bd4d4e9d7ae47, type: 3}
   - LevelName: Level 3
     UpgradeCost: 3
-    BonusValue: 15
-    BonusDescription: +15 coins
+    BonusValue: 0.5
+    BonusDescription: 50% Time Reduction for Plants
     ItemIcon: {fileID: -8066595168233350549, guid: e5dbefc30177b6b44b1bd4d4e9d7ae47, type: 3}
+  EffectType: 2
+  TargetItems:
+  - {fileID: 11400000, guid: 9c9d2f2f761a3ba44aa224f3f392c4a2, type: 2}
+  - {fileID: 11400000, guid: a5fb05ea6335d03499d9046f61262aa7, type: 2}
+  - {fileID: 11400000, guid: 91ca3eb80bb226040898685d8e53f5f5, type: 2}
+  - {fileID: 11400000, guid: 3b47dc45b68aedb49a58b063ca8914d1, type: 2}
+  - {fileID: 11400000, guid: 1c623a4e6a680f14f9ba42b8ca68917f, type: 2}
+  - {fileID: 11400000, guid: 150e4430ed3400f4aa386ac7c377083e, type: 2}
+  SaveId: Aquarium

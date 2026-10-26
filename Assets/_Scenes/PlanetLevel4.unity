@@ -30954,6 +30954,7 @@ MonoBehaviour:
   ForceTimescaleMode: 0
   ForcedTimescaleMode: 1
   DurationMultiplier: 1
+  TimescaleMultiplier: 1
   RandomizeDuration: 0
   RandomDurationMultiplier: {x: 0.5, y: 1.5}
   DisplayFullDurationDetails: 0
@@ -31003,10 +31004,13 @@ MonoBehaviour:
     OnPause:
       m_PersistentCalls:
         m_Calls: []
+    OnStop:
+      m_PersistentCalls:
+        m_Calls: []
     OnResume:
       m_PersistentCalls:
         m_Calls: []
-    OnRevert:
+    OnChangeDirection:
       m_PersistentCalls:
         m_Calls: []
     OnComplete:
@@ -31018,28 +31022,42 @@ MonoBehaviour:
     OnSkipToTheEnd:
       m_PersistentCalls:
         m_Calls: []
+    OnInitializationComplete:
+      m_PersistentCalls:
+        m_Calls: []
+    OnEnable:
+      m_PersistentCalls:
+        m_Calls: []
+    OnDisable:
+      m_PersistentCalls:
+        m_Calls: []
   DebugActive: 0
+  InScriptDrivenPause: 0
   FeedbacksList:
   - rid: 1135082211351724036
   - rid: 1135082211351724037
   KeepPlayModeChanges: 0
   PerformanceMode: 0
+  RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
+  MMF_ChannelMode: 0
+  MMF_Channel: 0
+  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
     - rid: 1135082211351724036
-      type: {class: MMF_Image, ns: MoreMountains.Feedbacks, asm: MoreMountains.Feedbacks}
+      type: {class: MMF_Image, ns: MoreMountains.Feedbacks, asm: MoreMountains.Tools}
       data:
         Active: 1
         UniqueID: -1006608302
         Label: Image
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
         Chance: 100
-        DisplayColor: {r: 0, g: 0, b: 0, a: 1}
         Timing:
           TimescaleMode: 0
           ExcludeFromHoldingPauses: 0
@@ -31050,6 +31068,10 @@ MonoBehaviour:
           NumberOfRepeats: 0
           RepeatForever: 0
           DelayBetweenRepeats: 1
+          PlayCount: 0
+          LimitPlayCount: 0
+          MaxPlayCount: 3
+          SetPlayCountToZeroOnReset: 0
           MMFeedbacksDirectionCondition: 0
           PlayDirection: 0
           ConstantIntensity: 0
@@ -31095,6 +31117,8 @@ MonoBehaviour:
           m_PostInfinity: 2
           m_RotationOrder: 4
         RemapRangeFalloff: {x: 0, y: 1}
+        AutomaticShakerSetupButton:
+          ButtonText: 
         Owner: {fileID: 331689853}
         DebugActive: 0
         BoundImage: {fileID: 2044081717}
@@ -31133,21 +31157,46 @@ MonoBehaviour:
           m_NumColorKeys: 2
           m_NumAlphaKeys: 2
         InstantColor: {r: 0, g: 0, b: 0, a: 0}
+        ToDestinationColor: {r: 1, g: 0, b: 0, a: 1}
+        ToDestinationColorCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
         DisableOnInit: 0
         EnableOnPlay: 1
         DisableOnSequenceEnd: 0
         DisableOnStop: 0
     - rid: 1135082211351724037
-      type: {class: MMF_Sound, ns: MoreMountains.Feedbacks, asm: MoreMountains.Feedbacks.MMTools}
+      type: {class: MMF_Sound, ns: MoreMountains.Feedbacks, asm: MoreMountains.Tools}
       data:
         Active: 1
         UniqueID: 446223735
         Label: Sound
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
         Chance: 100
-        DisplayColor: {r: 0, g: 0, b: 0, a: 1}
         Timing:
           TimescaleMode: 0
           ExcludeFromHoldingPauses: 0
@@ -31158,6 +31207,10 @@ MonoBehaviour:
           NumberOfRepeats: 0
           RepeatForever: 0
           DelayBetweenRepeats: 1
+          PlayCount: 0
+          LimitPlayCount: 0
+          MaxPlayCount: 3
+          SetPlayCountToZeroOnReset: 0
           MMFeedbacksDirectionCondition: 0
           PlayDirection: 0
           ConstantIntensity: 0
@@ -31203,6 +31256,8 @@ MonoBehaviour:
           m_PostInfinity: 2
           m_RotationOrder: 4
         RemapRangeFalloff: {x: 0, y: 1}
+        AutomaticShakerSetupButton:
+          ButtonText: Automatic Shaker Setup
         Owner: {fileID: 331689853}
         DebugActive: 0
         Sfx: {fileID: 8300000, guid: f0e7c42565a3dc4489e8e0b957e0a123, type: 3}
@@ -57979,6 +58034,10 @@ MonoBehaviour:
   RotationSpace: 1
   UpdateMode: 0
   RotationSpeed: {x: 0, y: 0, z: 3}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 0
   OrbitCenterTransform: {fileID: 0}
@@ -67747,6 +67806,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4946829778465561026, guid: 486848b2cd32f8b4583fe9dd14a86ef1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5253385485012614440, guid: 486848b2cd32f8b4583fe9dd14a86ef1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5253385485012614440, guid: 486848b2cd32f8b4583fe9dd14a86ef1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5253385485012614440, guid: 486848b2cd32f8b4583fe9dd14a86ef1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5253385485012614440, guid: 486848b2cd32f8b4583fe9dd14a86ef1, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
@@ -83552,6 +83627,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: -10, y: 3, z: 0}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}
@@ -89498,6 +89577,7 @@ MonoBehaviour:
   ForceTimescaleMode: 0
   ForcedTimescaleMode: 1
   DurationMultiplier: 1
+  TimescaleMultiplier: 1
   RandomizeDuration: 0
   RandomDurationMultiplier: {x: 0.5, y: 1.5}
   DisplayFullDurationDetails: 0
@@ -89547,10 +89627,13 @@ MonoBehaviour:
     OnPause:
       m_PersistentCalls:
         m_Calls: []
+    OnStop:
+      m_PersistentCalls:
+        m_Calls: []
     OnResume:
       m_PersistentCalls:
         m_Calls: []
-    OnRevert:
+    OnChangeDirection:
       m_PersistentCalls:
         m_Calls: []
     OnComplete:
@@ -89562,28 +89645,42 @@ MonoBehaviour:
     OnSkipToTheEnd:
       m_PersistentCalls:
         m_Calls: []
+    OnInitializationComplete:
+      m_PersistentCalls:
+        m_Calls: []
+    OnEnable:
+      m_PersistentCalls:
+        m_Calls: []
+    OnDisable:
+      m_PersistentCalls:
+        m_Calls: []
   DebugActive: 0
+  InScriptDrivenPause: 0
   FeedbacksList:
   - rid: 1135082211351724043
   - rid: 1135082350179254273
   KeepPlayModeChanges: 0
   PerformanceMode: 0
+  RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
+  MMF_ChannelMode: 0
+  MMF_Channel: 0
+  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
     - rid: 1135082211351724043
-      type: {class: MMF_Sound, ns: MoreMountains.Feedbacks, asm: MoreMountains.Feedbacks.MMTools}
+      type: {class: MMF_Sound, ns: MoreMountains.Feedbacks, asm: MoreMountains.Tools}
       data:
         Active: 1
         UniqueID: -1650286452
         Label: Sound
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
         Chance: 100
-        DisplayColor: {r: 0, g: 0, b: 0, a: 1}
         Timing:
           TimescaleMode: 0
           ExcludeFromHoldingPauses: 0
@@ -89594,6 +89691,10 @@ MonoBehaviour:
           NumberOfRepeats: 0
           RepeatForever: 0
           DelayBetweenRepeats: 1
+          PlayCount: 0
+          LimitPlayCount: 0
+          MaxPlayCount: 3
+          SetPlayCountToZeroOnReset: 0
           MMFeedbacksDirectionCondition: 0
           PlayDirection: 0
           ConstantIntensity: 0
@@ -89639,6 +89740,8 @@ MonoBehaviour:
           m_PostInfinity: 2
           m_RotationOrder: 4
         RemapRangeFalloff: {x: 0, y: 1}
+        AutomaticShakerSetupButton:
+          ButtonText: Automatic Shaker Setup
         Owner: {fileID: 1016912866}
         DebugActive: 0
         Sfx: {fileID: 8300000, guid: 8b8eb3b0e0bc26b49969a313c2614b7d, type: 3}
@@ -89693,16 +89796,16 @@ MonoBehaviour:
           m_PostInfinity: 2
           m_RotationOrder: 4
     - rid: 1135082350179254273
-      type: {class: MMF_NVClip, ns: MoreMountains.FeedbacksForThirdParty, asm: MoreMountains.Feedbacks.NiceVibrations}
+      type: {class: MMF_NVClip, ns: MoreMountains.FeedbacksForThirdParty, asm: MoreMountains.Tools}
       data:
         Active: 1
         UniqueID: 1394778515
         Label: Haptic Clip
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
         Chance: 100
-        DisplayColor: {r: 0, g: 0, b: 0, a: 1}
         Timing:
           TimescaleMode: 0
           ExcludeFromHoldingPauses: 0
@@ -89713,6 +89816,10 @@ MonoBehaviour:
           NumberOfRepeats: 0
           RepeatForever: 0
           DelayBetweenRepeats: 1
+          PlayCount: 0
+          LimitPlayCount: 0
+          MaxPlayCount: 3
+          SetPlayCountToZeroOnReset: 0
           MMFeedbacksDirectionCondition: 0
           PlayDirection: 0
           ConstantIntensity: 0
@@ -89758,12 +89865,36 @@ MonoBehaviour:
           m_PostInfinity: 2
           m_RotationOrder: 4
         RemapRangeFalloff: {x: 0, y: 1}
+        AutomaticShakerSetupButton:
+          ButtonText: 
         Owner: {fileID: 1016912866}
         DebugActive: 0
         Clip: {fileID: -8404250095460277587, guid: fafb36cf7b1ae455cb46b5f952075a53, type: 3}
         FallbackPreset: 8
         Loop: 0
         SeekTime: 0
+        TestHapticButton:
+          ButtonText: Test Haptic
+        MMSMSoundFeedbackLabel: 
+        SampleCount: 256
+        NormalizeAmplitude: 1
+        NormalizeAmplitudeFactor: 1
+        NormalizeFrequency: 1
+        NormalizeFrequencyFactor: 1
+        ConvertButton:
+          ButtonText: Convert MMSM Sound feedback Audio Clip to Haptic
+        TestHapticAudioButton:
+          ButtonText: Test Haptic and Audio
+        HapticData:
+          SampleCount: 0
+          Clip: {fileID: 0}
+          AmplitudePoints: []
+          FrequencyPoints: []
+          RumbleData:
+            durationsMs: 
+            totalDurationMs: 0
+            lowFrequencyMotorSpeeds: []
+            highFrequencyMotorSpeeds: []
         MinLevel: 1
         MaxLevel: 1
         MinFrequencyShift: 0
@@ -90501,6 +90632,74 @@ Transform:
   - {fileID: 1887475986}
   m_Father: {fileID: 1355637764}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1025496162
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1025496163}
+  - component: {fileID: 1025496164}
+  m_Layer: 0
+  m_Name: PlanetMode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1025496163
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025496162}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1657769732}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1025496164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025496162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f359fd9d78048cc4ebc2aa1ecdab5ecf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StandardPlanetMode
+  _gameUI: {fileID: 173342935}
+  _gameRules: {fileID: 1811967467}
+  _creationItemsDataList:
+  - {fileID: 11400000, guid: 91ca3eb80bb226040898685d8e53f5f5, type: 2}
+  - {fileID: 11400000, guid: 150e4430ed3400f4aa386ac7c377083e, type: 2}
+  - {fileID: 11400000, guid: 3576a19d4819e2e43ad46924b810e25d, type: 2}
+  - {fileID: 11400000, guid: 55b90dbe8bfc3094baa0f2aed4c935ec, type: 2}
+  - {fileID: 11400000, guid: d8aef6a2b13314b4c82d013ff96cfaff, type: 2}
+  - {fileID: 11400000, guid: 3c32a93ec5efeea43b3474b0af1a532a, type: 2}
+  - {fileID: 11400000, guid: 0aa9eb4d169528642ba31056459bc51d, type: 2}
+  - {fileID: 11400000, guid: 6c1ef6db0520ca04aad672f348266275, type: 2}
+  - {fileID: 11400000, guid: 33f798f7bc1ff90419195dbf0169affb, type: 2}
+  - {fileID: 11400000, guid: 6a144aec088e14d4c904c06270a73cfd, type: 2}
+  - {fileID: 11400000, guid: 216dee28cc8f9ec488b138655861ed4e, type: 2}
+  _creationItemsCount: 
+  _upgradeItemsDataList:
+  - {fileID: 11400000, guid: 8c83964220e9f3f478b2a6a72b2429a4, type: 2}
+  - {fileID: 11400000, guid: 9b1b17937ccd6ae46b5226ff1fd313a5, type: 2}
+  - {fileID: 11400000, guid: c2bcb64217e104a459b65e5c207ee851, type: 2}
+  - {fileID: 11400000, guid: 0078bf94efa103147861739ec1bdcbb7, type: 2}
+  - {fileID: 11400000, guid: 7f2f9b00c82138a4c9fd6f55a60b867d, type: 2}
+  _upgradeItemCount: 
+  _passiveIncome: {fileID: 772766151}
+  _levelController: {fileID: 756543789}
 --- !u!1001 &1026156713
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -94237,6 +94436,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: 12, y: -5, z: 0}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}
@@ -106621,37 +106824,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89be4087921298943906fdddf739255e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameUI: {fileID: 173342935}
-  _gameRules: {fileID: 1811967467}
   _saveSystem: {fileID: 1954066748}
-  _creationItemsDataList:
-  - {fileID: 11400000, guid: 91ca3eb80bb226040898685d8e53f5f5, type: 2}
-  - {fileID: 11400000, guid: 150e4430ed3400f4aa386ac7c377083e, type: 2}
-  - {fileID: 11400000, guid: 3576a19d4819e2e43ad46924b810e25d, type: 2}
-  - {fileID: 11400000, guid: 55b90dbe8bfc3094baa0f2aed4c935ec, type: 2}
-  - {fileID: 11400000, guid: d8aef6a2b13314b4c82d013ff96cfaff, type: 2}
-  - {fileID: 11400000, guid: 3c32a93ec5efeea43b3474b0af1a532a, type: 2}
-  - {fileID: 11400000, guid: 0aa9eb4d169528642ba31056459bc51d, type: 2}
-  - {fileID: 11400000, guid: 6c1ef6db0520ca04aad672f348266275, type: 2}
-  - {fileID: 11400000, guid: 33f798f7bc1ff90419195dbf0169affb, type: 2}
-  - {fileID: 11400000, guid: 6a144aec088e14d4c904c06270a73cfd, type: 2}
-  - {fileID: 11400000, guid: 216dee28cc8f9ec488b138655861ed4e, type: 2}
-  _creationItemsCount: 
-  _upgradeItemsDataList:
-  - {fileID: 11400000, guid: 8c83964220e9f3f478b2a6a72b2429a4, type: 2}
-  - {fileID: 11400000, guid: 9b1b17937ccd6ae46b5226ff1fd313a5, type: 2}
-  - {fileID: 11400000, guid: c2bcb64217e104a459b65e5c207ee851, type: 2}
-  - {fileID: 11400000, guid: 0078bf94efa103147861739ec1bdcbb7, type: 2}
-  - {fileID: 11400000, guid: 7f2f9b00c82138a4c9fd6f55a60b867d, type: 2}
-  _upgradeItemCount: 
-  _rewardTimer: {fileID: 772766150}
-  _rewardsManager: {fileID: 447865552}
+  _planetModeBehaviour: {fileID: 1025496164}
   _purchaseManager: {fileID: 1755365173}
-  _passiveIncome: {fileID: 772766151}
-  _levelController: {fileID: 756543789}
-  _uiController: {fileID: 1975725909}
-  _tutorialManager: {fileID: 1969606328}
-  _metaPlanetManager: {fileID: 0}
+  _metaUpgradeConfigs:
+  - {fileID: 11400000, guid: 9bf70e8fa52fc024fba948eb32689ea4, type: 2}
+  - {fileID: 11400000, guid: ac63a3bce159e5c41972019731d4458b, type: 2}
+  _offlinePlanetCatalog: {fileID: 11400000, guid: fde2818805241bb44a8811e4b69bf89b, type: 2}
 --- !u!4 &1164067889
 Transform:
   m_ObjectHideFlags: 0
@@ -110448,6 +110627,22 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 1260587656, guid: 04fff96dfc723e749933be1dbd3b2424, type: 3}
+    - target: {fileID: 5814060290766766479, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5814060290766766479, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5814060290766766479, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5814060290766766479, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7756887216064453379, guid: 88279248ea41c40878898bea290e9d70, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -110536,6 +110731,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8034738881041382321, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1811967467}
+    - target: {fileID: 8034738881041382321, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: Get50MMoney
+      objectReference: {fileID: 0}
     - target: {fileID: 8223427229683103837, guid: 88279248ea41c40878898bea290e9d70, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -110567,6 +110770,10 @@ PrefabInstance:
     - target: {fileID: 8405951052614926926, guid: 88279248ea41c40878898bea290e9d70, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8579625635953757089, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -132883,6 +133090,7 @@ MonoBehaviour:
   TargetFPS: 300
   RenderFrameInterval: 0
   VSyncCount: 0
+  EnableNumberShortcuts: 0
 --- !u!114 &1556473097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133153,6 +133361,10 @@ MonoBehaviour:
   RotationSpace: 1
   UpdateMode: 0
   RotationSpeed: {x: 0, y: 0, z: 7}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 0
   OrbitCenterTransform: {fileID: 0}
@@ -136852,6 +137064,10 @@ MonoBehaviour:
   RotationSpace: 1
   UpdateMode: 0
   RotationSpeed: {x: 10, y: 0, z: 0}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 0
   OrbitCenterTransform: {fileID: 0}
@@ -141629,6 +141845,7 @@ Transform:
   - {fileID: 1954066749}
   - {fileID: 799750719}
   - {fileID: 742920531}
+  - {fileID: 1025496163}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1657814598 stripped
@@ -161160,17 +161377,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2193295604987105669, guid: 24b6855ac9ee45b45872cc910acd0680, type: 3}
   m_PrefabInstance: {fileID: 1969606326}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1969606328 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8248311093503165220, guid: 24b6855ac9ee45b45872cc910acd0680, type: 3}
-  m_PrefabInstance: {fileID: 1969606326}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 922cbf0495fb1914a8cf776d4089b97a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1970405792
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -37,11 +37,19 @@ public class MetaGameRules : MonoBehaviour
 
     public bool TryHandleUpgradeLevel(double price)
     {
+        return TryHandleUpgradeLevel(price, true);
+    }
+
+    public bool TryHandleUpgradeLevel(double price, bool notify)
+    {
         if (!CanAfford(price))
             return false;
 
         _generalGameData.Diamonds -= price;
-        SendDataUpdate();
+
+        if (notify)
+            SendDataUpdate();
+
         return true;
     }
 

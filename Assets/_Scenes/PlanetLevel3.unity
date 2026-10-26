@@ -11457,6 +11457,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: -6, y: 3, z: 0}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}
@@ -30255,6 +30259,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: 0, y: -3, z: 6}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}
@@ -65968,6 +65976,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: 0, y: 6, z: 3}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}
@@ -67033,17 +67045,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2193295604987105669, guid: 24b6855ac9ee45b45872cc910acd0680, type: 3}
   m_PrefabInstance: {fileID: 744034215}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &744034217 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8248311093503165220, guid: 24b6855ac9ee45b45872cc910acd0680, type: 3}
-  m_PrefabInstance: {fileID: 744034215}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 922cbf0495fb1914a8cf776d4089b97a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &744219372 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1365360117783897168, guid: 47b408cdd468e7d438d43114b533fcca, type: 3}
@@ -73977,6 +73978,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: -10, y: 3, z: 0}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}
@@ -89398,6 +89403,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: -3, y: -7, z: 2}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}
@@ -91019,6 +91028,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: 3, y: -7, z: 0}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}
@@ -94881,37 +94894,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89be4087921298943906fdddf739255e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameUI: {fileID: 173342935}
-  _gameRules: {fileID: 1811967467}
   _saveSystem: {fileID: 1954066748}
-  _creationItemsDataList:
-  - {fileID: 11400000, guid: a5fb05ea6335d03499d9046f61262aa7, type: 2}
-  - {fileID: 11400000, guid: 03d3f635669b3db43a1a5c4adb5f1dda, type: 2}
-  - {fileID: 11400000, guid: 1c623a4e6a680f14f9ba42b8ca68917f, type: 2}
-  - {fileID: 11400000, guid: 07531338a972506428aa8794f270afdf, type: 2}
-  - {fileID: 11400000, guid: 6fd3f05d6c420804aa9b0cfe77797708, type: 2}
-  - {fileID: 11400000, guid: be94f681084761944967649f7bd793ec, type: 2}
-  - {fileID: 11400000, guid: c6ec723036da34e40b574e81034eafd0, type: 2}
-  - {fileID: 11400000, guid: 38e45cd25fd349d409bc212e819406d0, type: 2}
-  - {fileID: 11400000, guid: 399fe31eaeff1bf4b933e2a609a14763, type: 2}
-  - {fileID: 11400000, guid: 53ca40d0b97782a4e9d9f406ebeded61, type: 2}
-  - {fileID: 11400000, guid: 95d630b827f071d41b47a1918215ec47, type: 2}
-  _creationItemsCount: 
-  _upgradeItemsDataList:
-  - {fileID: 11400000, guid: 957501752c7b706469c026a9b8a3b57d, type: 2}
-  - {fileID: 11400000, guid: 57beb725cfdab934f99942358dbc14d9, type: 2}
-  - {fileID: 11400000, guid: 8126f93b40696604fb4eafa4ba3dcab5, type: 2}
-  - {fileID: 11400000, guid: 19eec0c138d370c41b82a4d757465d02, type: 2}
-  - {fileID: 11400000, guid: 6f9f9395e97451947afecfee10f99c6a, type: 2}
-  _upgradeItemCount: 
-  _rewardTimer: {fileID: 772766150}
-  _rewardsManager: {fileID: 380591823}
+  _planetModeBehaviour: {fileID: 2131286020}
   _purchaseManager: {fileID: 1629112298}
-  _passiveIncome: {fileID: 772766151}
-  _levelController: {fileID: 1429793103}
-  _uiController: {fileID: 1975725909}
-  _tutorialManager: {fileID: 744034217}
-  _metaPlanetManager: {fileID: 0}
+  _metaUpgradeConfigs:
+  - {fileID: 11400000, guid: 9bf70e8fa52fc024fba948eb32689ea4, type: 2}
+  - {fileID: 11400000, guid: ac63a3bce159e5c41972019731d4458b, type: 2}
+  _offlinePlanetCatalog: {fileID: 11400000, guid: fde2818805241bb44a8811e4b69bf89b, type: 2}
 --- !u!4 &1164067889
 Transform:
   m_ObjectHideFlags: 0
@@ -112492,6 +112481,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: 0, y: 3, z: -6}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}
@@ -113133,6 +113126,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4946829778465561026, guid: 486848b2cd32f8b4583fe9dd14a86ef1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5253385485012614440, guid: 486848b2cd32f8b4583fe9dd14a86ef1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5253385485012614440, guid: 486848b2cd32f8b4583fe9dd14a86ef1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5253385485012614440, guid: 486848b2cd32f8b4583fe9dd14a86ef1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5253385485012614440, guid: 486848b2cd32f8b4583fe9dd14a86ef1, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
@@ -120021,6 +120030,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: 5, y: 3, z: 7}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}
@@ -122456,6 +122469,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: -4, y: 8, z: 2}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}
@@ -124418,6 +124435,7 @@ MonoBehaviour:
   TargetFPS: 300
   RenderFrameInterval: 0
   VSyncCount: 0
+  EnableNumberShortcuts: 0
 --- !u!114 &1556473097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131250,6 +131268,22 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -1123912822, guid: 04fff96dfc723e749933be1dbd3b2424, type: 3}
+    - target: {fileID: 5814060290766766479, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5814060290766766479, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5814060290766766479, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5814060290766766479, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7756887216064453379, guid: 88279248ea41c40878898bea290e9d70, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -131338,6 +131372,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8034738881041382321, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1811967467}
+    - target: {fileID: 8034738881041382321, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: Get50MMoney
+      objectReference: {fileID: 0}
     - target: {fileID: 8223427229683103837, guid: 88279248ea41c40878898bea290e9d70, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -131369,6 +131411,10 @@ PrefabInstance:
     - target: {fileID: 8405951052614926926, guid: 88279248ea41c40878898bea290e9d70, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8579625635953757089, guid: 88279248ea41c40878898bea290e9d70, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -131936,6 +131982,18 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2368501853187451144, guid: c44d9333402955f4b941d34802bd301d, type: 3}
+      propertyPath: m_text
+      value: "\u0422\u0412\u041E\u0420\u0415\u041D\u0418\u0415"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2368501853187451144, guid: c44d9333402955f4b941d34802bd301d, type: 3}
+      propertyPath: m_fontSize
+      value: 34.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 2368501853187451144, guid: c44d9333402955f4b941d34802bd301d, type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
+      objectReference: {fileID: 0}
     - target: {fileID: 2439015632166457552, guid: c44d9333402955f4b941d34802bd301d, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -132363,6 +132421,18 @@ PrefabInstance:
     - target: {fileID: 4628611343702988488, guid: c44d9333402955f4b941d34802bd301d, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4660377482909063924, guid: c44d9333402955f4b941d34802bd301d, type: 3}
+      propertyPath: m_text
+      value: "\u041C\u0410\u0413\u0410\u0417\u0418\u041D"
+      objectReference: {fileID: 0}
+    - target: {fileID: 4660377482909063924, guid: c44d9333402955f4b941d34802bd301d, type: 3}
+      propertyPath: m_fontSize
+      value: 38.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 4660377482909063924, guid: c44d9333402955f4b941d34802bd301d, type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
       objectReference: {fileID: 0}
     - target: {fileID: 4693300328318262987, guid: c44d9333402955f4b941d34802bd301d, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -133096,6 +133166,18 @@ PrefabInstance:
     - target: {fileID: 8216892600371420954, guid: c44d9333402955f4b941d34802bd301d, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8238485694696416859, guid: c44d9333402955f4b941d34802bd301d, type: 3}
+      propertyPath: m_text
+      value: "\u0420\u0410\u0417\u0412\u0418\u0422\u0418\u0415"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8238485694696416859, guid: c44d9333402955f4b941d34802bd301d, type: 3}
+      propertyPath: m_fontSize
+      value: 35.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8238485694696416859, guid: c44d9333402955f4b941d34802bd301d, type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
       objectReference: {fileID: 0}
     - target: {fileID: 8394409916715471157, guid: c44d9333402955f4b941d34802bd301d, type: 3}
       propertyPath: m_AnchorMax.y
@@ -134407,6 +134489,7 @@ Transform:
   - {fileID: 1954066749}
   - {fileID: 799750719}
   - {fileID: 1232242332}
+  - {fileID: 2131286019}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1659618236
@@ -152356,6 +152439,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: 6, y: 3, z: 0}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}
@@ -161331,6 +161418,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: -7, y: 3, z: 0}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}
@@ -168406,6 +168497,74 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!1 &2131286018
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2131286019}
+  - component: {fileID: 2131286020}
+  m_Layer: 0
+  m_Name: PlanetMode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2131286019
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2131286018}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1657769732}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2131286020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2131286018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f359fd9d78048cc4ebc2aa1ecdab5ecf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StandardPlanetMode
+  _gameUI: {fileID: 173342935}
+  _gameRules: {fileID: 1811967467}
+  _creationItemsDataList:
+  - {fileID: 11400000, guid: a5fb05ea6335d03499d9046f61262aa7, type: 2}
+  - {fileID: 11400000, guid: 03d3f635669b3db43a1a5c4adb5f1dda, type: 2}
+  - {fileID: 11400000, guid: 1c623a4e6a680f14f9ba42b8ca68917f, type: 2}
+  - {fileID: 11400000, guid: 07531338a972506428aa8794f270afdf, type: 2}
+  - {fileID: 11400000, guid: 6fd3f05d6c420804aa9b0cfe77797708, type: 2}
+  - {fileID: 11400000, guid: be94f681084761944967649f7bd793ec, type: 2}
+  - {fileID: 11400000, guid: 38e45cd25fd349d409bc212e819406d0, type: 2}
+  - {fileID: 11400000, guid: 399fe31eaeff1bf4b933e2a609a14763, type: 2}
+  - {fileID: 11400000, guid: c6ec723036da34e40b574e81034eafd0, type: 2}
+  - {fileID: 11400000, guid: 53ca40d0b97782a4e9d9f406ebeded61, type: 2}
+  - {fileID: 11400000, guid: 95d630b827f071d41b47a1918215ec47, type: 2}
+  _creationItemsCount: 
+  _upgradeItemsDataList:
+  - {fileID: 11400000, guid: 957501752c7b706469c026a9b8a3b57d, type: 2}
+  - {fileID: 11400000, guid: 57beb725cfdab934f99942358dbc14d9, type: 2}
+  - {fileID: 11400000, guid: 8126f93b40696604fb4eafa4ba3dcab5, type: 2}
+  - {fileID: 11400000, guid: 19eec0c138d370c41b82a4d757465d02, type: 2}
+  - {fileID: 11400000, guid: 6f9f9395e97451947afecfee10f99c6a, type: 2}
+  _upgradeItemCount: 
+  _passiveIncome: {fileID: 772766151}
+  _levelController: {fileID: 1429793103}
 --- !u!1001 &2132583694
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -168770,6 +168929,10 @@ MonoBehaviour:
   RotationSpace: 0
   UpdateMode: 0
   RotationSpeed: {x: -5, y: 3, z: -7}
+  RandomizeRotationSpeed: 0
+  RotationSpeedMin: {x: 100, y: 0, z: 0}
+  RotationSpeedMax: {x: 300, y: 0, z: 0}
+  RandomInitialDelay: {x: 0, y: 0}
   Orbiting: 1
   AdditiveOrbitRotation: 1
   OrbitCenterTransform: {fileID: 8889672783975255859}

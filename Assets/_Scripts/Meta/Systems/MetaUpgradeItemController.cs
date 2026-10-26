@@ -39,6 +39,7 @@ public class MetaUpgradeItemController : MonoBehaviour
 
     private Vector3 mouseDownPosition;
     private bool isDragging;
+    private bool worldPressAllowed;
     [SerializeField] private float dragThreshold = 15f;
 
     public event Action OnUpgradePurchased;
@@ -63,6 +64,27 @@ public class MetaUpgradeItemController : MonoBehaviour
     public void SetMetaGameRules(MetaGameRules metaGameRules)
     {
         _metaGameRules = metaGameRules;
+    }
+
+    public bool CanAdd()
+    {
+        if (isActive ||
+            data == null ||
+            data.BoxPrefab == null ||
+            data.Upgrades == null ||
+            data.Upgrades.Count == 0 ||
+            _metaGameRules == null ||
+            !_metaGameRules.IsPrepared)
+        {
+            return false;
+        }
+
+        double price = data.Price;
+
+        return !double.IsNaN(price) &&
+               !double.IsInfinity(price) &&
+               price >= 0d &&
+               (price == 0d || _metaGameRules.CanAfford(price));
     }
 
     public bool CanUpgrade()
@@ -129,6 +151,11 @@ public class MetaUpgradeItemController : MonoBehaviour
 
     void OnMouseDown()
     {
+        worldPressAllowed = !PlanetInputBlocker.IsBlocked();
+
+        if (!worldPressAllowed)
+            return;
+
         mouseDownPosition = Input.mousePosition;
         isDragging = false;
     }
@@ -141,25 +168,36 @@ public class MetaUpgradeItemController : MonoBehaviour
 
     void OnMouseUpAsButton()
     {
-        if (!isDragging)
+        bool canOpen = worldPressAllowed
+                       && !isDragging
+                       && !PlanetInputBlocker.IsBlocked();
+
+        worldPressAllowed = false;
+
+        if (canOpen)
             panelUI.Open(this);
     }
 
     private void InstantiateBoxPrefab()
     {
-        if (isActive) return;
+        if (!CanAdd())
+            return;
 
+        double price = data.Price;
+
+        if (price > 0d &&
+            !_metaGameRules.TryHandleUpgradeLevel(price, notify: false))
+        {
+            return;
+        }
+
+        currentLevel = 0;
         isActive = true;
 
-        EnsureBoxExists();
-
-        if (box != null)
-            box.SetActive(true);
-
-        if (visualMode == UpgradeVisualMode.BoxWithChildrenByLevel)
-            ApplyBoxChildrenState();
-
+        BuildInstance();
         SaveToES3();
+
+        _metaGameRules.SendDataUpdate();
     }
 
     public void BuildInstance()
@@ -258,7 +296,7 @@ public class MetaUpgradeItemController : MonoBehaviour
 
     public void ActivateUpgradeObject()
     {
-        if (objectsToActivate == null || objectPlaceRotator == null) return;
+        //if (objectsToActivate == null || objectPlaceRotator == null) return;
 
         if (itemCount < objectsToActivate.Count)
         {

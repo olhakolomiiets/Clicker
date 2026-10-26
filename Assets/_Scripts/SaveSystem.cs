@@ -13,8 +13,87 @@ public class SaveSystem : MonoBehaviour
 
     private string _saveGameKeyName = "SaveGeneralData";
 
+    private const string PassiveIncomeTransactionKey =
+    "PendingPassiveIncomeTransaction_v1";
+
+    [Serializable]
+    private sealed class PassiveIncomeTransaction
+    {
+        public string PlanetKey;
+        public string PlanetJson;
+        public string GeneralJson;
+    }
+
+    public void SavePassiveIncomeReward(List<string> planetData, List<string> generalData)
+    {
+        RecoverPassiveIncomeTransaction();
+
+        if (string.IsNullOrEmpty(_saveKeyName))
+            throw new InvalidOperationException(
+                "Planet save key is missing.");
+
+        var transaction = new PassiveIncomeTransaction
+        {
+            PlanetKey = _saveKeyName,
+            PlanetJson = JsonUtility.ToJson(new SavedData
+            {
+                savedData = planetData
+            }),
+            GeneralJson = JsonUtility.ToJson(new SavedGeneralData
+            {
+                savedGeneralData = generalData
+            })
+        };
+
+        PlayerPrefs.SetString(
+            PassiveIncomeTransactionKey,
+            JsonUtility.ToJson(transaction)
+        );
+
+        PlayerPrefs.Save();
+
+        RecoverPassiveIncomeTransaction();
+    }
+
+    private void RecoverPassiveIncomeTransaction()
+    {
+        if (!PlayerPrefs.HasKey(PassiveIncomeTransactionKey))
+            return;
+
+        var transaction =
+            JsonUtility.FromJson<PassiveIncomeTransaction>(
+                PlayerPrefs.GetString(PassiveIncomeTransactionKey)
+            );
+
+        if (transaction == null ||
+            string.IsNullOrEmpty(transaction.PlanetKey) ||
+            string.IsNullOrEmpty(transaction.PlanetJson) ||
+            string.IsNullOrEmpty(transaction.GeneralJson) ||
+            string.IsNullOrEmpty(_saveGameKeyName))
+        {
+            throw new InvalidOperationException(
+                "Passive income transaction is invalid.");
+        }
+
+        PlayerPrefs.SetString(
+            transaction.PlanetKey,
+            transaction.PlanetJson
+        );
+
+        PlayerPrefs.SetString(
+            _saveGameKeyName,
+            transaction.GeneralJson
+        );
+
+        PlayerPrefs.Save();
+
+        PlayerPrefs.DeleteKey(PassiveIncomeTransactionKey);
+        PlayerPrefs.Save();
+    }
+
     public void SaveThePlanet(List<string> dataToSave)
     {
+        RecoverPassiveIncomeTransaction();
         SavedData data = new SavedData
         {
             savedData = dataToSave,
@@ -25,6 +104,7 @@ public class SaveSystem : MonoBehaviour
 
     public List<string> LoadPlanet()
     {
+        RecoverPassiveIncomeTransaction();
         if (PlayerPrefs.HasKey(_saveKeyName) == false)
             return new();
         SavedData data = JsonUtility.FromJson<SavedData>(PlayerPrefs.GetString(_saveKeyName));
@@ -36,6 +116,7 @@ public class SaveSystem : MonoBehaviour
 
     public void SaveTheGame(List<string> dataToSave)
     {
+        RecoverPassiveIncomeTransaction();
         SavedGeneralData data = new SavedGeneralData
         {
             savedGeneralData = dataToSave,
@@ -46,6 +127,7 @@ public class SaveSystem : MonoBehaviour
 
     public List<string> LoadGame()
     {
+        RecoverPassiveIncomeTransaction();
         if (PlayerPrefs.HasKey(_saveGameKeyName) == false)
             return new();
         SavedGeneralData data = JsonUtility.FromJson<SavedGeneralData>(PlayerPrefs.GetString(_saveGameKeyName));

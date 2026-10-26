@@ -57,6 +57,28 @@ public class MetaVariantsController : MonoBehaviour
 
     public void OpenVariantPanel(MetaVariantItemController item)
     {
+        Debug.Log(
+            $"[Variants] OPEN | " +
+            $"Controller: {controllerId} | " +
+            $"Item: {item.itemId} | " +
+            $"Variants: {item.Variants.Count} | " +
+            $"Children: {_variantItemParent.childCount} | " +
+            $"Frame: {Time.frameCount}"
+        );
+
+        for (int i = _variantItemParent.childCount - 1; i >= 0; i--)
+        {
+            Transform child = _variantItemParent.GetChild(i);
+            child.gameObject.SetActive(false);
+            child.SetParent(null, false);
+            Destroy(child.gameObject);
+        }
+
+        _variantButtonList.Clear();
+
+        if (_variant != null)
+            _variant.OnSelectVariantItem -= UpdateVariantUI;
+
         _variant = item;
         _variantPanel.SetActive(true);
         _planetRotator.enabled = false;
@@ -79,8 +101,8 @@ public class MetaVariantsController : MonoBehaviour
             ConnectVariantEvents(btn);
         }
 
-        float _scrollItemGroupHeight = 165 * item.Variants.Count;
-        _variantItemParent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _scrollItemGroupHeight);
+        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_variantItemParent);
 
         _variant.OnSelectVariantItem += UpdateVariantUI;
 
@@ -89,8 +111,19 @@ public class MetaVariantsController : MonoBehaviour
 
     public void CloseVariantPanel()
     {
-        foreach (Transform t in _variantItemParent)
-            Destroy(t.gameObject);
+        for (int i = _variantItemParent.childCount - 1; i >= 0; i--)
+        {
+            Transform child = _variantItemParent.GetChild(i);
+            child.gameObject.SetActive(false);
+            child.SetParent(null, false);
+            Destroy(child.gameObject);
+        }
+
+        if (_variant != null)
+        {
+            _variant.OnSelectVariantItem -= UpdateVariantUI;
+            _variant = null;
+        }
 
         _variantButtonList.Clear();
         _variantPanel.SetActive(false);
@@ -214,6 +247,10 @@ public class MetaVariantsController : MonoBehaviour
     private void OnDisable()
     {
         _closeButton.onClick.RemoveListener(CloseVariantPanel);
+
+        foreach (var controller in items)
+            controller.OnVariantPanelOpened -= OpenVariantPanel;
+
         SaveToES3();
     }
     private void OnDestroy()

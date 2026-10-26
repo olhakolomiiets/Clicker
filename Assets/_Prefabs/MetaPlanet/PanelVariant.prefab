@@ -518,6 +518,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1481965190125571953}
   - component: {fileID: 9198931476400937059}
+  - component: {fileID: 2277590788980974287}
   - component: {fileID: 572509693761496896}
   - component: {fileID: 678966207213314966}
   m_Layer: 5
@@ -557,6 +558,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4806874721800126225}
   m_CullTransparentMesh: 1
+--- !u!114 &2277590788980974287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4806874721800126225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd547129512f9d4c846f0c3a8874811, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlanetInputBlocker
 --- !u!114 &572509693761496896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -638,7 +651,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 800, y: 1080}
+  m_SizeDelta: {x: 800, y: 1380}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &965213832289013731
 CanvasRenderer:
@@ -1069,6 +1082,7 @@ GameObject:
   m_Component:
   - component: {fileID: 474090954283216092}
   - component: {fileID: 3191686369130385391}
+  - component: {fileID: 4292596794984425305}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -1093,7 +1107,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 1080}
+  m_SizeDelta: {x: 0, y: 1300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &3191686369130385391
 MonoBehaviour:
@@ -1121,3 +1135,17 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &4292596794984425305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8532764674388253626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
+  m_HorizontalFit: 0
+  m_VerticalFit: 2

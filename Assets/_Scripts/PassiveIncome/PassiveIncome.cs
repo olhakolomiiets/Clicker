@@ -50,6 +50,7 @@ public class PassiveIncome : MonoBehaviour
 
     public event Action<double, double> OnEarningPassiveIncome;
     public event Action<double, int> OnGetPassiveIncomeExtraTime;
+    public event Action<double, double, double, double> OnPassiveIncomeQuotePrepared;
 
     #endregion
 
@@ -60,8 +61,8 @@ public class PassiveIncome : MonoBehaviour
     private double _passiveDiamondsProfit;
     private bool _rewardReceived;
     private bool _isPassiveIncome;
-    private int _2xPassiveIncome;
-    private int _3xPassiveIncome;
+    private double _2xPassiveIncome;
+    private double _3xPassiveIncome;
 
     #endregion
 
@@ -103,7 +104,6 @@ public class PassiveIncome : MonoBehaviour
         _currentGameData = gameData;
 
         _buyButton.interactable = (generalGameData.Diamonds < _passiveIncomeData.ExtraTimePrice) ? false : true;
-        _rewardReceived = false;
     }
 
     public void GetExtraTimeForPassiveIncome()
@@ -113,27 +113,65 @@ public class PassiveIncome : MonoBehaviour
         if (_currentGeneralData.ExtraTimePurchasedCount >= _passiveIncomeData.ExtraTimeCount)
         {
             _extraTimeTxt.text = _timeTxt.text;
-            _buyButton.gameObject.SetActive(false);      
+            _buyButton.gameObject.SetActive(false);
             _timeTxt.gameObject.SetActive(false);
-        }          
+        }
 
         _passiveIncomeData.ExtraTimePrice = _passiveIncomeData.ExtraTimePrice * _passiveIncomeData.ExtraTimePriceMultiplier;
         _extraTimePriceTxt.text = _passiveIncomeData.ExtraTimePrice.ToString();
-        UpdateTimeText();       
+        UpdateTimeText();
     }
 
     public void ActivatePassiveIncome(int timeAfterExit)
     {
-        if (!_rewardReceived && timeAfterExit > _delayTime && _currentGameData.MoneyPerSec > 0 && _currentGameData.IsManagerPurchased > 0)
+        int pendingSeconds = _currentGeneralData.PendingOfflineSeconds;
+
+        if (pendingSeconds > _delayTime && _currentGameData.MoneyPerSec > 0 && _currentGameData.IsManagerPurchased > 0 && !passiveIncomeWind.activeSelf)
         {
-            _passiveProfit = Math.Min(timeAfterExit, _currentGeneralData.PassiveIncomeTime) * _currentGameData.MoneyPerSec;
-            PreparePassiveIncomeUI(timeAfterExit, _passiveProfit);
+            _passiveProfit = Math.Min(pendingSeconds, _currentGeneralData.PassiveIncomeTime) * _currentGameData.MoneyPerSec;
+
+            Debug.Log(
+                $"[PassiveIncome] ACTIVATE | " +
+                $"Pending={pendingSeconds}s | " +
+                $"Limit={_currentGeneralData.PassiveIncomeTime}s | " +
+                $"MoneyPerSec={_currentGameData.MoneyPerSec} | " +
+                $"Reward={_passiveProfit}"
+            );
+
+            PreparePassiveIncomeUI(pendingSeconds, _passiveProfit);
         }
     }
 
     public void EarningPassiveIncome()
     {
+        if (_currentGeneralData == null || _currentGameData == null || _currentGeneralData.PendingOfflineSeconds <= 0)
+            return;
+
+        _passiveProfit = Math.Min(_currentGeneralData.PendingOfflineSeconds, _currentGeneralData.PassiveIncomeTime) * _currentGameData.MoneyPerSec;
+
+        Debug.Log(
+            $"[PassiveIncome] CLAIM X1 | " +
+            $"MoneyBefore={_currentGameData.Money} | " +
+            $"PendingBefore={_currentGeneralData.PendingOfflineSeconds}s | " +
+            $"Reward={_passiveProfit}"
+        );
+
         OnEarningPassiveIncome?.Invoke(_passiveProfit, 0);
+
+        if (_currentGeneralData.PendingOfflineSeconds > 0)
+        {
+            Debug.LogWarning("[PassiveIncome] CLAIM REJECTED");
+            return;
+        }
+
+        _rewardReceived = true;
+
+        Debug.Log(
+            $"[PassiveIncome] CLAIM SUCCESS | " +
+            $"MoneyAfter={_currentGameData.Money} | " +
+            $"PendingAfter={_currentGeneralData.PendingOfflineSeconds}s"
+        );
+
         passiveIncomeWind.SetActive(false);
         FirebaseAnalytics.LogEvent(name: "passive_income_received");
         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! PassiveIncome /// EarningPassiveIncome /// PassiveIncome: " + _passiveProfit);
@@ -141,8 +179,15 @@ public class PassiveIncome : MonoBehaviour
 
     public void PreparePassiveIncomeUI(int timeAfterExit, double passiveIncome)
     {
-        _2xPassiveIncome = (int)passiveIncome * 2;
-        _3xPassiveIncome = (int)passiveIncome * 3;
+        _2xPassiveIncome = Math.Truncate(passiveIncome) * 2d;
+        _3xPassiveIncome = Math.Truncate(passiveIncome) * 3d;
+
+        OnPassiveIncomeQuotePrepared?.Invoke(
+            passiveIncome,
+            _2xPassiveIncome,
+            _3xPassiveIncome,
+            _3xPassiveIncomePrice
+        );
 
         passiveIncomeWind.SetActive(true);
 
@@ -160,7 +205,7 @@ public class PassiveIncome : MonoBehaviour
         {
             _2xPassiveIncomeTxt.text = $"{AbbreviateNumber(_2xPassiveIncome)}";
             _3xPassiveIncomeTxt.text = $"{AbbreviateNumber(_3xPassiveIncome)}";
-        }    
+        }
         else
         {
             _2xPassiveIncomeTxt.text = _2xPassiveIncome.ToString();
@@ -204,7 +249,7 @@ public class PassiveIncome : MonoBehaviour
         _isPassiveIncome = true;
 
         //buttonReward.GetComponentInChildren<Text>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Loading")}";
- 
+
         _adController.LoadAd();
     }
 

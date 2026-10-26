@@ -16,6 +16,13 @@ public class MetaUpgradeItemData : ScriptableObject
     [Header("Upgrade")]
     [SerializeField] public List<UpgradeLevel> Upgrades;
 
+    [Header("Economic Effect")]
+    public MetaUpgradeEffectType EffectType = MetaUpgradeEffectType.None;
+
+    public List<ItemData> TargetItems = new();
+
+    public string SaveId;
+
     public double UpgradeLevelPrice(int index)
     => Upgrades[index].UpgradeCost;
 }
@@ -28,4 +35,11 @@ public class UpgradeLevel
     public float BonusValue;
     public string BonusDescription;
     public Sprite ItemIcon;
+}
+
+public enum MetaUpgradeEffectType
+{
+    None = 0,
+    IncomeMultiplier = 1,
+    ProductionTimeMultiplier = 2
 }

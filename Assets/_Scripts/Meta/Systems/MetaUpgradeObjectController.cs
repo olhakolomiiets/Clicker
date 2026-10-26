@@ -45,18 +45,23 @@ public class MetaUpgradeObjectController : MonoBehaviour
     private void HandleBuyButton()
     {
         OnObjectAddButtonClicked?.Invoke();
-        _buyButton.gameObject.SetActive(false);
     }
 
     public void SetBuyPrice(double price)
     {
-        _buyButtonText.text = $"{price.ToString("N0")}";
+        _buyButtonText.text = price == 0d
+            ? "ADD"
+            : $"ADD {price:G}";
     }
 
     public void ToggleBuyButton(bool val)
         => _buyButton.interactable = val;
 
-    public void DisableBuyPanel(bool val) => _buyButton.interactable = val;
+    public void DisableBuyPanel(bool val)
+    {
+        _buyButton.gameObject.SetActive(val);
+        _buyButton.interactable = val;
+    }
 
     public void UpdateLanguage()
     {

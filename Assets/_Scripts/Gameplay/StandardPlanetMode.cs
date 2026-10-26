@@ -82,7 +82,12 @@ public class StandardPlanetMode : MonoBehaviour, IPlanetMode
         _gameRules.OnUpdateUpgradeData += _gameUI.UpdateUpgradeUI;
 
         _gameRules.OnUpdateGameData += _passiveIncome.PrepareGameData;
+        _gameRules.OnActivatePassiveIncome += _passiveIncome.ActivatePassiveIncome;
+        _passiveIncome.OnEarningPassiveIncome += _gameRules.GetPassiveIncome;
+        _passiveIncome.OnPassiveIncomeQuotePrepared += _gameRules.SetPassiveIncomeQuote;
+
         _gameRules.OnUpdateGameData += _levelController.PrepareGameData;
+        _levelController.OnNextPlanetPurchased += _gameRules.HandlePlanet;
 
     }
 
@@ -99,5 +104,15 @@ public class StandardPlanetMode : MonoBehaviour, IPlanetMode
     public void ActivatePurchasedBooster()
     {
         _gameRules.GetPurchasedBooster();
+    }
+
+    public void SetPassiveIncomeSaver(System.Action saver)
+    {
+        _gameRules.SetPassiveIncomeSaver(saver);
+    }
+
+    public void TryActivatePassiveIncome()
+    {
+        _gameRules.TryActivatePassiveIncome();
     }
 }

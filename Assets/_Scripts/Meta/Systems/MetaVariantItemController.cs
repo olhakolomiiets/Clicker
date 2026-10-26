@@ -46,6 +46,7 @@ public class MetaVariantItemController : MonoBehaviour
 
     private Vector3 mouseDownPosition;
     private bool isDragging;
+    private bool worldPressAllowed;
     [SerializeField] private float dragThreshold = 15f;
 
     void Start()
@@ -61,7 +62,7 @@ public class MetaVariantItemController : MonoBehaviour
             {
                 box = Instantiate(itemData.BoxPrefab, transform);
                 isActive = true;
-            }       
+            }
 
             if (variantsRoot != null)
                 variantsRoot.gameObject.SetActive(false);
@@ -203,7 +204,7 @@ public class MetaVariantItemController : MonoBehaviour
                 box = Instantiate(itemData.BoxPrefab, transform);
 
             if (box != null)
-                box.SetActive(true); 
+                box.SetActive(true);
 
             DisableAllInstances();
 
@@ -281,10 +282,14 @@ public class MetaVariantItemController : MonoBehaviour
 
     void OnMouseDown()
     {
+        worldPressAllowed = !PlanetInputBlocker.IsBlocked();
+
+        if (!worldPressAllowed)
+            return;
+
         mouseDownPosition = Input.mousePosition;
         isDragging = false;
     }
-
     void OnMouseDrag()
     {
         if (Vector3.Distance(Input.mousePosition, mouseDownPosition) > dragThreshold)
@@ -293,7 +298,13 @@ public class MetaVariantItemController : MonoBehaviour
 
     void OnMouseUpAsButton()
     {
-        if (!isDragging)
+        bool canOpen = worldPressAllowed
+                       && !isDragging
+                       && !PlanetInputBlocker.IsBlocked();
+
+        worldPressAllowed = false;
+
+        if (canOpen)
             OnVariantPanelOpened?.Invoke(this);
     }
 

@@ -93,6 +93,18 @@ public class GameRules : MonoBehaviour
     [Header("Currency")]
     [SerializeField] private string currencyCode;
     private string diamondCode = "DI";
+    private System.Action _savePassiveIncomeReward;
+
+    private bool _hasPassiveIncomeQuote;
+    private double _passiveX1;
+    private double _passiveX2;
+    private double _passiveX3;
+    private double _passiveX3Price;
+
+    public void SetPassiveIncomeSaver(System.Action saver)
+    {
+        _savePassiveIncomeReward = saver;
+    }
 
     public void PrepareGameData(GameData gameData, GeneralGameData generalData)
     {
@@ -265,18 +277,33 @@ public class GameRules : MonoBehaviour
     {
         if (_currentGameData.ItemDataList[index].IsPremium)
         {
-            _currentGeneralData.Diamonds += _currentGameData.ItemDataList[index].DiamondsIncome(_currentGameData.ItemCount[index]);
+            ItemData itemData = _currentGameData.ItemDataList[index];
+
+            double income = itemData.DiamondsIncome(
+                _currentGameData.ItemCount[index]);
+
+            double metaMultiplier =
+                _currentGeneralData?.MetaUpgradeEffects?.GetIncomeMultiplier(itemData) ?? 1d;
+
+            _currentGeneralData.Diamonds += income * metaMultiplier;
         }
         else
         {
-            double income = _currentGameData.ItemDataList[index].ItemIncome(
+            ItemData itemData = _currentGameData.ItemDataList[index];
+
+            double income = itemData.ItemIncome(
                 _currentGameData.ItemCount[index],
                 _currentGameData.ItemBonusMultiplayer[index]);
+
+            double metaMultiplier =
+                _currentGeneralData?.MetaUpgradeEffects?.GetIncomeMultiplier(itemData) ?? 1d;
+
+            income *= metaMultiplier;
 
             _currentGameData.Money += income;
             _currentGeneralData.TotalScore += income;
             _totalScore = _currentGeneralData.TotalScore;
-            Debug.Log($"[PlanetTutorialTrace] income confirmed index={index} income={income} money={_currentGameData.Money}", this);
+            //Debug.Log($"[PlanetTutorialTrace] income confirmed index={index} income={income} money={_currentGameData.Money}", this);
             OnItemIncomeEarned?.Invoke(index, income);
         }
 
@@ -286,7 +313,18 @@ public class GameRules : MonoBehaviour
     public void HandleStartItemProgress(int index)
     {
         OnPerformAction?.Invoke(index, _currentGameData, _currentGeneralData);
-        OnStartWorkOnItem?.Invoke(index, _currentGameData.ItemDataList[index].Delay);
+
+        ItemData itemData = _currentGameData.ItemDataList[index];
+
+        double timeMultiplier =
+            _currentGeneralData?.MetaUpgradeEffects?.GetTimeMultiplier(itemData) ?? 1d;
+
+        float effectiveDelay = Mathf.Max(
+            0.1f,
+            (float)(itemData.Delay * timeMultiplier)
+        );
+
+        OnStartWorkOnItem?.Invoke(index, effectiveDelay);
     }
 
     public void HandleUpgrade(int index)
@@ -295,7 +333,7 @@ public class GameRules : MonoBehaviour
         _currentGameData.ItemCount[index] += 1;
 
         SendDataUpdate();
-        Debug.Log($"[PlanetTutorialTrace] item upgrade confirmed index={index} count={_currentGameData.ItemCount[index]}", this);
+        //Debug.Log($"[PlanetTutorialTrace] item upgrade confirmed index={index} count={_currentGameData.ItemCount[index]}", this);
         OnItemUpgradedConfirmed?.Invoke(index);
     }
 
@@ -313,9 +351,26 @@ public class GameRules : MonoBehaviour
 
         for (int i = 0; i < _currentGameData.ItemDataList.Count; i++)
         {
-            _currentGameData.MoneyPerSec += _currentGameData.ItemDataList[i].ItemIncomePerSec(
-                _currentGameData.ItemCount[i],
-                _currentGameData.ItemBonusMultiplayer[i]);
+            ItemData itemData = _currentGameData.ItemDataList[i];
+
+            if (itemData.IsPremium)
+                continue;
+
+            double incomePerCycle = itemData.ItemIncome(_currentGameData.ItemCount[i], _currentGameData.ItemBonusMultiplayer[i]);
+
+            double timeMultiplier =
+                _currentGeneralData?.MetaUpgradeEffects?.GetTimeMultiplier(itemData) ?? 1d;
+
+            float effectiveDelay = Mathf.Max(
+                0.1f,
+                (float)(itemData.Delay * timeMultiplier)
+            );
+
+            double metaMultiplier = itemData.IsPremium
+                ? 1d
+                : (_currentGeneralData?.MetaUpgradeEffects?.GetIncomeMultiplier(itemData) ?? 1d);
+
+            _currentGameData.MoneyPerSec += incomePerCycle * metaMultiplier / effectiveDelay;
         }
     }
 
@@ -413,17 +468,103 @@ public class GameRules : MonoBehaviour
         Debug.Log("GameRules /// Add INT " + reward + " Diamonds");
     }
 
+    public void SetPassiveIncomeQuote(
+    double x1,
+    double x2,
+    double x3,
+    double x3Price)
+    {
+        if (_currentGeneralData == null ||
+            _currentGeneralData.PendingOfflineSeconds <= 0)
+            return;
+
+        if (x1 <= 0d ||
+            double.IsNaN(x1) ||
+            double.IsInfinity(x1) ||
+            double.IsNaN(x2) ||
+            double.IsInfinity(x2) ||
+            double.IsNaN(x3) ||
+            double.IsInfinity(x3) ||
+            double.IsNaN(x3Price) ||
+            double.IsInfinity(x3Price) ||
+            x3Price < 0d)
+            return;
+
+        if (x2 != Math.Truncate(x1) * 2d ||
+            x3 != Math.Truncate(x1) * 3d)
+            return;
+
+        _passiveX1 = x1;
+        _passiveX2 = x2;
+        _passiveX3 = x3;
+        _passiveX3Price = x3Price;
+
+        _hasPassiveIncomeQuote = true;
+    }
+
     public void GetPassiveIncome(double income, double diamonds)
     {
+        if (_currentGameData == null ||
+            _currentGeneralData == null ||
+            _savePassiveIncomeReward == null)
+            return;
+
+        if (_currentGeneralData.PendingOfflineSeconds <= 0)
+            return;
+
+        if (income <= 0d ||
+            double.IsNaN(income) ||
+            double.IsInfinity(income) ||
+            diamonds < 0d ||
+            double.IsNaN(diamonds) ||
+            double.IsInfinity(diamonds) ||
+            _currentGeneralData.Diamonds < diamonds)
+            return;
+
+        if (!_hasPassiveIncomeQuote)
+            return;
+
+        bool validReward =
+            (diamonds == 0d &&
+                (income == _passiveX1 || income == _passiveX2)) ||
+            (_passiveX3Price > 0d &&
+                diamonds == _passiveX3Price &&
+                income == _passiveX3);
+
+        if (!validReward)
+            return;
+
         _currentGameData.Money += income;
         _currentGeneralData.TotalScore += income;
         _totalScore = _currentGeneralData.TotalScore;
 
         _currentGeneralData.Diamonds -= diamonds;
 
+        _currentGeneralData.ClearPendingOfflineTime();
+        _hasPassiveIncomeQuote = false;
+
+        _savePassiveIncomeReward();
+
         SendDataUpdate();
 
         FirebaseAnalytics.LogEvent("triple_passive_income_received");
+    }
+
+    public void TryActivatePassiveIncome()
+    {
+        if (_currentGeneralData == null || _currentGameData == null)
+            return;
+
+        Debug.Log(
+            $"[PassiveIncome] REQUEST | " +
+            $"Pending={_currentGeneralData.PendingOfflineSeconds}s | " +
+            $"MoneyPerSec={_currentGameData.MoneyPerSec} | " +
+            $"Managers={_currentGameData.IsManagerPurchased}"
+        );
+
+        OnActivatePassiveIncome?.Invoke(
+            _currentGeneralData.PendingOfflineSeconds
+        );
     }
 
     public void UpdatePassiveIncomeTime(double price, int time)

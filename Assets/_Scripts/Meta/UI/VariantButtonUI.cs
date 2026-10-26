@@ -7,6 +7,7 @@ using Lean.Localization;
 public class VariantButtonUI : MonoBehaviour
 {
     public Image icon;
+    public Image diamondIcon;
     public TextMeshProUGUI priceText;
     public TextMeshProUGUI itemName;
     private ItemVariant itemData;
@@ -49,12 +50,12 @@ public class VariantButtonUI : MonoBehaviour
         }
         if (isBought && !isActive)
         {
-            icon.gameObject.SetActive(false);
+            diamondIcon.gameObject.SetActive(false);
             priceText.text = LeanLocalization.GetTranslationText("Select");
         }
         if (isActive)
         {
-            icon.gameObject.SetActive(false);
+            diamondIcon.gameObject.SetActive(false);
             priceText.text = LeanLocalization.GetTranslationText("Selected");
         }
 
@@ -77,12 +78,12 @@ public class VariantButtonUI : MonoBehaviour
         isBought = bought;
         if (isBought && !isActive)
         {
-            icon.gameObject.SetActive(false);
+            diamondIcon.gameObject.SetActive(false);
             priceText.text = LeanLocalization.GetTranslationText("Select");
         }
         if (isActive)
         {
-            icon.gameObject.SetActive(false);
+            diamondIcon.gameObject.SetActive(false);
             priceText.text = LeanLocalization.GetTranslationText("Selected");
         }
     }

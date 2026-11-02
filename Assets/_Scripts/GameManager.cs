@@ -26,6 +26,9 @@ public class GameManager : MonoBehaviour
     private static string _observedOfflineExitTime;
     private static DateTime _observedOfflineReturnUtc;
 
+    [Header("Passive Income Chest")]
+    [SerializeField] private PassiveIncomeChestController _passiveIncomeChestController;
+
     private void OnEnable()
     {
         _generalGameData = new GeneralGameData();
@@ -121,6 +124,11 @@ public class GameManager : MonoBehaviour
         if (_planetMode is StandardPlanetMode standardMode)
         {
             standardMode.SetPassiveIncomeSaver(SavePassiveIncomeReward);
+
+            _passiveIncomeChestController?.Initialize(
+                _generalGameData,
+                _saveSystem.PlanetSaveKey);
+
             standardMode.TryActivatePassiveIncome();
         }
     }
@@ -442,7 +450,10 @@ public class GameManager : MonoBehaviour
                 Debug.Log("GameManager /// OnApplicationPause /// Load");
 
                 if (_planetMode is StandardPlanetMode standardMode)
+                {
                     standardMode.TryActivatePassiveIncome();
+                    _passiveIncomeChestController?.Refresh();
+                }
             }
         }
     }

@@ -468,14 +468,12 @@ public class GameRules : MonoBehaviour
         Debug.Log("GameRules /// Add INT " + reward + " Diamonds");
     }
 
-    public void SetPassiveIncomeQuote(
-    double x1,
-    double x2,
-    double x3,
-    double x3Price)
+    public void SetPassiveIncomeQuote(double x1, double x2, double x3, double x3Price)
     {
-        if (_currentGeneralData == null ||
-            _currentGeneralData.PendingOfflineSeconds <= 0)
+        if (_currentGeneralData != null && _currentGeneralData.OfflinePlanetRewardsEnabled)
+            return;
+
+        if (_currentGeneralData == null || _currentGeneralData.PendingOfflineSeconds <= 0)
             return;
 
         if (x1 <= 0d ||
@@ -504,9 +502,10 @@ public class GameRules : MonoBehaviour
 
     public void GetPassiveIncome(double income, double diamonds)
     {
-        if (_currentGameData == null ||
-            _currentGeneralData == null ||
-            _savePassiveIncomeReward == null)
+        if (_currentGeneralData != null && _currentGeneralData.OfflinePlanetRewardsEnabled)
+            return;
+
+        if (_currentGameData == null || _currentGeneralData == null || _savePassiveIncomeReward == null)
             return;
 
         if (_currentGeneralData.PendingOfflineSeconds <= 0)
@@ -552,6 +551,9 @@ public class GameRules : MonoBehaviour
 
     public void TryActivatePassiveIncome()
     {
+        if (_currentGeneralData != null && _currentGeneralData.OfflinePlanetRewardsEnabled)
+            return;
+
         if (_currentGeneralData == null || _currentGameData == null)
             return;
 

@@ -15,6 +15,17 @@ public class LevelController : MonoBehaviour
 {
     [SerializeField] private List<Button> _buyButtons;
     [SerializeField] private List<Button> _levelButtons;
+
+    [Serializable]
+    private struct CollectButtonBinding
+    {
+        public Button Button;
+        public int SceneBuildIndex;
+    }
+
+    [SerializeField] private OfflinePlanetCatalog _offlinePlanetCatalog;
+    [SerializeField] private List<CollectButtonBinding> _collectButtons = new();
+
     [SerializeField] private Color disabledColor = new Color(1, 1, 1, 0.5f);
     [SerializeField] private Color enabledColor = Color.white;
 
@@ -85,15 +96,13 @@ public class LevelController : MonoBehaviour
 
     private void UpdateLevelButtons()
     {
+        RefreshCollectButtons();
+
         if (generalData == null)
             return;
 
         for (int i = 0; i < _levelButtons.Count; i++)
         {
-            // В списке нет кнопки сцены 0:
-            // i = 0 → сцена 1
-            // i = 1 → сцена 2
-            // i = 2 → сцена 3
             int sceneIndex = i + 1;
 
             bool isFree = sceneIndex < FreeScenesCount;
@@ -114,13 +123,11 @@ public class LevelController : MonoBehaviour
 
     private void UpdateBuyButtons()
     {
-        if (generalData == null || data == null)
+        if (generalData == null)
             return;
 
         for (int i = 0; i < _buyButtons.Count; i++)
         {
-            // i = 0 → покупка сцены 2
-            // i = 1 → покупка сцены 3
             int paidSceneIndex = FirstPaidSceneIndex + i;
 
             bool alreadyPurchased = generalData.ActivePlanet > paidSceneIndex;
@@ -128,7 +135,7 @@ public class LevelController : MonoBehaviour
                 level == paidSceneIndex &&
                 generalData.ActivePlanet == paidSceneIndex;
 
-            bool hasEnoughMoney = data.Money >= nextPlanetPrice;
+            bool hasEnoughMoney = data != null && data.Money >= nextPlanetPrice;
             bool isActive = isCurrentPurchase && hasEnoughMoney;
 
             _buyButtons[i].gameObject.SetActive(!alreadyPurchased);
@@ -243,6 +250,64 @@ public class LevelController : MonoBehaviour
             levelInfo.SetActive(false);
             isHidingTip = false;
         });
+    }
+
+    public void RefreshCollectButtons()
+    {
+        if (_collectButtons == null)
+            return;
+
+        foreach (var binding in _collectButtons)
+        {
+            Button button = binding.Button;
+
+            if (button == null)
+                continue;
+
+            bool hasReward = HasCollectReward(binding.SceneBuildIndex);
+
+            button.interactable = hasReward;
+            button.gameObject.SetActive(hasReward);
+        }
+    }
+
+    private bool HasCollectReward(int sceneIndex)
+    {
+        if (generalData == null ||
+            !generalData.OfflinePlanetRewardsEnabled ||
+            generalData.OfflinePlanetRewards == null ||
+            _offlinePlanetCatalog == null ||
+            _offlinePlanetCatalog.Planets == null)
+        {
+            return false;
+        }
+
+        bool isUnlocked =
+            sceneIndex == 1 ||
+            generalData.ActivePlanet > sceneIndex;
+
+        if (!isUnlocked)
+            return false;
+
+        OfflinePlanetEntry planet = _offlinePlanetCatalog.Planets.Find(
+            p => p != null && p.SceneBuildIndex == sceneIndex);
+
+        if (planet == null)
+            return false;
+
+        foreach (var reward in generalData.OfflinePlanetRewards)
+        {
+            if (reward != null &&
+                reward.PlanetKey == planet.SaveKey &&
+                reward.MoneyX1 > 0d &&
+                !double.IsNaN(reward.MoneyX1) &&
+                !double.IsInfinity(reward.MoneyX1))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

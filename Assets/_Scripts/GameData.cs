@@ -5,11 +5,11 @@ using UnityEngine;
 /// <summary>
 /// GameData class stores all the data about the Incremental Game part of our project (not the visuals - enemie health and count)
 /// </summary>
-public class GameData 
+public class GameData
 {
     //Money representation should handle a lot but at some point it will get reset to 0
-    public double Money { get; set;}
-    public double MoneyPerSec { get; set;}
+    public double Money { get; set; }
+    public double MoneyPerSec { get; set; }
 
     //Bonus multiplier allows us to better balance the incremental game
     //https://www.gamedeveloper.com/design/the-math-of-idle-games-part-i
@@ -20,11 +20,14 @@ public class GameData
     public List<int> ItemMaxCountHelper = new();
     public List<ItemData> ItemDataList = new();
     public List<double> ItemIncomePerSec = new();
-    public double BoosterMultiplier { get; set;}
-    public bool IsBoosterPurchased { get; set;}
+    public double BoosterMultiplier { get; set; }
+    public bool IsBoosterPurchased { get; set; }
 
     public List<UpgradeItemData> UpgradeItemDataList = new();
     public int IsManagerPurchased;
+
+    public int PassiveIncomeChestSpawnPointIndex;
+    public int PassiveIncomeChestPrefabIndex;
 
     public void SetData(string dataString)
     {
@@ -41,6 +44,8 @@ public class GameData
         ItemMaxCountHelper = data.ItemMaxCountHelper;
         IsManagerPurchased = data.IsManagerPurchased;
         IsBoosterPurchased = data.IsBoosterPurchased;
+        PassiveIncomeChestSpawnPointIndex = Mathf.Max(0, data.PassiveIncomeChestSpawnPointIndex);
+        PassiveIncomeChestPrefabIndex = Mathf.Max(0, data.PassiveIncomeChestPrefabIndex);
 
         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! GameData /// SetData " + dataString);
     }
@@ -57,7 +62,9 @@ public class GameData
             BoosterMultiplier = BoosterMultiplier,
             ItemMaxCountHelper = ItemMaxCountHelper,
             IsManagerPurchased = IsManagerPurchased,
-            IsBoosterPurchased = IsBoosterPurchased
+            IsBoosterPurchased = IsBoosterPurchased,
+            PassiveIncomeChestSpawnPointIndex = PassiveIncomeChestSpawnPointIndex,
+            PassiveIncomeChestPrefabIndex = PassiveIncomeChestPrefabIndex,
         });
 }
 
@@ -74,5 +81,7 @@ public struct GameDataSave
     public List<int> ItemMaxCountHelper;
     public int IsManagerPurchased;
     public bool IsBoosterPurchased;
+    public int PassiveIncomeChestSpawnPointIndex;
+    public int PassiveIncomeChestPrefabIndex;
 }
 

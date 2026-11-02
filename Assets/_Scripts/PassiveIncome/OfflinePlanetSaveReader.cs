@@ -5,6 +5,7 @@ using UnityEngine;
 public static class OfflinePlanetSaveReader
 {
     private const string PendingTransactionKey = "PendingPassiveIncomeTransaction_v1";
+    private const string PendingExchangeTransactionKey = "PendingCurrencyExchangeTransaction_v1";
 
     [Serializable]
     private sealed class PlanetSaveEnvelope
@@ -26,10 +27,11 @@ public static class OfflinePlanetSaveReader
             return false;
         }
 
-        // Read only after the existing transaction recovery has completed.
-        if (PlayerPrefs.HasKey(PendingTransactionKey))
+        // Read only after all pending transactions are recovered.
+        if (PlayerPrefs.HasKey(PendingTransactionKey) ||
+            PlayerPrefs.HasKey(PendingExchangeTransactionKey))
         {
-            error = "Passive income transaction recovery is required.";
+            error = "Pending economy transaction recovery is required.";
             return false;
         }
 

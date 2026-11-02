@@ -124,6 +124,9 @@ public class PassiveIncome : MonoBehaviour
 
     public void ActivatePassiveIncome(int timeAfterExit)
     {
+        if (_currentGeneralData == null || _currentGeneralData.OfflinePlanetRewardsEnabled)
+            return;
+
         int pendingSeconds = _currentGeneralData.PendingOfflineSeconds;
 
         if (pendingSeconds > _delayTime && _currentGameData.MoneyPerSec > 0 && _currentGameData.IsManagerPurchased > 0 && !passiveIncomeWind.activeSelf)

@@ -10,11 +10,17 @@ public class SaveSystem : MonoBehaviour
     //We areu using PlayerPrefs so here is the default key that we use
     [SerializeField]
     private string _saveKeyName;
-
+    public string PlanetSaveKey => _saveKeyName;
     private string _saveGameKeyName = "SaveGeneralData";
 
     private const string PassiveIncomeTransactionKey =
     "PendingPassiveIncomeTransaction_v1";
+
+    private const string CurrencyExchangeSaveKey =
+    "MetaExchange_V1";
+
+    private const string CurrencyExchangeTransactionKey =
+        "PendingCurrencyExchangeTransaction_v1";
 
     [Serializable]
     private sealed class PassiveIncomeTransaction
@@ -24,6 +30,14 @@ public class SaveSystem : MonoBehaviour
         public string GeneralJson;
     }
 
+    [Serializable]
+    private sealed class CurrencyExchangeTransaction
+    {
+        public string PlanetKey;
+        public string PlanetJson;
+        public string GeneralJson;
+        public string ExchangeJson;
+    }
     public void SavePassiveIncomeReward(List<string> planetData, List<string> generalData)
     {
         RecoverPassiveIncomeTransaction();
@@ -91,9 +105,146 @@ public class SaveSystem : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+
+    public void RecoverPendingTransactions()
+    {
+        bool hasPassive =
+            PlayerPrefs.HasKey(PassiveIncomeTransactionKey);
+
+        bool hasExchange =
+            PlayerPrefs.HasKey(CurrencyExchangeTransactionKey);
+
+        if (hasPassive && hasExchange)
+        {
+            throw new InvalidOperationException(
+                "Multiple pending economy transactions found.");
+        }
+
+        RecoverPassiveIncomeTransaction();
+        RecoverCurrencyExchangeTransaction();
+    }
+
+    public void SaveCurrencyExchange(
+        string planetKey,
+        List<string> planetData,
+        List<string> generalData,
+        string exchangeStateJson)
+    {
+        RecoverPendingTransactions();
+
+        if (string.IsNullOrWhiteSpace(planetKey) ||
+            planetKey == _saveGameKeyName ||
+            planetKey == CurrencyExchangeSaveKey ||
+            planetKey == PassiveIncomeTransactionKey ||
+            planetKey == CurrencyExchangeTransactionKey)
+        {
+            throw new ArgumentException(
+                "Invalid planet save key.", nameof(planetKey));
+        }
+
+        if (!PlayerPrefs.HasKey(planetKey))
+        {
+            throw new InvalidOperationException(
+                "Selected planet save does not exist.");
+        }
+
+        if (planetData == null ||
+            planetData.Count == 0 ||
+            string.IsNullOrWhiteSpace(planetData[0]))
+        {
+            throw new ArgumentException(
+                "Planet snapshot is invalid.", nameof(planetData));
+        }
+
+        if (generalData == null ||
+            generalData.Count == 0 ||
+            string.IsNullOrWhiteSpace(generalData[0]))
+        {
+            throw new ArgumentException(
+                "General snapshot is invalid.", nameof(generalData));
+        }
+
+        if (string.IsNullOrWhiteSpace(exchangeStateJson))
+        {
+            throw new ArgumentException(
+                "Exchange state is missing.",
+                nameof(exchangeStateJson));
+        }
+
+        var transaction = new CurrencyExchangeTransaction
+        {
+            PlanetKey = planetKey,
+
+            PlanetJson = JsonUtility.ToJson(new SavedData
+            {
+                savedData = planetData
+            }),
+
+            GeneralJson = JsonUtility.ToJson(new SavedGeneralData
+            {
+                savedGeneralData = generalData
+            }),
+
+            ExchangeJson = exchangeStateJson
+        };
+
+        // First persist the complete prepared transaction.
+        PlayerPrefs.SetString(
+            CurrencyExchangeTransactionKey,
+            JsonUtility.ToJson(transaction));
+
+        PlayerPrefs.Save();
+
+        // Apply the snapshots and remove the journal.
+        RecoverCurrencyExchangeTransaction();
+    }
+
+    private void RecoverCurrencyExchangeTransaction()
+    {
+        if (!PlayerPrefs.HasKey(CurrencyExchangeTransactionKey))
+            return;
+
+        var transaction =
+            JsonUtility.FromJson<CurrencyExchangeTransaction>(
+                PlayerPrefs.GetString(
+                    CurrencyExchangeTransactionKey));
+
+        if (transaction == null ||
+            string.IsNullOrWhiteSpace(transaction.PlanetKey) ||
+            transaction.PlanetKey == _saveGameKeyName ||
+            transaction.PlanetKey == CurrencyExchangeSaveKey ||
+            string.IsNullOrWhiteSpace(transaction.PlanetJson) ||
+            string.IsNullOrWhiteSpace(transaction.GeneralJson) ||
+            string.IsNullOrWhiteSpace(transaction.ExchangeJson))
+        {
+            throw new InvalidOperationException(
+                "Currency exchange transaction is invalid.");
+        }
+
+        // Apply absolute snapshots, never increment balances.
+        PlayerPrefs.SetString(
+            transaction.PlanetKey,
+            transaction.PlanetJson);
+
+        PlayerPrefs.SetString(
+            _saveGameKeyName,
+            transaction.GeneralJson);
+
+        PlayerPrefs.SetString(
+            CurrencyExchangeSaveKey,
+            transaction.ExchangeJson);
+
+        PlayerPrefs.Save();
+
+        // Delete only after all three snapshots are saved.
+        PlayerPrefs.DeleteKey(CurrencyExchangeTransactionKey);
+        PlayerPrefs.Save();
+    }
+
+
     public void SaveThePlanet(List<string> dataToSave)
     {
-        RecoverPassiveIncomeTransaction();
+        RecoverPendingTransactions();
         SavedData data = new SavedData
         {
             savedData = dataToSave,
@@ -104,7 +255,7 @@ public class SaveSystem : MonoBehaviour
 
     public List<string> LoadPlanet()
     {
-        RecoverPassiveIncomeTransaction();
+        RecoverPendingTransactions();
         if (PlayerPrefs.HasKey(_saveKeyName) == false)
             return new();
         SavedData data = JsonUtility.FromJson<SavedData>(PlayerPrefs.GetString(_saveKeyName));
@@ -116,7 +267,7 @@ public class SaveSystem : MonoBehaviour
 
     public void SaveTheGame(List<string> dataToSave)
     {
-        RecoverPassiveIncomeTransaction();
+        RecoverPendingTransactions();
         SavedGeneralData data = new SavedGeneralData
         {
             savedGeneralData = dataToSave,
@@ -127,7 +278,7 @@ public class SaveSystem : MonoBehaviour
 
     public List<string> LoadGame()
     {
-        RecoverPassiveIncomeTransaction();
+        RecoverPendingTransactions();
         if (PlayerPrefs.HasKey(_saveGameKeyName) == false)
             return new();
         SavedGeneralData data = JsonUtility.FromJson<SavedGeneralData>(PlayerPrefs.GetString(_saveGameKeyName));
@@ -138,7 +289,10 @@ public class SaveSystem : MonoBehaviour
     }
 
     public void ResetData()
-        => PlayerPrefs.DeleteKey(_saveKeyName);
+    {
+        RecoverPendingTransactions();
+        PlayerPrefs.DeleteKey(_saveKeyName);
+    }
 
 
     [Serializable]

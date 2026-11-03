@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8667950613018688948}
+  - component: {fileID: 2350560486537493407}
   m_Layer: 0
   m_Name: SolarPanel
   m_TagString: Untagged
@@ -32,6 +33,23 @@ Transform:
   - {fileID: 5927605504891107822}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!111 &2350560486537493407
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5520388171563113119}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Animation: {fileID: 7400000, guid: 83e3f26e214b834479eeba53a1118dc8, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 83e3f26e214b834479eeba53a1118dc8, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_UpdateMode: 0
+  m_CullingType: 0
 --- !u!1001 &5932268555072476468
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43,6 +61,22 @@ PrefabInstance:
     - target: {fileID: 1326000930098258, guid: b241911f40adead4da1190fc656439bf, type: 3}
       propertyPath: m_Name
       value: SM_Prop_SolarPanel_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 4235221414484206, guid: b241911f40adead4da1190fc656439bf, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9992686
+      objectReference: {fileID: 0}
+    - target: {fileID: 4235221414484206, guid: b241911f40adead4da1190fc656439bf, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4235221414484206, guid: b241911f40adead4da1190fc656439bf, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.03823952
+      objectReference: {fileID: 0}
+    - target: {fileID: 4235221414484206, guid: b241911f40adead4da1190fc656439bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -4.383
       objectReference: {fileID: 0}
     - target: {fileID: 4700545470147802, guid: b241911f40adead4da1190fc656439bf, type: 3}
       propertyPath: m_LocalScale.x

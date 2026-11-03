@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6229351585201447026}
+  - component: {fileID: 5146754896917317708}
   m_Layer: 0
   m_Name: Light_Disco
   m_TagString: Untagged
@@ -32,6 +33,23 @@ Transform:
   - {fileID: 5084357471297234369}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -180, y: 0, z: 0}
+--- !u!111 &5146754896917317708
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3538185614777338220}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Animation: {fileID: 7400000, guid: 005a68580c6952e4498eeeec0ab89507, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 005a68580c6952e4498eeeec0ab89507, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_UpdateMode: 0
+  m_CullingType: 0
 --- !u!1001 &3780314288525227111
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -99,6 +117,26 @@ PrefabInstance:
     - target: {fileID: 8769294981846731548, guid: dfdab8e00760f784d809cc4f1ce85e7a, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8796460918952615444, guid: dfdab8e00760f784d809cc4f1ce85e7a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8796460918952615444, guid: dfdab8e00760f784d809cc4f1ce85e7a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8796460918952615444, guid: dfdab8e00760f784d809cc4f1ce85e7a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8796460918952615444, guid: dfdab8e00760f784d809cc4f1ce85e7a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8796460918952615444, guid: dfdab8e00760f784d809cc4f1ce85e7a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 360
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1005198989, guid: dfdab8e00760f784d809cc4f1ce85e7a, type: 3}

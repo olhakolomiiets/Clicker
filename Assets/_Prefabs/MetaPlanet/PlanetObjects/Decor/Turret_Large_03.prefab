@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2594721533689900562}
+  - component: {fileID: 4379033871188866784}
   m_Layer: 0
   m_Name: Turret_Large_03
   m_TagString: Untagged
@@ -31,7 +32,24 @@ Transform:
   m_Children:
   - {fileID: 6446641094749310861}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!111 &4379033871188866784
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4320962070680122041}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Animation: {fileID: 7400000, guid: 880df74f13a21ca40bda97e0dbacd4db, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 880df74f13a21ca40bda97e0dbacd4db, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_UpdateMode: 0
+  m_CullingType: 0
 --- !u!1001 &6442122057157925873
 PrefabInstance:
   m_ObjectHideFlags: 0

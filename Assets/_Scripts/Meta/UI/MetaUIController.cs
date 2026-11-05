@@ -7,6 +7,8 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 using PlanetBuilder.Messages;
+using TMPro;
+using System.Collections.Generic;
 
 public class MetaUIController : MonoBehaviour
 {
@@ -65,6 +67,21 @@ public class MetaUIController : MonoBehaviour
     private MetaObjectPlaceRotator _objectPlaceRotator;
     private int _currentShopTabIndex = -1;
 
+    [Header("Currency Exchange")]
+    [SerializeField] private MetaPlanetMode _exchangeMode;
+    [SerializeField] private GameObject _exchangePanel;
+    [SerializeField] private TMP_Dropdown _exchangePlanetDropdown;
+    [SerializeField] private TMP_Text _exchangePlanetBalanceText;
+    [SerializeField] private TMP_Text _exchangeDiamondPriceText;
+    [SerializeField] private TMP_InputField _exchangeAmountInput;
+    [SerializeField] private TMP_Text _exchangeTotalCostText;
+    [SerializeField] private TMP_Text _exchangeStatusText;
+    [SerializeField] private Button _exchangeButton;
+
+    private readonly List<int> _exchangePlanetIds = new();
+    private bool _exchangeRotationWasEnabled;
+
+
     public bool IsUpgradeTabOpen => isDisplayed && _currentShopTabIndex == 1;
 
     public event Action OnStorePanelDisplayed;
@@ -77,11 +94,15 @@ public class MetaUIController : MonoBehaviour
 
     private void OnDisable()
     {
+        CloseExchangePanel();
         SetShopOpen(false);
     }
 
     public void OpenShop()
     {
+        if (_exchangePanel != null && _exchangePanel.activeSelf)
+            return;
+
         if (isDisplayed)
         {
             ShopsToggle(2);
@@ -101,10 +122,13 @@ public class MetaUIController : MonoBehaviour
             SetShopOpen(true);
             _planetRotator.enabled = false;
             ShopsToggle(2);
-        }            
+        }
     }
     public void ToggleUpgradeStorePanel()
     {
+        if (_exchangePanel != null && _exchangePanel.activeSelf)
+            return;
+
         if (isDisplayed)
         {
             _planetRotator.ZoomBack(zoomDuration);
@@ -148,6 +172,9 @@ public class MetaUIController : MonoBehaviour
 
     public void ToggleLevelsPanel()
     {
+        if (_exchangePanel != null && _exchangePanel.activeSelf)
+            return;
+
         if (isLevelsDisplayed)
         {
             _bg.SetActive(false);
@@ -233,6 +260,166 @@ public class MetaUIController : MonoBehaviour
         _upgradeItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
         _shopItemsParent.DOAnchorPos(new Vector3(0, -1130, 0), 0.25f);
     }
+
+
+    public void OpenExchangePanel()
+    {
+        if (_exchangePanel == null || _exchangeMode == null ||
+            _exchangePlanetDropdown == null || _exchangeAmountInput == null ||
+            _exchangeButton == null || _exchangePlanetBalanceText == null ||
+            _exchangeDiamondPriceText == null || _exchangeTotalCostText == null ||
+            _exchangeStatusText == null)
+        {
+            Debug.LogError("[ExchangeUI] Missing UI references.", this);
+            return;
+        }
+
+        if (_exchangePanel.activeSelf || isDisplayed || isLevelsDisplayed)
+            return;
+
+        _exchangePlanetIds.Clear();
+        _exchangePlanetIds.AddRange(_exchangeMode.OpenCurrencyExchange());
+
+        var options = new List<TMP_Dropdown.OptionData>();
+
+        foreach (int planetId in _exchangePlanetIds)
+            options.Add(new TMP_Dropdown.OptionData($"Planet {planetId}"));
+
+        if (options.Count == 0)
+            options.Add(new TMP_Dropdown.OptionData("No available planets"));
+
+        _exchangePlanetDropdown.ClearOptions();
+        _exchangePlanetDropdown.AddOptions(options);
+        _exchangePlanetDropdown.SetValueWithoutNotify(0);
+        _exchangePlanetDropdown.RefreshShownValue();
+        _exchangePlanetDropdown.interactable = _exchangePlanetIds.Count > 0;
+
+        _exchangeAmountInput.SetTextWithoutNotify("1");
+
+        _exchangeRotationWasEnabled =
+            _planetRotator != null && _planetRotator.enabled;
+
+        if (_planetRotator != null)
+            _planetRotator.enabled = false;
+
+        _exchangePanel.SetActive(true);
+        SetShopOpen(true);
+
+        RefreshExchangePreview();
+    }
+
+    public void CloseExchangePanel()
+    {
+        if (_exchangePanel == null || !_exchangePanel.activeSelf)
+            return;
+
+        _exchangeMode?.CloseCurrencyExchange();
+        _exchangePanel.SetActive(false);
+        _exchangePlanetIds.Clear();
+
+        SetShopOpen(false);
+
+        if (_exchangeRotationWasEnabled &&
+            _planetRotator != null &&
+            !isDisplayed && !isLevelsDisplayed &&
+            (_objectPlaceRotator == null || !_objectPlaceRotator.isRotating))
+        {
+            _planetRotator.enabled = true;
+        }
+    }
+
+    public void SelectExchangePlanet(int index)
+    {
+        RefreshExchangePreview();
+    }
+
+    public void ChangeExchangeAmount(string value)
+    {
+        RefreshExchangePreview();
+    }
+
+    private void RefreshExchangePreview()
+    {
+        _exchangeButton.interactable = false;
+        _exchangePlanetBalanceText.text = "—";
+        _exchangeDiamondPriceText.text = "—";
+        _exchangeTotalCostText.text = "—";
+        _exchangeStatusText.text = "";
+
+        if (_exchangePlanetIds.Count == 0)
+        {
+            _exchangeStatusText.text = "No available planets.";
+            return;
+        }
+
+        int index = _exchangePlanetDropdown.value;
+
+        if (index < 0 || index >= _exchangePlanetIds.Count)
+            return;
+
+        int planetId = _exchangePlanetIds[index];
+
+        if (!_exchangeMode.TryGetCurrencyExchangeQuote(planetId, out MetaPlanetCurrencyExchange.ExchangeQuote quote, out double planetMoney, out string error))
+        {
+            _exchangeStatusText.text = error;
+            return;
+        }
+
+        _exchangePlanetBalanceText.text = planetMoney.ToString("N0");
+        _exchangeDiamondPriceText.text = quote.pricePerDiamond.ToString("N0");
+
+        if (!int.TryParse(_exchangeAmountInput.text, out int diamonds) || diamonds <= 0)
+        {
+            _exchangeStatusText.text = "Enter a valid diamond amount.";
+            return;
+        }
+
+        double cost = Math.Ceiling(quote.pricePerDiamond * diamonds);
+
+        if (double.IsNaN(cost) || double.IsInfinity(cost) || cost <= 0)
+        {
+            _exchangeStatusText.text = "Invalid exchange cost.";
+            return;
+        }
+
+        _exchangeTotalCostText.text = cost.ToString("N0");
+        _exchangeButton.interactable = planetMoney >= cost;
+
+        if (!_exchangeButton.interactable)
+            _exchangeStatusText.text = "Not enough planet currency.";
+    }
+
+    public void ConfirmExchange()
+    {
+        if (_exchangePanel == null || !_exchangePanel.activeSelf || !_exchangeButton.interactable || _exchangePlanetIds.Count == 0)
+            return;
+
+        if (!int.TryParse(_exchangeAmountInput.text, out int diamonds) || diamonds <= 0)
+            return;
+
+        int index = _exchangePlanetDropdown.value;
+
+        if (index < 0 || index >= _exchangePlanetIds.Count)
+            return;
+
+        int planetId = _exchangePlanetIds[index];
+
+        if (!_exchangeMode.TryGetCurrencyExchangeQuote(planetId, out MetaPlanetCurrencyExchange.ExchangeQuote quote, out _, out string error))
+        {
+            _exchangeStatusText.text = error;
+            return;
+        }
+
+        var result = _exchangeMode.TryExchangeCurrency(quote, diamonds, out _, out error);
+
+        RefreshExchangePreview();
+
+        _exchangeStatusText.text =
+            result == MetaPlanetCurrencyExchange.ExchangeResult.Success
+                ? "Exchange successful."
+                : error ?? result.ToString();
+    }
+
 
     private static void SetShopOpen(bool isOpen)
     {

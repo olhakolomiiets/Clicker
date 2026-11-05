@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,251 +12,178 @@ public class MetaPlanetCurrencyExchange : MonoBehaviour
         public double baseDiamondPrice = 1800;
     }
 
-    [Serializable]
-    private class RateState
-    {
-        public int planetId;
-        public double price;
-        public long nextUpdateTicks;
-    }
-
-    [Serializable]
-    private class SaveData
-    {
-        public List<RateState> rates = new List<RateState>();
-        public long windowStartTicks;
-        public int exchangedDiamonds;
-    }
-
     public struct ExchangeQuote
     {
+        public int planetId;
         public double pricePerDiamond;
-        public int remainingDiamonds;
-        public DateTime nextUpdateUtc;
     }
 
     public enum ExchangeResult
     {
         Success,
+        NotInitialized,
         InvalidAmount,
         PlanetNotConfigured,
-        DailyLimitReached,
         InvalidRate,
-        WalletRejected
+        QuoteChanged,
+        WalletRejected,
+        TransactionFailed
     }
 
     [Header("Planet currencies")]
-    [SerializeField] private List<PlanetSettings> planets =
-        new List<PlanetSettings>();
+    [SerializeField] private List<PlanetSettings> planets = new List<PlanetSettings>();
 
     [Header("Exchange settings")]
-    [SerializeField, Min(1)]
-    private int rateUpdateHours = 24;
+    [SerializeField, Range(1f, 2f)] private float inflationPower = 1.15f;
+    private readonly Dictionary<int, double> _openRates = new();
+    private bool _isOpen;
+    private bool isInitialized;
+    public bool IsInitialized => isInitialized;
+    public bool IsOpen => _isOpen;
 
-    [SerializeField, Range(1f, 2f)]
-    private float inflationPower = 1.15f;
-
-    [SerializeField, Min(1)]
-    private int maxDiamondsPer24Hours = 3;
-
-    private const string SaveKey = "MetaExchange_V1";
-    private SaveData data;
-
-    private void Awake()
+    public bool Initialize()
     {
-        Load();
+        isInitialized = false;
+
+        try
+        {
+            ValidateConfiguration();
+
+            _openRates.Clear();
+            _isOpen = false;
+
+            isInitialized = true;
+            return true;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            return false;
+        }
     }
 
-    public bool TryGetQuote(
-        int planetId,
-        double incomePerSecond,
-        out ExchangeQuote quote)
+    public void OpenExchange()
+    {
+        if (_isOpen)
+            return;
+            
+        _openRates.Clear();
+        _isOpen = isInitialized;
+    }
+
+    public void CloseExchange()
+    {
+        _openRates.Clear();
+        _isOpen = false;
+    }
+
+    public bool SetRate(int planetId, double incomePerSecond)
+    {
+        if (!isInitialized || !_isOpen || _openRates.ContainsKey(planetId) || !IsFiniteNonNegative(incomePerSecond))
+            return false;
+
+        PlanetSettings settings = planets.Find(
+            p => p != null && p.planetId == planetId);
+
+        if (settings == null)
+            return false;
+
+        double price = CalculatePrice(settings, incomePerSecond);
+
+        if (!IsValidPrice(price))
+            return false;
+
+        _openRates.Add(planetId, price);
+        return true;
+    }
+
+
+    public bool TryGetQuote(int planetId, out ExchangeQuote quote)
     {
         quote = default;
 
-        PlanetSettings settings =
-            planets.Find(p => p.planetId == planetId);
-
-        if (settings == null ||
-            settings.baseIncomePerSecond <= 0 ||
-            settings.baseDiamondPrice <= 0 ||
-            double.IsNaN(incomePerSecond) ||
-            double.IsInfinity(incomePerSecond) ||
-            incomePerSecond < 0)
-        {
+        if (!isInitialized || !_isOpen ||
+            !_openRates.TryGetValue(planetId, out double price))
             return false;
-        }
-
-        DateTime now = DateTime.UtcNow;
-        bool changed = RefreshDailyLimit(now);
-
-        RateState state =
-            data.rates.Find(r => r.planetId == planetId);
-
-        if (state == null)
-        {
-            double price = CalculatePrice(
-                settings, incomePerSecond);
-
-            if (!IsValidPrice(price))
-                return false;
-
-            state = new RateState
-            {
-                planetId = planetId,
-                price = price,
-                nextUpdateTicks =
-                    now.AddHours(rateUpdateHours).Ticks
-            };
-
-            data.rates.Add(state);
-            changed = true;
-        }
-        else if (now.Ticks >= state.nextUpdateTicks)
-        {
-            double newPrice = CalculatePrice(
-                settings, incomePerSecond);
-
-            if (!IsValidPrice(newPrice))
-                return false;
-
-            // The exchange rate never decreases.
-            state.price = Math.Max(state.price, newPrice);
-            state.nextUpdateTicks =
-                now.AddHours(rateUpdateHours).Ticks;
-
-            changed = true;
-        }
-
-        if (changed)
-            Save();
 
         quote = new ExchangeQuote
         {
-            pricePerDiamond = state.price,
-            remainingDiamonds = Math.Max(
-                0,
-                maxDiamondsPer24Hours -
-                data.exchangedDiamonds),
-            nextUpdateUtc =
-                new DateTime(
-                    state.nextUpdateTicks,
-                    DateTimeKind.Utc)
+            planetId = planetId,
+            pricePerDiamond = price
         };
 
         return true;
     }
 
-    public ExchangeResult TryExchange(
-        int planetId,
-        int diamonds,
-        double incomePerSecond,
-        Func<int, double, int, bool> commitTransaction,
-        out double spentCurrency)
+    public ExchangeResult TryExchange(ExchangeQuote approvedQuote, int diamonds, Func<int, double, int, bool> commitTransaction, out double spentCurrency)
     {
-        spentCurrency = 0;
+        spentCurrency = 0d;
+
+        if (!isInitialized || !_isOpen)
+            return ExchangeResult.NotInitialized;
 
         if (diamonds <= 0 || commitTransaction == null)
             return ExchangeResult.InvalidAmount;
 
-        if (!TryGetQuote(
-                planetId, incomePerSecond, out var quote))
-        {
+        if (!TryGetQuote(approvedQuote.planetId, out ExchangeQuote currentQuote))
             return ExchangeResult.PlanetNotConfigured;
-        }
 
-        if (diamonds > quote.remainingDiamonds)
-            return ExchangeResult.DailyLimitReached;
+        if (approvedQuote.pricePerDiamond != currentQuote.pricePerDiamond)
+            return ExchangeResult.QuoteChanged;
 
         double cost = Math.Ceiling(
-            quote.pricePerDiamond * diamonds);
+            currentQuote.pricePerDiamond * diamonds);
 
         if (!IsValidPrice(cost))
             return ExchangeResult.InvalidRate;
 
-        // The callback must atomically spend planet
-        // currency and grant global diamonds.
-        bool committed = commitTransaction(
-            planetId, cost, diamonds);
+        try
+        {
+            if (!commitTransaction(currentQuote.planetId, cost, diamonds))
+                return ExchangeResult.WalletRejected;
 
-        if (!committed)
-            return ExchangeResult.WalletRejected;
-
-        if (data.windowStartTicks == 0)
-            data.windowStartTicks = DateTime.UtcNow.Ticks;
-
-        data.exchangedDiamonds += diamonds;
-        spentCurrency = cost;
-
-        Save();
-
-        return ExchangeResult.Success;
+            spentCurrency = cost;
+            return ExchangeResult.Success;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            isInitialized = false;
+            return ExchangeResult.TransactionFailed;
+        }
     }
 
-    private double CalculatePrice(
-        PlanetSettings settings,
-        double incomePerSecond)
+    private double CalculatePrice(PlanetSettings settings, double incomePerSecond)
     {
-        double growth = Math.Max(
-            1d,
-            incomePerSecond / settings.baseIncomePerSecond);
+        double growth = Math.Max(1d, incomePerSecond / settings.baseIncomePerSecond);
 
-        return Math.Ceiling(
-            settings.baseDiamondPrice *
-            Math.Pow(growth, inflationPower));
+        return Math.Ceiling(settings.baseDiamondPrice * Math.Pow(growth, inflationPower));
     }
 
-    private bool RefreshDailyLimit(DateTime now)
+    private void ValidateConfiguration()
     {
-        if (data.windowStartTicks == 0)
-            return false;
+        if (float.IsNaN(inflationPower) || float.IsInfinity(inflationPower) || inflationPower < 1f || inflationPower > 2f || planets == null || planets.Count == 0)
+        {
+            throw new InvalidOperationException("Exchange Inspector configuration is invalid.");
+        }
 
-        long elapsed = now.Ticks - data.windowStartTicks;
+        var knownIds = new HashSet<int>();
+        foreach (PlanetSettings settings in planets)
+        {
+            if (settings == null || !knownIds.Add(settings.planetId) || !IsValidPrice(settings.baseIncomePerSecond) || !IsValidPrice(settings.baseDiamondPrice))
+            {
+                throw new InvalidOperationException("Planet exchange configuration is invalid.");
+            }
+        }
+    }
 
-        if (elapsed < TimeSpan.FromHours(24).Ticks)
-            return false;
-
-        data.windowStartTicks = 0;
-        data.exchangedDiamonds = 0;
-
-        return true;
+    private static bool IsFiniteNonNegative(double value)
+    {
+        return value >= 0 && !double.IsNaN(value) && !double.IsInfinity(value);
     }
 
     private static bool IsValidPrice(double price)
     {
-        return price > 0 &&
-               !double.IsNaN(price) &&
-               !double.IsInfinity(price);
-    }
-
-    private void Save()
-    {
-        PlayerPrefs.SetString(
-            SaveKey,
-            JsonUtility.ToJson(data));
-
-        PlayerPrefs.Save();
-    }
-
-    private void Load()
-    {
-        string json = PlayerPrefs.GetString(SaveKey, "");
-
-        try
-        {
-            data = string.IsNullOrEmpty(json)
-                ? new SaveData()
-                : JsonUtility.FromJson<SaveData>(json);
-        }
-        catch (Exception)
-        {
-            data = new SaveData();
-        }
-
-        if (data == null)
-            data = new SaveData();
-
-        if (data.rates == null)
-            data.rates = new List<RateState>();
+        return price > 0 && !double.IsNaN(price) && !double.IsInfinity(price);
     }
 }

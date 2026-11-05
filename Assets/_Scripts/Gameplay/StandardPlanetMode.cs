@@ -14,7 +14,8 @@ public class StandardPlanetMode : MonoBehaviour, IPlanetMode
 
     [SerializeField] private PassiveIncome _passiveIncome;
     [SerializeField] private LevelController _levelController;
-
+    [SerializeField] private RewardsManager _rewardsManager;
+    [SerializeField] private RewardTimers _rewardTimers;
 
     private GameData _gameData;
     private GeneralGameData _generalGameData;
@@ -86,9 +87,31 @@ public class StandardPlanetMode : MonoBehaviour, IPlanetMode
         _passiveIncome.OnEarningPassiveIncome += _gameRules.GetPassiveIncome;
         _passiveIncome.OnPassiveIncomeQuotePrepared += _gameRules.SetPassiveIncomeQuote;
 
+        _passiveIncome.OnClaimChestReward += _gameRules.ClaimChestReward;
+
+        _gameRules.SetPassiveIncomeTimeConfig(_passiveIncome.ExtraTimeConfig);
+        _passiveIncome.OnGetPassiveIncomeExtraTime -= _gameRules.UpdatePassiveIncomeTime;
+
+        _passiveIncome.OnGetPassiveIncomeExtraTime += _gameRules.UpdatePassiveIncomeTime;
+
         _gameRules.OnUpdateGameData += _levelController.PrepareGameData;
         _levelController.OnNextPlanetPurchased += _gameRules.HandlePlanet;
 
+        // Astronaut rewards
+        _rewardsManager.OnEarningReward += _gameRules.GetReward;
+        _rewardsManager.OnEarningDiamonds += _gameRules.GetDiamonds;
+
+        // Coins offer
+        _rewardTimers.OnActivatedCoinsRewardButton.AddListener(PrepareCoinsReward);
+
+        // Advertisement booster
+        _rewardTimers.OnSetBoosterTimer += _gameRules.GetCoinsBooster;
+        _rewardTimers.OnEndBoosterTimer += _gameRules.DisableCoinsBooster;
+    }
+
+    private void PrepareCoinsReward()
+    {
+        _rewardsManager.PrepareRewardData(_gameData.MoneyPerSec);
     }
 
     public void AddPurchasedPack(double coins, double diamonds)
@@ -114,5 +137,21 @@ public class StandardPlanetMode : MonoBehaviour, IPlanetMode
     public void TryActivatePassiveIncome()
     {
         _gameRules.TryActivatePassiveIncome();
+    }
+
+    private void OnDestroy()
+    {
+        if (_rewardsManager != null)
+        {
+            _rewardsManager.OnEarningReward -= _gameRules.GetReward;
+            _rewardsManager.OnEarningDiamonds -= _gameRules.GetDiamonds;
+        }
+
+        if (_rewardTimers != null)
+        {
+            _rewardTimers.OnActivatedCoinsRewardButton.RemoveListener(PrepareCoinsReward);
+            _rewardTimers.OnSetBoosterTimer -= _gameRules.GetCoinsBooster;
+            _rewardTimers.OnEndBoosterTimer -= _gameRules.DisableCoinsBooster;
+        }
     }
 }

@@ -51,7 +51,7 @@ public class RewardsManager : MonoBehaviour
 
     #region PRIVATE FIELDS
 
-    private float _coinsReward;
+    private double _coinsReward;
     private bool _isCoinsRewardActive;
     private bool _isBoosterRewardActive;
     private bool _isDiamondsRewardActive;
@@ -77,18 +77,22 @@ public class RewardsManager : MonoBehaviour
     public void EnableCoinsReward()
     {
         _isCoinsRewardActive = true;
+        _isBoosterRewardActive = false;
+        _isDiamondsRewardActive = false;
 
         _boosterObj.SetActive(false);
         _diamondsObj.SetActive(false);
 
         _rewardButton.gameObject.SetActive(true);
         _coinsObj.SetActive(true);
-        _serviceTxt.text = $"";
-        _coinsTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("GetCoins")}";
+        _serviceTxt.text = "";
+        _coinsTitle.text = Lean.Localization.LeanLocalization.GetTranslationText("GetCoins");
     }
 
     public void EnableDiamondsReward()
     {
+        _isCoinsRewardActive = false;
+        _isBoosterRewardActive = false;
         _isDiamondsRewardActive = true;
 
         _boosterObj.SetActive(false);
@@ -96,32 +100,37 @@ public class RewardsManager : MonoBehaviour
 
         _rewardButton.gameObject.SetActive(true);
         _diamondsObj.SetActive(true);
-        _serviceTxt.text = $"";
-        _diamondsTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("GetDiamonds")}";      
+        _serviceTxt.text = "";
+
+        _diamondsTitle.text = Lean.Localization.LeanLocalization.GetTranslationText("GetDiamonds");
+        _diamondsRewardTxt.text = _diamonds.ToString("N0");
     }
 
     public void EnableBoosterReward()
     {
+        _isCoinsRewardActive = false;
         _isBoosterRewardActive = true;
+        _isDiamondsRewardActive = false;
 
         _coinsObj.SetActive(false);
         _diamondsObj.SetActive(false);
 
         _rewardButton.gameObject.SetActive(true);
         _boosterObj.SetActive(true);
-        _serviceTxt.text = $"";
-        _boosterTitle.text = $"{Lean.Localization.LeanLocalization.GetTranslationText("Booster")}";    
+        _serviceTxt.text = "";
+        _boosterTitle.text = Lean.Localization.LeanLocalization.GetTranslationText("Booster");
     }
 
-    public void PrepareRewardData(float money)
+    public void PrepareRewardData(double money)
     {
         EnableCoinsReward();
 
         if (!_rewardTimer.isBoosterTimerActive)
             _coinsReward = money * _coinsMultiplicator;
-        else _coinsReward = (money/2) * _coinsMultiplicator;
+        else
+            _coinsReward = (money / 2d) * _coinsMultiplicator;
 
-        _coinsRewardTxt.text = $"{_coinsReward.ToString("N0")}";
+        _coinsRewardTxt.text = _coinsReward.ToString("N0");
     }
 
     public void UserEarnedReward()
@@ -165,7 +174,7 @@ public class RewardsManager : MonoBehaviour
                 Debug.Log("Rewards Manager /// UserEarnedReward() /// Diamonds " + _diamonds + "_isRewardEarned " + _isRewardEarned);
             }
 
-            _isRewardEarned = false;   
+            _isRewardEarned = false;
             Debug.Log("Rewards Manager /// _isRewardEarned " + _isRewardEarned);
         }
     }
@@ -203,7 +212,7 @@ public class RewardsManager : MonoBehaviour
     private void OnDisable()
     {
         _adController.OnUserEarnedRewardEvent.RemoveListener(SetRewardState);
-        _adController.OnAdClosedEvent.RemoveListener(UserEarnedReward);  
+        _adController.OnAdClosedEvent.RemoveListener(UserEarnedReward);
         _adController.RewardedAdLoadedEvent.RemoveListener(ShowRewardedAd);
         _adController.RewardedAdLoadedWithErrorEvent.RemoveListener(RewardedAdWithError);
     }

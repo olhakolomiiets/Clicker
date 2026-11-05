@@ -56,8 +56,7 @@ public class PassiveIncomeChestController : MonoBehaviour
         if (!ValidateConfiguration())
             return;
 
-        if (!OfflinePlanetSaveReader.TryRead(
-                _planetKey, out GameDataSave save, out string error))
+        if (!OfflinePlanetSaveReader.TryRead(_planetKey, out GameDataSave save, out string error))
         {
             Debug.LogWarning($"[PassiveIncomeChest] {error}");
             return;
@@ -85,9 +84,7 @@ public class PassiveIncomeChestController : MonoBehaviour
     {
         reward = null;
 
-        if (_generalData == null ||
-            !_generalData.OfflinePlanetRewardsEnabled ||
-            _generalData.OfflinePlanetRewards == null)
+        if (_generalData == null || !_generalData.OfflinePlanetRewardsEnabled || _generalData.OfflinePlanetRewards == null)
         {
             return false;
         }
@@ -96,6 +93,7 @@ public class PassiveIncomeChestController : MonoBehaviour
             r != null &&
             r.PlanetKey == _planetKey &&
             !string.IsNullOrEmpty(r.RewardId) &&
+            r.CreditedSeconds >= 60 &&
             r.MoneyX1 > 0d &&
             !double.IsNaN(r.MoneyX1) &&
             !double.IsInfinity(r.MoneyX1));
@@ -150,21 +148,28 @@ public class PassiveIncomeChestController : MonoBehaviour
             return;
         }
 
-        PassiveIncomeChestClick click =
-            collider.GetComponent<PassiveIncomeChestClick>();
+        PassiveIncomePop pop = collider.GetComponent<PassiveIncomePop>();
 
-        if (click == null)
-            click = collider.gameObject.AddComponent<PassiveIncomeChestClick>();
+        if (pop == null)
+        {
+            Debug.LogError("[PassiveIncomeChest] PassiveIncomePop is missing.");
 
-        click.Initialize(this);
+            Destroy(instance);
+            return;
+        }
+
+        pop.InitializeChest(this);
+        PassiveIncomeChestClick oldClick = collider.GetComponent<PassiveIncomeChestClick>();
+
+        if (oldClick != null)
+            oldClick.enabled = false;
 
         _activeChest = instance;
         _activeRewardId = rewardId;
         _activeSpawnIndex = spawnIndex;
         _activePrefabIndex = prefabIndex;
 
-        Debug.Log(
-            $"[PassiveIncomeChest] Spawned point={spawnIndex}, prefab={prefabIndex}");
+        Debug.Log($"[PassiveIncomeChest] Spawned point={spawnIndex}, prefab={prefabIndex}");
     }
 
     public void HandleChestClick()

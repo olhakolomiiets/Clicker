@@ -46,6 +46,13 @@ public class GameManager : MonoBehaviour
         _generalGameData.MetaUpgradeEffects = new MetaUpgradeEffects();
         _generalGameData.MetaUpgradeEffects.Rebuild(_metaUpgradeConfigs);
 
+        if (_planetMode is MetaPlanetMode metaPlanetMode)
+        {
+            metaPlanetMode.ConfigureCurrencyExchange(
+                _saveSystem,
+                _offlinePlanetCatalog);
+        }
+
         _planetMode.Initialize(_generalGameData);
 
         ConnectPurchaseManager();
@@ -237,6 +244,9 @@ public class GameManager : MonoBehaviour
                 OfflinePlanetRewardData reward =
                     working.OfflinePlanetRewards.Find(
                         r => r.PlanetKey == entry.SaveKey);
+
+                if (reward != null && reward.CreditedSeconds >= 60)
+                    continue;
 
                 int creditedSeconds = reward?.CreditedSeconds ?? 0;
 

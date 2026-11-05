@@ -60,7 +60,10 @@ namespace GoogleMobileAds.Sample
 
                 RegisterEventHandlers(ad);
 
-                RewardedAdLoadedEvent.Invoke();
+                GoogleMobileAds.Common.MobileAdsEventExecutor.ExecuteInUpdate(() =>
+                {
+                    RewardedAdLoadedEvent.Invoke();
+                });
             });
         }
 
@@ -75,12 +78,16 @@ namespace GoogleMobileAds.Sample
                                             reward.Amount,
                                             reward.Type));
 
-                    OnUserEarnedRewardEvent.Invoke();
+                    GoogleMobileAds.Common.MobileAdsEventExecutor.ExecuteInUpdate(() =>
+                    {
+                        OnUserEarnedRewardEvent.Invoke();
+                    });
                 });
             }
             else
             {
                 Debug.LogError("Rewarded ad is not ready yet.");
+                RewardedAdLoadedWithErrorEvent.Invoke();
             }
         }
 
@@ -106,13 +113,13 @@ namespace GoogleMobileAds.Sample
         private void RegisterEventHandlers(RewardedAd ad)
         {
             ad.OnAdPaid += (AdValue adValue) =>
-            {                
+            {
                 Debug.Log(String.Format("Rewarded ad paid {0} {1}.",
                     adValue.Value,
                     adValue.CurrencyCode));
             };
             ad.OnAdImpressionRecorded += () =>
-            {              
+            {
                 Debug.Log("Rewarded ad recorded an impression.");
             };
             ad.OnAdClicked += () =>
@@ -121,21 +128,35 @@ namespace GoogleMobileAds.Sample
             };
             ad.OnAdFullScreenContentOpened += () =>
             {
-                SetAdvertisementOpen(true);
+                GoogleMobileAds.Common.MobileAdsEventExecutor.ExecuteInUpdate(() =>
+                {
+                    SetAdvertisementOpen(true);
+                });
+                
                 Debug.Log("Rewarded ad full screen content opened.");
             };
             ad.OnAdFullScreenContentClosed += () =>
             {
-                SetAdvertisementOpen(false);
-                OnAdClosedEvent.Invoke();
                 Debug.Log("Rewarded ad full screen content closed.");
+
+                GoogleMobileAds.Common.MobileAdsEventExecutor.ExecuteInUpdate(() =>
+                {
+                    SetAdvertisementOpen(false);
+                    OnAdClosedEvent.Invoke();
+                });
             };
+
             ad.OnAdFullScreenContentFailed += (AdError error) =>
             {
-                SetAdvertisementOpen(false);
-                Debug.LogError("Rewarded ad failed to open full screen content with error : "
-                    + error);
+                Debug.LogError("Rewarded ad failed to open full screen content: " + error);
+
+                GoogleMobileAds.Common.MobileAdsEventExecutor.ExecuteInUpdate(() =>
+                {
+                    SetAdvertisementOpen(false);
+                    RewardedAdLoadedWithErrorEvent.Invoke();
+                });
             };
+
         }
 
         private static void SetAdvertisementOpen(bool isOpen)

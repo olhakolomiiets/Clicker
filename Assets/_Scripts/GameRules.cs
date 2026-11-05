@@ -94,6 +94,8 @@ public class GameRules : MonoBehaviour
     [SerializeField] private string currencyCode;
     private string diamondCode = "DI";
     private System.Action _savePassiveIncomeReward;
+    private PassiveIncomeData _passiveIncomeTimeConfig;
+    private bool _extraTimeSaveFailed;
 
     private bool _hasPassiveIncomeQuote;
     private double _passiveX1;
@@ -104,6 +106,11 @@ public class GameRules : MonoBehaviour
     public void SetPassiveIncomeSaver(System.Action saver)
     {
         _savePassiveIncomeReward = saver;
+    }
+
+    public void SetPassiveIncomeTimeConfig(PassiveIncomeData config)
+    {
+        _passiveIncomeTimeConfig = config;
     }
 
     public void PrepareGameData(GameData gameData, GeneralGameData generalData)
@@ -500,6 +507,124 @@ public class GameRules : MonoBehaviour
         _hasPassiveIncomeQuote = true;
     }
 
+    public bool ClaimChestReward(
+    string planetKey,
+    string rewardId,
+    int multiplier,
+    double diamondCost)
+    {
+        if (_currentGameData == null ||
+            _currentGeneralData == null ||
+            !_currentGeneralData.OfflinePlanetRewardsEnabled ||
+            _currentGeneralData.OfflinePlanetRewards == null ||
+            _savePassiveIncomeReward == null ||
+            string.IsNullOrEmpty(planetKey) ||
+            string.IsNullOrEmpty(rewardId))
+            return false;
+
+        if (multiplier < 1 || multiplier > 3)
+            return false;
+
+        var rewards = _currentGeneralData.OfflinePlanetRewards;
+
+        int rewardIndex = rewards.FindIndex(r =>
+            r != null &&
+            r.PlanetKey == planetKey &&
+            r.RewardId == rewardId);
+
+        if (rewardIndex < 0)
+            return false;
+
+        OfflinePlanetRewardData reward = rewards[rewardIndex];
+
+        if (reward.CreditedSeconds < 60)
+            return false;
+
+        double income = multiplier == 1 ? reward.MoneyX1 :
+                        multiplier == 2 ? reward.MoneyX2 :
+                                          reward.MoneyX3;
+
+        if (income <= 0d ||
+            double.IsNaN(income) ||
+            double.IsInfinity(income) ||
+            double.IsNaN(diamondCost) ||
+            double.IsInfinity(diamondCost))
+            return false;
+
+        if (multiplier == 3)
+        {
+            if (diamondCost <= 0d ||
+                _currentGeneralData.Diamonds < diamondCost)
+                return false;
+        }
+        else if (diamondCost != 0d)
+        {
+            return false;
+        }
+
+        double oldMoney = _currentGameData.Money;
+        double oldScore = _currentGeneralData.TotalScore;
+        double oldDiamonds = _currentGeneralData.Diamonds;
+
+        int oldPointIndex =
+            _currentGameData.PassiveIncomeChestSpawnPointIndex;
+        int oldPrefabIndex =
+            _currentGameData.PassiveIncomeChestPrefabIndex;
+
+        double newMoney = oldMoney + income;
+        double newScore = oldScore + income;
+
+        if (double.IsNaN(newMoney) ||
+            double.IsInfinity(newMoney) ||
+            double.IsNaN(newScore) ||
+            double.IsInfinity(newScore))
+            return false;
+
+        _currentGameData.Money = newMoney;
+        _currentGeneralData.TotalScore = newScore;
+        _currentGeneralData.Diamonds -= diamondCost;
+
+        rewards.RemoveAt(rewardIndex);
+
+        _currentGameData.PassiveIncomeChestSpawnPointIndex =
+            oldPointIndex == int.MaxValue ? 0 : oldPointIndex + 1;
+
+        _currentGameData.PassiveIncomeChestPrefabIndex =
+            oldPrefabIndex == int.MaxValue ? 0 : oldPrefabIndex + 1;
+
+        try
+        {
+            _savePassiveIncomeReward();
+        }
+        catch (Exception exception)
+        {
+            _currentGameData.Money = oldMoney;
+            _currentGeneralData.TotalScore = oldScore;
+            _currentGeneralData.Diamonds = oldDiamonds;
+
+            _currentGameData.PassiveIncomeChestSpawnPointIndex =
+                oldPointIndex;
+
+            _currentGameData.PassiveIncomeChestPrefabIndex =
+                oldPrefabIndex;
+
+            rewards.Insert(rewardIndex, reward);
+
+            Debug.LogException(exception, this);
+            return false;
+        }
+
+        _totalScore = newScore;
+        SendDataUpdate();
+
+        Debug.Log(
+            $"[PassiveIncome] CLAIM SUCCESS | " +
+            $"Planet={planetKey} | X{multiplier} | " +
+            $"Income={income} | Diamonds={diamondCost}");
+
+        return true;
+    }
+
     public void GetPassiveIncome(double income, double diamonds)
     {
         if (_currentGeneralData != null && _currentGeneralData.OfflinePlanetRewardsEnabled)
@@ -569,16 +694,52 @@ public class GameRules : MonoBehaviour
         );
     }
 
+
     public void UpdatePassiveIncomeTime(double price, int time)
     {
-        _currentGeneralData.Diamonds -= price;
+        if (_currentGeneralData == null || _passiveIncomeTimeConfig == null || _savePassiveIncomeReward == null || _extraTimeSaveFailed)
+            return;
+
+        var config = _passiveIncomeTimeConfig;
+        int count = _currentGeneralData.ExtraTimePurchasedCount;
+
+        if (count < 0 || count >= config.ExtraTimeCount || config.ExtraTimePrice <= 0d || config.ExtraTimePriceMultiplier <= 0d || config.ExtraTime <= 0)
+            return;
+
+        double expectedPrice = config.ExtraTimePrice * Math.Pow(config.ExtraTimePriceMultiplier, count);
+
+        if (expectedPrice <= 0d || double.IsNaN(expectedPrice) || double.IsInfinity(expectedPrice) || price != expectedPrice || time != config.ExtraTime || _currentGeneralData.Diamonds < expectedPrice || double.IsNaN(_currentGeneralData.Diamonds) || double.IsInfinity(_currentGeneralData.Diamonds) || _currentGeneralData.PassiveIncomeTime < 0 || _currentGeneralData.PassiveIncomeTime > int.MaxValue - time)
+            return;
+
+        double oldDiamonds = _currentGeneralData.Diamonds;
+        int oldTime = _currentGeneralData.PassiveIncomeTime;
+        int oldCount = count;
+
+        _currentGeneralData.Diamonds -= expectedPrice;
         _currentGeneralData.PassiveIncomeTime += time;
         _currentGeneralData.ExtraTimePurchasedCount++;
+
+        try
+        {
+            _savePassiveIncomeReward();
+        }
+        catch (Exception exception)
+        {
+            _currentGeneralData.Diamonds = oldDiamonds;
+            _currentGeneralData.PassiveIncomeTime = oldTime;
+            _currentGeneralData.ExtraTimePurchasedCount = oldCount;
+
+            _extraTimeSaveFailed = true;
+
+            Debug.LogException(exception, this);
+            return;
+        }
 
         SendDataUpdate();
 
         FirebaseAnalytics.LogEvent("passive_income_time_updated");
     }
+
 
     public void GetReward(double reward)
     {

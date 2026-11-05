@@ -26,6 +26,13 @@ public class PassiveIncomePop : MonoBehaviour
     private Vector3 originalScale;
     private bool isPlaying;
 
+    private PassiveIncomeChestController _chestController;
+
+    public void InitializeChest(PassiveIncomeChestController controller)
+    {
+        _chestController = controller;
+    }
+
     private void Awake()
     {
         if (visual != null)
@@ -37,7 +44,14 @@ public class PassiveIncomePop : MonoBehaviour
 
     private void OnMouseDown()
     {
-        PlayPop();
+        if (_chestController != null)
+        {
+            if (PlanetInputBlocker.IsBlocked())
+                return;
+
+            PlayPop();
+            return;
+        }
     }
 
     public void PlayPop()
@@ -77,6 +91,10 @@ public class PassiveIncomePop : MonoBehaviour
         );
 
         currencyBurst.Play(true);
+
+        yield return new WaitUntil(() => !currencyBurst.IsAlive(true));
+
+        _chestController?.HandleChestClick();
     }
 
     private IEnumerator ScaleTo(float multiplier, float duration)

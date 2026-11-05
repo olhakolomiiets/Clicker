@@ -164,7 +164,16 @@ namespace PlanetBuilder.Messages.Tutorial
 
         public static bool ShouldStartTutorial()
         {
-            return PlayerPrefs.GetInt(MetaTutorialCompletedKey, 0) != 1;
+            if (PlayerPrefs.GetInt(MetaTutorialCompletedKey, 0) != 1)
+                return true;
+
+            if (PlayerPrefs.HasKey(TutorialStageKey))
+            {
+                int stage = PlayerPrefs.GetInt(TutorialStageKey, StageFirstVisit);
+                return stage >= StageOpenUpgradeTab && stage <= StageUpgradeObject;
+            }
+
+            return PlayerPrefs.GetInt($"{TutorialActionsCompletedKey}.MetaPlanet.UpgradeObject", 0) != 1;
         }
 
         private static string T(string key)
@@ -174,18 +183,54 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void Awake()
         {
+            MessageManager messageManager = MessageManager.Instance;
+            MetaPlanetTutorialController existing = messageManager != null
+                ? messageManager.GetComponent<MetaPlanetTutorialController>()
+                : null;
+
+            if (existing != null && existing != this)
+            {
+                existing.Unsubscribe();
+                existing._metaGameRules = _metaGameRules;
+                existing._gameManager = _gameManager;
+                existing._metaUIController = _metaUIController;
+                existing._metaPlanetManager = _metaPlanetManager;
+                existing._houseController = _houseController;
+                existing._houseUpgradeController = _houseUpgradeController;
+                existing._upgradePanel = _upgradePanel;
+                existing._diamondBalanceTarget = _diamondBalanceTarget;
+                existing._worldTargetCamera = _worldTargetCamera;
+                gameObject.SetActive(false);
+                Destroy(gameObject);
+                existing.enabled = true;
+                return;
+            }
+
             if (_tutorialManager != null)
                 _tutorialManager.SetStartAutomatically(false);
         }
 
         private void OnEnable()
         {
-            Subscribe();
+            SceneManager.sceneLoaded += HandleSceneLoaded;
             _initializationCoroutine = StartCoroutine(InitializeWhenReady());
+        }
+
+        private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (_metaGameRules == null || _metaGameRules.gameObject.scene != scene)
+                enabled = false;
         }
 
         private void OnDisable()
         {
+            SceneManager.sceneLoaded -= HandleSceneLoaded;
+
+            MessageManager messageManager = MessageManager.Instance;
+
+            if (messageManager != null && messageManager.gameObject != gameObject)
+                return;
+
             Debug.LogWarning("[MetaTutorialTrace] OnDisable START", this);
             Debug.LogWarning(
                 $"[MetaTutorialTrace] OnDisable DETAILS\n" +
@@ -221,10 +266,28 @@ namespace PlanetBuilder.Messages.Tutorial
             StopStep6UpgradeTabPolish(false);
             StopStep7UpgradeObjectPolish(false);
             StopStep8UpgradeButtonPolish(false);
-            DisableStep5WorldProxy();
-            HideBlocker();
-            SetConversationViewsTopPlacement(false, null, "controller disabled");
             Unsubscribe();
+
+            if (_tutorialManager != null && _tutorialManager.IsRunning &&
+                _tutorialManager.CurrentStep?.StepId?.StartsWith("MetaPlanet.", StringComparison.Ordinal) == true)
+                _tutorialManager.CancelTutorial();
+
+            if (_dialogManager != null &&
+                _dialogManager.ActiveDialog?.DialogId?.StartsWith("MetaPlanetTutorial.", StringComparison.Ordinal) == true)
+                _dialogManager.CancelDialog();
+
+            // The new scene may already be using the shared tutorial UI.
+            if ((_tutorialManager == null || !_tutorialManager.IsRunning) &&
+                (_dialogManager == null || !_dialogManager.IsRunning))
+            {
+                DisableStep5WorldProxy();
+                HideBlocker();
+                SetConversationViewsTopPlacement(false, null, "controller disabled");
+            }
+
+            _tutorialStepCompleted = null;
+            _dialogCallbacks.Clear();
+            _nonBlockingDialogIds.Clear();
         }
 
         private void LateUpdate()
@@ -255,6 +318,9 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private IEnumerator InitializeWhenReady()
         {
+            // Wait for scene initialization and duplicate-root destruction to finish.
+            yield return null;
+
             if (!ShouldStartTutorial())
             {
                 _initializationCoroutine = null;
@@ -279,7 +345,9 @@ namespace PlanetBuilder.Messages.Tutorial
 
             _isAdvancing = true;
 
-            int stage = PlayerPrefs.GetInt(TutorialStageKey, StageFirstVisit);
+            int stage = PlayerPrefs.GetInt(
+                TutorialStageKey,
+                PlayerPrefs.GetInt(MetaTutorialCompletedKey, 0) == 1 ? StageOpenUpgradeTab : StageFirstVisit);
 
             switch (stage)
             {
@@ -350,7 +418,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 new[]
                 {
                     Line(T("meta_tutorial_step0_dialog_1") + "\n\n" + T("meta_tutorial_step0_dialog_2"), CharacterMood.Happy),
-                    Line(T("meta_tutorial_step0_dialog_3") + "\n\n" + T("meta_tutorial_step0_dialog_4"), CharacterMood.Confused)
+                    Line(T("meta_tutorial_step0_dialog_3"), CharacterMood.Confused)
                 },
                 () => AdvanceToStage(StageStartingBudget));
         }
@@ -402,7 +470,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 new[]
                 {
                     Line(T("meta_tutorial_step2_dialog_1") + "\n\n" + T("meta_tutorial_step2_dialog_2"), CharacterMood.Thinking),
-                    Line(T("meta_tutorial_step2_dialog_3") + "\n\n" + T("meta_tutorial_step2_dialog_4"), CharacterMood.Confused)
+                    Line(T("meta_tutorial_step2_dialog_3"), CharacterMood.Confused)
                 },
                 StartOpenVariantTabStep);
         }
@@ -422,7 +490,7 @@ namespace PlanetBuilder.Messages.Tutorial
 
             if (IsHousePurchased())
             {
-                AdvanceToStage(StageOpenUpgradeTab);
+                StartDeferredAdvanceToStage(StageFirstOrder);
                 return;
             }
 
@@ -1110,7 +1178,7 @@ namespace PlanetBuilder.Messages.Tutorial
                     Step4AddVariantObjectStepId,
                     T("meta_tutorial_step3_add_variant_hint"),
                     target,
-                    CompleteAddVariantObjectStep);
+                    () => _stepCompletedCoroutine = StartCoroutine(CompleteAddVariantObjectStep()));
                 return;
             }
 
@@ -1120,7 +1188,7 @@ namespace PlanetBuilder.Messages.Tutorial
             {
                 Debug.Log("[MetaTutorialTrace] Step4 add variant clicked", this);
                 StopStep4AddVariantPolish();
-                CompleteAddVariantObjectStep();
+                _stepCompletedCoroutine = StartCoroutine(CompleteAddVariantObjectStep());
             };
 
             StartAddVariantObjectTutorialStep(target);
@@ -1166,9 +1234,14 @@ namespace PlanetBuilder.Messages.Tutorial
             _tutorialManager.RestartTutorial();
         }
 
-        private void CompleteAddVariantObjectStep()
+        private IEnumerator CompleteAddVariantObjectStep()
         {
-            ShowToast(T("meta_tutorial_step3_toast_added"));
+            while (!TryGetHouseItem(out MetaVariantItemController houseItem) || houseItem.CurrentVisualTarget == null)
+                yield return null;
+
+            yield return new WaitForSecondsRealtime(3f);
+
+            _stepCompletedCoroutine = null;
             ShowBlockingDialog(
                 "MetaPlanetTutorial.AddVariantObject.Done",
                 new[]
@@ -2701,7 +2774,6 @@ namespace PlanetBuilder.Messages.Tutorial
             _houseController.SaveToES3();
             _gameManager.SaveGeneralGameData();
             _tutorialManager.CompleteManualStep();
-            ShowToast(T("meta_tutorial_step5_toast_built"));
             CloseVariantPanelIfOpen();
             ShowBlockingDialog(
                 "MetaPlanetTutorial.BuyVariantObject.Done",
@@ -2713,7 +2785,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 () =>
                 {
                     Debug.Log("[MetaTutorialTrace] Step5 completed", this);
-                    AdvanceToStage(StageOpenUpgradeTab);
+                    AdvanceToStage(StageFirstOrder);
                 });
         }
 

@@ -16,9 +16,6 @@ public class SaveSystem : MonoBehaviour
     private const string PassiveIncomeTransactionKey =
     "PendingPassiveIncomeTransaction_v1";
 
-    private const string CurrencyExchangeSaveKey =
-    "MetaExchange_V1";
-
     private const string CurrencyExchangeTransactionKey =
         "PendingCurrencyExchangeTransaction_v1";
 
@@ -36,11 +33,10 @@ public class SaveSystem : MonoBehaviour
         public string PlanetKey;
         public string PlanetJson;
         public string GeneralJson;
-        public string ExchangeJson;
     }
     public void SavePassiveIncomeReward(List<string> planetData, List<string> generalData)
     {
-        RecoverPassiveIncomeTransaction();
+        RecoverPendingTransactions();
 
         if (string.IsNullOrEmpty(_saveKeyName))
             throw new InvalidOperationException(
@@ -105,7 +101,6 @@ public class SaveSystem : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-
     public void RecoverPendingTransactions()
     {
         bool hasPassive =
@@ -124,52 +119,22 @@ public class SaveSystem : MonoBehaviour
         RecoverCurrencyExchangeTransaction();
     }
 
-    public void SaveCurrencyExchange(
-        string planetKey,
-        List<string> planetData,
-        List<string> generalData,
-        string exchangeStateJson)
+    public void SaveCurrencyExchange(string planetKey, List<string> planetData, List<string> generalData)
     {
         RecoverPendingTransactions();
 
-        if (string.IsNullOrWhiteSpace(planetKey) ||
-            planetKey == _saveGameKeyName ||
-            planetKey == CurrencyExchangeSaveKey ||
-            planetKey == PassiveIncomeTransactionKey ||
-            planetKey == CurrencyExchangeTransactionKey)
-        {
-            throw new ArgumentException(
-                "Invalid planet save key.", nameof(planetKey));
-        }
+        if (string.IsNullOrWhiteSpace(planetKey) || planetKey == _saveGameKeyName || planetKey == PassiveIncomeTransactionKey || planetKey == CurrencyExchangeTransactionKey)
+            throw new ArgumentException("Invalid planet save key.", nameof(planetKey));
 
         if (!PlayerPrefs.HasKey(planetKey))
-        {
-            throw new InvalidOperationException(
-                "Selected planet save does not exist.");
-        }
+            throw new InvalidOperationException("Selected planet save does not exist.");
 
-        if (planetData == null ||
-            planetData.Count == 0 ||
-            string.IsNullOrWhiteSpace(planetData[0]))
-        {
-            throw new ArgumentException(
-                "Planet snapshot is invalid.", nameof(planetData));
-        }
+        if (planetData == null || planetData.Count == 0 || string.IsNullOrWhiteSpace(planetData[0]))
+            throw new ArgumentException("Planet snapshot is invalid.", nameof(planetData));
 
-        if (generalData == null ||
-            generalData.Count == 0 ||
-            string.IsNullOrWhiteSpace(generalData[0]))
-        {
-            throw new ArgumentException(
-                "General snapshot is invalid.", nameof(generalData));
-        }
+        if (generalData == null || generalData.Count == 0 || string.IsNullOrWhiteSpace(generalData[0]))
+            throw new ArgumentException("General snapshot is invalid.", nameof(generalData));
 
-        if (string.IsNullOrWhiteSpace(exchangeStateJson))
-        {
-            throw new ArgumentException(
-                "Exchange state is missing.",
-                nameof(exchangeStateJson));
-        }
 
         var transaction = new CurrencyExchangeTransaction
         {
@@ -183,16 +148,11 @@ public class SaveSystem : MonoBehaviour
             GeneralJson = JsonUtility.ToJson(new SavedGeneralData
             {
                 savedGeneralData = generalData
-            }),
-
-            ExchangeJson = exchangeStateJson
+            })
         };
 
         // First persist the complete prepared transaction.
-        PlayerPrefs.SetString(
-            CurrencyExchangeTransactionKey,
-            JsonUtility.ToJson(transaction));
-
+        PlayerPrefs.SetString(CurrencyExchangeTransactionKey, JsonUtility.ToJson(transaction));
         PlayerPrefs.Save();
 
         // Apply the snapshots and remove the journal.
@@ -204,35 +164,15 @@ public class SaveSystem : MonoBehaviour
         if (!PlayerPrefs.HasKey(CurrencyExchangeTransactionKey))
             return;
 
-        var transaction =
-            JsonUtility.FromJson<CurrencyExchangeTransaction>(
-                PlayerPrefs.GetString(
-                    CurrencyExchangeTransactionKey));
+        var transaction = JsonUtility.FromJson<CurrencyExchangeTransaction>(PlayerPrefs.GetString(CurrencyExchangeTransactionKey));
 
-        if (transaction == null ||
-            string.IsNullOrWhiteSpace(transaction.PlanetKey) ||
-            transaction.PlanetKey == _saveGameKeyName ||
-            transaction.PlanetKey == CurrencyExchangeSaveKey ||
-            string.IsNullOrWhiteSpace(transaction.PlanetJson) ||
-            string.IsNullOrWhiteSpace(transaction.GeneralJson) ||
-            string.IsNullOrWhiteSpace(transaction.ExchangeJson))
-        {
-            throw new InvalidOperationException(
-                "Currency exchange transaction is invalid.");
-        }
+        if (transaction == null || string.IsNullOrWhiteSpace(transaction.PlanetKey) || transaction.PlanetKey == _saveGameKeyName || string.IsNullOrWhiteSpace(transaction.PlanetJson) || string.IsNullOrWhiteSpace(transaction.GeneralJson))
+            throw new InvalidOperationException("Currency exchange transaction is invalid.");
 
         // Apply absolute snapshots, never increment balances.
-        PlayerPrefs.SetString(
-            transaction.PlanetKey,
-            transaction.PlanetJson);
+        PlayerPrefs.SetString(transaction.PlanetKey, transaction.PlanetJson);
 
-        PlayerPrefs.SetString(
-            _saveGameKeyName,
-            transaction.GeneralJson);
-
-        PlayerPrefs.SetString(
-            CurrencyExchangeSaveKey,
-            transaction.ExchangeJson);
+        PlayerPrefs.SetString(_saveGameKeyName, transaction.GeneralJson);
 
         PlayerPrefs.Save();
 

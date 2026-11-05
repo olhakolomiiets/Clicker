@@ -12,6 +12,7 @@ public class PassiveIncome : MonoBehaviour
 
     [Header("Purchasing Extra Time")]
     [SerializeField] private PassiveIncomeData _passiveIncomeData;
+    public PassiveIncomeData ExtraTimeConfig => _passiveIncomeData;
 
     [Space(10)]
     [SerializeField] private GameObject _extraTimePanel;
@@ -42,6 +43,9 @@ public class PassiveIncome : MonoBehaviour
     [Space(10)]
     [SerializeField] private GoogleMobileAds.Sample.RewardedAdController _adController;
 
+    [Header("Passive Income Chest")]
+    [SerializeField] private PassiveIncomeChestController _chestController;
+
     #endregion
 
     #region EVENTS & ACTIONS
@@ -63,6 +67,10 @@ public class PassiveIncome : MonoBehaviour
     private bool _isPassiveIncome;
     private double _2xPassiveIncome;
     private double _3xPassiveIncome;
+    private string _openedPlanetKey;
+    private string _openedRewardId;
+
+    public event Func<string, string, int, double, bool> OnClaimChestReward;
 
     #endregion
 
@@ -72,21 +80,15 @@ public class PassiveIncome : MonoBehaviour
         _adController.OnUserEarnedRewardEvent.AddListener(UserEarnedReward);
         _adController.RewardedAdLoadedEvent.AddListener(ShowRewardedAd);
         _adController.RewardedAdLoadedWithErrorEvent.AddListener(RewardedAdWithError);
+        _adController.OnAdClosedEvent.AddListener(RewardedAdClosed);
+
+        if (_chestController != null)
+            _chestController.OnChestClicked += HandleChestClicked;
     }
 
     private void Start()
     {
-        _extraTimeTxt.text = $"{"+" + (_passiveIncomeData.ExtraTime / 60).ToString() + " " + Lean.Localization.LeanLocalization.GetTranslationText("minutes")}";
-
-        UpdateTimeText();
-
-        if (_currentGeneralData.ExtraTimePurchasedCount >= _passiveIncomeData.ExtraTimeCount)
-        {
-            _extraTimeTxt.text = _timeTxt.text;
-            _buyButton.gameObject.SetActive(false);
-            _timeTxt.gameObject.SetActive(false);
-        }
-        else _extraTimePriceTxt.text = _passiveIncomeData.ExtraTimePrice.ToString();
+        RefreshExtraTimeUI();
     }
 
     void UpdateTimeText()
@@ -98,29 +100,70 @@ public class PassiveIncome : MonoBehaviour
         _timeTxt.text = $"{hours:D2}:{minutes:D2}:{seconds:D2}";
     }
 
+
+    private void RefreshExtraTimeUI()
+    {
+        if (_currentGeneralData == null || _passiveIncomeData == null)
+            return;
+
+        UpdateTimeText();
+
+        int count = _currentGeneralData.ExtraTimePurchasedCount;
+
+        bool maxPurchased = count >= _passiveIncomeData.ExtraTimeCount;
+
+        _buyButton.gameObject.SetActive(!maxPurchased);
+        _timeTxt.gameObject.SetActive(!maxPurchased);
+
+        if (maxPurchased)
+        {
+            _extraTimeTxt.text = _timeTxt.text;
+            return;
+        }
+
+        _extraTimeTxt.text = "+" + (_passiveIncomeData.ExtraTime / 60) + " " + Lean.Localization.LeanLocalization.GetTranslationText("minutes");
+
+        double price = GetExtraTimePrice();
+
+        bool validPrice = price > 0d && !double.IsNaN(price) && !double.IsInfinity(price);
+
+        _extraTimePriceTxt.text = validPrice ? price.ToString("0.##") : "-";
+
+        _buyButton.interactable = count >= 0 && validPrice && _currentGeneralData.Diamonds >= price;
+    }
+
     public void PrepareGameData(GeneralGameData generalGameData, GameData gameData)
     {
         _currentGeneralData = generalGameData;
         _currentGameData = gameData;
 
-        _buyButton.interactable = (generalGameData.Diamonds < _passiveIncomeData.ExtraTimePrice) ? false : true;
+        RefreshExtraTimeUI();
     }
+
 
     public void GetExtraTimeForPassiveIncome()
     {
-        OnGetPassiveIncomeExtraTime?.Invoke(_passiveIncomeData.ExtraTimePrice, _passiveIncomeData.ExtraTime);
+        if (_currentGeneralData == null || _passiveIncomeData == null)
+            return;
 
-        if (_currentGeneralData.ExtraTimePurchasedCount >= _passiveIncomeData.ExtraTimeCount)
+        int count = _currentGeneralData.ExtraTimePurchasedCount;
+
+        if (count < 0 || count >= _passiveIncomeData.ExtraTimeCount)
+            return;
+
+        double price = GetExtraTimePrice();
+
+        if (price <= 0d || double.IsNaN(price) || double.IsInfinity(price) || _currentGeneralData.Diamonds < price)
         {
-            _extraTimeTxt.text = _timeTxt.text;
-            _buyButton.gameObject.SetActive(false);
-            _timeTxt.gameObject.SetActive(false);
+            RefreshExtraTimeUI();
+            return;
         }
 
-        _passiveIncomeData.ExtraTimePrice = _passiveIncomeData.ExtraTimePrice * _passiveIncomeData.ExtraTimePriceMultiplier;
-        _extraTimePriceTxt.text = _passiveIncomeData.ExtraTimePrice.ToString();
-        UpdateTimeText();
+        OnGetPassiveIncomeExtraTime?.Invoke(price, _passiveIncomeData.ExtraTime);
+
+        RefreshExtraTimeUI();
     }
+
 
     public void ActivatePassiveIncome(int timeAfterExit)
     {
@@ -145,19 +188,56 @@ public class PassiveIncome : MonoBehaviour
         }
     }
 
+    private bool TryClaimChestReward(int multiplier, double diamondCost)
+    {
+        if (string.IsNullOrEmpty(_openedPlanetKey) ||
+            string.IsNullOrEmpty(_openedRewardId) ||
+            OnClaimChestReward == null)
+            return false;
+
+        bool success = OnClaimChestReward.Invoke(
+            _openedPlanetKey,
+            _openedRewardId,
+            multiplier,
+            diamondCost);
+
+        if (!success)
+        {
+            Debug.LogWarning(
+                $"[PassiveIncome] CLAIM X{multiplier} REJECTED");
+            return false;
+        }
+
+        _openedPlanetKey = null;
+        _openedRewardId = null;
+
+        _rewardReceived = true;
+        _isPassiveIncome = false;
+
+        _2xButtonReward.interactable = true;
+        _3xButtonReward.interactable = true;
+
+        passiveIncomeWind.SetActive(false);
+        _chestController?.Refresh();
+
+        return true;
+    }
+
     public void EarningPassiveIncome()
     {
+        if (_currentGeneralData != null &&
+            _currentGeneralData.OfflinePlanetRewardsEnabled)
+        {
+            TryClaimChestReward(1, 0d);
+            return;
+        }
+
         if (_currentGeneralData == null || _currentGameData == null || _currentGeneralData.PendingOfflineSeconds <= 0)
             return;
 
         _passiveProfit = Math.Min(_currentGeneralData.PendingOfflineSeconds, _currentGeneralData.PassiveIncomeTime) * _currentGameData.MoneyPerSec;
 
-        Debug.Log(
-            $"[PassiveIncome] CLAIM X1 | " +
-            $"MoneyBefore={_currentGameData.Money} | " +
-            $"PendingBefore={_currentGeneralData.PendingOfflineSeconds}s | " +
-            $"Reward={_passiveProfit}"
-        );
+        Debug.Log($"[PassiveIncome] CLAIM X1 | " + $"MoneyBefore={_currentGameData.Money} | " + $"PendingBefore={_currentGeneralData.PendingOfflineSeconds}s | " + $"Reward={_passiveProfit}");
 
         OnEarningPassiveIncome?.Invoke(_passiveProfit, 0);
 
@@ -169,21 +249,22 @@ public class PassiveIncome : MonoBehaviour
 
         _rewardReceived = true;
 
-        Debug.Log(
-            $"[PassiveIncome] CLAIM SUCCESS | " +
-            $"MoneyAfter={_currentGameData.Money} | " +
-            $"PendingAfter={_currentGeneralData.PendingOfflineSeconds}s"
-        );
+        Debug.Log($"[PassiveIncome] CLAIM SUCCESS | " + $"MoneyAfter={_currentGameData.Money} | " + $"PendingAfter={_currentGeneralData.PendingOfflineSeconds}s");
 
         passiveIncomeWind.SetActive(false);
         FirebaseAnalytics.LogEvent(name: "passive_income_received");
         Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! PassiveIncome /// EarningPassiveIncome /// PassiveIncome: " + _passiveProfit);
     }
 
-    public void PreparePassiveIncomeUI(int timeAfterExit, double passiveIncome)
+    public void PreparePassiveIncomeUI(
+        int timeAfterExit,
+        double passiveIncome,
+        double? savedX2 = null,
+        double? savedX3 = null)
     {
-        _2xPassiveIncome = Math.Truncate(passiveIncome) * 2d;
-        _3xPassiveIncome = Math.Truncate(passiveIncome) * 3d;
+        _2xPassiveIncome = savedX2 ?? Math.Truncate(passiveIncome) * 2d;
+
+        _3xPassiveIncome = savedX3 ?? Math.Truncate(passiveIncome) * 3d;
 
         OnPassiveIncomeQuotePrepared?.Invoke(
             passiveIncome,
@@ -194,7 +275,7 @@ public class PassiveIncome : MonoBehaviour
 
         passiveIncomeWind.SetActive(true);
 
-        _3xButtonReward.interactable = (_currentGeneralData.Diamonds <= _3xPassiveIncomePrice) ? false : true;
+        _3xButtonReward.interactable = _currentGeneralData.Diamonds >= _3xPassiveIncomePrice;
 
         TimeSpan timeAway = TimeSpan.FromSeconds(timeAfterExit);
         _timeAwayTxt.text = $"{timeAway.Hours} h {timeAway.Minutes} m {timeAway.Seconds} s";
@@ -230,6 +311,24 @@ public class PassiveIncome : MonoBehaviour
 
     public void UserEarnedReward()
     {
+        if (_isPassiveIncome && _currentGeneralData != null && _currentGeneralData.OfflinePlanetRewardsEnabled)
+        {
+            bool success = TryClaimChestReward(2, 0d);
+
+            if (success)
+            {
+                FirebaseAnalytics.LogEvent("double_passive_income_received");
+            }
+            else
+            {
+                _isPassiveIncome = false;
+                _2xButtonReward.interactable = true;
+                _3xButtonReward.interactable =
+                    _currentGeneralData.Diamonds >= _3xPassiveIncomePrice;
+            }
+
+            return;
+        }
         if (_isPassiveIncome)
         {
             OnEarningPassiveIncome?.Invoke(_2xPassiveIncome, 0);
@@ -258,6 +357,12 @@ public class PassiveIncome : MonoBehaviour
 
     public void GetTriplePassiveIncome()
     {
+        if (_currentGeneralData != null &&
+    _currentGeneralData.OfflinePlanetRewardsEnabled)
+        {
+            TryClaimChestReward(3, _3xPassiveIncomePrice);
+            return;
+        }
         _2xButtonReward.interactable = false;
         _3xButtonReward.interactable = false;
 
@@ -275,13 +380,75 @@ public class PassiveIncome : MonoBehaviour
 
     public void RewardedAdWithError()
     {
+        if (_currentGeneralData != null && _currentGeneralData.OfflinePlanetRewardsEnabled && _isPassiveIncome)
+        {
+            _isPassiveIncome = false;
+            _2xButtonReward.interactable = true;
+            _3xButtonReward.interactable =
+                _currentGeneralData.Diamonds >= _3xPassiveIncomePrice;
+        }
         //buttonReward.GetComponentInChildren<Text>().text = $"{Lean.Localization.LeanLocalization.GetTranslationText("RewardedAdError")}";
     }
+
+
+    private void RewardedAdClosed()
+    {
+        if (!_isPassiveIncome || _currentGeneralData == null || !_currentGeneralData.OfflinePlanetRewardsEnabled)
+            return;
+
+        _2xButtonReward.interactable = true;
+        _3xButtonReward.interactable = _currentGeneralData.Diamonds >= _3xPassiveIncomePrice;
+    }
+
+
+
+    private void HandleChestClicked(string planetKey, string rewardId)
+    {
+        if (_currentGeneralData == null || !_currentGeneralData.OfflinePlanetRewardsEnabled || _currentGeneralData.OfflinePlanetRewards == null)
+        {
+            Debug.LogWarning("[PassiveIncome] Offline rewards not ready.");
+            return;
+        }
+
+        OfflinePlanetRewardData reward = _currentGeneralData.OfflinePlanetRewards.Find(r => r != null && r.PlanetKey == planetKey && r.RewardId == rewardId);
+
+        if (reward == null)
+        {
+            Debug.LogWarning("[PassiveIncome] Chest reward not found.");
+            return;
+        }
+
+        if (reward.CreditedSeconds < 60)
+            return;
+
+        if (passiveIncomeWind.activeSelf)
+            return;
+
+        Debug.Log($"[PassiveIncome] Opening chest reward: {reward.MoneyX1:N0}");
+
+        _openedPlanetKey = planetKey;
+        _openedRewardId = rewardId;
+
+        PreparePassiveIncomeUI(reward.CreditedSeconds, reward.MoneyX1, reward.MoneyX2, reward.MoneyX3);
+    }
+
+    private double GetExtraTimePrice()
+    {
+        return _passiveIncomeData.ExtraTimePrice *
+               Math.Pow(
+                   _passiveIncomeData.ExtraTimePriceMultiplier,
+                   _currentGeneralData.ExtraTimePurchasedCount);
+    }
+
 
     private void OnDisable()
     {
         _adController.OnUserEarnedRewardEvent.RemoveListener(UserEarnedReward);
         _adController.RewardedAdLoadedEvent.RemoveListener(ShowRewardedAd);
         _adController.RewardedAdLoadedWithErrorEvent.RemoveListener(RewardedAdWithError);
+        _adController.OnAdClosedEvent.RemoveListener(RewardedAdClosed);
+
+        if (_chestController != null)
+            _chestController.OnChestClicked -= HandleChestClicked;
     }
 }

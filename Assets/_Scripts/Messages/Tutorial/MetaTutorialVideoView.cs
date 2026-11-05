@@ -1,14 +1,16 @@
 using System;
 using PlanetBuilder.Messages;
+using PlanetBuilder.Messages.Dialogs;
 using Lean.Localization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
 namespace PlanetBuilder.Messages.Tutorial
 {
-    public class MetaTutorialVideoView : MonoBehaviour
+    public class MetaTutorialVideoView : MonoBehaviour, IPointerClickHandler
     {
         [SerializeField] private VideoPlayer _videoPlayer;
         [SerializeField] private Button _skipButton;
@@ -73,6 +75,18 @@ namespace PlanetBuilder.Messages.Tutorial
             }
             else
                 HandleVideoFinished(_videoPlayer);
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (_dialogCompleted)
+                return;
+
+            DialogManager dialogManager = GetComponentInParent<DialogManager>();
+
+            if (dialogManager != null &&
+                dialogManager.ActiveDialog?.DialogId == "MetaPlanetTutorial.FirstOrder")
+                dialogManager.ShowNext();
         }
 
         public void SetDialogCompleted()

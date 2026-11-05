@@ -299,6 +299,7 @@ public class LevelController : MonoBehaviour
         {
             if (reward != null &&
                 reward.PlanetKey == planet.SaveKey &&
+                reward.CreditedSeconds >= 60 &&
                 reward.MoneyX1 > 0d &&
                 !double.IsNaN(reward.MoneyX1) &&
                 !double.IsInfinity(reward.MoneyX1))

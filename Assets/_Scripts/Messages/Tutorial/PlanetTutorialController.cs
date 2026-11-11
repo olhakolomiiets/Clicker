@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Lean.Localization;
 using PlanetBuilder.Messages;
 using PlanetBuilder.Messages.Characters;
 using PlanetBuilder.Messages.Dialogs;
@@ -51,22 +52,21 @@ namespace PlanetBuilder.Messages.Tutorial
         private const string StepIdBuyBigTree = "Planet.BuyBigTree";
         private const string StepIdOpenManager = "Planet.OpenSmallTreeManager";
         private const string StepIdBuyManager = "Planet.BuySmallTreeManager";
+        private const string FirstEarnMessageId = "PlanetTutorial.FirstEarn";
 
-        // Hardcoded RU strings. Localization is intentionally not introduced yet to match the
-        // existing tutorials' content style and to avoid touching localization assets.
-        private const string DialogWelcome = "Добро пожаловать на мою первую планету!";
-        private const string DialogOpenCreation = "Сначала посмотрим на объекты.";
-        private const string HintEarnCoins = "Для начала заработаем первые монеты.";
-        private const string ToastEarnedFirst = "Ты заработал первые деньги.";
-        private const string HintBuySmallTree = "Для начала разместим новый объект из этой категории.";
-        private const string DialogSmallTreeBought = "Отлично. Теперь объект появился на станции.";
-        private const string HintBuyBigTree = "Теперь купим еще один тип объектов.\nТак планета будет выглядеть гораздо лучше.";
-        private const string DialogBigTreeBought = "Отлично. Теперь на планете есть деревья.";
-        private const string HintBuyManager = "Теперь купим автоматизацию заработка.";
-        private const string DialogManagerBought = "Отлично. Теперь планета будет развиваться гораздо быстрее.";
-        private const string DialogManagerEarlyOpen = "Менеджер заставит эти объекты работать автоматически.";
-        private const string DialogManagerNotEnoughMoney = "Но монет пока маловато. Придётся поработать активнее.";
-        private const string HintEarnMore = "Заработай немного больше монет, чтобы продолжить.";
+        private const string FirstVisitDialogKey = "planet_tutorial_first_visit_dialog";
+        private const string OpenCreationDialogKey = "planet_tutorial_open_creation_dialog";
+        private const string OpenCreationHintKey = "planet_tutorial_open_creation_hint";
+        private const string EarnCoinsHintKey = "planet_tutorial_earn_coins_hint";
+        private const string EarnedFirstToastKey = "planet_tutorial_earned_first_toast";
+        private const string BuySmallTreeHintKey = "planet_tutorial_buy_small_tree_hint";
+        private const string BuySmallTreeDoneKey = "planet_tutorial_buy_small_tree_done";
+        private const string BuyBigTreeHintKey = "planet_tutorial_buy_big_tree_hint";
+        private const string BuyBigTreeDoneKey = "planet_tutorial_buy_big_tree_done";
+        private const string ManagerEarlyOpenDialogKey = "planet_tutorial_manager_early_open_dialog";
+        private const string ManagerNotEnoughMoneyDialogKey = "planet_tutorial_manager_not_enough_money_dialog";
+        private const string BuyManagerHintKey = "planet_tutorial_buy_manager_hint";
+        private const string BuyManagerDoneKey = "planet_tutorial_buy_manager_done";
 
         public enum PlanetTutorialStage
         {
@@ -361,7 +361,7 @@ namespace PlanetBuilder.Messages.Tutorial
 
             ShowBlockingDialog(
                 "PlanetTutorial.FirstVisit",
-                new[] { Line(DialogWelcome, CharacterMood.Happy) },
+                new[] { Line(LeanLocalization.GetTranslationText(FirstVisitDialogKey, FirstVisitDialogKey), CharacterMood.Happy) },
                 () =>
                 {
                     SaveFlag(FirstVisitShownKey);
@@ -381,10 +381,11 @@ namespace PlanetBuilder.Messages.Tutorial
             }
 
             GameObject target = _uiController != null ? _uiController.ToggleButtonTarget : null;
+            string text = LeanLocalization.GetTranslationText(OpenCreationDialogKey, OpenCreationDialogKey);
 
             ShowBlockingDialog(
                 "PlanetTutorial.OpenCreationTab",
-                new[] { Line(DialogOpenCreation, CharacterMood.Thinking) },
+                new[] { Line(text, CharacterMood.Thinking) },
                 () =>
                 {
                     if (target == null)
@@ -395,8 +396,9 @@ namespace PlanetBuilder.Messages.Tutorial
                         return;
                     }
 
+                    string hint = LeanLocalization.GetTranslationText(OpenCreationHintKey, OpenCreationHintKey);
                     _tutorialStepCompleted = HandleCreationTabOpened;
-                    StartHighlightStep(StepIdOpenCreation, DialogOpenCreation, target, CharacterMood.Thinking);
+                    StartHighlightStep(StepIdOpenCreation, hint, target, CharacterMood.Thinking);
                 });
         }
 
@@ -425,7 +427,8 @@ namespace PlanetBuilder.Messages.Tutorial
             }
 
             double target = cost > 0d ? cost : 1d;
-            StartEarnPhase(target, HintEarnCoins, () => AdvanceToStage(PlanetTutorialStage.BuySmallTree));
+            string hint = LeanLocalization.GetTranslationText(EarnCoinsHintKey, EarnCoinsHintKey);
+            StartEarnPhase(target, hint, () => AdvanceToStage(PlanetTutorialStage.BuySmallTree));
         }
 
         // ================================================================
@@ -445,22 +448,78 @@ namespace PlanetBuilder.Messages.Tutorial
 
             GameObject target = _gameUI != null ? _gameUI.GetCreationBuyButtonTarget(SmallTreeIndex) : null;
 
-            if (!StartBuyStep(StepIdBuySmallTree, HintBuySmallTree, target, SmallTreeIndex))
+            string hint = LeanLocalization.GetTranslationText(BuySmallTreeHintKey, BuySmallTreeHintKey);
+            if (!StartBuyStep(StepIdBuySmallTree, hint, target, SmallTreeIndex))
                 return;
 
             // Completed via OnItemUpgradedConfirmed event.
             _tutorialStepCompleted = null;
         }
 
-        private void HandleSmallTreeBought()
+        private void HandleSmallTreeBought(GameObject buyTarget)
         {
             Debug.Log("[PlanetTutorialTrace] another SmallTree bought", this);
-            CompleteManualStep();
-
-            ShowBlockingDialog(
+            BeginTreePlacement(
+                buyTarget,
+                PlanetTutorialStage.BuySmallTree,
                 "PlanetTutorial.BuySmallTree.Done",
-                new[] { Line(DialogSmallTreeBought, CharacterMood.Happy) },
-                () => EarnUntilMoneyOrAdvance(GetBigTreeFirstCost(), PlanetTutorialStage.BuyBigTree));
+                BuySmallTreeDoneKey,
+                () => AdvanceToStage(PlanetTutorialStage.BuyBigTree));
+        }
+
+        private void BeginTreePlacement(
+            GameObject buyTarget, PlanetTutorialStage stage, string dialogId, string dialogKey, Action completed)
+        {
+            bool isSmallTree = stage == PlanetTutorialStage.BuySmallTree;
+            PlanetObject tree = null;
+            foreach (ObjectActivator activator in FindObjectsByType<ObjectActivator>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                ItemController item = activator.itemController;
+                if (item == null)
+                    continue;
+
+                GameObject target = isSmallTree ? item.BuyButtonTarget : item.ProgressButtonTarget;
+                if (target != buyTarget)
+                    continue;
+
+                int objectIndex = isSmallTree ? activator.NextObjectIndex - 1 : _gameRules.GetItemCount(BigTreeIndex) - 1;
+                List<PlanetObject> objects = activator.objectsToActivate;
+                if (objects != null && objectIndex >= 0 && objectIndex < objects.Count)
+                    tree = objects[objectIndex];
+                break;
+            }
+
+            CompleteManualStep();
+            ShowBlocker();
+            if (_interactionOverlay != null && _interactionOverlay.TryGetComponent(out CanvasGroup blocker))
+                blocker.alpha = 0f;
+
+            StopDialogRetry();
+            _dialogRetryCoroutine = StartCoroutine(ShowTreeBoughtWhenPlaced(tree, stage, dialogId, dialogKey, completed));
+        }
+
+        private IEnumerator ShowTreeBoughtWhenPlaced(
+            PlanetObject tree, PlanetTutorialStage stage, string dialogId, string dialogKey, Action completed)
+        {
+            // Purchase confirmation precedes the rotation that activates the tree.
+            yield return new WaitUntil(() => !_isRunning || _currentStage != stage ||
+                tree == null || tree.gameObject.activeInHierarchy);
+            _dialogRetryCoroutine = null;
+
+            if (!_isRunning || _currentStage != stage)
+                yield break;
+
+            HideBlocker();
+            if (tree == null)
+            {
+                string treeName = stage == PlanetTutorialStage.BuySmallTree ? "SmallTree" : "BigTree";
+                Debug.LogWarning($"[PlanetTutorialTrace] Purchased {treeName} visual missing; continuing without the dialog", this);
+                completed();
+                yield break;
+            }
+
+            string text = LeanLocalization.GetTranslationText(dialogKey, dialogKey);
+            ShowBlockingDialog(dialogId, new[] { Line(text, CharacterMood.Happy) }, completed);
         }
 
         // ================================================================
@@ -468,10 +527,17 @@ namespace PlanetBuilder.Messages.Tutorial
         // ================================================================
         private void StepBuyBigTree()
         {
+            bool alreadyOwned = PlayerPrefs.GetInt(BigTreeBoughtKey, 0) == 1 ||
+                                (_gameRules != null && _gameRules.IsItemOwned(BigTreeIndex));
+            if (!alreadyOwned && GetCurrentMoney() < GetBigTreeFirstCost())
+            {
+                SetConversationViewsTopPlacement(false, null, "waiting for BigTree money");
+                return;
+            }
+
             EnsureShopOpenOnCreationTab();
 
-            if (PlayerPrefs.GetInt(BigTreeBoughtKey, 0) == 1 ||
-                (_gameRules != null && _gameRules.GetItemCount(BigTreeIndex) >= 1))
+            if (alreadyOwned)
             {
                 Debug.Log("[PlanetTutorialTrace] BuyBigTree skipped: BigTree already owned", this);
                 AdvanceToStage(PlanetTutorialStage.BuySmallTreeManager);
@@ -482,21 +548,22 @@ namespace PlanetBuilder.Messages.Tutorial
             // which routes to GameRules.PurchaseItemFirstTime -> OnItemFirstPurchaseConfirmed.
             GameObject target = _gameUI != null ? _gameUI.GetCreationProgressButtonTarget(BigTreeIndex) : null;
 
-            if (!StartBuyStep(StepIdBuyBigTree, HintBuyBigTree, target, BigTreeIndex))
+            string hint = LeanLocalization.GetTranslationText(BuyBigTreeHintKey, BuyBigTreeHintKey);
+            if (!StartBuyStep(StepIdBuyBigTree, hint, target, BigTreeIndex))
                 return;
 
             // Completed via OnItemFirstPurchaseConfirmed event.
             _tutorialStepCompleted = null;
         }
 
-        private void HandleBigTreeBought()
+        private void HandleBigTreeBought(GameObject buyTarget)
         {
             Debug.Log("[PlanetTutorialTrace] BigTree bought", this);
-            CompleteManualStep();
-
-            ShowBlockingDialog(
+            BeginTreePlacement(
+                buyTarget,
+                PlanetTutorialStage.BuyBigTree,
                 "PlanetTutorial.BuyBigTree.Done",
-                new[] { Line(DialogBigTreeBought, CharacterMood.Happy) },
+                BuyBigTreeDoneKey,
                 () => AdvanceToStage(PlanetTutorialStage.BuySmallTreeManager));
         }
 
@@ -573,9 +640,10 @@ namespace PlanetBuilder.Messages.Tutorial
                 }
 
                 _tutorialStepCompleted = ShowManagerBuyStep;
+                string hint = LeanLocalization.GetTranslationText(BuyManagerHintKey, BuyManagerHintKey);
                 StartHighlightStep(
                     StepIdOpenManager,
-                    HintBuyManager,
+                    hint,
                     target,
                     CharacterMood.Thinking,
                     TutorialCompletionCondition.TargetUIClicked);
@@ -600,7 +668,8 @@ namespace PlanetBuilder.Messages.Tutorial
             _gameUI.SetManagerBuyButtonInteractable(SmallTreeIndex, true);
 
             _tutorialStepCompleted = null; // Completed via OnManagerPurchasedConfirmed event.
-            StartHighlightStep(StepIdBuyManager, HintBuyManager, target, CharacterMood.Thinking);
+            string hint = LeanLocalization.GetTranslationText(BuyManagerHintKey, BuyManagerHintKey);
+            StartHighlightStep(StepIdBuyManager, hint, target, CharacterMood.Thinking);
         }
 
         private void StartManagerTargetRetry()
@@ -633,9 +702,10 @@ namespace PlanetBuilder.Messages.Tutorial
                 {
                     _managerTargetRetryCoroutine = null;
                     _tutorialStepCompleted = ShowManagerBuyStep;
+                    string hint = LeanLocalization.GetTranslationText(BuyManagerHintKey, BuyManagerHintKey);
                     StartHighlightStep(
                         StepIdOpenManager,
-                        HintBuyManager,
+                        hint,
                         managerTarget,
                         CharacterMood.Thinking,
                         TutorialCompletionCondition.TargetUIClicked);
@@ -665,15 +735,22 @@ namespace PlanetBuilder.Messages.Tutorial
             _isWaitingForManagerMoney = false;
             _tutorialStepCompleted = null;
             CompleteManualStep();
+            StopStepCompletedCallback();
+            StopManagerTargetRetry();
+
+            GameObject managerButton = _gameUI != null ? _gameUI.GetManagerButtonTarget(SmallTreeIndex) : null;
+            if (managerButton != null)
+                managerButton.GetComponentInParent<UIManagerController>(true)?.SetButtonPurchased(SmallTreeIndex, true);
 
             ShowManagerBoughtDialog();
         }
 
         private void ShowManagerBoughtDialog()
         {
+            string text = LeanLocalization.GetTranslationText(BuyManagerDoneKey, BuyManagerDoneKey);
             ShowBlockingDialog(
                 "PlanetTutorial.BuySmallTreeManager.Done",
-                new[] { Line(DialogManagerBought, CharacterMood.Excited) },
+                new[] { Line(text, CharacterMood.Excited) },
                 CompleteTutorial);
         }
 
@@ -714,17 +791,6 @@ namespace PlanetBuilder.Messages.Tutorial
                 _isEarnPhaseActive = false;
                 CompleteManualStep();
             }
-        }
-
-        private void EarnUntilMoneyOrAdvance(double targetMoney, PlanetTutorialStage next)
-        {
-            if (targetMoney <= 0d || GetCurrentMoney() >= targetMoney)
-            {
-                AdvanceToStage(next);
-                return;
-            }
-
-            StartEarnPhase(targetMoney, HintEarnMore, () => AdvanceToStage(next));
         }
 
         // ================================================================
@@ -932,6 +998,65 @@ namespace PlanetBuilder.Messages.Tutorial
             callback?.Invoke();
         }
 
+        private void ShowFirstEarnMessage(string text)
+        {
+            MessageManager messageManager = MessageManager.Instance;
+
+            if (messageManager == null)
+                return;
+
+            MessageData hint = messageManager.GetCurrentMessage(MessageChannel.Tutorial);
+
+            if (hint != null)
+            {
+                if (hint.Id != $"Tutorial.{StepIdEarnCoins}")
+                    return;
+
+                messageManager.CloseCurrentMessage(MessageChannel.Tutorial);
+            }
+
+            if (messageManager.TryShowMessageImmediately(new MessageData
+            {
+                Id = FirstEarnMessageId,
+                Text = text,
+                SpeakerId = _contractorSpeakerId,
+                CharacterMood = CharacterMood.Happy,
+                Type = MessageType.Tutorial,
+                Channel = MessageChannel.Tutorial,
+                DisplayDuration = 3f,
+                CanDisplayOverModal = true,
+                CanDisplayOverShop = true
+            }))
+            {
+                messageManager.OnMessageClosed += HandleFirstEarnMessageClosed;
+            }
+            else if (hint != null)
+            {
+                messageManager.ShowMessage(hint);
+            }
+
+            void HandleFirstEarnMessageClosed(MessageData message)
+            {
+                if (message.Id != FirstEarnMessageId)
+                    return;
+
+                messageManager.OnMessageClosed -= HandleFirstEarnMessageClosed;
+
+                if (!isActiveAndEnabled ||
+                    !_isEarnPhaseActive ||
+                    _currentStage != PlanetTutorialStage.EarnCoinsSmallTree ||
+                    _tutorialManager?.CurrentStep?.StepId != StepIdEarnCoins)
+                {
+                    return;
+                }
+
+                if (GetCurrentMoney() >= _earnTargetMoney)
+                    CompleteEarnPhase();
+                else if (hint != null)
+                    messageManager.ShowMessage(hint);
+            }
+        }
+
         private void ShowToast(string text)
         {
             MessageManager messageManager = MessageManager.Instance;
@@ -1049,22 +1174,62 @@ namespace PlanetBuilder.Messages.Tutorial
                 if (_gameUI != null)
                     _gameUI.PlayCoinsEarnedFeedback();
 
-                ShowToast(ToastEarnedFirst);
+                string text = LeanLocalization.GetTranslationText(EarnedFirstToastKey, EarnedFirstToastKey);
+
+                if (_currentStage == PlanetTutorialStage.EarnCoinsSmallTree && _isEarnPhaseActive)
+                    ShowFirstEarnMessage(text);
+                else
+                    ShowToast(text);
+
                 Debug.Log("[PlanetTutorialTrace] first coins earned from SmallTree", this);
             }
 
-            if (index == SmallTreeIndex && _isEarnPhaseActive && GetCurrentMoney() >= _earnTargetMoney)
+            if (index == SmallTreeIndex &&
+                _isEarnPhaseActive &&
+                GetCurrentMoney() >= _earnTargetMoney &&
+                MessageManager.Instance?.GetCurrentMessage(MessageChannel.Tutorial)?.Id != FirstEarnMessageId)
             {
-                Debug.Log($"[PlanetTutorialTrace] earn target reached money={GetCurrentMoney()} target={_earnTargetMoney}", this);
-                _isEarnPhaseActive = false;
-                CompleteManualStep();
+                CompleteEarnPhase();
             }
 
             TryResumeManagerTutorial();
         }
 
+        private void CompleteEarnPhase()
+        {
+            Debug.Log($"[PlanetTutorialTrace] earn target reached money={GetCurrentMoney()} target={_earnTargetMoney}", this);
+            _isEarnPhaseActive = false;
+            CompleteManualStep();
+        }
+
         private void HandleGameDataUpdated()
         {
+            if (_isRunning && _currentStage == PlanetTutorialStage.BuyBigTree &&
+                _gameRules != null && !_gameRules.IsItemOwned(BigTreeIndex))
+            {
+                double money = GetCurrentMoney();
+                double cost = GetBigTreeFirstCost();
+                bool isStepRunning = _tutorialManager != null && _tutorialManager.IsRunning;
+                if (!isStepRunning && money >= cost)
+                {
+                    StepBuyBigTree();
+                }
+                else if (isStepRunning && _tutorialManager.CurrentStep?.StepId == StepIdBuyBigTree)
+                {
+                    if (money < cost)
+                    {
+                        StopTargetPolish();
+                        _tutorialManager.CancelTutorial();
+                        SetConversationViewsTopPlacement(false, null, "waiting for BigTree money");
+                    }
+                    else if (money == cost && _gameUI != null)
+                    {
+                        // The regular unlock refresh requires strictly more than the cost.
+                        _gameUI.SetCreationProgressButtonEnabled(BigTreeIndex, true);
+                    }
+                }
+            }
+
             TryResumeManagerTutorial();
         }
 
@@ -1122,12 +1287,14 @@ namespace PlanetBuilder.Messages.Tutorial
 
             Debug.Log("[PlanetTutorial] Manager opened before enough money.", this);
             _isEarlyManagerDialogActive = true;
+            string earlyOpenText = LeanLocalization.GetTranslationText(ManagerEarlyOpenDialogKey, ManagerEarlyOpenDialogKey);
+            string notEnoughMoneyText = LeanLocalization.GetTranslationText(ManagerNotEnoughMoneyDialogKey, ManagerNotEnoughMoneyDialogKey);
             ShowBlockingDialog(
                 "PlanetTutorial.BuySmallTreeManager.Early",
                 new[]
                 {
-                    Line(DialogManagerEarlyOpen, CharacterMood.Thinking),
-                    Line(DialogManagerNotEnoughMoney, CharacterMood.Thinking)
+                    Line(earlyOpenText, CharacterMood.Thinking),
+                    Line(notEnoughMoneyText, CharacterMood.Thinking)
                 },
                 () =>
                 {
@@ -1144,8 +1311,8 @@ namespace PlanetBuilder.Messages.Tutorial
 
             TutorialStepData current = _tutorialManager != null ? _tutorialManager.CurrentStep : null;
 
-            if (current != null && current.StepId == StepIdBuyBigTree && index == BigTreeIndex)
-                HandleBigTreeBought();
+            if (current != null && _tutorialManager.IsRunning && current.StepId == StepIdBuyBigTree && index == BigTreeIndex)
+                HandleBigTreeBought(current.TargetUI);
         }
 
         private void HandleItemUpgradedConfirmed(int index)
@@ -1156,7 +1323,7 @@ namespace PlanetBuilder.Messages.Tutorial
             TutorialStepData current = _tutorialManager != null ? _tutorialManager.CurrentStep : null;
 
             if (current != null && current.StepId == StepIdBuySmallTree && index == SmallTreeIndex)
-                HandleSmallTreeBought();
+                HandleSmallTreeBought(current.TargetUI);
         }
 
         private void HandleManagerPurchasedConfirmed(int index)

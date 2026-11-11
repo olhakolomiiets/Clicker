@@ -1,5 +1,6 @@
 using System;
 using PlanetBuilder.Messages.Characters;
+using PlanetBuilder.Messages.UI;
 
 namespace PlanetBuilder.Messages
 {
@@ -28,6 +29,8 @@ namespace PlanetBuilder.Messages
         public float ReminderInterval;
         public int MaxShows;
 
+        internal VideoDialogView VideoView { get; set; }
+
         public MessageData()
         {
         }
@@ -53,6 +56,7 @@ namespace PlanetBuilder.Messages
             ReminderCount = source.ReminderCount;
             ReminderInterval = source.ReminderInterval;
             MaxShows = source.MaxShows;
+            VideoView = source.VideoView;
         }
 
         public MessageData CreateSnapshot()

@@ -14,6 +14,33 @@ namespace PlanetBuilder.Messages.UI
         private readonly Dictionary<GameObject, GameObject> _instancesByPrefab = new();
         private GameObject _currentPrefab;
         private GameObject _currentInstance;
+        private bool? _portraitActiveBeforeHide;
+        private bool _nameTextWasEnabled;
+
+        internal void SetTemporarilyHidden(bool hidden)
+        {
+            if (_portraitContainer == null || hidden == _portraitActiveBeforeHide.HasValue)
+                return;
+
+            if (hidden)
+            {
+                _portraitActiveBeforeHide = _portraitContainer.gameObject.activeSelf;
+                _portraitContainer.gameObject.SetActive(false);
+                if (_characterNameText != null)
+                {
+                    _nameTextWasEnabled = _characterNameText.enabled;
+                    _characterNameText.enabled = false;
+                }
+            }
+            else
+            {
+                bool wasActive = _portraitActiveBeforeHide.Value;
+                _portraitActiveBeforeHide = null;
+                _portraitContainer.gameObject.SetActive(wasActive);
+                if (_characterNameText != null)
+                    _characterNameText.enabled = _nameTextWasEnabled;
+            }
+        }
 
         public void ShowCharacter(string speakerId, CharacterMood mood)
         {
@@ -66,7 +93,7 @@ namespace PlanetBuilder.Messages.UI
 
             if (_currentPrefab == portraitPrefab && _currentInstance != null)
             {
-                _portraitContainer.gameObject.SetActive(true);
+                _portraitContainer.gameObject.SetActive(!_portraitActiveBeforeHide.HasValue);
                 _currentInstance.SetActive(true);
                 ResetTransform(_currentInstance.transform);
                 return;
@@ -84,7 +111,7 @@ namespace PlanetBuilder.Messages.UI
             _currentPrefab = portraitPrefab;
             _currentInstance = instance;
             ResetTransform(_currentInstance.transform);
-            _portraitContainer.gameObject.SetActive(true);
+            _portraitContainer.gameObject.SetActive(!_portraitActiveBeforeHide.HasValue);
             _currentInstance.SetActive(true);
         }
 

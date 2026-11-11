@@ -1,5 +1,65 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8107394418612147
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5412148105941600126}
+  - component: {fileID: 7522263535500733924}
+  m_Layer: 0
+  m_Name: planet_tutorial_first_visit_dialog
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5412148105941600126
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8107394418612147}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7522263535500733924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8107394418612147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0412\u043E\u0442 \u0438 \u043D\u0430\u0448\u0430 \u043F\u0435\u0440\u0432\u0430\u044F
+      \u043F\u043B\u0430\u043D\u0435\u0442\u0430. \u041F\u043E\u043A\u0430 \u0446\u0435\u043B\u0430\u044F!"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Here's our first planet. Still in one piece!
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041E\u0441\u044C \u0456 \u043D\u0430\u0448\u0430 \u043F\u0435\u0440\u0448\u0430
+      \u043F\u043B\u0430\u043D\u0435\u0442\u0430. \u041F\u043E\u043A\u0438 \u0446\u0456\u043B\u0430!"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "\xA1Aqu\xED est\xE1 nuestro primer planeta! \xA1De momento sigue intacto!"
+    Object: {fileID: 0}
 --- !u!1 &24578569061889855
 GameObject:
   m_ObjectHideFlags: 0
@@ -224,13 +284,14 @@ MonoBehaviour:
     Text: "\u041E\u0442\u043B\u0438\u0447\u043D\u043E! \u0414\u043E\u043C \u0433\u043E\u0442\u043E\u0432."
     Object: {fileID: 0}
   - Language: English
-    Text: "Great! The house is ready."
+    Text: Great! The house is ready.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0427\u0443\u0434\u043E\u0432\u043E! \u0411\u0443\u0434\u0438\u043D\u043E\u043A \u0433\u043E\u0442\u043E\u0432\u0438\u0439."
+    Text: "\u0427\u0443\u0434\u043E\u0432\u043E! \u0411\u0443\u0434\u0438\u043D\u043E\u043A
+      \u0433\u043E\u0442\u043E\u0432\u0438\u0439."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "\u00A1Genial! La casa est\u00E1 lista."
+    Text: "\xA1Genial! La casa est\xE1 lista."
     Object: {fileID: 0}
 --- !u!1 &168429223381815443
 GameObject:
@@ -753,16 +814,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u041D\u0430\u043C \u043F\u043E\u043D\u0430\u0434\u043E\u0431\u0438\u0442\u0441\u044F \u0441\u043E\u043B\u0438\u0434\u043D\u044B\u0439 \u043E\u0444\u0438\u0441."
+    Text: "\u041D\u0430\u043C \u043F\u043E\u043D\u0430\u0434\u043E\u0431\u0438\u0442\u0441\u044F
+      \u0441\u043E\u043B\u0438\u0434\u043D\u044B\u0439 \u043E\u0444\u0438\u0441."
     Object: {fileID: 0}
   - Language: English
-    Text: "We'll need a proper office."
+    Text: We'll need a proper office.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u041D\u0430\u043C \u0437\u043D\u0430\u0434\u043E\u0431\u0438\u0442\u044C\u0441\u044F \u0441\u043E\u043B\u0456\u0434\u043D\u0438\u0439 \u043E\u0444\u0456\u0441."
+    Text: "\u041D\u0430\u043C \u0437\u043D\u0430\u0434\u043E\u0431\u0438\u0442\u044C\u0441\u044F
+      \u0441\u043E\u043B\u0456\u0434\u043D\u0438\u0439 \u043E\u0444\u0456\u0441."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Necesitaremos una oficina en condiciones."
+    Text: Necesitaremos una oficina en condiciones.
     Object: {fileID: 0}
 --- !u!1 &772310493377867210
 GameObject:
@@ -927,16 +990,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u041E\u0442\u043B\u0438\u0447\u043D\u043E."
+    Text: "\u041E\u0442\u043B\u0438\u0447\u043D\u043E! \u0422\u0435\u043F\u0435\u0440\u044C
+      \u0434\u0435\u0440\u0435\u0432\u044C\u044F \u043F\u043E\u0434 \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u0435\u043C."
     Object: {fileID: 0}
   - Language: English
-    Text: Great.
+    Text: Great! Now we've got the trees under control.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0427\u0443\u0434\u043E\u0432\u043E."
+    Text: "\u0427\u0443\u0434\u043E\u0432\u043E! \u0422\u0435\u043F\u0435\u0440 \u0434\u0435\u0440\u0435\u0432\u0430
+      \u043F\u0456\u0434 \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u0435\u043C."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: Muy bien.
+    Text: "\xA1Genial! Ya tenemos a los \xE1rboles bajo control."
     Object: {fileID: 0}
 --- !u!1 &998651555909727479
 GameObject:
@@ -985,16 +1050,19 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u041E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0439 \u043E\u0444\u0438\u0441 \u043F\u043E\u0441\u0442\u0440\u043E\u0438\u043C \u043F\u043E\u0441\u043B\u0435 \u043F\u0435\u0440\u0432\u044B\u0445 \u0437\u0430\u043A\u0430\u0437\u043E\u0432."
+    Text: "\u041E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0439 \u043E\u0444\u0438\u0441
+      \u043F\u043E\u0441\u0442\u0440\u043E\u0438\u043C \u043F\u043E\u0441\u043B\u0435
+      \u043F\u0435\u0440\u0432\u044B\u0445 \u0437\u0430\u043A\u0430\u0437\u043E\u0432."
     Object: {fileID: 0}
   - Language: English
-    Text: "We'll build a separate office after our first orders."
+    Text: We'll build a separate office after our first orders.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u041E\u043A\u0440\u0435\u043C\u0438\u0439 \u043E\u0444\u0456\u0441 \u0437\u0431\u0443\u0434\u0443\u0454\u043C\u043E \u043F\u0456\u0441\u043B\u044F \u043F\u0435\u0440\u0448\u0438\u0445 \u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u044C."
+    Text: "\u041E\u043A\u0440\u0435\u043C\u0438\u0439 \u043E\u0444\u0456\u0441 \u0437\u0431\u0443\u0434\u0443\u0454\u043C\u043E
+      \u043F\u0456\u0441\u043B\u044F \u043F\u0435\u0440\u0448\u0438\u0445 \u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u044C."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Construiremos una oficina aparte despu\u00E9s de los primeros encargos."
+    Text: "Construiremos una oficina aparte despu\xE9s de los primeros encargos."
     Object: {fileID: 0}
 --- !u!1 &1088254770149877917
 GameObject:
@@ -1053,6 +1121,64 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0414\u0435\u0440\u0435\u0432\u0430"
+    Object: {fileID: 0}
+--- !u!1 &1185004162498009181
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5141393510593598383}
+  - component: {fileID: 5068874430635632022}
+  m_Layer: 0
+  m_Name: exchange_rate
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5141393510593598383
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1185004162498009181}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5068874430635632022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1185004162498009181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Exchange Rate
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u041A\u0443\u0440\u0441 \u043E\u0431\u043C\u0435\u043D\u0430"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Tipo de cambio
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041A\u0443\u0440\u0441 \u043E\u0431\u043C\u0456\u043D\u0443"
     Object: {fileID: 0}
 --- !u!1 &1185231144202377507
 GameObject:
@@ -1557,6 +1683,71 @@ MonoBehaviour:
   - Language: Spanish
     Text: "Por eso las mejoras importan m\xE1s que las casas bonitas."
     Object: {fileID: 0}
+--- !u!1 &1642772659511550053
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1030089975993486586}
+  - component: {fileID: 3665280489468239267}
+  m_Layer: 0
+  m_Name: planet_tutorial_buy_small_tree_done
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1030089975993486586
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642772659511550053}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3665280489468239267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642772659511550053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041E\u0442\u043B\u0438\u0447\u043D\u043E. \u041A\u0443\u0441\u0442 \u0443\u0436\u0435
+      \u043D\u0430 \u043F\u043B\u0430\u043D\u0435\u0442\u0435. \u0422\u0435\u043F\u0435\u0440\u044C
+      \u043A\u0430\u0436\u0434\u043E\u0435 \u043D\u0430\u0436\u0430\u0442\u0438\u0435
+      \u043F\u0440\u0438\u043D\u043E\u0441\u0438\u0442 \u0431\u043E\u043B\u044C\u0448\u0435!"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Great! The bush is on the planet. Now every tap earns more!
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0427\u0443\u0434\u043E\u0432\u043E. \u041A\u0443\u0449 \u0443\u0436\u0435
+      \u043D\u0430 \u043F\u043B\u0430\u043D\u0435\u0442\u0456. \u0422\u0435\u043F\u0435\u0440
+      \u043A\u043E\u0436\u043D\u0435 \u043D\u0430\u0442\u0438\u0441\u043A\u0430\u043D\u043D\u044F
+      \u043F\u0440\u0438\u043D\u043E\u0441\u0438\u0442\u044C \u0431\u0456\u043B\u044C\u0448\u0435!"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "\xA1Genial! El arbusto ya est\xE1 en el planeta. \xA1Ahora cada toque
+      nos da m\xE1s!"
+    Object: {fileID: 0}
 --- !u!1 &1764515714127560891
 GameObject:
   m_ObjectHideFlags: 0
@@ -1676,6 +1867,127 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u041C\u0456\u0441\u0442"
     Object: {fileID: 0}
+--- !u!1 &1898288121093695184
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4972233356482592192}
+  - component: {fileID: 1399231797652201971}
+  m_Layer: 0
+  m_Name: total_cost
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4972233356482592192
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898288121093695184}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1399231797652201971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898288121093695184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Total Cost
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u0421\u0442\u043E\u0438\u043C\u043E\u0441\u0442\u044C"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Costo total
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0412\u0430\u0440\u0442\u0456\u0441\u0442\u044C"
+    Object: {fileID: 0}
+--- !u!1 &1921915643220892543
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6265999528975611896}
+  - component: {fileID: 985569031024196198}
+  m_Layer: 0
+  m_Name: exchange_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6265999528975611896
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1921915643220892543}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &985569031024196198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1921915643220892543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Every planet has its own exchange rate. Economics is a strange science.
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u0423 \u043A\u0430\u0436\u0434\u043E\u0439 \u043F\u043B\u0430\u043D\u0435\u0442\u044B
+      \u0441\u0432\u043E\u0439 \u043A\u0443\u0440\u0441. \u042D\u043A\u043E\u043D\u043E\u043C\u0438\u043A\u0430
+      \u2014 \u0441\u0442\u0440\u0430\u043D\u043D\u0430\u044F \u043D\u0430\u0443\u043A\u0430."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Cada planeta tiene su propio tipo de cambio. La econom\xEDa es una ciencia
+      extra\xF1a."
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0423 \u043A\u043E\u0436\u043D\u043E\u0457 \u043F\u043B\u0430\u043D\u0435\u0442\u0438
+      \u0441\u0432\u0456\u0439 \u043A\u0443\u0440\u0441. \u0415\u043A\u043E\u043D\u043E\u043C\u0456\u043A\u0430
+      \u2014 \u0434\u0438\u0432\u043D\u0430 \u043D\u0430\u0443\u043A\u0430."
+    Object: {fileID: 0}
 --- !u!1 &1923476752832022167
 GameObject:
   m_ObjectHideFlags: 0
@@ -1723,20 +2035,25 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u041A\u0430\u0436\u0434\u043E\u0435 \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435
-      \u043F\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E\u0435
-      \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0439."
+    Text: "\u042D\u0442\u0438 \u0434\u0435\u0440\u0435\u0432\u044C\u044F \u0441\u043B\u0438\u0448\u043A\u043E\u043C
+      \u043C\u043D\u043E\u0433\u043E \u043E\u0442\u0434\u044B\u0445\u0430\u044E\u0442.
+      \u041F\u043E\u0440\u0430 \u0443\u0432\u0435\u043B\u0438\u0447\u0438\u0442\u044C
+      \u043D\u043E\u0440\u043C\u0443 \u0432\u044B\u0440\u0430\u0431\u043E\u0442\u043A\u0438
+      \u043A\u0438\u0441\u043B\u043E\u0440\u043E\u0434\u0430!"
     Object: {fileID: 0}
   - Language: English
-    Text: Each upgrade represents a separate field of research.
+    Text: These trees are taking too many breaks. Time to raise their oxygen production
+      quota!
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u041A\u043E\u0436\u043D\u0435 \u043F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F
-      \u043F\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043B\u044F\u0454 \u043E\u043A\u0440\u0435\u043C\u0438\u0439
-      \u043D\u0430\u043F\u0440\u044F\u043C \u0434\u043E\u0441\u043B\u0456\u0434\u0436\u0435\u043D\u044C."
+    Text: "\u0426\u0456 \u0434\u0435\u0440\u0435\u0432\u0430 \u0437\u0430\u0431\u0430\u0433\u0430\u0442\u043E
+      \u0432\u0456\u0434\u043F\u043E\u0447\u0438\u0432\u0430\u044E\u0442\u044C. \u0427\u0430\u0441
+      \u043F\u0456\u0434\u0432\u0438\u0449\u0438\u0442\u0438 \u043D\u043E\u0440\u043C\u0443
+      \u0432\u0438\u0440\u043E\u0431\u043D\u0438\u0446\u0442\u0432\u0430 \u043A\u0438\u0441\u043D\u044E!"
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Cada mejora representa una l\xEDnea de investigaci\xF3n distinta."
+    Text: "Estos \xE1rboles se toman demasiados descansos. \xA1Hora de subirles la
+      cuota de producci\xF3n de ox\xEDgeno!"
     Object: {fileID: 0}
 --- !u!1 &1977948616445031894
 GameObject:
@@ -1843,16 +2160,25 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u041A\u0430\u043A\u043E\u0439-\u0442\u043E \u0440\u043E\u0431\u043E\u0442 \u0437\u0430\u043A\u0430\u0437\u0430\u043B \u0441\u0435\u0431\u0435 \u043F\u043B\u0430\u043D\u0435\u0442\u0443. \u0425\u043E\u0447\u0435\u0442, \u0447\u0442\u043E\u0431\u044B \u043C\u0435\u0441\u0442\u043D\u044B\u0435 \u043F\u0440\u043E\u0438\u0437\u0432\u043E\u0434\u0438\u043B\u0438 \u0435\u043C\u0443 \u0437\u0430\u043F\u0447\u0430\u0441\u0442\u0438."
+    Text: "\u041A\u0430\u043A\u043E\u0439-\u0442\u043E \u0440\u043E\u0431\u043E\u0442
+      \u0437\u0430\u043A\u0430\u0437\u0430\u043B \u0441\u0435\u0431\u0435 \u043F\u043B\u0430\u043D\u0435\u0442\u0443.
+      \u0425\u043E\u0447\u0435\u0442, \u0447\u0442\u043E\u0431\u044B \u043C\u0435\u0441\u0442\u043D\u044B\u0435
+      \u043F\u0440\u043E\u0438\u0437\u0432\u043E\u0434\u0438\u043B\u0438 \u0435\u043C\u0443
+      \u0437\u0430\u043F\u0447\u0430\u0441\u0442\u0438."
     Object: {fileID: 0}
   - Language: English
-    Text: "Some robot ordered a planet. He wants the locals to make spare parts for him."
+    Text: Some robot ordered a planet. He wants the locals to make spare parts for
+      him.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u042F\u043A\u0438\u0439\u0441\u044C \u0440\u043E\u0431\u043E\u0442 \u0437\u0430\u043C\u043E\u0432\u0438\u0432 \u0441\u043E\u0431\u0456 \u043F\u043B\u0430\u043D\u0435\u0442\u0443. \u0425\u043E\u0447\u0435, \u0449\u043E\u0431 \u043C\u0456\u0441\u0446\u0435\u0432\u0456 \u0432\u0438\u0440\u043E\u0431\u043B\u044F\u043B\u0438 \u0434\u043B\u044F \u043D\u044C\u043E\u0433\u043E \u0437\u0430\u043F\u0447\u0430\u0441\u0442\u0438\u043D\u0438."
+    Text: "\u042F\u043A\u0438\u0439\u0441\u044C \u0440\u043E\u0431\u043E\u0442 \u0437\u0430\u043C\u043E\u0432\u0438\u0432
+      \u0441\u043E\u0431\u0456 \u043F\u043B\u0430\u043D\u0435\u0442\u0443. \u0425\u043E\u0447\u0435,
+      \u0449\u043E\u0431 \u043C\u0456\u0441\u0446\u0435\u0432\u0456 \u0432\u0438\u0440\u043E\u0431\u043B\u044F\u043B\u0438
+      \u0434\u043B\u044F \u043D\u044C\u043E\u0433\u043E \u0437\u0430\u043F\u0447\u0430\u0441\u0442\u0438\u043D\u0438."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Un robot ha encargado un planeta. Quiere que sus habitantes fabriquen piezas de repuesto para \u00E9l."
+    Text: "Un robot ha encargado un planeta. Quiere que sus habitantes fabriquen
+      piezas de repuesto para \xE9l."
     Object: {fileID: 0}
 --- !u!1 &2028968580451748316
 GameObject:
@@ -1977,6 +2303,135 @@ MonoBehaviour:
       \u0417\u0433\u0430\u0434\u0430\u0439 \u043F\u0440\u043E \u0446\u0435 \u0443
       \u0441\u0432\u043E\u0454\u043C\u0443 5-\u0437\u0456\u0440\u043A\u043E\u0432\u043E\u043C\u0443
       \u0432\u0456\u0434\u0433\u0443\u043A\u0443!"
+    Object: {fileID: 0}
+--- !u!1 &2045384422499494794
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8335738879730335335}
+  - component: {fileID: 4224764045198650874}
+  m_Layer: 0
+  m_Name: meta_tutorial_step6_return_dialog_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8335738879730335335
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045384422499494794}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4224764045198650874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045384422499494794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0421 \u0432\u043E\u0437\u0432\u0440\u0430\u0449\u0435\u043D\u0438\u0435\u043C!
+      \u041F\u0435\u0440\u0432\u0430\u044F \u043F\u043B\u0430\u043D\u0435\u0442\u0430
+      \u0435\u0449\u0451 \u0446\u0435\u043B\u0430? \u0417\u043D\u0430\u0447\u0438\u0442,
+      \u0437\u0430\u0440\u0430\u0431\u0430\u0442\u044B\u0432\u0430\u0442\u044C \u0442\u044B
+      \u0443\u0436\u0435 \u0443\u043C\u0435\u0435\u0448\u044C."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Welcome back! Is your first planet still in one piece? Then you already
+      know how to make money.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0417 \u043F\u043E\u0432\u0435\u0440\u043D\u0435\u043D\u043D\u044F\u043C!
+      \u041F\u0435\u0440\u0448\u0430 \u043F\u043B\u0430\u043D\u0435\u0442\u0430 \u0449\u0435
+      \u0446\u0456\u043B\u0430? \u041E\u0442\u0436\u0435, \u0437\u0430\u0440\u043E\u0431\u043B\u044F\u0442\u0438
+      \u0442\u0438 \u0432\u0436\u0435 \u0432\u043C\u0456\u0454\u0448."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "\xA1Qu\xE9 bueno que hayas vuelto! \xBFTu primer planeta sigue de una
+      pieza? Entonces ya sabes c\xF3mo ganar dinero."
+    Object: {fileID: 0}
+--- !u!1 &2280669182750254197
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4360410676584111257}
+  - component: {fileID: 1015335494608703519}
+  m_Layer: 0
+  m_Name: planet_tutorial_buy_manager_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4360410676584111257
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2280669182750254197}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1015335494608703519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2280669182750254197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0422\u0435\u043F\u0435\u0440\u044C \u043C\u043E\u0436\u0435\u043C \u043D\u0430\u043D\u044F\u0442\u044C
+      \u043C\u0435\u043D\u0435\u0434\u0436\u0435\u0440\u0430. \u041F\u0443\u0441\u0442\u044C
+      \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442!"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Now we can hire a manager. Let him do the work!
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0422\u0435\u043F\u0435\u0440 \u043C\u043E\u0436\u0435\u043C\u043E \u043D\u0430\u0439\u043D\u044F\u0442\u0438
+      \u043C\u0435\u043D\u0435\u0434\u0436\u0435\u0440\u0430. \u041D\u0435\u0445\u0430\u0439
+      \u043F\u0440\u0430\u0446\u044E\u0454!"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Ahora podemos contratar a un gerente. \xA1Que se ponga a trabajar!"
     Object: {fileID: 0}
 --- !u!1 &2347163544817267261
 GameObject:
@@ -2141,16 +2596,79 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0417\u0430\u043A\u0430\u0436\u0435\u043C \u043F\u0435\u0440\u0432\u044B\u0439 \u0434\u043E\u043C. \u041D\u0430\u0447\u043D\u0451\u043C \u0441 \u0443\u043F\u0430\u043A\u043E\u0432\u043A\u0438."
+    Text: "\u0417\u0430\u043A\u0430\u0436\u0435\u043C \u043F\u0435\u0440\u0432\u044B\u0439
+      \u0434\u043E\u043C. \u041D\u0430\u0447\u043D\u0451\u043C \u0441 \u0443\u043F\u0430\u043A\u043E\u0432\u043A\u0438."
     Object: {fileID: 0}
   - Language: English
-    Text: "Let's order our first house. We'll start with the packaging."
+    Text: Let's order our first house. We'll start with the packaging.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0417\u0430\u043C\u043E\u0432\u0438\u043C\u043E \u043F\u0435\u0440\u0448\u0438\u0439 \u0431\u0443\u0434\u0438\u043D\u043E\u043A. \u041F\u043E\u0447\u043D\u0435\u043C\u043E \u0437 \u0443\u043F\u0430\u043A\u043E\u0432\u043A\u0438."
+    Text: "\u0417\u0430\u043C\u043E\u0432\u0438\u043C\u043E \u043F\u0435\u0440\u0448\u0438\u0439
+      \u0431\u0443\u0434\u0438\u043D\u043E\u043A. \u041F\u043E\u0447\u043D\u0435\u043C\u043E
+      \u0437 \u0443\u043F\u0430\u043A\u043E\u0432\u043A\u0438."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Encarguemos nuestra primera casa. Empecemos por el embalaje."
+    Text: Encarguemos nuestra primera casa. Empecemos por el embalaje.
+    Object: {fileID: 0}
+--- !u!1 &2408098173398758371
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8793847627928903035}
+  - component: {fileID: 2074275411634506286}
+  m_Layer: 0
+  m_Name: planet_tutorial_open_creation_dialog
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8793847627928903035
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2408098173398758371}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2074275411634506286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2408098173398758371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0438\u043C, \u0447\u0442\u043E
+      \u0437\u0434\u0435\u0441\u044C \u043C\u043E\u0436\u043D\u043E \u043F\u043E\u0441\u0442\u0440\u043E\u0438\u0442\u044C."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Let's see what we can build here.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u043E\u0434\u0438\u0432\u0438\u043C\u043E\u0441\u044F, \u0449\u043E
+      \u0442\u0443\u0442 \u043C\u043E\u0436\u043D\u0430 \u043F\u043E\u0431\u0443\u0434\u0443\u0432\u0430\u0442\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Veamos qu\xE9 podemos construir aqu\xED."
     Object: {fileID: 0}
 --- !u!1 &2444468701888919127
 GameObject:
@@ -2319,16 +2837,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0422\u0435\u043F\u0435\u0440\u044C \u0443 \u043D\u0430\u0441 \u0435\u0441\u0442\u044C \u0441\u043E\u0431\u0441\u0442\u0432\u0435\u043D\u043D\u0430\u044F \u043A\u043E\u0440\u043E\u0431\u043A\u0430."
+    Text: "\u0422\u0435\u043F\u0435\u0440\u044C \u0443 \u043D\u0430\u0441 \u0435\u0441\u0442\u044C
+      \u0441\u043E\u0431\u0441\u0442\u0432\u0435\u043D\u043D\u0430\u044F \u043A\u043E\u0440\u043E\u0431\u043A\u0430."
     Object: {fileID: 0}
   - Language: English
-    Text: "Now we have a box of our very own."
+    Text: Now we have a box of our very own.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0422\u0435\u043F\u0435\u0440 \u0443 \u043D\u0430\u0441 \u0454 \u0432\u043B\u0430\u0441\u043D\u0430 \u043A\u043E\u0440\u043E\u0431\u043A\u0430."
+    Text: "\u0422\u0435\u043F\u0435\u0440 \u0443 \u043D\u0430\u0441 \u0454 \u0432\u043B\u0430\u0441\u043D\u0430
+      \u043A\u043E\u0440\u043E\u0431\u043A\u0430."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Ahora tenemos nuestra propia caja."
+    Text: Ahora tenemos nuestra propia caja.
     Object: {fileID: 0}
 --- !u!1 &2569658434303233399
 GameObject:
@@ -2505,16 +3025,78 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0422\u0435\u043F\u0435\u0440\u044C \u0435\u0441\u0442\u044C \u0433\u0434\u0435 \u0432\u0441\u0442\u0440\u0435\u0447\u0430\u0442\u044C \u0437\u0430\u043A\u0430\u0437\u0447\u0438\u043A\u043E\u0432."
+    Text: "\u0422\u0435\u043F\u0435\u0440\u044C \u0435\u0441\u0442\u044C \u0433\u0434\u0435
+      \u0432\u0441\u0442\u0440\u0435\u0447\u0430\u0442\u044C \u0437\u0430\u043A\u0430\u0437\u0447\u0438\u043A\u043E\u0432."
     Object: {fileID: 0}
   - Language: English
-    Text: "Now we have somewhere to meet clients."
+    Text: Now we have somewhere to meet clients.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0422\u0435\u043F\u0435\u0440 \u0454 \u0434\u0435 \u0437\u0443\u0441\u0442\u0440\u0456\u0447\u0430\u0442\u0438 \u0437\u0430\u043C\u043E\u0432\u043D\u0438\u043A\u0456\u0432."
+    Text: "\u0422\u0435\u043F\u0435\u0440 \u0454 \u0434\u0435 \u0437\u0443\u0441\u0442\u0440\u0456\u0447\u0430\u0442\u0438
+      \u0437\u0430\u043C\u043E\u0432\u043D\u0438\u043A\u0456\u0432."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Ahora tenemos d\u00F3nde recibir a los clientes."
+    Text: "Ahora tenemos d\xF3nde recibir a los clientes."
+    Object: {fileID: 0}
+--- !u!1 &2657416203412019347
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3144775490093068238}
+  - component: {fileID: 3303443864942369945}
+  m_Layer: 0
+  m_Name: exchange_title
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3144775490093068238
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2657416203412019347}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3303443864942369945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2657416203412019347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Interplanetary Exchange
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u041C\u0435\u0436\u043F\u043B\u0430\u043D\u0435\u0442\u043D\u044B\u0439
+      \u043E\u0431\u043C\u0435\u043D"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Intercambio interplanetario
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041C\u0456\u0436\u043F\u043B\u0430\u043D\u0435\u0442\u043D\u0438\u0439
+      \u043E\u0431\u043C\u0456\u043D"
     Object: {fileID: 0}
 --- !u!1 &2660139516510989252
 GameObject:
@@ -2638,6 +3220,65 @@ MonoBehaviour:
   - Language: Spanish
     Text: Cada planeta nuevo es distinto.
     Object: {fileID: 0}
+--- !u!1 &2824192330175319071
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8016029062330917373}
+  - component: {fileID: 735335917077274163}
+  m_Layer: 0
+  m_Name: exchange_not_enough_coins
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8016029062330917373
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2824192330175319071}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &735335917077274163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2824192330175319071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Not enough coins.
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u041D\u0435\u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E
+      \u043C\u043E\u043D\u0435\u0442."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: No tienes suficientes monedas.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041D\u0435\u0434\u043E\u0441\u0442\u0430\u0442\u043D\u044C\u043E \u043C\u043E\u043D\u0435\u0442."
+    Object: {fileID: 0}
 --- !u!1 &2849645754950938206
 GameObject:
   m_ObjectHideFlags: 0
@@ -2755,6 +3396,78 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0414\u0438\u0440\u0438\u0436\u0430\u0431\u043B\u044C"
+    Object: {fileID: 0}
+--- !u!1 &2911167166699478191
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6100639635141953877}
+  - component: {fileID: 1164473930529955012}
+  m_Layer: 0
+  m_Name: planet_tutorial_buy_big_tree_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6100639635141953877
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2911167166699478191}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1164473930529955012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2911167166699478191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0422\u0435\u043F\u0435\u0440\u044C \u043A\u0443\u043F\u0438\u043C \u0434\u0435\u0440\u0435\u0432\u043E
+      \u043F\u043E\u0431\u043E\u043B\u044C\u0448\u0435. \u0415\u0449\u0451 \u0431\u043E\u043B\u044C\u0448\u0435
+      \u0437\u0435\u043B\u0435\u043D\u0438, \u0435\u0449\u0451 \u0431\u043E\u043B\u044C\u0448\u0435
+      \u043F\u0440\u0438\u0431\u044B\u043B\u0438!\n\u041D\u0443 \u0438 \u043F\u043B\u0430\u043D\u0435\u0442\u0430
+      \u0431\u0443\u0434\u0435\u0442 \u0432\u044B\u0433\u043B\u044F\u0434\u0435\u0442\u044C
+      \u0433\u043E\u0440\u0430\u0437\u0434\u043E \u043B\u0443\u0447\u0448\u0435."
+    Object: {fileID: 0}
+  - Language: English
+    Text: 'Now let''s buy a bigger tree. More greenery, more profit!
+
+      And the
+      planet will look much better, too.'
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0422\u0435\u043F\u0435\u0440 \u043A\u0443\u043F\u0456\u043C\u043E \u0434\u0435\u0440\u0435\u0432\u043E
+      \u043F\u043E\u0431\u0456\u043B\u044C\u0448\u0435. \u0429\u0435 \u0431\u0456\u043B\u044C\u0448\u0435
+      \u0437\u0435\u043B\u0435\u043D\u0456, \u0449\u0435 \u0431\u0456\u043B\u044C\u0448\u0435
+      \u043F\u0440\u0438\u0431\u0443\u0442\u043A\u0443!\n\u0406 \u043F\u043B\u0430\u043D\u0435\u0442\u0430
+      \u0432\u0438\u0433\u043B\u044F\u0434\u0430\u0442\u0438\u043C\u0435 \u043D\u0430\u0431\u0430\u0433\u0430\u0442\u043E
+      \u043A\u0440\u0430\u0449\u0435."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Ahora compremos un \xE1rbol m\xE1s grande. \xA1M\xE1s verde, m\xE1s ganancias!\nY
+      el planeta se ver\xE1 mucho mejor."
     Object: {fileID: 0}
 --- !u!1 &2967659020524180900
 GameObject:
@@ -2930,6 +3643,66 @@ MonoBehaviour:
   - Language: Spanish
     Text: Desarrollamos civilizaciones.
     Object: {fileID: 0}
+--- !u!1 &3290781177774364079
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2208888957646415952}
+  - component: {fileID: 8757376600871985036}
+  m_Layer: 0
+  m_Name: planet_tutorial_buy_big_tree_done
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2208888957646415952
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3290781177774364079}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8757376600871985036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3290781177774364079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041E\u0442\u043B\u0438\u0447\u043D\u043E! \u041D\u0430\u0448\u0430 \u043F\u043B\u0430\u043D\u0435\u0442\u0430
+      \u043D\u0430\u0447\u0438\u043D\u0430\u0435\u0442 \u0437\u0435\u043B\u0435\u043D\u0435\u0442\u044C!"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Great! Our planet is starting to turn green!
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0427\u0443\u0434\u043E\u0432\u043E! \u041D\u0430\u0448\u0430 \u043F\u043B\u0430\u043D\u0435\u0442\u0430
+      \u043F\u043E\u0447\u0438\u043D\u0430\u0454 \u0437\u0435\u043B\u0435\u043D\u0456\u0442\u0438!"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "\xA1Genial! \xA1Nuestro planeta empieza a ponerse verde!"
+    Object: {fileID: 0}
 --- !u!1 &3293461217878662115
 GameObject:
   m_ObjectHideFlags: 0
@@ -2980,13 +3753,13 @@ MonoBehaviour:
     Text: "\u0421\u0442\u0430\u0440\u0442\u043E\u0432\u044B\u0439 \u043A\u0430\u043F\u0438\u0442\u0430\u043B"
     Object: {fileID: 0}
   - Language: English
-    Text: "Startup Capital"
+    Text: Startup Capital
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0421\u0442\u0430\u0440\u0442\u043E\u0432\u0438\u0439 \u043A\u0430\u043F\u0456\u0442\u0430\u043B"
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Capital inicial"
+    Text: Capital inicial
     Object: {fileID: 0}
 --- !u!1 &3294465508697440090
 GameObject:
@@ -3233,16 +4006,20 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0435 \u0430\u043B\u043C\u0430\u0437\u044B. \u041C\u043E\u0439 \u0441\u0430\u043C\u044B\u0439 \u043D\u0435\u043B\u044E\u0431\u0438\u043C\u044B\u0439 \u0432\u0438\u0434 \u0430\u043B\u043C\u0430\u0437\u043E\u0432!"
+    Text: "\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0435 \u0430\u043B\u043C\u0430\u0437\u044B.
+      \u041C\u043E\u0439 \u0441\u0430\u043C\u044B\u0439 \u043D\u0435\u043B\u044E\u0431\u0438\u043C\u044B\u0439
+      \u0432\u0438\u0434 \u0430\u043B\u043C\u0430\u0437\u043E\u0432!"
     Object: {fileID: 0}
   - Language: English
-    Text: "My last diamonds. My least favorite kind of diamonds!"
+    Text: My last diamonds. My least favorite kind of diamonds!
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u041E\u0441\u0442\u0430\u043D\u043D\u0456 \u0430\u043B\u043C\u0430\u0437\u0438. \u041C\u0456\u0439 \u043D\u0430\u0439\u043D\u0435\u043B\u044E\u0431\u0456\u0448\u0438\u0439 \u0432\u0438\u0434 \u0430\u043B\u043C\u0430\u0437\u0456\u0432!"
+    Text: "\u041E\u0441\u0442\u0430\u043D\u043D\u0456 \u0430\u043B\u043C\u0430\u0437\u0438.
+      \u041C\u0456\u0439 \u043D\u0430\u0439\u043D\u0435\u043B\u044E\u0431\u0456\u0448\u0438\u0439
+      \u0432\u0438\u0434 \u0430\u043B\u043C\u0430\u0437\u0456\u0432!"
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Los \u00FAltimos diamantes. \u00A1Los diamantes que menos me gustan!"
+    Text: "Los \xFAltimos diamantes. \xA1Los diamantes que menos me gustan!"
     Object: {fileID: 0}
 --- !u!1 &3531693772642229134
 GameObject:
@@ -3526,16 +4303,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0412\u0441\u0451, \u0447\u0442\u043E \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043D\u0430\u0441\u043A\u0440\u0435\u0441\u0442\u0438 \u043D\u0430 \u043E\u0442\u043A\u0440\u044B\u0442\u0438\u0435."
+    Text: "\u0412\u0441\u0451, \u0447\u0442\u043E \u0443\u0434\u0430\u043B\u043E\u0441\u044C
+      \u043D\u0430\u0441\u043A\u0440\u0435\u0441\u0442\u0438 \u043D\u0430 \u043E\u0442\u043A\u0440\u044B\u0442\u0438\u0435."
     Object: {fileID: 0}
   - Language: English
-    Text: "Everything I managed to scrape together to open up shop."
+    Text: Everything I managed to scrape together to open up shop.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0423\u0441\u0435, \u0449\u043E \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u043D\u0430\u0448\u043A\u0440\u0435\u0431\u0442\u0438 \u043D\u0430 \u0432\u0456\u0434\u043A\u0440\u0438\u0442\u0442\u044F."
+    Text: "\u0423\u0441\u0435, \u0449\u043E \u0432\u0434\u0430\u043B\u043E\u0441\u044F
+      \u043D\u0430\u0448\u043A\u0440\u0435\u0431\u0442\u0438 \u043D\u0430 \u0432\u0456\u0434\u043A\u0440\u0438\u0442\u0442\u044F."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Todo lo que logr\u00E9 juntar para abrir el negocio."
+    Text: "Todo lo que logr\xE9 juntar para abrir el negocio."
     Object: {fileID: 0}
 --- !u!1 &3695912790869593986
 GameObject:
@@ -3594,6 +4373,192 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0420\u041E\u0417\u0412\u0418\u0422\u041E\u041A"
+    Object: {fileID: 0}
+--- !u!1 &3747518708602018266
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5576907845728043424}
+  - component: {fileID: 5652006441041072466}
+  m_Layer: 0
+  m_Name: planet_tutorial_buy_small_tree_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5576907845728043424
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3747518708602018266}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5652006441041072466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3747518708602018266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041A\u0443\u043F\u0438\u043C \u043F\u0435\u0440\u0432\u044B\u0439 \u043A\u0443\u0441\u0442.
+      \u0422\u0435\u043F\u0435\u0440\u044C \u043A\u0430\u0436\u0434\u044B\u0439 \u043A\u043B\u0438\u043A
+      \u0431\u0443\u0434\u0435\u0442 \u043F\u0440\u0438\u0431\u044B\u043B\u044C\u043D\u0435\u0435!"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Let's buy our first bush. Now every tap will earn us more!
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041A\u0443\u043F\u0438\u043C\u043E \u043F\u0435\u0440\u0448\u0438\u0439
+      \u043A\u0443\u0449. \u0422\u0435\u043F\u0435\u0440 \u043A\u043E\u0436\u043D\u0435
+      \u043D\u0430\u0442\u0438\u0441\u043A\u0430\u043D\u043D\u044F \u043F\u0440\u0438\u043D\u043E\u0441\u0438\u0442\u0438\u043C\u0435
+      \u0431\u0456\u043B\u044C\u0448\u0435!"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "\xA1Compremos nuestro primer arbusto! \xA1Ahora ganaremos m\xE1s con cada
+      toque!"
+    Object: {fileID: 0}
+--- !u!1 &3846379565963458085
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1715335983572507271}
+  - component: {fileID: 8954039341933739593}
+  m_Layer: 0
+  m_Name: planet_tutorial_earn_more_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1715335983572507271
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3846379565963458085}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8954039341933739593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3846379565963458085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0439 \u043D\u0430\u0436\u0438\u043C\u0430\u0442\u044C.
+      \u041D\u0430\u043C \u043D\u0443\u0436\u043D\u043E \u0431\u043E\u043B\u044C\u0448\u0435
+      \u0448\u0435\u0441\u0442\u0435\u0440\u0451\u043D\u043E\u043A! \u041D\u0430\u043C
+      \u043D\u0443\u0436\u043D\u044B \u0434\u0435\u0440\u0435\u0432\u044C\u044F!"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Keep tapping. We need more gears! We need trees!
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u0440\u043E\u0434\u043E\u0432\u0436\u0443\u0439 \u043D\u0430\u0442\u0438\u0441\u043A\u0430\u0442\u0438.
+      \u041D\u0430\u043C \u043F\u043E\u0442\u0440\u0456\u0431\u043D\u043E \u0431\u0456\u043B\u044C\u0448\u0435
+      \u0448\u0435\u0441\u0442\u0435\u0440\u0435\u043D\u044C! \u041D\u0430\u043C
+      \u043F\u043E\u0442\u0440\u0456\u0431\u043D\u0456 \u0434\u0435\u0440\u0435\u0432\u0430!"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Sigue pulsando. \xA1Necesitamos m\xE1s engranajes! \xA1Necesitamos \xE1rboles!"
+    Object: {fileID: 0}
+--- !u!1 &4051929741215549957
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 420377359267550276}
+  - component: {fileID: 4638424960596785793}
+  m_Layer: 0
+  m_Name: enter_amount
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &420377359267550276
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4051929741215549957}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4638424960596785793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4051929741215549957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Enter amount...
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u0412\u0432\u0435\u0434\u0438 \u043A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u043E..."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Introduce la cantidad...
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0412\u0432\u0435\u0434\u0438 \u043A\u0456\u043B\u044C\u043A\u0456\u0441\u0442\u044C..."
     Object: {fileID: 0}
 --- !u!1 &4087534657263849413
 GameObject:
@@ -3714,16 +4679,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0417\u0434\u0435\u0441\u044C \u0431\u0443\u0434\u0435\u043C \u0436\u0438\u0442\u044C \u0438 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0442\u044C \u0437\u0430\u043A\u0430\u0437\u0447\u0438\u043A\u043E\u0432."
+    Text: "\u0417\u0434\u0435\u0441\u044C \u0431\u0443\u0434\u0435\u043C \u0436\u0438\u0442\u044C
+      \u0438 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0442\u044C \u0437\u0430\u043A\u0430\u0437\u0447\u0438\u043A\u043E\u0432."
     Object: {fileID: 0}
   - Language: English
-    Text: "We'll live here and meet with clients."
+    Text: We'll live here and meet with clients.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0422\u0443\u0442 \u0436\u0438\u0442\u0438\u043C\u0435\u043C\u043E \u0439 \u043F\u0440\u0438\u0439\u043C\u0430\u0442\u0438\u043C\u0435\u043C\u043E \u0437\u0430\u043C\u043E\u0432\u043D\u0438\u043A\u0456\u0432."
+    Text: "\u0422\u0443\u0442 \u0436\u0438\u0442\u0438\u043C\u0435\u043C\u043E \u0439
+      \u043F\u0440\u0438\u0439\u043C\u0430\u0442\u0438\u043C\u0435\u043C\u043E \u0437\u0430\u043C\u043E\u0432\u043D\u0438\u043A\u0456\u0432."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Aqu\u00ED viviremos y recibiremos a los clientes."
+    Text: "Aqu\xED viviremos y recibiremos a los clientes."
     Object: {fileID: 0}
 --- !u!1 &4121947133575837938
 GameObject:
@@ -4007,16 +4974,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u041D\u0430\u0434\u0435\u044E\u0441\u044C, \u043A\u0430\u0442\u0430\u0441\u0442\u0440\u043E\u0444\u044B \u043D\u0430\u0447\u043D\u0443\u0442\u0441\u044F \u043D\u0435 \u0441\u0440\u0430\u0437\u0443."
+    Text: "\u041D\u0430\u0434\u0435\u044E\u0441\u044C, \u043A\u0430\u0442\u0430\u0441\u0442\u0440\u043E\u0444\u044B
+      \u043D\u0430\u0447\u043D\u0443\u0442\u0441\u044F \u043D\u0435 \u0441\u0440\u0430\u0437\u0443."
     Object: {fileID: 0}
   - Language: English
-    Text: "I just hope the disasters don't start right away."
+    Text: I just hope the disasters don't start right away.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0421\u043F\u043E\u0434\u0456\u0432\u0430\u044E\u0441\u044F, \u043A\u0430\u0442\u0430\u0441\u0442\u0440\u043E\u0444\u0438 \u043F\u043E\u0447\u043D\u0443\u0442\u044C\u0441\u044F \u043D\u0435 \u043E\u0434\u0440\u0430\u0437\u0443."
+    Text: "\u0421\u043F\u043E\u0434\u0456\u0432\u0430\u044E\u0441\u044F, \u043A\u0430\u0442\u0430\u0441\u0442\u0440\u043E\u0444\u0438
+      \u043F\u043E\u0447\u043D\u0443\u0442\u044C\u0441\u044F \u043D\u0435 \u043E\u0434\u0440\u0430\u0437\u0443."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Espero que las cat\u00E1strofes no empiecen de inmediato."
+    Text: "Espero que las cat\xE1strofes no empiecen de inmediato."
     Object: {fileID: 0}
 --- !u!1 &4432329989457928363
 GameObject:
@@ -4065,13 +5034,15 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0422\u0435\u043F\u0435\u0440\u044C \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0438\u043C \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u044F."
+    Text: "\u0422\u0435\u043F\u0435\u0440\u044C \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0438\u043C
+      \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u044F."
     Object: {fileID: 0}
   - Language: English
     Text: Now let's look at the upgrades.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0422\u0435\u043F\u0435\u0440 \u043F\u043E\u0433\u043B\u044F\u043D\u044C\u043C\u043E \u043D\u0430 \u043F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F."
+    Text: "\u0422\u0435\u043F\u0435\u0440 \u043F\u043E\u0433\u043B\u044F\u043D\u044C\u043C\u043E
+      \u043D\u0430 \u043F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F."
     Object: {fileID: 0}
   - Language: Spanish
     Text: Ahora veamos las mejoras.
@@ -4194,6 +5165,126 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u0417\u0431\u0435\u0440\u0435\u0433\u0442\u0438"
     Object: {fileID: 0}
+--- !u!1 &4482705153924912768
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3694840983323682838}
+  - component: {fileID: 5880085609698589321}
+  m_Layer: 0
+  m_Name: planet_tutorial_buy_manager_done
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3694840983323682838
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4482705153924912768}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5880085609698589321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4482705153924912768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041E\u0442\u043B\u0438\u0447\u043D\u043E. \u0422\u0435\u043F\u0435\u0440\u044C
+      \u043F\u043B\u0430\u043D\u0435\u0442\u0430 \u0431\u0443\u0434\u0435\u0442 \u0440\u0430\u0437\u0432\u0438\u0432\u0430\u0442\u044C\u0441\u044F
+      \u0433\u043E\u0440\u0430\u0437\u0434\u043E \u0431\u044B\u0441\u0442\u0440\u0435\u0435."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Great! Now the planet will develop much faster.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0427\u0443\u0434\u043E\u0432\u043E. \u0422\u0435\u043F\u0435\u0440 \u043F\u043B\u0430\u043D\u0435\u0442\u0430
+      \u0440\u043E\u0437\u0432\u0438\u0432\u0430\u0442\u0438\u043C\u0435\u0442\u044C\u0441\u044F
+      \u043D\u0430\u0431\u0430\u0433\u0430\u0442\u043E \u0448\u0432\u0438\u0434\u0448\u0435."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "\xA1Genial! Ahora el planeta se desarrollar\xE1 mucho m\xE1s r\xE1pido."
+    Object: {fileID: 0}
+--- !u!1 &4717558248224502480
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7848989609808058920}
+  - component: {fileID: 7115359357884686102}
+  m_Layer: 0
+  m_Name: exchange_diamonds_amount
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7848989609808058920
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4717558248224502480}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7115359357884686102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4717558248224502480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Diamonds
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u0410\u043B\u043C\u0430\u0437\u044B"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Diamantes
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0410\u043B\u043C\u0430\u0437\u0438"
+    Object: {fileID: 0}
 --- !u!1 &4732134750934252867
 GameObject:
   m_ObjectHideFlags: 0
@@ -4308,7 +5399,7 @@ MonoBehaviour:
     Text: "\u041F\u0435\u0440\u0448\u0435 \u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F"
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Primer encargo"
+    Text: Primer encargo
     Object: {fileID: 0}
 --- !u!1 &4773852993963792089
 GameObject:
@@ -4357,16 +5448,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0418 \u0443\u0436\u0435 \u043C\u0435\u043D\u044C\u0448\u0435 \u043D\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u0435\u0442 \u043A\u0443\u0447\u0443 \u043A\u043E\u0440\u043E\u0431\u043E\u043A."
+    Text: "\u0418 \u0443\u0436\u0435 \u043C\u0435\u043D\u044C\u0448\u0435 \u043D\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u0435\u0442
+      \u043A\u0443\u0447\u0443 \u043A\u043E\u0440\u043E\u0431\u043E\u043A."
     Object: {fileID: 0}
   - Language: English
-    Text: "And it looks a lot less like a pile of boxes."
+    Text: And it looks a lot less like a pile of boxes.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0406 \u0432\u0436\u0435 \u043C\u0435\u043D\u0448\u0435 \u043D\u0430\u0433\u0430\u0434\u0443\u0454 \u043A\u0443\u043F\u0443 \u043A\u043E\u0440\u043E\u0431\u043E\u043A."
+    Text: "\u0406 \u0432\u0436\u0435 \u043C\u0435\u043D\u0448\u0435 \u043D\u0430\u0433\u0430\u0434\u0443\u0454
+      \u043A\u0443\u043F\u0443 \u043A\u043E\u0440\u043E\u0431\u043E\u043A."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Y ya se parece mucho menos a un mont\u00F3n de cajas."
+    Text: "Y ya se parece mucho menos a un mont\xF3n de cajas."
     Object: {fileID: 0}
 --- !u!1 &4810472097101196618
 GameObject:
@@ -4531,16 +5624,19 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0416\u0438\u0442\u044C \u0438 \u0440\u0430\u0431\u043E\u0442\u0430\u0442\u044C \u0431\u0443\u0434\u0435\u043C \u0442\u0430\u043C \u0436\u0435. \u042D\u043A\u043E\u043D\u043E\u043C\u0438\u044F!"
+    Text: "\u0416\u0438\u0442\u044C \u0438 \u0440\u0430\u0431\u043E\u0442\u0430\u0442\u044C
+      \u0431\u0443\u0434\u0435\u043C \u0442\u0430\u043C \u0436\u0435. \u042D\u043A\u043E\u043D\u043E\u043C\u0438\u044F!"
     Object: {fileID: 0}
   - Language: English
-    Text: "We'll live and work there too. Talk about saving money!"
+    Text: We'll live and work there too. Talk about saving money!
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0416\u0438\u0442\u0438 \u0439 \u043F\u0440\u0430\u0446\u044E\u0432\u0430\u0442\u0438 \u0431\u0443\u0434\u0435\u043C\u043E \u0442\u0430\u043C \u0441\u0430\u043C\u043E. \u0415\u043A\u043E\u043D\u043E\u043C\u0456\u044F!"
+    Text: "\u0416\u0438\u0442\u0438 \u0439 \u043F\u0440\u0430\u0446\u044E\u0432\u0430\u0442\u0438
+      \u0431\u0443\u0434\u0435\u043C\u043E \u0442\u0430\u043C \u0441\u0430\u043C\u043E.
+      \u0415\u043A\u043E\u043D\u043E\u043C\u0456\u044F!"
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Viviremos y trabajaremos all\u00ED mismo. \u00A1Hay que ahorrar!"
+    Text: "Viviremos y trabajaremos all\xED mismo. \xA1Hay que ahorrar!"
     Object: {fileID: 0}
 --- !u!1 &4865019328691112695
 GameObject:
@@ -4715,6 +5811,66 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0428\u0432\u0438\u0434\u043Ai\u0441\u043D\u0438\u0439 \u043A\u0430\u0442\u0435\u0440"
+    Object: {fileID: 0}
+--- !u!1 &4999298149340654773
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4947914051245965501}
+  - component: {fileID: 440097801261112556}
+  m_Layer: 0
+  m_Name: exchange_enter_amount_error
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4947914051245965501
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4999298149340654773}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &440097801261112556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4999298149340654773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Enter the number of diamonds.
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u0423\u043A\u0430\u0436\u0438 \u043A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u043E
+      \u0430\u043B\u043C\u0430\u0437\u043E\u0432."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Introduce la cantidad de diamantes.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0412\u043A\u0430\u0436\u0438 \u043A\u0456\u043B\u044C\u043A\u0456\u0441\u0442\u044C
+      \u0430\u043B\u043C\u0430\u0437\u0456\u0432."
     Object: {fileID: 0}
 --- !u!1 &5002196495263375682
 GameObject:
@@ -5364,6 +6520,71 @@ MonoBehaviour:
   - Language: Spanish
     Text: Recibir
     Object: {fileID: 0}
+--- !u!1 &5583405565909200434
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2532904155440275386}
+  - component: {fileID: 9159848974084777651}
+  m_Layer: 0
+  m_Name: planet_tutorial_earned_first_toast
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2532904155440275386
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5583405565909200434}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9159848974084777651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5583405565909200434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u0435\u0440\u0432\u044B\u0435 \u0448\u0435\u0441\u0442\u0435\u0440\u0451\u043D\u043A\u0438!
+      \u041A\u0430\u0436\u0434\u043E\u0435 \u043D\u0430\u0436\u0430\u0442\u0438\u0435
+      \u043F\u0440\u0438\u043D\u043E\u0441\u0438\u0442 \u0435\u0449\u0451. \u042D\u0442\u043E
+      \u0447\u0443\u0434\u043E!"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Our first gears! Every tap earns more. It's a miracle!
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041F\u0435\u0440\u0448\u0456 \u0448\u0435\u0441\u0442\u0435\u0440\u043D\u0456!
+      \u041A\u043E\u0436\u043D\u0435 \u043D\u0430\u0442\u0438\u0441\u043A\u0430\u043D\u043D\u044F
+      \u043F\u0440\u0438\u043D\u043E\u0441\u0438\u0442\u044C \u0449\u0435. \u0426\u0435
+      \u0434\u0438\u0432\u043E!"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "\xA1Nuestros primeros engranajes! Cada toque nos da m\xE1s. \xA1Es un
+      milagro!"
+    Object: {fileID: 0}
 --- !u!1 &5599906283802797020
 GameObject:
   m_ObjectHideFlags: 0
@@ -5531,13 +6752,13 @@ MonoBehaviour:
     Text: "\u041E\u0442\u043B\u0438\u0447\u043D\u043E."
     Object: {fileID: 0}
   - Language: English
-    Text: "Great."
+    Text: Great.
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0427\u0443\u0434\u043E\u0432\u043E."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "\u00A1Genial!"
+    Text: "\xA1Genial!"
     Object: {fileID: 0}
 --- !u!1 &5690862783312844231
 GameObject:
@@ -5716,6 +6937,64 @@ MonoBehaviour:
     Text: "\u0422\u0438 \u043D\u0430\u043A\u043E\u043F\u0438\u0447\u0438\u0432 \u0434\u043E\u0441\u0442\u0430\u0442\u043D\u044C\u043E
       \u043C\u043E\u043D\u0435\u0442, \u0449\u043E\u0431 \u0434\u043E\u0434\u0430\u0442\u0438
       \u043D\u043E\u0432\u0438\u0439 \u043E\u0431'\u0454\u043A\u0442"
+    Object: {fileID: 0}
+--- !u!1 &5946795363987266245
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7179065304265419593}
+  - component: {fileID: 5218174335485257363}
+  m_Layer: 0
+  m_Name: planet_tutorial_open_creation_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7179065304265419593
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5946795363987266245}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5218174335485257363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5946795363987266245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041D\u0430\u0436\u043C\u0438 \u0441\u044E\u0434\u0430."
+    Object: {fileID: 0}
+  - Language: English
+    Text: Tap here.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041D\u0430\u0442\u0438\u0441\u043D\u0438 \u0441\u044E\u0434\u0438."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Pulsa aqu\xED."
     Object: {fileID: 0}
 --- !u!1 &5969479768404483213
 GameObject:
@@ -5903,6 +7182,122 @@ MonoBehaviour:
       \u0434\u043E\u043F\u043E\u043C\u043E\u0436\u0435 \u043D\u0430\u043C \u0437\u0440\u043E\u0431\u0438\u0442\u0438
       \u0433\u0440\u0443 \u043A\u0440\u0430\u0449\u0435."
     Object: {fileID: 0}
+--- !u!1 &6043892220695183474
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2370908406634084212}
+  - component: {fileID: 1073137252072211995}
+  m_Layer: 0
+  m_Name: exchange
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2370908406634084212
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6043892220695183474}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1073137252072211995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6043892220695183474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Exchange
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u041E\u0431\u043C\u0435\u043D\u044F\u0442\u044C"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Cambiar
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041E\u0431\u043C\u0456\u043D\u044F\u0442\u0438"
+    Object: {fileID: 0}
+--- !u!1 &6073998639462480605
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1469777273740966038}
+  - component: {fileID: 2445180849487649525}
+  m_Layer: 0
+  m_Name: exchange_success
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1469777273740966038
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6073998639462480605}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2445180849487649525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6073998639462480605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Exchange complete!
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u041E\u0431\u043C\u0435\u043D \u0437\u0430\u0432\u0435\u0440\u0448\u0451\u043D!"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "\xA1Intercambio completado!"
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041E\u0431\u043C\u0456\u043D \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u043E!"
+    Object: {fileID: 0}
 --- !u!1 &6076752904070250987
 GameObject:
   m_ObjectHideFlags: 0
@@ -5950,16 +7345,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0411\u0435\u0440\u0438 \u044D\u0442\u043E\u0442. \u041D\u0430 \u043E\u0441\u0442\u0430\u043B\u044C\u043D\u044B\u0435 \u043D\u0435 \u0445\u0432\u0430\u0442\u0438\u0442."
+    Text: "\u0411\u0435\u0440\u0438 \u044D\u0442\u043E\u0442. \u041D\u0430 \u043E\u0441\u0442\u0430\u043B\u044C\u043D\u044B\u0435
+      \u043D\u0435 \u0445\u0432\u0430\u0442\u0438\u0442."
     Object: {fileID: 0}
   - Language: English
-    Text: "Go with this one. We can't afford the others."
+    Text: Go with this one. We can't afford the others.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0411\u0435\u0440\u0438 \u0446\u0435\u0439. \u041D\u0430 \u0440\u0435\u0448\u0442\u0443 \u043D\u0435 \u0432\u0438\u0441\u0442\u0430\u0447\u0438\u0442\u044C."
+    Text: "\u0411\u0435\u0440\u0438 \u0446\u0435\u0439. \u041D\u0430 \u0440\u0435\u0448\u0442\u0443
+      \u043D\u0435 \u0432\u0438\u0441\u0442\u0430\u0447\u0438\u0442\u044C."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Elige este. No nos alcanza para los dem\u00E1s."
+    Text: "Elige este. No nos alcanza para los dem\xE1s."
     Object: {fileID: 0}
 --- !u!1 &6115629733161110041
 GameObject:
@@ -6008,18 +7405,19 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0410 \u0432\u043E\u0442 \u044D\u0442\u043E \u0443\u0436\u0435 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E
-      \u043F\u043E\u043B\u0435\u0437\u043D\u043E."
+    Text: "\u0412\u043E\u0442 \u044D\u0442\u0438 \u0437\u0434\u0430\u043D\u0438\u044F
+      \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E
+      \u043F\u043E\u043B\u0435\u0437\u043D\u044B!"
     Object: {fileID: 0}
   - Language: English
-    Text: Now this is actually useful.
+    Text: Now these buildings are actually useful!
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0410 \u043E\u0441\u044C \u0446\u0435 \u0432\u0436\u0435 \u0441\u043F\u0440\u0430\u0432\u0434\u0456
-      \u043A\u043E\u0440\u0438\u0441\u043D\u043E."
+    Text: "\u041E\u0441\u044C \u0446\u0456 \u0431\u0443\u0434\u0456\u0432\u043B\u0456
+      \u0441\u043F\u0440\u0430\u0432\u0434\u0456 \u043A\u043E\u0440\u0438\u0441\u043D\u0456!"
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Esto s\xED que es realmente \xFAtil."
+    Text: "\xA1Estos edificios s\xED que son \xFAtiles!"
     Object: {fileID: 0}
 --- !u!1 &6195453891984325821
 GameObject:
@@ -6068,29 +7466,29 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u041A\u0430\u0436\u0434\u043E\u0435 \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435
-      \u043C\u043E\u0436\u043D\u043E \u043F\u0440\u043E\u043A\u0430\u0447\u0430\u0442\u044C
-      \u0434\u043E \u0442\u0440\u0451\u0445 \u0443\u0440\u043E\u0432\u043D\u0435\u0439.\n\n\u041A\u0430\u0436\u0434\u044B\u0439
-      \u0443\u0440\u043E\u0432\u0435\u043D\u044C \u0443\u0441\u0438\u043B\u0438\u0432\u0430\u0435\u0442
-      \u0431\u043E\u043D\u0443\u0441."
+    Text: "\u041D\u043E \u044D\u0442\u043E \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u0435\u0440\u0432\u044B\u0439
+      \u0443\u0440\u043E\u0432\u0435\u043D\u044C!\n\n\u0412\u0441\u0435\u0433\u043E
+      \u0438\u0445 \u0442\u0440\u0438. \u041A\u0430\u0436\u0434\u044B\u0439 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439
+      \u0435\u0449\u0451 \u0441\u0438\u043B\u044C\u043D\u0435\u0435 \u0443\u0432\u0435\u043B\u0438\u0447\u0438\u0442
+      \u043F\u0440\u0438\u0431\u044B\u043B\u044C."
     Object: {fileID: 0}
   - Language: English
-    Text: 'Each upgrade can be raised to three levels.
+    Text: 'But that''s only level one!
 
 
-      Each level strengthens
-      the bonus.'
+      There are three levels in all. Each
+      new level boosts profits even more.'
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u041A\u043E\u0436\u043D\u0435 \u043F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F
-      \u043C\u043E\u0436\u043D\u0430 \u043F\u0440\u043E\u043A\u0430\u0447\u0430\u0442\u0438
-      \u0434\u043E \u0442\u0440\u044C\u043E\u0445 \u0440\u0456\u0432\u043D\u0456\u0432.\n\n\u041A\u043E\u0436\u0435\u043D
-      \u0440\u0456\u0432\u0435\u043D\u044C \u043F\u043E\u0441\u0438\u043B\u044E\u0454
-      \u0431\u043E\u043D\u0443\u0441."
+    Text: "\u0410\u043B\u0435 \u0446\u0435 \u043B\u0438\u0448\u0435 \u043F\u0435\u0440\u0448\u0438\u0439
+      \u0440\u0456\u0432\u0435\u043D\u044C!\n\n\u0423\u0441\u044C\u043E\u0433\u043E
+      \u0457\u0445 \u0442\u0440\u0438. \u041A\u043E\u0436\u0435\u043D \u043D\u0430\u0441\u0442\u0443\u043F\u043D\u0438\u0439
+      \u043F\u0440\u0438\u043D\u0435\u0441\u0435 \u0449\u0435 \u0431\u0456\u043B\u044C\u0448\u0435
+      \u043F\u0440\u0438\u0431\u0443\u0442\u043A\u0443."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Cada mejora puede subirse hasta el nivel tres.\n\nCada nivel refuerza
-      la bonificaci\xF3n."
+    Text: "\xA1Pero este es solo el primer nivel!\n\nHay tres en total. Cada nivel
+      aumenta a\xFAn m\xE1s las ganancias."
     Object: {fileID: 0}
 --- !u!1 &6215063365853247041
 GameObject:
@@ -6371,16 +7769,23 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0412\u0438\u0434\u0438\u0448\u044C?"
+    Text: "\u041D\u0430\u043A\u043E\u043F\u0438\u0448\u044C \u0434\u0435\u043D\u0435\u0433
+      \u2014 \u043F\u0440\u0438\u0445\u043E\u0434\u0438. \u0412\u044B\u0436\u043C\u0435\u043C
+      \u0438\u0437 \u0434\u0435\u0440\u0435\u0432\u044C\u0435\u0432 \u0435\u0449\u0451
+      \u0431\u043E\u043B\u044C\u0448\u0435!"
     Object: {fileID: 0}
   - Language: English
-    Text: See?
+    Text: Come back when you've saved up some money. We'll squeeze even more out
+      of those trees!
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0411\u0430\u0447\u0438\u0448?"
+    Text: "\u041D\u0430\u0437\u0431\u0438\u0440\u0430\u0454\u0448 \u0433\u0440\u043E\u0448\u0435\u0439
+      \u2014 \u043F\u0440\u0438\u0445\u043E\u0434\u044C. \u0412\u0438\u0447\u0430\u0432\u0438\u043C\u043E
+      \u0437 \u0434\u0435\u0440\u0435\u0432 \u0456\u0449\u0435 \u0431\u0456\u043B\u044C\u0448\u0435!"
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "\xBFVes?"
+    Text: "Vuelve cuando hayas ahorrado algo de dinero. \xA1Les sacaremos a\xFAn
+      m\xE1s a esos \xE1rboles!"
     Object: {fileID: 0}
 --- !u!1 &6349451134705426727
 GameObject:
@@ -6429,18 +7834,19 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0440\u0430\u0437\u043C\u0435\u0441\u0442\u0438\u043C
-      \u0435\u0433\u043E \u043D\u0430 \u0441\u0442\u0430\u043D\u0446\u0438\u0438."
+    Text: "\u0414\u043B\u044F \u044D\u0442\u043E\u0433\u043E \u0443 \u043C\u0435\u043D\u044F
+      \u0435\u0441\u0442\u044C \u0441\u043F\u0435\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0435
+      \u0437\u0434\u0430\u043D\u0438\u0435."
     Object: {fileID: 0}
   - Language: English
-    Text: First, let's place it on the station.
+    Text: I've got a special building for that.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0421\u043F\u0435\u0440\u0448\u0443 \u0440\u043E\u0437\u043C\u0456\u0441\u0442\u0438\u043C\u043E
-      \u0439\u043E\u0433\u043E \u043D\u0430 \u0441\u0442\u0430\u043D\u0446\u0456\u0457."
+    Text: "\u0414\u043B\u044F \u0446\u044C\u043E\u0433\u043E \u0432 \u043C\u0435\u043D\u0435
+      \u0454 \u0441\u043F\u0435\u0446\u0456\u0430\u043B\u044C\u043D\u0430 \u0431\u0443\u0434\u0456\u0432\u043B\u044F."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Primero coloqu\xE9mosla en la estaci\xF3n."
+    Text: Tengo un edificio especial para eso.
     Object: {fileID: 0}
 --- !u!1 &6354683421427197460
 GameObject:
@@ -6499,6 +7905,69 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0420\u043E\u0441\u043B\u0438\u043D\u0438"
+    Object: {fileID: 0}
+--- !u!1 &6372378348458150727
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8708165815031929442}
+  - component: {fileID: 7460993232505564483}
+  m_Layer: 0
+  m_Name: planet_tutorial_manager_not_enough_money_dialog
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8708165815031929442
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6372378348458150727}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7460993232505564483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6372378348458150727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u0440\u0430\u0432\u0434\u0430, \u043D\u0430 \u0435\u0433\u043E
+      \u0437\u0430\u0440\u043F\u043B\u0430\u0442\u0443 \u043F\u043E\u043A\u0430 \u043D\u0435
+      \u0445\u0432\u0430\u0442\u0430\u0435\u0442. \u041F\u043E\u0434\u043D\u0430\u0436\u043C\u0438!"
+    Object: {fileID: 0}
+  - Language: English
+    Text: We can't afford his salary just yet, though. Keep tapping!
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0429\u043E\u043F\u0440\u0430\u0432\u0434\u0430, \u043D\u0430 \u0439\u043E\u0433\u043E
+      \u0437\u0430\u0440\u043F\u043B\u0430\u0442\u0443 \u043F\u043E\u043A\u0438 \u043D\u0435
+      \u0432\u0438\u0441\u0442\u0430\u0447\u0430\u0454. \u041D\u0430\u0442\u0438\u0441\u043A\u0430\u0439
+      \u0430\u043A\u0442\u0438\u0432\u043D\u0456\u0448\u0435!"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Aunque todav\xEDa no nos alcanza para su sueldo. \xA1Sigue pulsando!"
     Object: {fileID: 0}
 --- !u!1 &6475374461774353081
 GameObject:
@@ -6617,18 +8086,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0422\u0435\u043F\u0435\u0440\u044C \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435
-      \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E \u0434\u043B\u044F \u0440\u0430\u0437\u0432\u0438\u0442\u0438\u044F."
+    Text: "\u0418 \u043F\u0440\u0438\u043D\u043E\u0441\u044F\u0442 \u0431\u043E\u043B\u044C\u0448\u0435
+      \u0432\u0430\u043B\u044E\u0442\u044B."
     Object: {fileID: 0}
   - Language: English
-    Text: Now the upgrade can be developed.
+    Text: And they're bringing in more currency.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0422\u0435\u043F\u0435\u0440 \u043F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F
-      \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0435 \u0434\u043B\u044F \u0440\u043E\u0437\u0432\u0438\u0442\u043A\u0443."
+    Text: "\u0406 \u043F\u0440\u0438\u043D\u043E\u0441\u044F\u0442\u044C \u0431\u0456\u043B\u044C\u0448\u0435
+      \u0432\u0430\u043B\u044E\u0442\u0438."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: Ahora la mejora se puede desarrollar.
+    Text: "Y generan m\xE1s moneda."
     Object: {fileID: 0}
 --- !u!1 &6492295396406269566
 GameObject:
@@ -6969,17 +8438,20 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0414\u043E\u0431\u0430\u0432\u0438\u043C \u043D\u043E\u0432\u043E\u0435
-      \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435."
+    Text: "\u041F\u043E\u0441\u0442\u0440\u043E\u0438\u043C \u043A\u043E\u0435-\u0447\u0442\u043E
+      \u043F\u043E\u043B\u0435\u0437\u043D\u043E\u0435 \u0434\u043B\u044F \u043D\u0430\u0448\u0438\u0445
+      \u0434\u0435\u0440\u0435\u0432\u044C\u0435\u0432."
     Object: {fileID: 0}
   - Language: English
-    Text: Add a new research item.
+    Text: Let's build something useful for our trees.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0414\u043E\u0434\u0430\u043C\u043E \u043D\u043E\u0432\u0435 \u0434\u043E\u0441\u043B\u0456\u0434\u0436\u0435\u043D\u043D\u044F."
+    Text: "\u0417\u0431\u0443\u0434\u0443\u0454\u043C\u043E \u0434\u0435\u0449\u043E
+      \u043A\u043E\u0440\u0438\u0441\u043D\u0435 \u0434\u043B\u044F \u043D\u0430\u0448\u0438\u0445
+      \u0434\u0435\u0440\u0435\u0432."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "A\xF1ade una nueva investigaci\xF3n."
+    Text: "Construyamos algo \xFAtil para nuestros \xE1rboles."
     Object: {fileID: 0}
 --- !u!1 &7016261279218168820
 GameObject:
@@ -7153,7 +8625,7 @@ MonoBehaviour:
     Text: "\u041F\u0440\u0438\u0439\u043D\u044F\u0442\u0438 \u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F"
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Aceptar encargo"
+    Text: Aceptar encargo
     Object: {fileID: 0}
 --- !u!1 &7234349275125695308
 GameObject:
@@ -7202,16 +8674,74 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "+{0:0} \u0430\u043B\u043C\u0430\u0437\u043E\u0432"
+    Text: +{0:0}
     Object: {fileID: 0}
   - Language: English
-    Text: +{0:0} diamonds
+    Text: +{0:0}
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "+{0:0} \u0430\u043B\u043C\u0430\u0437\u0456\u0432"
+    Text: +{0:0}
     Object: {fileID: 0}
   - Language: Spanish
-    Text: +{0:0} diamantes
+    Text: +{0:0}
+    Object: {fileID: 0}
+--- !u!1 &7234570221290381167
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2118788499984915858}
+  - component: {fileID: 6999214157041550813}
+  m_Layer: 0
+  m_Name: exchange_select_planet
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2118788499984915858
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7234570221290381167}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6999214157041550813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7234570221290381167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Select a Planet
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u0412\u044B\u0431\u0435\u0440\u0438 \u043F\u043B\u0430\u043D\u0435\u0442\u0443"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Elige un planeta
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041E\u0431\u0435\u0440\u0438 \u043F\u043B\u0430\u043D\u0435\u0442\u0443"
     Object: {fileID: 0}
 --- !u!1 &7351714705784095956
 GameObject:
@@ -7438,20 +8968,21 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u042D\u0442\u043E\u0442 \u0431\u043E\u043D\u0443\u0441 \u0431\u0443\u0434\u0435\u0442
-      \u0440\u0430\u0431\u043E\u0442\u0430\u0442\u044C \u043D\u0430 \u0432\u0441\u0435\u0445
-      \u0431\u0443\u0434\u0443\u0449\u0438\u0445 \u043F\u043B\u0430\u043D\u0435\u0442\u0430\u0445."
+    Text: "\u0411\u043E\u043D\u0443\u0441 \u0434\u043E\u0441\u0442\u0430\u043D\u0435\u0442\u0441\u044F
+      \u0432\u0441\u0435\u043C \u0431\u0443\u0434\u0443\u0449\u0438\u043C \u043F\u043B\u0430\u043D\u0435\u0442\u0430\u043C.
+      \u0412\u043E\u0442 \u044D\u0442\u043E \u0438\u043D\u0432\u0435\u0441\u0442\u0438\u0446\u0438\u044F!"
     Object: {fileID: 0}
   - Language: English
-    Text: This bonus will apply to all future planets.
+    Text: All future planets get the bonus. Now that's an investment!
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0426\u0435\u0439 \u0431\u043E\u043D\u0443\u0441 \u043F\u0440\u0430\u0446\u044E\u0432\u0430\u0442\u0438\u043C\u0435
-      \u043D\u0430 \u0432\u0441\u0456\u0445 \u043C\u0430\u0439\u0431\u0443\u0442\u043D\u0456\u0445
-      \u043F\u043B\u0430\u043D\u0435\u0442\u0430\u0445."
+    Text: "\u0411\u043E\u043D\u0443\u0441 \u0434\u0456\u0441\u0442\u0430\u043D\u0435\u0442\u044C\u0441\u044F
+      \u0432\u0441\u0456\u043C \u043C\u0430\u0439\u0431\u0443\u0442\u043D\u0456\u043C
+      \u043F\u043B\u0430\u043D\u0435\u0442\u0430\u043C. \u041E\u0446\u0435 \u0456\u043D\u0432\u0435\u0441\u0442\u0438\u0446\u0456\u044F!"
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Esta bonificaci\xF3n funcionar\xE1 en todos los planetas futuros."
+    Text: "Todos los planetas futuros recibir\xE1n la bonificaci\xF3n. \xA1Eso s\xED
+      que es una inversi\xF3n!"
     Object: {fileID: 0}
 --- !u!1 &7509525832485177850
 GameObject:
@@ -8044,6 +9575,69 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "2x \u0411\u0456\u043B\u044C\u0448\u0435"
     Object: {fileID: 0}
+--- !u!1 &7846450082799459774
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8564790406360901258}
+  - component: {fileID: 1214085184353048999}
+  m_Layer: 0
+  m_Name: planet_tutorial_manager_early_open_dialog
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8564790406360901258
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7846450082799459774}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1214085184353048999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7846450082799459774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041D\u0430\u0434\u043E\u0435\u043B\u043E \u043F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u043E
+      \u043D\u0430\u0436\u0438\u043C\u0430\u0442\u044C? \u0415\u0441\u0442\u044C
+      \u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u2014 \u043C\u0435\u043D\u0435\u0434\u0436\u0435\u0440!"
+    Object: {fileID: 0}
+  - Language: English
+    Text: "Tired of tapping all the time? There's a solution \u2014 a manager!"
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u041D\u0430\u0431\u0440\u0438\u0434\u043B\u043E \u043F\u043E\u0441\u0442\u0456\u0439\u043D\u043E
+      \u043D\u0430\u0442\u0438\u0441\u043A\u0430\u0442\u0438? \u0404 \u0440\u0456\u0448\u0435\u043D\u043D\u044F
+      \u2014 \u043C\u0435\u043D\u0435\u0434\u0436\u0435\u0440!"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "\xBFTe has cansado de pulsar todo el tiempo? \xA1Hay una soluci\xF3n:
+      un gerente!"
+    Object: {fileID: 0}
 --- !u!1 &7920277023181170257
 GameObject:
   m_ObjectHideFlags: 0
@@ -8460,6 +10054,64 @@ MonoBehaviour:
   - Language: Ukrainian
     Text: "\u041D\u0435\u0436\u0438\u0442\u044C"
     Object: {fileID: 0}
+--- !u!1 &8194190898016506600
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8884878183106788197}
+  - component: {fileID: 7287340366216122157}
+  m_Layer: 0
+  m_Name: meta_tutorial_video_next
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8884878183106788197
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8194190898016506600}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7287340366216122157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8194190898016506600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0414\u0430\u043B\u0435\u0435"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Next
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0414\u0430\u043B\u0456"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Siguiente
+    Object: {fileID: 0}
 --- !u!1 &8205595419732414756
 GameObject:
   m_ObjectHideFlags: 0
@@ -8507,16 +10159,24 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u041A\u0443\u043F\u0438\u043B \u0435\u0451 \u043F\u043E\u0434 \u0441\u043E\u0431\u0441\u0442\u0432\u0435\u043D\u043D\u0443\u044E \u043A\u043E\u043D\u0442\u043E\u0440\u0443. \u0411\u0443\u0434\u0435\u043C \u0434\u0435\u043B\u0430\u0442\u044C \u0442\u0443\u0442 \u043F\u043B\u0430\u043D\u0435\u0442\u044B \u043D\u0430 \u0437\u0430\u043A\u0430\u0437."
+    Text: "\u041A\u0443\u043F\u0438\u043B \u0435\u0451 \u043F\u043E\u0434 \u0441\u043E\u0431\u0441\u0442\u0432\u0435\u043D\u043D\u0443\u044E
+      \u043A\u043E\u043D\u0442\u043E\u0440\u0443. \u0411\u0443\u0434\u0435\u043C
+      \u0434\u0435\u043B\u0430\u0442\u044C \u0442\u0443\u0442 \u043F\u043B\u0430\u043D\u0435\u0442\u044B
+      \u043D\u0430 \u0437\u0430\u043A\u0430\u0437."
     Object: {fileID: 0}
   - Language: English
-    Text: "I bought it for my own little business. We'll be making planets to order here."
+    Text: I bought it for my own little business. We'll be making planets to order
+      here.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u041A\u0443\u043F\u0438\u0432 \u0457\u0457 \u043F\u0456\u0434 \u0432\u043B\u0430\u0441\u043D\u0443 \u043A\u043E\u043D\u0442\u043E\u0440\u0443. \u0411\u0443\u0434\u0435\u043C\u043E \u0442\u0443\u0442 \u0441\u0442\u0432\u043E\u0440\u044E\u0432\u0430\u0442\u0438 \u043F\u043B\u0430\u043D\u0435\u0442\u0438 \u043D\u0430 \u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F."
+    Text: "\u041A\u0443\u043F\u0438\u0432 \u0457\u0457 \u043F\u0456\u0434 \u0432\u043B\u0430\u0441\u043D\u0443
+      \u043A\u043E\u043D\u0442\u043E\u0440\u0443. \u0411\u0443\u0434\u0435\u043C\u043E
+      \u0442\u0443\u0442 \u0441\u0442\u0432\u043E\u0440\u044E\u0432\u0430\u0442\u0438
+      \u043F\u043B\u0430\u043D\u0435\u0442\u0438 \u043D\u0430 \u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "La compr\u00E9 para montar mi propio negocio. Aqu\u00ED crearemos planetas por encargo."
+    Text: "La compr\xE9 para montar mi propio negocio. Aqu\xED crearemos planetas
+      por encargo."
     Object: {fileID: 0}
 --- !u!1 &8232269886006360821
 GameObject:
@@ -8623,16 +10283,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0438\u043C, \u043D\u0430 \u0447\u0442\u043E \u0438\u0445 \u0445\u0432\u0430\u0442\u0438\u0442."
+    Text: "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0438\u043C, \u043D\u0430 \u0447\u0442\u043E
+      \u0438\u0445 \u0445\u0432\u0430\u0442\u0438\u0442."
     Object: {fileID: 0}
   - Language: English
-    Text: "Let's see what we can afford."
+    Text: Let's see what we can afford.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u041F\u043E\u0434\u0438\u0432\u0438\u043C\u043E\u0441\u044F, \u043D\u0430 \u0449\u043E \u0457\u0445 \u0432\u0438\u0441\u0442\u0430\u0447\u0438\u0442\u044C."
+    Text: "\u041F\u043E\u0434\u0438\u0432\u0438\u043C\u043E\u0441\u044F, \u043D\u0430
+      \u0449\u043E \u0457\u0445 \u0432\u0438\u0441\u0442\u0430\u0447\u0438\u0442\u044C."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Veamos para qu\u00E9 nos alcanza."
+    Text: "Veamos para qu\xE9 nos alcanza."
     Object: {fileID: 0}
 --- !u!1 &8325094528726716811
 GameObject:
@@ -8684,13 +10346,13 @@ MonoBehaviour:
     Text: "\u0417\u0430\u043A\u0430\u0437 \u0434\u043E\u0441\u0442\u0430\u0432\u043B\u0435\u043D"
     Object: {fileID: 0}
   - Language: English
-    Text: "Order delivered"
+    Text: Order delivered
     Object: {fileID: 0}
   - Language: Ukrainian
     Text: "\u0417\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F \u0434\u043E\u0441\u0442\u0430\u0432\u043B\u0435\u043D\u043E"
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Pedido entregado"
+    Text: Pedido entregado
     Object: {fileID: 0}
 --- !u!1 &8370783289515238962
 GameObject:
@@ -8848,6 +10510,18 @@ Transform:
   - {fileID: 1916811349153521963}
   - {fileID: 3296601776273312925}
   - {fileID: 1404920342014337711}
+  - {fileID: 3144775490093068238}
+  - {fileID: 2118788499984915858}
+  - {fileID: 4210455719041437372}
+  - {fileID: 5141393510593598383}
+  - {fileID: 7848989609808058920}
+  - {fileID: 6265999528975611896}
+  - {fileID: 8016029062330917373}
+  - {fileID: 4947914051245965501}
+  - {fileID: 1469777273740966038}
+  - {fileID: 4972233356482592192}
+  - {fileID: 2370908406634084212}
+  - {fileID: 420377359267550276}
   - {fileID: 1802640337204541617}
   - {fileID: 2910499717829687331}
   - {fileID: 2578200708649514223}
@@ -8960,6 +10634,8 @@ Transform:
   - {fileID: 4079999781317162792}
   - {fileID: 8680514047280070864}
   - {fileID: 6479780609766107592}
+  - {fileID: 8335738879730335335}
+  - {fileID: 3595731498468187221}
   - {fileID: 6365463375232943004}
   - {fileID: 7983984940942246694}
   - {fileID: 2286165535475179553}
@@ -9011,6 +10687,21 @@ Transform:
   - {fileID: 452209210714595014}
   - {fileID: 4118370152751827552}
   - {fileID: 4362655301511952015}
+  - {fileID: 5412148105941600126}
+  - {fileID: 8793847627928903035}
+  - {fileID: 7179065304265419593}
+  - {fileID: 7626186569825257461}
+  - {fileID: 2532904155440275386}
+  - {fileID: 5576907845728043424}
+  - {fileID: 1030089975993486586}
+  - {fileID: 1715335983572507271}
+  - {fileID: 6100639635141953877}
+  - {fileID: 2208888957646415952}
+  - {fileID: 8564790406360901258}
+  - {fileID: 8708165815031929442}
+  - {fileID: 4360410676584111257}
+  - {fileID: 3694840983323682838}
+  - {fileID: 8884878183106788197}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4487452411359540208
@@ -9030,6 +10721,73 @@ MonoBehaviour:
   defaultLanguage: English
   saveLoad: 1
   prefabs: []
+--- !u!1 &8424882503534720525
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3595731498468187221}
+  - component: {fileID: 2025297765783388595}
+  m_Layer: 0
+  m_Name: meta_tutorial_step6_return_dialog_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3595731498468187221
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8424882503534720525}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2025297765783388595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8424882503534720525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u042F \u043F\u0440\u0438\u0434\u0443\u043C\u0430\u043B, \u043A\u0430\u043A
+      \u0443\u0441\u043A\u043E\u0440\u0438\u0442\u044C \u043D\u0430\u0448 \u0431\u0438\u0437\u043D\u0435\u0441.
+      \u0418 \u043D\u0435\u0442, \u044D\u0442\u043E \u043D\u0435 \u0443\u043A\u043B\u043E\u043D\u0435\u043D\u0438\u0435
+      \u043E\u0442 \u043D\u0430\u043B\u043E\u0433\u043E\u0432."
+    Object: {fileID: 0}
+  - Language: English
+    Text: I've figured out how to speed things up for our business. And no, it's
+      not tax evasion.
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u042F \u043F\u0440\u0438\u0434\u0443\u043C\u0430\u0432, \u044F\u043A
+      \u043F\u0440\u0438\u0441\u043A\u043E\u0440\u0438\u0442\u0438 \u043D\u0430\u0448
+      \u0431\u0456\u0437\u043D\u0435\u0441. \u0406 \u043D\u0456, \u0446\u0435 \u043D\u0435
+      \u0443\u0445\u0438\u043B\u0435\u043D\u043D\u044F \u0432\u0456\u0434 \u0441\u043F\u043B\u0430\u0442\u0438
+      \u043F\u043E\u0434\u0430\u0442\u043A\u0456\u0432."
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Se me ocurri\xF3 c\xF3mo darle un impulso a nuestro negocio. Y no, no
+      es evasi\xF3n fiscal."
+    Object: {fileID: 0}
 --- !u!1 &8437302879992734360
 GameObject:
   m_ObjectHideFlags: 0
@@ -9135,18 +10893,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0418\u043C\u0435\u043D\u043D\u043E \u0437\u0434\u0435\u0441\u044C \u043D\u0430\u0447\u0438\u043D\u0430\u0435\u0442\u0441\u044F
-      \u043D\u0430\u0441\u0442\u043E\u044F\u0449\u0438\u0439 \u043F\u0440\u043E\u0433\u0440\u0435\u0441\u0441."
+    Text: "\u041A\u0440\u0430\u0441\u0438\u0432\u044B\u0439 \u043E\u0444\u0438\u0441
+      \u0442\u0430\u043A\u043E\u0433\u043E \u043D\u0435 \u0443\u043C\u0435\u0435\u0442."
     Object: {fileID: 0}
   - Language: English
-    Text: This is where real progress begins.
+    Text: A fancy office can't do that.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0421\u0430\u043C\u0435 \u0442\u0443\u0442 \u043F\u043E\u0447\u0438\u043D\u0430\u0454\u0442\u044C\u0441\u044F
-      \u0441\u043F\u0440\u0430\u0432\u0436\u043D\u0456\u0439 \u043F\u0440\u043E\u0433\u0440\u0435\u0441."
+    Text: "\u0413\u0430\u0440\u043D\u0438\u0439 \u043E\u0444\u0456\u0441 \u0442\u0430\u043A\u043E\u0433\u043E
+      \u043D\u0435 \u0432\u043C\u0456\u0454."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Aqu\xED empieza el progreso de verdad."
+    Text: Una oficina bonita no puede hacer eso.
     Object: {fileID: 0}
 --- !u!1 &8540844767869329726
 GameObject:
@@ -9195,16 +10953,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0414\u043E\u0431\u0440\u043E \u043F\u043E\u0436\u0430\u043B\u043E\u0432\u0430\u0442\u044C \u043D\u0430 \u043C\u043E\u044E \u043F\u043B\u0430\u043D\u0435\u0442\u0443!"
+    Text: "\u0414\u043E\u0431\u0440\u043E \u043F\u043E\u0436\u0430\u043B\u043E\u0432\u0430\u0442\u044C
+      \u043D\u0430 \u043C\u043E\u044E \u043F\u043B\u0430\u043D\u0435\u0442\u0443!"
     Object: {fileID: 0}
   - Language: English
-    Text: "Welcome to my planet!"
+    Text: Welcome to my planet!
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u041B\u0430\u0441\u043A\u0430\u0432\u043E \u043F\u0440\u043E\u0441\u0438\u043C\u043E \u043D\u0430 \u043C\u043E\u044E \u043F\u043B\u0430\u043D\u0435\u0442\u0443!"
+    Text: "\u041B\u0430\u0441\u043A\u0430\u0432\u043E \u043F\u0440\u043E\u0441\u0438\u043C\u043E
+      \u043D\u0430 \u043C\u043E\u044E \u043F\u043B\u0430\u043D\u0435\u0442\u0443!"
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "\u00A1Bienvenido a mi planeta!"
+    Text: "\xA1Bienvenido a mi planeta!"
     Object: {fileID: 0}
 --- !u!1 &8547437707391144853
 GameObject:
@@ -9253,20 +11013,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0423\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u044F \u0432\u043B\u0438\u044F\u044E\u0442
-      \u043D\u0430 \u0432\u0441\u0435 \u0431\u0443\u0434\u0443\u0449\u0438\u0435
-      \u043F\u043B\u0430\u043D\u0435\u0442\u044B."
+    Text: "\u041E\u043D\u0438 \u0443\u0441\u0438\u043B\u0438\u0432\u0430\u044E\u0442
+      \u0432\u0441\u0435 \u0431\u0443\u0434\u0443\u0449\u0438\u0435 \u043F\u043B\u0430\u043D\u0435\u0442\u044B."
     Object: {fileID: 0}
   - Language: English
-    Text: Upgrades affect all future planets.
+    Text: They give all future planets a boost.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u041F\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u043D\u044F \u0432\u043F\u043B\u0438\u0432\u0430\u044E\u0442\u044C
-      \u043D\u0430 \u0432\u0441\u0456 \u043C\u0430\u0439\u0431\u0443\u0442\u043D\u0456
-      \u043F\u043B\u0430\u043D\u0435\u0442\u0438."
+    Text: "\u0412\u043E\u043D\u0438 \u043F\u043E\u0441\u0438\u043B\u044E\u044E\u0442\u044C
+      \u0443\u0441\u0456 \u043C\u0430\u0439\u0431\u0443\u0442\u043D\u0456 \u043F\u043B\u0430\u043D\u0435\u0442\u0438."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: Las mejoras afectan a todos los planetas futuros.
+    Text: Potencian todos los planetas futuros.
     Object: {fileID: 0}
 --- !u!1 &8668166557699906286
 GameObject:
@@ -9373,16 +11131,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u0412\u0441\u0451, \u0447\u0442\u043E \u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C \u043F\u043E\u0441\u043B\u0435 \u043F\u043E\u043A\u0443\u043F\u043A\u0438 \u043F\u043B\u0430\u043D\u0435\u0442\u044B."
+    Text: "\u0412\u0441\u0451, \u0447\u0442\u043E \u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C
+      \u043F\u043E\u0441\u043B\u0435 \u043F\u043E\u043A\u0443\u043F\u043A\u0438 \u043F\u043B\u0430\u043D\u0435\u0442\u044B."
     Object: {fileID: 0}
   - Language: English
-    Text: "All that's left after buying the planet."
+    Text: All that's left after buying the planet.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0423\u0441\u0435, \u0449\u043E \u0437\u0430\u043B\u0438\u0448\u0438\u043B\u043E\u0441\u044F \u043F\u0456\u0441\u043B\u044F \u043A\u0443\u043F\u0456\u0432\u043B\u0456 \u043F\u043B\u0430\u043D\u0435\u0442\u0438."
+    Text: "\u0423\u0441\u0435, \u0449\u043E \u0437\u0430\u043B\u0438\u0448\u0438\u043B\u043E\u0441\u044F
+      \u043F\u0456\u0441\u043B\u044F \u043A\u0443\u043F\u0456\u0432\u043B\u0456 \u043F\u043B\u0430\u043D\u0435\u0442\u0438."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Todo lo que queda despu\u00E9s de comprar el planeta."
+    Text: "Todo lo que queda despu\xE9s de comprar el planeta."
     Object: {fileID: 0}
 --- !u!1 &8807753850815856956
 GameObject:
@@ -9502,6 +11262,74 @@ MonoBehaviour:
     Text: "\u0422\u0438 \u0431\u0443\u0432(\u043B\u0430) \u0432\u0456\u0434\u0441\u0443\u0442\u043D\u0456\u0439(\u044F)
       \u043F\u0440\u043E\u0442\u044F\u0433\u043E\u043C"
     Object: {fileID: 0}
+--- !u!1 &8900135983069604858
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7626186569825257461}
+  - component: {fileID: 5456972222808668965}
+  m_Layer: 0
+  m_Name: planet_tutorial_earn_coins_hint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7626186569825257461
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8900135983069604858}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5456972222808668965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8900135983069604858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization::Lean.Localization.LeanPhrase
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041F\u043E\u0440\u0430 \u0434\u0435\u043B\u0430\u0442\u044C \u0434\u0435\u043D\u044C\u0433\u0438!
+      \u0422\u043E\u0447\u043D\u0435\u0435, \u0442\u0443\u0442 \u043F\u043E\u0447\u0435\u043C\u0443-\u0442\u043E
+      \u0448\u0435\u0441\u0442\u0435\u0440\u0451\u043D\u043A\u0438. \u041D\u0430\u0436\u0438\u043C\u0430\u0439
+      \u043D\u0430 \u043A\u043D\u043E\u043F\u043A\u0443, \u0447\u0442\u043E\u0431\u044B
+      \u0438\u0445 \u0437\u0430\u0440\u0430\u0431\u0430\u0442\u044B\u0432\u0430\u0442\u044C!"
+    Object: {fileID: 0}
+  - Language: English
+    Text: Time to make money! Except... they're gears for some reason. Tap the button
+      to earn them!
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0427\u0430\u0441 \u0437\u0430\u0440\u043E\u0431\u043B\u044F\u0442\u0438
+      \u0433\u0440\u043E\u0448\u0456! \u0422\u043E\u0447\u043D\u0456\u0448\u0435,
+      \u0442\u0443\u0442 \u0447\u043E\u043C\u0443\u0441\u044C \u0448\u0435\u0441\u0442\u0435\u0440\u043D\u0456.
+      \u041D\u0430\u0442\u0438\u0441\u043A\u0430\u0439 \u043A\u043D\u043E\u043F\u043A\u0443,
+      \u0449\u043E\u0431 \u0457\u0445 \u0437\u0430\u0440\u043E\u0431\u043B\u044F\u0442\u0438!"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "\xA1Hora de ganar dinero! Aunque aqu\xED, por alguna raz\xF3n, son engranajes.
+      \xA1Pulsa el bot\xF3n para conseguirlos!"
+    Object: {fileID: 0}
 --- !u!1 &8907358139533618278
 GameObject:
   m_ObjectHideFlags: 0
@@ -9610,16 +11438,18 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u041D\u0435\u043F\u043B\u043E\u0445\u043E\u0439 \u0434\u043E\u043C \u0437\u0430 \u0442\u0430\u043A\u0438\u0435 \u0434\u0435\u043D\u044C\u0433\u0438."
+    Text: "\u041D\u0435\u043F\u043B\u043E\u0445\u043E\u0439 \u0434\u043E\u043C \u0437\u0430
+      \u0442\u0430\u043A\u0438\u0435 \u0434\u0435\u043D\u044C\u0433\u0438."
     Object: {fileID: 0}
   - Language: English
-    Text: "Not a bad house for the price."
+    Text: Not a bad house for the price.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u041D\u0435\u043F\u043E\u0433\u0430\u043D\u0438\u0439 \u0431\u0443\u0434\u0438\u043D\u043E\u043A \u0437\u0430 \u0442\u0430\u043A\u0456 \u0433\u0440\u043E\u0448\u0456."
+    Text: "\u041D\u0435\u043F\u043E\u0433\u0430\u043D\u0438\u0439 \u0431\u0443\u0434\u0438\u043D\u043E\u043A
+      \u0437\u0430 \u0442\u0430\u043A\u0456 \u0433\u0440\u043E\u0448\u0456."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "No est\u00E1 mal la casa por ese precio."
+    Text: "No est\xE1 mal la casa por ese precio."
     Object: {fileID: 0}
 --- !u!1 &8928117710933690583
 GameObject:
@@ -9913,16 +11743,21 @@ MonoBehaviour:
   data: 0
   entries:
   - Language: Russian
-    Text: "\u041D\u043E \u0434\u0435\u043D\u0435\u0433 \u043D\u0430\u043C \u0445\u0432\u0430\u0442\u0438\u0442 \u0442\u043E\u043B\u044C\u043A\u043E \u043D\u0430 \u0441\u0430\u043C\u044B\u0439 \u0434\u0435\u0448\u0435\u0432\u044B\u0439 \u0434\u043E\u043C."
+    Text: "\u041D\u043E \u0434\u0435\u043D\u0435\u0433 \u043D\u0430\u043C \u0445\u0432\u0430\u0442\u0438\u0442
+      \u0442\u043E\u043B\u044C\u043A\u043E \u043D\u0430 \u0441\u0430\u043C\u044B\u0439
+      \u0434\u0435\u0448\u0435\u0432\u044B\u0439 \u0434\u043E\u043C."
     Object: {fileID: 0}
   - Language: English
-    Text: "But we can only afford the cheapest house."
+    Text: But we can only afford the cheapest house.
     Object: {fileID: 0}
   - Language: Ukrainian
-    Text: "\u0410\u043B\u0435 \u0433\u0440\u043E\u0448\u0435\u0439 \u043D\u0430\u043C \u0432\u0438\u0441\u0442\u0430\u0447\u0438\u0442\u044C \u043B\u0438\u0448\u0435 \u043D\u0430 \u043D\u0430\u0439\u0434\u0435\u0448\u0435\u0432\u0448\u0438\u0439 \u0431\u0443\u0434\u0438\u043D\u043E\u043A."
+    Text: "\u0410\u043B\u0435 \u0433\u0440\u043E\u0448\u0435\u0439 \u043D\u0430\u043C
+      \u0432\u0438\u0441\u0442\u0430\u0447\u0438\u0442\u044C \u043B\u0438\u0448\u0435
+      \u043D\u0430 \u043D\u0430\u0439\u0434\u0435\u0448\u0435\u0432\u0448\u0438\u0439
+      \u0431\u0443\u0434\u0438\u043D\u043E\u043A."
     Object: {fileID: 0}
   - Language: Spanish
-    Text: "Pero solo nos alcanza para la casa m\u00E1s barata."
+    Text: "Pero solo nos alcanza para la casa m\xE1s barata."
     Object: {fileID: 0}
 --- !u!1 &9124211883585281471
 GameObject:
@@ -9985,6 +11820,64 @@ MonoBehaviour:
     Object: {fileID: 0}
   - Language: Spanish
     Text: "Hora de ver qu\xE9 puedes hacer en la pr\xE1ctica."
+    Object: {fileID: 0}
+--- !u!1 &9187128221129157043
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4210455719041437372}
+  - component: {fileID: 2693189990066160680}
+  m_Layer: 0
+  m_Name: exchange_planet_balance
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4210455719041437372
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9187128221129157043}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4676613419480998823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2693189990066160680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9187128221129157043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: English
+    Text: Planet Balance
+    Object: {fileID: 0}
+  - Language: Russian
+    Text: "\u0411\u0430\u043B\u0430\u043D\u0441 \u043F\u043B\u0430\u043D\u0435\u0442\u044B"
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: Saldo del planeta
+    Object: {fileID: 0}
+  - Language: Ukrainian
+    Text: "\u0411\u0430\u043B\u0430\u043D\u0441 \u043F\u043B\u0430\u043D\u0435\u0442\u0438"
     Object: {fileID: 0}
 --- !u!1001 &1128381588218093397
 PrefabInstance:

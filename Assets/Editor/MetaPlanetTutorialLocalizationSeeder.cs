@@ -28,13 +28,24 @@ public static class MetaPlanetTutorialLocalizationSeeder
     [MenuItem("Tools/Localization/Seed Meta Planet Tutorial")]
     public static void Seed()
     {
+        SeedPhrases(Phrases, "Meta tutorial");
+    }
+
+    [MenuItem("Tools/Localization/Seed Planet Tutorial")]
+    public static void SeedPlanetTutorial()
+    {
+        SeedPhrases(PlanetPhrases, "Planet tutorial");
+    }
+
+    private static void SeedPhrases(PhraseDef[] definitions, string tutorial)
+    {
         GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
 
         try
         {
             if (root == null)
             {
-                Debug.LogError($"Meta tutorial localization seeding failed. Prefab not found: {PrefabPath}");
+                Debug.LogError($"{tutorial} localization seeding failed. Prefab not found: {PrefabPath}");
                 return;
             }
 
@@ -42,7 +53,7 @@ public static class MetaPlanetTutorialLocalizationSeeder
 
             if (localization == null)
             {
-                Debug.LogError($"Meta tutorial localization seeding failed. LeanLocalization component not found in {PrefabPath}");
+                Debug.LogError($"{tutorial} localization seeding failed. LeanLocalization component not found in {PrefabPath}");
                 return;
             }
 
@@ -50,7 +61,7 @@ public static class MetaPlanetTutorialLocalizationSeeder
             int updatedTranslations = 0;
             Dictionary<string, LeanPhrase> phrases = BuildPhraseLookup(root);
 
-            foreach (PhraseDef def in Phrases)
+            foreach (PhraseDef def in definitions)
             {
                 if (!phrases.TryGetValue(def.Key, out LeanPhrase phrase) || phrase == null)
                 {
@@ -73,7 +84,7 @@ public static class MetaPlanetTutorialLocalizationSeeder
             }
 
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
-            Debug.Log($"Meta tutorial localization seeded. Created phrases: {created}. Translations written: {updatedTranslations}. Prefab: {PrefabPath}");
+            Debug.Log($"{tutorial} localization seeded. Created phrases: {created}. Translations written: {updatedTranslations}. Prefab: {PrefabPath}");
         }
         finally
         {
@@ -104,6 +115,24 @@ public static class MetaPlanetTutorialLocalizationSeeder
         phrase.AddEntry(language, text);
     }
 
+    private static readonly PhraseDef[] PlanetPhrases =
+    {
+        new PhraseDef("planet_tutorial_first_visit_dialog", "Вот и наша первая планета. Пока целая!", "Here's our first planet. Still in one piece!", "Ось і наша перша планета. Поки ціла!", "¡Aquí está nuestro primer planeta! ¡De momento sigue intacto!"),
+        new PhraseDef("planet_tutorial_open_creation_dialog", "Посмотрим, что здесь можно построить.", "Let's see what we can build here.", "Подивимося, що тут можна побудувати.", "Veamos qué podemos construir aquí."),
+        new PhraseDef("planet_tutorial_open_creation_hint", "Нажми сюда.", "Tap here.", "Натисни сюди.", "Pulsa aquí."),
+        new PhraseDef("planet_tutorial_earn_coins_hint", "Пора делать деньги! Точнее, тут почему-то шестерёнки. Нажимай на кнопку, чтобы их зарабатывать!", "Time to make money! Except... they're gears for some reason. Tap the button to earn them!", "Час заробляти гроші! Точніше, тут чомусь шестерні. Натискай кнопку, щоб їх заробляти!", "¡Hora de ganar dinero! Aunque aquí, por alguna razón, son engranajes. ¡Pulsa el botón para conseguirlos!"),
+        new PhraseDef("planet_tutorial_earned_first_toast", "Первые шестерёнки! Каждое нажатие приносит ещё. Это чудо!", "Our first gears! Every tap earns more. It's a miracle!", "Перші шестерні! Кожне натискання приносить ще. Це диво!", "¡Nuestros primeros engranajes! Cada toque nos da más. ¡Es un milagro!"),
+        new PhraseDef("planet_tutorial_buy_small_tree_hint", "Купим первый куст. Теперь каждый клик будет прибыльнее!", "Let's buy our first bush. Now every tap will earn us more!", "Купимо перший кущ. Тепер кожне натискання приноситиме більше!", "¡Compremos nuestro primer arbusto! ¡Ahora ganaremos más con cada toque!"),
+        new PhraseDef("planet_tutorial_buy_small_tree_done", "Отлично. Куст уже на планете. Теперь каждое нажатие приносит больше!", "Great! The bush is on the planet. Now every tap earns more!", "Чудово. Кущ уже на планеті. Тепер кожне натискання приносить більше!", "¡Genial! El arbusto ya está en el planeta. ¡Ahora cada toque nos da más!"),
+        new PhraseDef("planet_tutorial_earn_more_hint", "Продолжай нажимать. Нам нужно больше шестерёнок! Нам нужны деревья!", "Keep tapping. We need more gears! We need trees!", "Продовжуй натискати. Нам потрібно більше шестерень! Нам потрібні дерева!", "Sigue pulsando. ¡Necesitamos más engranajes! ¡Necesitamos árboles!"),
+        new PhraseDef("planet_tutorial_buy_big_tree_hint", "Теперь купим дерево побольше. Ещё больше зелени, ещё больше прибыли!\nНу и планета будет выглядеть гораздо лучше.", "Now let's buy a bigger tree. More greenery, more profit!\nAnd the planet will look much better, too.", "Тепер купімо дерево побільше. Ще більше зелені, ще більше прибутку!\nІ планета виглядатиме набагато краще.", "Ahora compremos un árbol más grande. ¡Más verde, más ganancias!\nY el planeta se verá mucho mejor."),
+        new PhraseDef("planet_tutorial_buy_big_tree_done", "Отлично! Наша планета начинает зеленеть!", "Great! Our planet is starting to turn green!", "Чудово! Наша планета починає зеленіти!", "¡Genial! ¡Nuestro planeta empieza a ponerse verde!"),
+        new PhraseDef("planet_tutorial_manager_early_open_dialog", "Надоело постоянно нажимать? Есть решение — менеджер!", "Tired of tapping all the time? There's a solution — a manager!", "Набридло постійно натискати? Є рішення — менеджер!", "¿Te has cansado de pulsar todo el tiempo? ¡Hay una solución: un gerente!"),
+        new PhraseDef("planet_tutorial_manager_not_enough_money_dialog", "Правда, на его зарплату пока не хватает. Поднажми!", "We can't afford his salary just yet, though. Keep tapping!", "Щоправда, на його зарплату поки не вистачає. Натискай активніше!", "Aunque todavía no nos alcanza para su sueldo. ¡Sigue pulsando!"),
+        new PhraseDef("planet_tutorial_buy_manager_hint", "Теперь можем нанять менеджера. Пусть работает!", "Now we can hire a manager. Let him do the work!", "Тепер можемо найняти менеджера. Нехай працює!", "Ahora podemos contratar a un gerente. ¡Que se ponga a trabajar!"),
+        new PhraseDef("planet_tutorial_buy_manager_done", "Отлично. Теперь планета будет развиваться гораздо быстрее.", "Great! Now the planet will develop much faster.", "Чудово. Тепер планета розвиватиметься набагато швидше.", "¡Genial! Ahora el planeta se desarrollará mucho más rápido.")
+    };
+
     private static readonly PhraseDef[] Phrases =
     {
         new PhraseDef("meta_tutorial_step0_dialog_1", "Добро пожаловать на мою планету!", "Welcome to my planet!", "Ласкаво просимо на мою планету!", "¡Bienvenido a mi planeta!"),
@@ -133,21 +162,23 @@ public static class MetaPlanetTutorialLocalizationSeeder
         new PhraseDef("meta_tutorial_step5_done_1", "Отлично! Дом готов.", "Great! The house is ready.", "Чудово! Будинок готовий.", "¡Genial! La casa está lista."),
         new PhraseDef("meta_tutorial_step5_done_2", "Теперь есть где встречать заказчиков.", "Now we have somewhere to meet clients.", "Тепер є де зустрічати замовників.", "Ahora tenemos dónde recibir a los clientes."),
         new PhraseDef("meta_tutorial_step5_done_3", "И уже меньше напоминает кучу коробок.", "And it looks a lot less like a pile of boxes.", "І вже менше нагадує купу коробок.", "Y ya se parece mucho menos a un montón de cajas."),
+        new PhraseDef("meta_tutorial_step6_return_dialog_1", "С возвращением! Первая планета ещё цела? Значит, зарабатывать ты уже умеешь.", "Welcome back! Is your first planet still in one piece? Then you already know how to make money.", "З поверненням! Перша планета ще ціла? Отже, заробляти ти вже вмієш.", "¡Qué bueno que hayas vuelto! ¿Tu primer planeta sigue de una pieza? Entonces ya sabes cómo ganar dinero."),
+        new PhraseDef("meta_tutorial_step6_return_dialog_2", "Я придумал, как ускорить наш бизнес. И нет, это не уклонение от налогов.", "I've figured out how to speed things up for our business. And no, it's not tax evasion.", "Я придумав, як прискорити наш бізнес. І ні, це не ухилення від сплати податків.", "Se me ocurrió cómo darle un impulso a nuestro negocio. Y no, no es evasión fiscal."),
         new PhraseDef("meta_tutorial_step6_open_shop_hint", "Откроем магазин.", "Let's open the shop.", "Відкриймо магазин.", "Abramos la tienda."),
         new PhraseDef("meta_tutorial_step6_open_upgrade_hint", "Теперь посмотрим улучшения.", "Now let's look at the upgrades.", "Тепер погляньмо на покращення.", "Ahora veamos las mejoras."),
-        new PhraseDef("meta_tutorial_step6_dialog_1", "А вот это уже действительно полезно.", "Now this is actually useful.", "А ось це вже справді корисно.", "Esto sí que es realmente útil."),
-        new PhraseDef("meta_tutorial_step6_dialog_2", "Улучшения влияют на все будущие планеты.", "Upgrades affect all future planets.", "Покращення впливають на всі майбутні планети.", "Las mejoras afectan a todos los planetas futuros."),
-        new PhraseDef("meta_tutorial_step6_dialog_3", "Именно здесь начинается настоящий прогресс.", "This is where real progress begins.", "Саме тут починається справжній прогрес.", "Aquí empieza el progreso de verdad."),
-        new PhraseDef("meta_tutorial_step7_add_upgrade_hint", "Добавим новое исследование.", "Add a new research item.", "Додамо нове дослідження.", "Añade una nueva investigación."),
-        new PhraseDef("meta_tutorial_step7_intro_1", "Каждое улучшение представляет отдельное направление исследований.", "Each upgrade represents a separate field of research.", "Кожне покращення представляє окремий напрям досліджень.", "Cada mejora representa una línea de investigación distinta."),
-        new PhraseDef("meta_tutorial_step7_intro_2", "Сначала разместим его на станции.", "First, let's place it on the station.", "Спершу розмістимо його на станції.", "Primero coloquémosla en la estación."),
+        new PhraseDef("meta_tutorial_step6_dialog_1", "Вот эти здания действительно полезны!", "Now these buildings are actually useful!", "Ось ці будівлі справді корисні!", "¡Estos edificios sí que son útiles!"),
+        new PhraseDef("meta_tutorial_step6_dialog_2", "Они усиливают все будущие планеты.", "They give all future planets a boost.", "Вони посилюють усі майбутні планети.", "Potencian todos los planetas futuros."),
+        new PhraseDef("meta_tutorial_step6_dialog_3", "Красивый офис такого не умеет.", "A fancy office can't do that.", "Гарний офіс такого не вміє.", "Una oficina bonita no puede hacer eso."),
+        new PhraseDef("meta_tutorial_step7_add_upgrade_hint", "Построим кое-что полезное для наших деревьев.", "Let's build something useful for our trees.", "Збудуємо дещо корисне для наших дерев.", "Construyamos algo útil para nuestros árboles."),
+        new PhraseDef("meta_tutorial_step7_intro_1", "Эти деревья слишком много отдыхают. Пора увеличить норму выработки кислорода!", "These trees are taking too many breaks. Time to raise their oxygen production quota!", "Ці дерева забагато відпочивають. Час підвищити норму виробництва кисню!", "Estos árboles se toman demasiados descansos. ¡Hora de subirles la cuota de producción de oxígeno!"),
+        new PhraseDef("meta_tutorial_step7_intro_2", "Для этого у меня есть специальное здание.", "I've got a special building for that.", "Для цього в мене є спеціальна будівля.", "Tengo un edificio especial para eso."),
         new PhraseDef("meta_tutorial_step7_toast_added", "Исследование добавлено", "Research added", "Дослідження додано", "Investigación añadida"),
-        new PhraseDef("meta_tutorial_step7_done_1", "Отлично.", "Great.", "Чудово.", "Muy bien."),
-        new PhraseDef("meta_tutorial_step7_done_2", "Теперь улучшение доступно для развития.", "Now the upgrade can be developed.", "Тепер покращення доступне для розвитку.", "Ahora la mejora se puede desarrollar."),
-        new PhraseDef("meta_tutorial_step8_upgrade_hint", "Каждое улучшение можно прокачать до трёх уровней.\n\nКаждый уровень усиливает бонус.", "Each upgrade can be raised to three levels.\n\nEach level strengthens the bonus.", "Кожне покращення можна прокачати до трьох рівнів.\n\nКожен рівень посилює бонус.", "Cada mejora puede subirse hasta el nivel tres.\n\nCada nivel refuerza la bonificación."),
+        new PhraseDef("meta_tutorial_step7_done_1", "Отлично! Теперь деревья под контролем.", "Great! Now we've got the trees under control.", "Чудово! Тепер дерева під контролем.", "¡Genial! Ya tenemos a los árboles bajo control."),
+        new PhraseDef("meta_tutorial_step7_done_2", "И приносят больше валюты.", "And they're bringing in more currency.", "І приносять більше валюти.", "Y generan más moneda."),
+        new PhraseDef("meta_tutorial_step8_upgrade_hint", "Но это только первый уровень!\n\nВсего их три. Каждый следующий ещё сильнее увеличит прибыль.", "But that's only level one!\n\nThere are three levels in all. Each new level boosts profits even more.", "Але це лише перший рівень!\n\nУсього їх три. Кожен наступний принесе ще більше прибутку.", "¡Pero este es solo el primer nivel!\n\nHay tres en total. Cada nivel aumenta aún más las ganancias."),
         new PhraseDef("meta_tutorial_step8_toast_upgraded", "Доход планет +10%", "Planet income +10%", "Дохід планет +10%", "Ingresos de planetas +10%"),
-        new PhraseDef("meta_tutorial_step8_done_1", "Видишь?", "See?", "Бачиш?", "¿Ves?"),
-        new PhraseDef("meta_tutorial_step8_done_2", "Этот бонус будет работать на всех будущих планетах.", "This bonus will apply to all future planets.", "Цей бонус працюватиме на всіх майбутніх планетах.", "Esta bonificación funcionará en todos los planetas futuros."),
+        new PhraseDef("meta_tutorial_step8_done_1", "Накопишь денег — приходи. Выжмем из деревьев ещё больше!", "Come back when you've saved up some money. We'll squeeze even more out of those trees!", "Назбираєш грошей — приходь. Вичавимо з дерев іще більше!", "Vuelve cuando hayas ahorrado algo de dinero. ¡Les sacaremos aún más a esos árboles!"),
+        new PhraseDef("meta_tutorial_step8_done_2", "Бонус достанется всем будущим планетам. Вот это инвестиция!", "All future planets get the bonus. Now that's an investment!", "Бонус дістанеться всім майбутнім планетам. Оце інвестиція!", "Todos los planetas futuros recibirán la bonificación. ¡Eso sí que es una inversión!"),
         new PhraseDef("meta_tutorial_step8_done_3", "Поэтому улучшения важнее красивых домов.", "That is why upgrades matter more than pretty houses.", "Тому покращення важливіші за красиві будинки.", "Por eso las mejoras importan más que las casas bonitas."),
         new PhraseDef("meta_tutorial_step8_done_4", "Хотя красивые дома тоже хороши.", "Although pretty houses are good too.", "Хоча красиві будинки теж хороші.", "Aunque las casas bonitas también están bien."),
         new PhraseDef("meta_tutorial_step9_dialog_1", "Вы принимаете заказы на создание планет?", "Do you accept orders to create planets?", "Ви приймаєте замовлення на створення планет?", "¿Aceptan encargos para crear planetas?"),

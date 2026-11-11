@@ -1,6 +1,7 @@
 using System;
 using PlanetBuilder.Messages;
 using PlanetBuilder.Messages.Dialogs;
+using PlanetBuilder.Messages.UI;
 using Lean.Localization;
 using TMPro;
 using UnityEngine;
@@ -17,6 +18,7 @@ namespace PlanetBuilder.Messages.Tutorial
         [SerializeField] private TMP_Text _skipButtonText;
         [SerializeField] private string _continueTextKey = "meta_tutorial_video_continue";
         [SerializeField] private string _skipTextKey = "meta_tutorial_video_skip";
+        [SerializeField] private VideoDialogView _videoDialogView;
 
         private const string StartWorkTextKey = "meta_tutorial_step11_contract_button";
 
@@ -25,6 +27,8 @@ namespace PlanetBuilder.Messages.Tutorial
         private bool _canSkip;
         private bool _videoCompleted;
         private bool _dialogCompleted;
+
+        internal VideoDialogView DialogView => _videoDialogView;
 
         private void OnEnable()
         {
@@ -52,6 +56,9 @@ namespace PlanetBuilder.Messages.Tutorial
                 _videoPlayer.loopPointReached -= HandleVideoFinished;
                 _videoPlayer.Stop();
             }
+
+            if (_videoDialogView != null && _videoDialogView.gameObject.activeSelf)
+                _videoDialogView.Hide();
 
             SetModalOpen(false);
             _onVideoCompleted = null;
@@ -160,12 +167,15 @@ namespace PlanetBuilder.Messages.Tutorial
             completed?.Invoke();
         }
 
-        private static void SetModalOpen(bool isOpen)
+        private void SetModalOpen(bool isOpen)
         {
             MessageManager messageManager = MessageManager.Instance;
 
             if (messageManager != null)
+            {
                 messageManager.SetModalWindowOpen(isOpen);
+                messageManager.SetConversationPortraitsHidden(isOpen);
+            }
         }
     }
 }

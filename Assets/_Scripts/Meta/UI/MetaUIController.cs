@@ -77,6 +77,11 @@ public class MetaUIController : MonoBehaviour
     [SerializeField] private TMP_Text _exchangeTotalCostText;
     [SerializeField] private TMP_Text _exchangeStatusText;
     [SerializeField] private Button _exchangeButton;
+    [Header("Exchange Currency Icons")]
+    [SerializeField] private MetaPlanetCurrencyExchange _exchangeCurrencyController;
+    [SerializeField] private Image _exchangeDiamondPriceCurrencyIcon;
+    [SerializeField] private Image _exchangeTotalCostCurrencyIcon;
+    [SerializeField] private Image _exchangePlanetBalanceCurrencyIcon;
 
     private readonly List<int> _exchangePlanetIds = new();
     private bool _exchangeRotationWasEnabled;
@@ -338,8 +343,33 @@ public class MetaUIController : MonoBehaviour
         RefreshExchangePreview();
     }
 
+    private void UpdateExchangeCurrencyIcons(int planetId)
+    {
+        Sprite icon = _exchangeCurrencyController != null
+            ? _exchangeCurrencyController.GetCurrencyIcon(planetId)
+            : null;
+
+        if (_exchangeDiamondPriceCurrencyIcon != null)
+        {
+            _exchangeDiamondPriceCurrencyIcon.sprite = icon;
+            _exchangeDiamondPriceCurrencyIcon.enabled = icon != null;
+        }
+
+        if (_exchangeTotalCostCurrencyIcon != null)
+        {
+            _exchangeTotalCostCurrencyIcon.sprite = icon;
+            _exchangeTotalCostCurrencyIcon.enabled = icon != null;
+        }
+
+        if (_exchangePlanetBalanceCurrencyIcon != null)
+        {
+            _exchangePlanetBalanceCurrencyIcon.sprite = icon;
+            _exchangePlanetBalanceCurrencyIcon.enabled = icon != null;
+        }
+    }
     private void RefreshExchangePreview()
     {
+        UpdateExchangeCurrencyIcons(-1);
         _exchangeButton.interactable = false;
         _exchangePlanetBalanceText.text = "—";
         _exchangeDiamondPriceText.text = "—";
@@ -364,6 +394,8 @@ public class MetaUIController : MonoBehaviour
             _exchangeStatusText.text = error;
             return;
         }
+
+        UpdateExchangeCurrencyIcons(planetId);
 
         _exchangePlanetBalanceText.text = planetMoney.ToString("N0");
         _exchangeDiamondPriceText.text = quote.pricePerDiamond.ToString("N0");

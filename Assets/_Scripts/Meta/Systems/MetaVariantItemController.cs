@@ -55,22 +55,15 @@ public class MetaVariantItemController : MonoBehaviour
             return;
 
         EnsureVariantsRoot();
+        ApplyVisualStateFromFlags();
+    }
 
-        if (!isActive)
-        {
-            if (box == null && itemData.BoxPrefab != null)
-            {
-                box = Instantiate(itemData.BoxPrefab, transform);
-                isActive = true;
-            }
+    public void ActivateAddedObject()
+    {
+        if (isActive) return;
+        if (!EnsureVariantStateInitialized()) return;
 
-            if (variantsRoot != null)
-                variantsRoot.gameObject.SetActive(false);
-
-            return;
-        }
-
-        BuildInstancesIfNeeded();
+        isActive = true;
         ApplyVisualStateFromFlags();
     }
 
@@ -304,7 +297,7 @@ public class MetaVariantItemController : MonoBehaviour
 
         worldPressAllowed = false;
 
-        if (canOpen)
+        if (canOpen && isActive)
             OnVariantPanelOpened?.Invoke(this);
     }
 

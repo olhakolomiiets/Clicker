@@ -10,6 +10,7 @@ public class MetaPlanetCurrencyExchange : MonoBehaviour
         public int planetId;
         public double baseIncomePerSecond = 1;
         public double baseDiamondPrice = 1800;
+        public Sprite currencyIcon;
     }
 
     public struct ExchangeQuote
@@ -66,7 +67,7 @@ public class MetaPlanetCurrencyExchange : MonoBehaviour
     {
         if (_isOpen)
             return;
-            
+
         _openRates.Clear();
         _isOpen = isInitialized;
     }
@@ -113,6 +114,14 @@ public class MetaPlanetCurrencyExchange : MonoBehaviour
         };
 
         return true;
+    }
+
+    public Sprite GetCurrencyIcon(int planetId)
+    {
+        PlanetSettings settings = planets.Find(
+            p => p != null && p.planetId == planetId);
+
+        return settings != null ? settings.currencyIcon : null;
     }
 
     public ExchangeResult TryExchange(ExchangeQuote approvedQuote, int diamonds, Func<int, double, int, bool> commitTransaction, out double spentCurrency)

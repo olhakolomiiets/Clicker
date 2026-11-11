@@ -54,7 +54,7 @@ public class MetaObjectPlaceRotator : MonoBehaviour
             if (currentObject != null)
             {
                 // Rotate towards the current object's rotation
-                yield return StartCoroutine(RotateToTargetRotation(currentObject.transform));
+                yield return StartCoroutine(RotateToTargetRotation(currentObject.transform, true));
             }
         }
 
@@ -67,7 +67,7 @@ public class MetaObjectPlaceRotator : MonoBehaviour
         StartCoroutine(RotateToTargetRotation(targetObjectTransform));
     }
 
-    private IEnumerator RotateToTargetRotation(Transform targetObjectTransform)
+    private IEnumerator RotateToTargetRotation(Transform targetObjectTransform, bool isObjectAddition = false)
     {
         var cameraTransformPositionWithCorrect = cameraTransform.position + Vector3.up * 120f;
 
@@ -95,6 +95,13 @@ public class MetaObjectPlaceRotator : MonoBehaviour
         transform.rotation = targetRotation;
 
         targetObjectTransform.gameObject.SetActive(true);
+
+        if (isObjectAddition &&
+            targetObjectTransform.TryGetComponent<MetaVariantItemController>(out var item))
+        {
+            item.ActivateAddedObject();
+        }
+
         targetObjectTransform.GetComponent<PlanetObject>().MakeSFX();
 
         yield return new WaitForSecondsRealtime(1f);

@@ -370,7 +370,8 @@ namespace PlanetBuilder.Messages.Tutorial
                 return false;
             }
 
-            if (_interactionOverlay.Show(step.TargetUI, !step.DisableInteractionCutout))
+            bool showDimming = step.StepId?.StartsWith("MetaPlanet.", StringComparison.Ordinal) != true;
+            if (_interactionOverlay.Show(step.TargetUI, !step.DisableInteractionCutout, showDimming))
                 return true;
 
             StopWithWarning($"Tutorial step '{step.StepId}' could not configure its interaction overlay.");

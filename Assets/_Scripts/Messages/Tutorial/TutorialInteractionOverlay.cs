@@ -63,6 +63,11 @@ namespace PlanetBuilder.Messages.Tutorial
 
         public bool Show(GameObject targetUI, bool allowCutout)
         {
+            return Show(targetUI, allowCutout, showDimming: true);
+        }
+
+        internal bool Show(GameObject targetUI, bool allowCutout, bool showDimming)
+        {
             Debug.Log(
                 $"[MetaTutorialTrace] TutorialInteractionOverlay.Show ENTER target={GetTransformPath(targetUI != null ? targetUI.transform : null)} active={(targetUI != null && targetUI.activeInHierarchy)} allowCutout={allowCutout}",
                 this);
@@ -79,6 +84,13 @@ namespace PlanetBuilder.Messages.Tutorial
                 Debug.Log("[MetaTutorialTrace] TutorialInteractionOverlay.Show STOP TrySetTarget", this);
                 return false;
             }
+
+            // The separate raycast shield handles input.
+            float dimAlpha = showDimming ? 1f : 0f;
+            _topBlocker.canvasRenderer.SetAlpha(dimAlpha);
+            _bottomBlocker.canvasRenderer.SetAlpha(dimAlpha);
+            _leftBlocker.canvasRenderer.SetAlpha(dimAlpha);
+            _rightBlocker.canvasRenderer.SetAlpha(dimAlpha);
 
             _canvasGroup.alpha = _overlayAlpha;
             _canvasGroup.interactable = true;

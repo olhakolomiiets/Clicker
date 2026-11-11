@@ -175,6 +175,7 @@ namespace PlanetBuilder.Messages.Dialogs
                 CharacterMood = line.CharacterMood,
                 Type = MessageType.Dialog,
                 Channel = MessageChannel.Dialog,
+                VideoView = _activeDialog.VideoView,
                 Priority = _priority,
                 CanInterrupt = false,
                 CanDisplayOverModal = true,

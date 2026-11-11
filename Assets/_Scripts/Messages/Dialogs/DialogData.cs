@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using PlanetBuilder.Messages.Characters;
+using PlanetBuilder.Messages.UI;
 
 namespace PlanetBuilder.Messages.Dialogs
 {
@@ -9,6 +10,7 @@ namespace PlanetBuilder.Messages.Dialogs
     {
         public string DialogId;
         public List<DialogLine> ListDialogLine = new();
+        internal VideoDialogView VideoView { get; set; }
     }
 
     [Serializable]

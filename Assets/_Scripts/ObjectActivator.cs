@@ -11,6 +11,8 @@ public class ObjectActivator : MonoBehaviour
     [SerializeField] private int currentIndex = 0;
     [SerializeField] private ObjectPlaceRotator objectPlaceRotator;
 
+    public int NextObjectIndex => currentIndex;
+
     private bool isDisplayed;
 
     public void ActivateNextObject()

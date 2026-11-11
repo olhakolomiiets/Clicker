@@ -201,6 +201,15 @@ namespace PlanetBuilder.Messages
                 _tutorialView.SetTopPlacement(useTopPlacement, stepId, reason);
         }
 
+        internal void SetConversationPortraitsHidden(bool hidden)
+        {
+            if (_messageView != null)
+                _messageView.SetPortraitHidden(hidden);
+
+            if (_tutorialView != null)
+                _tutorialView.SetPortraitHidden(hidden);
+        }
+
         public void SetModalWindowOpen(bool isOpen)
         {
             _displayValidator.SetModalWindowOpen(isOpen);
@@ -324,7 +333,7 @@ namespace PlanetBuilder.Messages
             if (!_activeMessages.TryGetValue(channel, out ActiveMessage activeMessage))
                 return;
 
-            BaseMessageView view = GetView(activeMessage.Message.Type);
+            BaseMessageView view = GetView(activeMessage.Message);
 
             if (view is TypewriterMessageView typewriterMessageView &&
                 typewriterMessageView.IsTyping)
@@ -400,7 +409,7 @@ namespace PlanetBuilder.Messages
 
         private void ShowView(MessageData message)
         {
-            BaseMessageView view = GetView(message.Type);
+            BaseMessageView view = GetView(message);
 
             if (view != null)
                 view.Show(message);
@@ -408,7 +417,7 @@ namespace PlanetBuilder.Messages
 
         private void HideView(MessageData message)
         {
-            BaseMessageView view = GetView(message.Type);
+            BaseMessageView view = GetView(message);
 
             MessageTutorialTrace.LogHide(
                 "MessageManager.HideView",
@@ -421,14 +430,14 @@ namespace PlanetBuilder.Messages
                 view.Hide();
         }
 
-        private BaseMessageView GetView(MessageType messageType)
+        private BaseMessageView GetView(MessageData message)
         {
-            switch (messageType)
+            switch (message.Type)
             {
                 case MessageType.Tutorial:
                     return _tutorialView;
                 case MessageType.Dialog:
-                    return _messageView;
+                    return (BaseMessageView)message.VideoView ?? _messageView;
                 case MessageType.Hint:
                     return _characterBubbleView;
                 case MessageType.Toast:

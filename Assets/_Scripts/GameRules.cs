@@ -386,7 +386,7 @@ public class GameRules : MonoBehaviour
         if (_currentGameData.Managers[index])
             return;
 
-        bool canBuy = _currentGameData.ItemDataList[index].ManagerPrice < _currentGameData.Money;
+        bool canBuy = _currentGameData.ItemDataList[index].ManagerPrice <= _currentGameData.Money;
 
         OnModifyManagerAvailability?.Invoke(index, canBuy);
 

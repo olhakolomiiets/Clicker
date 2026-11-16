@@ -89,7 +89,10 @@ namespace PlanetBuilder.Messages.Tutorial
             if (_dialogCompleted)
                 return;
 
-            DialogManager dialogManager = GetComponentInParent<DialogManager>();
+            MessageManager messageManager = MessageManager.Instance;
+            DialogManager dialogManager = messageManager != null
+                ? messageManager.GetComponent<DialogManager>()
+                : null;
 
             if (dialogManager != null &&
                 dialogManager.ActiveDialog?.DialogId == "MetaPlanetTutorial.FirstOrder")

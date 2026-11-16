@@ -6,6 +6,7 @@ public class GameRules : MonoBehaviour
 {
     private GameData _currentGameData;
     private GeneralGameData _currentGeneralData;
+    private RewardTimers _rewardTimers;
 
     public event Action<int, bool> OnModifyManagerAvailability, OnToggleItemActivationState;
     public event Action<int, float> OnStartWorkOnItem, OnStartWorkOnUpgradeItem;
@@ -113,10 +114,11 @@ public class GameRules : MonoBehaviour
         _passiveIncomeTimeConfig = config;
     }
 
-    public void PrepareGameData(GameData gameData, GeneralGameData generalData)
+    public void PrepareGameData(GameData gameData, GeneralGameData generalData, RewardTimers rewardTimers)
     {
         _currentGameData = gameData;
         _currentGeneralData = generalData;
+        _rewardTimers = rewardTimers;
 
         for (int i = 0; i < gameData.ItemDataList.Count; i++)
         {
@@ -151,6 +153,7 @@ public class GameRules : MonoBehaviour
             return;
 
         _currentGameData.SetData(gameDataSave);
+        UpdateBoosterMultiplier();
 
         for (int i = 0; i < _currentGameData.ItemDataList.Count; i++)
         {
@@ -191,6 +194,8 @@ public class GameRules : MonoBehaviour
 
     public void SendDataUpdate()
     {
+        UpdateBoosterMultiplier();
+
         for (int i = 0; i < _currentGameData.ItemDataList.Count; i++)
         {
             UnlockOtherItems(i);
@@ -438,11 +443,19 @@ public class GameRules : MonoBehaviour
         }
     }
 
+    private void UpdateBoosterMultiplier()
+    {
+        // A failed IAP save may have changed the in-memory PlayerPrefs flag.
+        if (!SaveSystem.IsIapRecoveryRequired)
+            _currentGameData.IsBoosterPurchased = SaveSystem.HasPurchasedCoinsBooster;
+
+        _currentGameData.BoosterMultiplier = 1d
+            + (_currentGameData.IsBoosterPurchased ? 1d : 0d)
+            + (_rewardTimers != null && _rewardTimers.isBoosterTimerActive ? 1d : 0d);
+    }
+
     private void CheckBoosterMultiplier(int index)
     {
-        if (_currentGameData.BoosterMultiplier == 0)
-            _currentGameData.BoosterMultiplier = 1;
-
         if (!_currentGameData.ItemDataList[index].IsPremium)
             _currentGameData.ItemDataList[index].BoosterMultiplier = _currentGameData.BoosterMultiplier;
     }
@@ -763,8 +776,6 @@ public class GameRules : MonoBehaviour
 
     public void GetCoinsBooster()
     {
-        _currentGameData.BoosterMultiplier = _currentGameData.IsBoosterPurchased ? 3 : 2;
-
         SendDataUpdate();
 
         FirebaseAnalytics.LogEvent("booster_for_ads");
@@ -773,8 +784,6 @@ public class GameRules : MonoBehaviour
 
     public void DisableCoinsBooster()
     {
-        _currentGameData.BoosterMultiplier -= 1;
-
         SendDataUpdate();
     }
 
@@ -795,9 +804,6 @@ public class GameRules : MonoBehaviour
 
     public void GetPurchasedBooster()
     {
-        _currentGameData.BoosterMultiplier += _currentGameData.BoosterMultiplier == 0 ? 2 : 1;
-        _currentGameData.IsBoosterPurchased = true;
-
         SendDataUpdate();
     }
 

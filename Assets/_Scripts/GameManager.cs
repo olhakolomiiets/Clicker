@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Firebase.Analytics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Samples.Purchasing.IAP5.Demo;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,8 +31,48 @@ public class GameManager : MonoBehaviour
     [Header("Passive Income Chest")]
     [SerializeField] private PassiveIncomeChestController _passiveIncomeChestController;
 
+    private bool _iapGameContextReady;
+    private bool _iapApplicationPaused;
+
+    public enum IapGrantResult
+    {
+        Granted,
+        AlreadyProcessed,
+        Deferred,
+        UnsupportedProduct
+    }
+
+    private const string GearsSaveKey = "SavelPlanetLevel1";
+    private const string BatteriesSaveKey = "SavelPlanetLevel3";
+    private const string LikesSaveKey = "SavelPlanetLevel4";
+
+    private readonly struct IapReward
+    {
+        public readonly double Diamonds;
+        public readonly string PlanetKey;
+        public readonly double Money;
+        public readonly bool StarterPackPurchased;
+        public readonly bool SpecialOfferPurchased;
+        public readonly bool AdsRemoved;
+        public readonly bool CoinsBoosterPurchased;
+
+        public IapReward(double diamonds = 0, string planetKey = null, double money = 0,
+            bool starterPackPurchased = false, bool specialOfferPurchased = false, bool adsRemoved = false,
+            bool coinsBoosterPurchased = false)
+        {
+            Diamonds = diamonds;
+            PlanetKey = planetKey;
+            Money = money;
+            StarterPackPurchased = starterPackPurchased;
+            SpecialOfferPurchased = specialOfferPurchased;
+            AdsRemoved = adsRemoved;
+            CoinsBoosterPurchased = coinsBoosterPurchased;
+        }
+    }
+
     private void OnEnable()
     {
+        _iapGameContextReady = false;
         _generalGameData = new GeneralGameData();
 
         _planetMode = _planetModeBehaviour as IPlanetMode;
@@ -74,8 +116,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    var entry = catalog.Planets.Find(
-                        p => p.SceneBuildIndex == gameObject.scene.buildIndex);
+                    var entry = catalog.Planets.Find(p => p != null && p.SaveKey == _saveSystem.PlanetSaveKey);
 
                     if (entry == null)
                     {
@@ -83,8 +124,7 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        GameDataSave snapshot =
-                            JsonUtility.FromJson<GameDataSave>(_planetMode.Save());
+                        GameDataSave snapshot = JsonUtility.FromJson<GameDataSave>(_planetMode.Save());
 
                         bool success = OfflinePlanetIncomeCalculator.TryCalculate(
                             entry,
@@ -122,7 +162,7 @@ public class GameManager : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex == 0)
+        if (gameObject.scene.name == "PlanetMeta")
         {
             TestOfflinePlanetIncomes();
         }
@@ -132,12 +172,28 @@ public class GameManager : MonoBehaviour
         {
             standardMode.SetPassiveIncomeSaver(SavePassiveIncomeReward);
 
-            _passiveIncomeChestController?.Initialize(
-                _generalGameData,
-                _saveSystem.PlanetSaveKey);
+            _passiveIncomeChestController?.Initialize(_generalGameData, _saveSystem.PlanetSaveKey);
 
             standardMode.TryActivatePassiveIncome();
         }
+
+        if (LastSceneLoader.TryGetSceneId(gameObject.scene.name, out int sceneId))
+        {
+            if (!PlayerPrefs.HasKey("SavedScene") || PlayerPrefs.GetInt("SavedScene") != sceneId)
+            {
+                PlayerPrefs.SetInt("SavedScene", sceneId);
+                PlayerPrefs.Save();
+            }
+        }
+
+        // Journal recovery can finish after the shop's OnEnable.
+        if (SaveSystem.HasPurchasedCoinsBooster || SaveSystem.HasRemovedAds)
+            RefreshIapShop(SaveSystem.HasRemovedAds);
+
+        _iapGameContextReady = true;
+
+        if (!_iapApplicationPaused)
+            PaywallManager.Instance?.RegisterGameContext(this);
     }
 
     private void ConnectPurchaseManager()
@@ -145,6 +201,262 @@ public class GameManager : MonoBehaviour
         _purchaseManager.OnPurchasingPack += _planetMode.AddPurchasedPack;
         _purchaseManager.OnPurchasingDiamonds += _planetMode.AddPurchasedDiamonds;
         _purchaseManager.OnPurchasingBooster += _planetMode.ActivatePurchasedBooster;
+    }
+
+    public IapGrantResult GrantIapPurchase(string store, string transactionId, string productId)
+    {
+        if (SaveSystem.IsIapRecoveryRequired)
+        {
+            UnregisterIapGameContext();
+            return IapGrantResult.Deferred;
+        }
+
+        if (!HasReadyIapGameContext())
+            return IapGrantResult.Deferred;
+
+        if (_saveSystem.IsIapTransactionProcessed(store, transactionId, productId))
+            return IapGrantResult.AlreadyProcessed;
+
+        if (GetIapReward(productId) is not IapReward reward)
+            return IapGrantResult.UnsupportedProduct;
+
+        StandardPlanetMode openPlanet = null;
+        string planetSnapshot = null;
+        double updatedMoney = 0d;
+        if (reward.PlanetKey != null)
+        {
+            GameDataSave planetSave;
+            if (reward.PlanetKey == _saveSystem.PlanetSaveKey)
+            {
+                openPlanet = _planetMode as StandardPlanetMode;
+                if (openPlanet == null || !openPlanet.HasInitializedIapData)
+                    return IapGrantResult.Deferred;
+
+                planetSave = JsonUtility.FromJson<GameDataSave>(_planetMode.Save());
+            }
+            else if (!OfflinePlanetSaveReader.TryRead(reward.PlanetKey, out planetSave, out _))
+            {
+                return IapGrantResult.Deferred;
+            }
+
+            // The offline reader accepts older saves with fewer structural checks.
+            if (planetSave.ItemCount == null || planetSave.ItemCount.Count == 0 ||
+                planetSave.UpgradeItemCount == null || planetSave.Managers?.Count != planetSave.ItemCount.Count ||
+                planetSave.ItemBonusMultiplayer?.Count != planetSave.ItemCount.Count ||
+                planetSave.ItemMaxCountHelper?.Count != planetSave.ItemCount.Count ||
+                !TryAddIapBalance(planetSave.Money, reward.Money, out updatedMoney))
+            {
+                return IapGrantResult.Deferred;
+            }
+
+            planetSave.Money = updatedMoney;
+            planetSnapshot = JsonUtility.ToJson(planetSave);
+        }
+
+        string generalSnapshot = null;
+        double updatedDiamonds = 0d;
+        if (reward.Diamonds > 0d)
+        {
+            var generalSave = JsonUtility.FromJson<GeneralGameDataSave>(_generalGameData.GetSaveData());
+            if (!TryAddIapBalance(generalSave.Diamonds, reward.Diamonds, out updatedDiamonds))
+                return IapGrantResult.Deferred;
+
+            generalSave.Diamonds = updatedDiamonds;
+            generalSnapshot = JsonUtility.ToJson(generalSave);
+        }
+
+        bool firstCoinsBoosterPurchase = reward.CoinsBoosterPurchased && !SaveSystem.HasPurchasedCoinsBooster;
+        bool saved;
+        try
+        {
+            saved = _saveSystem.SaveIapTransaction(store, transactionId, productId,
+                planetKey: reward.PlanetKey,
+                planetSnapshot: planetSnapshot,
+                generalSnapshot: generalSnapshot,
+                starterPackPurchased: reward.StarterPackPurchased,
+                specialOfferPurchased: reward.SpecialOfferPurchased,
+                adsRemoved: reward.AdsRemoved,
+                coinsBoosterPurchased: reward.CoinsBoosterPurchased);
+        }
+        catch
+        {
+            if (SaveSystem.IsIapRecoveryRequired)
+                UnregisterIapGameContext();
+
+            throw;
+        }
+
+        if (!saved)
+            return IapGrantResult.AlreadyProcessed;
+
+        if (reward.Diamonds > 0d)
+            _generalGameData.Diamonds = updatedDiamonds;
+
+        openPlanet?.ApplySavedIapMoney(updatedMoney);
+
+        LogIapPurchase(productId, reward, firstCoinsBoosterPurchase);
+
+        try
+        {
+            _planetMode.UpdateData();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+        }
+
+        RefreshIapShop(reward.AdsRemoved);
+
+        return IapGrantResult.Granted;
+    }
+
+    private void LogIapPurchase(string productId, IapReward reward, bool firstCoinsBoosterPurchase)
+    {
+        try
+        {
+            var product = new Parameter("product_id", productId);
+            string diamondsEvent = productId switch
+            {
+                "com.planetclicker.diamonds.small" or "com.planetclicker.diamondspack50" => "money_diamondsPack50_purchased",
+                "com.planetclicker.diamonds.medium" or "com.planetclicker.diamondspack100" => "money_diamondsPack100_purchased",
+                "com.planetclicker.diamonds.large" or "com.planetclicker.diamondspack300" => "money_diamondsPack300_purchased",
+                _ => null
+            };
+
+            if (diamondsEvent != null)
+            {
+                FirebaseAnalytics.LogEvent(diamondsEvent, product, new Parameter("amount", reward.Diamonds));
+            }
+            else if (reward.StarterPackPurchased || reward.SpecialOfferPurchased)
+            {
+                string eventName = reward.StarterPackPurchased ? "money_starterPack_purchased" : "money_specialOffer_purchased";
+                FirebaseAnalytics.LogEvent(eventName, product, new Parameter("diamonds_amount", reward.Diamonds),
+                    new Parameter("gears_amount", reward.Money));
+            }
+            else if (productId == "com.planetclicker.noads")
+            {
+                FirebaseAnalytics.LogEvent("no_ads_purchased", product);
+            }
+            else if (firstCoinsBoosterPurchase)
+            {
+                FirebaseAnalytics.LogEvent("money_coinsBooster_purchased", product);
+            }
+            else if (reward.PlanetKey != null)
+            {
+                string resourceType = reward.PlanetKey switch
+                {
+                    GearsSaveKey => "gears",
+                    BatteriesSaveKey => "batteries",
+                    LikesSaveKey => "likes",
+                    _ => null
+                };
+
+                if (resourceType != null)
+                {
+                    string packSize = productId.Substring(productId.LastIndexOf('.') + 1);
+                    FirebaseAnalytics.LogEvent("money_planetCurrencyPack_purchased", product,
+                        new Parameter("resource_type", resourceType), new Parameter("pack_size", packSize),
+                        new Parameter("amount", reward.Money));
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+        }
+    }
+
+    internal bool RestoreNoAds(string store, string transactionId)
+    {
+        if (!HasReadyIapGameContext() || SaveSystem.IsIapRecoveryRequired)
+            return false;
+
+        bool restored;
+        try
+        {
+            restored = _saveSystem.RestoreNoAds(store, transactionId);
+        }
+        catch
+        {
+            if (SaveSystem.IsIapRecoveryRequired)
+                UnregisterIapGameContext();
+
+            throw;
+        }
+
+        if (restored)
+            RefreshIapShop(adsRemoved: true);
+
+        return true;
+    }
+
+    private bool HasReadyIapGameContext()
+    {
+        return _iapGameContextReady && !_iapApplicationPaused && isActiveAndEnabled &&
+               _saveSystem != null && _planetModeBehaviour != null && _planetMode != null && _generalGameData != null;
+    }
+
+    private void RefreshIapShop(bool adsRemoved)
+    {
+        if (adsRemoved)
+            PurchaseManager.ApplyNoAds();
+
+        try
+        {
+            if (_purchaseManager != null)
+                _purchaseManager.RefreshShopVisibility();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+        }
+    }
+
+    private static bool TryAddIapBalance(double balance, double reward, out double updatedBalance)
+    {
+        updatedBalance = balance + reward;
+        // Reject rounding that changes the whole-unit reward.
+        return balance >= 0d && updatedBalance > balance && !double.IsInfinity(updatedBalance) &&
+               Math.Abs((updatedBalance - balance) - reward) < 0.5d;
+    }
+
+    private static IapReward? GetIapReward(string productId)
+    {
+        return productId switch
+        {
+            "com.planetclicker.diamonds.small" => new IapReward(diamonds: 100),
+            "com.planetclicker.diamonds.medium" => new IapReward(diamonds: 250),
+            "com.planetclicker.diamonds.large" => new IapReward(diamonds: 600),
+            "com.planetclicker.coins.1p.small" => new IapReward(planetKey: GearsSaveKey, money: 600000),
+            "com.planetclicker.coins.1p.medium" => new IapReward(planetKey: GearsSaveKey, money: 2100000),
+            "com.planetclicker.coins.1p.large" => new IapReward(planetKey: GearsSaveKey, money: 4200000),
+            "com.planetclicker.coins.2p.small" => new IapReward(planetKey: BatteriesSaveKey, money: 1200000),
+            "com.planetclicker.coins.2p.medium" => new IapReward(planetKey: BatteriesSaveKey, money: 4200000),
+            "com.planetclicker.coins.2p.large" => new IapReward(planetKey: BatteriesSaveKey, money: 8400000),
+            "com.planetclicker.coins.3p.small" => new IapReward(planetKey: LikesSaveKey, money: 900000),
+            "com.planetclicker.coins.3p.medium" => new IapReward(planetKey: LikesSaveKey, money: 3150000),
+            "com.planetclicker.coins.3p.large" => new IapReward(planetKey: LikesSaveKey, money: 6300000),
+            "com.planetclicker.starterpack.v2" => new IapReward(
+                diamonds: 150, planetKey: GearsSaveKey, money: 3600, starterPackPurchased: true),
+            "com.planetclicker.specialoffer.v2" => new IapReward(
+                diamonds: 50, planetKey: GearsSaveKey, money: 1200, specialOfferPurchased: true, adsRemoved: true),
+            "com.planetclicker.noads" => new IapReward(adsRemoved: true),
+            "com.planetclicker.coinsbooster" => new IapReward(coinsBoosterPurchased: true),
+            "com.planetclicker.diamondspack50" => new IapReward(diamonds: 50),
+            "com.planetclicker.diamondspack100" => new IapReward(diamonds: 100),
+            "com.planetclicker.diamondspack300" => new IapReward(diamonds: 300),
+            "com.planetclicker.starterpack" => new IapReward(
+                diamonds: 50, planetKey: GearsSaveKey, money: 50000, starterPackPurchased: true),
+            "com.planetclicker.specialoffer" => new IapReward(
+                diamonds: 50, planetKey: GearsSaveKey, money: 50000, specialOfferPurchased: true, adsRemoved: true),
+            _ => null
+        };
+    }
+
+    private void UnregisterIapGameContext()
+    {
+        _iapGameContextReady = false;
+        PaywallManager.Instance?.UnregisterGameContext(this);
     }
 
     [RuntimeInitializeOnLoadMethod(
@@ -199,6 +511,13 @@ public class GameManager : MonoBehaviour
 
         if (captured && newOfflineSeconds > 0)
         {
+            bool? permanentBooster = working.OfflineCoinsBoosterState switch
+            {
+                1 => false,
+                2 => true,
+                _ => null
+            };
+
             var effects = new MetaUpgradeEffects();
             effects.Rebuild(_offlinePlanetCatalog.MetaUpgradeConfigs);
 
@@ -283,7 +602,8 @@ public class GameManager : MonoBehaviour
                         planetSave,
                         effects,
                         out double moneyPerSec,
-                        out error))
+                        out error,
+                        permanentBooster: permanentBooster))
                 {
                     Debug.LogError(
                         $"[OfflinePlanetRewards] {entry.SaveKey}: {error}");
@@ -430,9 +750,18 @@ public class GameManager : MonoBehaviour
 
     private void OnApplicationPause(bool pauseStatus)
     {
+        if (SaveSystem.IsIapRecoveryRequired)
+        {
+            UnregisterIapGameContext();
+            return;
+        }
+
         if (pauseStatus)
         {
+            _iapApplicationPaused = true;
+            PaywallManager.Instance?.UnregisterGameContext(this);
             _generalGameData.ExitTime = System.DateTime.UtcNow.ToBinary().ToString();
+            _generalGameData.OfflineCoinsBoosterState = SaveSystem.HasPurchasedCoinsBooster ? 2 : 1;
 
             Debug.Log(
                 $"[PassiveIncomeTime] APPLICATION PAUSED | " +
@@ -465,11 +794,19 @@ public class GameManager : MonoBehaviour
                     _passiveIncomeChestController?.Refresh();
                 }
             }
+
+            _iapApplicationPaused = false;
+            if (_iapGameContextReady && isActiveAndEnabled)
+            {
+                PaywallManager.Instance?.RegisterGameContext(this);
+            }
         }
     }
 
     private void OnDisable()
     {
+        UnregisterIapGameContext();
+
         if (_planetMode != null && _purchaseManager != null)
         {
             _purchaseManager.OnPurchasingPack -= _planetMode.AddPurchasedPack;

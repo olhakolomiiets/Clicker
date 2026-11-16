@@ -11,7 +11,7 @@ public class BannerAd : MonoBehaviour
     {
         _adController = FindAnyObjectByType<BannerViewController>();
 
-        if (PlayerPrefs.GetInt("adsRemoved") == 0 && _adController != null)
+        if (!SaveSystem.HasRemovedAds && _adController != null)
         {
             _adController.LoadAd();
         }

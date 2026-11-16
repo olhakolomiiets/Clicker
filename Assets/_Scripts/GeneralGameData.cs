@@ -9,6 +9,8 @@ public class GeneralGameData
     public double Diamonds { get; set; }
     public double DiamondsPerSec { get; set; }
     public string ExitTime { get; set; }
+    // 0 = unknown (legacy save), 1 = absent at ExitTime, 2 = purchased at ExitTime.
+    public int OfflineCoinsBoosterState { get; set; }
     public int PassiveIncomeTime { get; set; } = 1800;
     public int ExtraTimePurchasedCount { get; set; }
     public bool IsGameSaved { get; set; }
@@ -41,6 +43,7 @@ public class GeneralGameData
         TotalScore = data.TotalScore;
         Diamonds = data.Diamonds;
         ExitTime = data.ExitTime;
+        OfflineCoinsBoosterState = data.OfflineCoinsBoosterState;
         PassiveIncomeTime = data.PassiveIncomeTime;
         ExtraTimePurchasedCount = data.ExtraTimePurchasedCount;
         IsGameSaved = data.IsGameSaved;
@@ -66,6 +69,7 @@ public class GeneralGameData
             TotalScore = TotalScore,
             Diamonds = Diamonds,
             ExitTime = this.ExitTime,
+            OfflineCoinsBoosterState = OfflineCoinsBoosterState,
             PassiveIncomeTime = PassiveIncomeTime,
             ExtraTimePurchasedCount = ExtraTimePurchasedCount,
             IsGameSaved = IsGameSaved,
@@ -161,6 +165,7 @@ public struct GeneralGameDataSave
     public double TotalScore;
     public double Diamonds;
     public string ExitTime;
+    public int OfflineCoinsBoosterState;
     public int PassiveIncomeTime;
     public int ExtraTimePurchasedCount;
     public int ActivePlanet;

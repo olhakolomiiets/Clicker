@@ -1,31 +1,73 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using PlanetBuilder.Loading;
 
 public class LastSceneLoader : MonoBehaviour
 {
-    private void Awake()
+    private void Start()
     {
-        if (PlayerPrefs.HasKey("SavedScene"))
+        int savedSceneId = PlayerPrefs.GetInt("SavedScene", 0);
+
+        string sceneName = GetSceneName(savedSceneId);
+
+        if (string.IsNullOrEmpty(sceneName) ||
+            !Application.CanStreamedLevelBeLoaded(sceneName))
         {
-            int sceneIndex = PlayerPrefs.GetInt("SavedScene");
-            int activeScene = SceneManager.GetActiveScene().buildIndex;
+            sceneName = "PlanetMeta";
+        }
 
-            if (activeScene != sceneIndex)
-                StartCoroutine(LoadYourAsyncScene(sceneIndex));
+        if (PlanetLoadingScreen.Instance == null)
+        {
+            Debug.LogError(
+                "[LastSceneLoader] PlanetLoadingScreen is missing.",
+                this
+            );
 
-            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! LastSceneManager /// Awake /// Scene Index: " + sceneIndex);
-            Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! LastSceneManager /// Awake /// Active Scene Index: " + activeScene);
+            return;
+        }
+
+        PlanetLoadingScreen.Instance.LoadBuiltInScene(sceneName);
+    }
+
+    public static string GetSceneName(int sceneId)
+    {
+        switch (sceneId)
+        {
+            case 0:
+                return "PlanetMeta";
+            case 1:
+                return "PlanetLevel1";
+            case 2:
+                return "PlanetLevel3";
+            case 3:
+                return "PlanetLevel4";
+            default:
+                return null;
         }
     }
 
-    IEnumerator LoadYourAsyncScene(int index)
+    public static bool TryGetSceneId(string sceneName, out int sceneId)
     {
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(index);
-
-        while (!asyncLoad.isDone)
+        switch (sceneName)
         {
-            yield return null;
+            case "PlanetMeta":
+                sceneId = 0;
+                return true;
+
+            case "PlanetLevel1":
+                sceneId = 1;
+                return true;
+
+            case "PlanetLevel3":
+                sceneId = 2;
+                return true;
+
+            case "PlanetLevel4":
+                sceneId = 3;
+                return true;
+
+            default:
+                sceneId = -1;
+                return false;
         }
     }
 }

@@ -1,10 +1,12 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Lean.Localization;
 
 public class UpgradePanelUI : MonoBehaviour
 {
     public TextMeshProUGUI LevelText, BonusDescription, CurrentBonusText, NextBonusText, NextBonusDescription, CostText;
+
     public Image icon;
     public Button UpgradeButton;
 
@@ -12,10 +14,24 @@ public class UpgradePanelUI : MonoBehaviour
 
     private DragRotateGPT _planetRotator;
 
+
     void OnEnable()
     {
         _planetRotator = FindAnyObjectByType<DragRotateGPT>();
+        LeanLocalization.OnLocalizationChanged += OnLocalizationChanged;
     }
+
+    void OnDisable()
+    {
+        LeanLocalization.OnLocalizationChanged -= OnLocalizationChanged;
+    }
+
+    void OnLocalizationChanged()
+    {
+        if (ctrl != null)
+            Refresh();
+    }
+
 
     public void Open(MetaUpgradeItemController controller)
     {
@@ -35,6 +51,7 @@ public class UpgradePanelUI : MonoBehaviour
         // ����� ������ ����/������ � ����������� �� bought/canAfford
     }
 
+
     void Refresh()
     {
         var lvl = ctrl.currentLevel;
@@ -49,21 +66,37 @@ public class UpgradePanelUI : MonoBehaviour
             icon.sprite = data[iconIndex].ItemIcon;
         }
 
-        LevelText.text = $"Level: {lvl + 1}/{data.Count}";
-        CurrentBonusText.text = $"Bonus: {data[lvl].BonusValue}";
-        BonusDescription.text = data[lvl].BonusDescription;
+        LevelText.text = string.Format(
+            LeanLocalization.GetTranslationText("upgrade_level"),
+            lvl + 1,
+            data.Count
+        );
+
+        CurrentBonusText.text = LeanLocalization.GetTranslationText("upgrade_current_bonus");
+
+        BonusDescription.text = LeanLocalization.GetTranslationText(
+            data[lvl].BonusDescription,
+            data[lvl].BonusDescription
+        );
 
         if (lvl < data.Count - 1)
         {
             var next = data[lvl + 1];
-            NextBonusText.text = $"Next: {next.BonusValue}";
-            NextBonusDescription.text = next.BonusDescription;
+
+            NextBonusText.text = LeanLocalization.GetTranslationText("upgrade_next_bonus");
+
+            NextBonusDescription.text = LeanLocalization.GetTranslationText(
+                next.BonusDescription,
+                next.BonusDescription
+            );
+
             CostText.text = next.UpgradeCost.ToString();
             UpgradeButton.interactable = ctrl.CanUpgrade();
         }
         else
         {
-            NextBonusText.text = "Max";
+            NextBonusText.text = LeanLocalization.GetTranslationText("upgrade_max");
+            NextBonusDescription.text = "";
             CostText.text = "";
             UpgradeButton.interactable = false;
         }

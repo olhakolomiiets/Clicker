@@ -1,53 +1,58 @@
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Purchasing;
 
 namespace Samples.Purchasing.IAP5.Demo
 {
     public class IAPPaywallCallbacks
     {
-        PaywallManager m_PaywallManager;
+        readonly PaywallManager m_PaywallManager;
+
         public IAPPaywallCallbacks(PaywallManager paywallManager)
         {
             m_PaywallManager = paywallManager;
         }
+
         public void OnInitialProductsFetched(List<Product> products)
         {
-            // m_PaywallManager.m_IAPLogger.LogConsole("===========");
-            // m_PaywallManager.m_IAPLogger.LogConsole("OnInitialProductsFetched:");
-            // m_PaywallManager.m_IAPLogger.LogFetchedProducts(products);
+            Debug.Log($"[IAP] Products fetched: {products.Count}");
             m_PaywallManager.UpdateActivePurchaseButtons();
             m_PaywallManager.FetchExistingPurchases();
         }
+
         public void OnInitialProductsFetchFailed(ProductFetchFailed failure)
         {
-            // m_PaywallManager.m_IAPLogger.LogConsole("===========");
-            // m_PaywallManager.m_IAPLogger.LogConsole("OnInitialProductsFetchFailed:");
-            // m_PaywallManager.m_IAPLogger.LogConsole(failure.FailureReason);
+            Debug.LogWarning($"[IAP] Products fetch failed: {failure.FailureReason}");
+            m_PaywallManager.UpdateActivePurchaseButtons();
         }
+
         public void OnExistingPurchasesFetched(Orders existingOrders)
         {
-            //m_PaywallManager.m_IAPLogger.LogConsole("===========");
-            //m_PaywallManager.m_IAPLogger.LogConsole("OnExistingPurchasesFetched:");
-            //m_PaywallManager.m_IAPLogger.LogConsole(PaywallManager.IsReceiptAvailable(existingOrders) ? "Success - Found Existing Orders with receipts" : "Notice: - No Existing Orders with receipts");
-        }
-        public void OnExistingPurchasesFetchFailed(PurchasesFetchFailureDescription failure)
-        {
-            // m_PaywallManager.m_IAPLogger.LogConsole("===========");
-            // m_PaywallManager.m_IAPLogger.LogConsole("OnExistingPurchasesFetchFailed:");
-            // m_PaywallManager.m_IAPLogger.LogConsole(failure.Message);
-        }
-        public void OnPurchasePending(PendingOrder order)
-        {
-            foreach (var cartItem in order.CartOrdered.Items())
-            {
-                var product = cartItem.Product;
+            m_PaywallManager.HandlePurchasesFetched(existingOrders);
+            if (existingOrders == null)
+                return;
 
-                //m_PaywallManager.m_IAPLogger.LogCompletedPurchase(product, order.Info);
-                m_PaywallManager.ValidatePurchaseIfPossible(order.Info);
+            foreach (var order in existingOrders.PendingOrders)
+            {
+                m_PaywallManager.QueuePendingOrder(order);
             }
 
-            m_PaywallManager.ConfirmOrderIfAutomatic(order);
+            Debug.Log("[IAP] Existing purchases fetched.");
+            m_PaywallManager.UpdateActivePurchaseButtons();
         }
+
+        public void OnExistingPurchasesFetchFailed(PurchasesFetchFailureDescription failure)
+        {
+            Debug.LogWarning($"[IAP] Purchases fetch failed: {failure.Message}");
+            m_PaywallManager.HandlePurchasesFetchFailed();
+            m_PaywallManager.UpdateActivePurchaseButtons();
+        }
+
+        public void OnPurchasePending(PendingOrder order)
+        {
+            m_PaywallManager.HandlePurchasePending(order);
+        }
+
         public void OnPurchaseConfirmed(Order order)
         {
             switch (order)
@@ -63,38 +68,26 @@ namespace Samples.Purchasing.IAP5.Demo
 
         void OnConfirmationFailed(FailedOrder failedOrder)
         {
-            var reason = failedOrder.FailureReason;
-
-            foreach (var cartItem in failedOrder.CartOrdered.Items())
-            {
-                //m_PaywallManager.m_IAPLogger.LogFailedConfirmation(cartItem.Product, reason);
-            }
+            m_PaywallManager.HandlePurchaseConfirmation(failedOrder);
+            Debug.LogWarning($"[IAP] Purchase confirmation failed: {failedOrder.FailureReason}");
         }
 
         public void OnPurchaseConfirmed(ConfirmedOrder order)
         {
-            foreach (var cartItem in order.CartOrdered.Items())
-            {
-                var product = cartItem.Product;
-
-                //m_PaywallManager.m_IAPLogger.LogConfirmedOrder(product, order.Info);
-            }
+            m_PaywallManager.HandlePurchaseConfirmation(order);
+            Debug.Log("[IAP] Purchase confirmed.");
         }
+
         public void OnPurchaseFailed(FailedOrder failedOrder)
         {
-            var reason = failedOrder.FailureReason;
-
-            foreach (var cartItem in failedOrder.CartOrdered.Items())
-            {
-                //m_PaywallManager.m_IAPLogger.LogFailedPurchase(cartItem.Product, reason);
-            }
+            m_PaywallManager.HandlePurchaseFailed(failedOrder);
+            Debug.LogWarning($"[IAP] Purchase failed: {failedOrder.FailureReason}");
         }
+
         public void OnOrderDeferred(DeferredOrder deferredOrder)
         {
-            foreach (var cartItem in deferredOrder.CartOrdered.Items())
-            {
-                //m_PaywallManager.m_IAPLogger.LogDeferredPurchase(cartItem.Product);
-            }
+            m_PaywallManager.HandlePurchaseDeferred(deferredOrder);
+            Debug.Log("[IAP] Purchase deferred.");
         }
     }
 }

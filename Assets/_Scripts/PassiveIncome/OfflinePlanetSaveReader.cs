@@ -29,7 +29,8 @@ public static class OfflinePlanetSaveReader
 
         // Read only after all pending transactions are recovered.
         if (PlayerPrefs.HasKey(PendingTransactionKey) ||
-            PlayerPrefs.HasKey(PendingExchangeTransactionKey))
+            PlayerPrefs.HasKey(PendingExchangeTransactionKey) ||
+            SaveSystem.IsIapRecoveryRequired)
         {
             error = "Pending economy transaction recovery is required.";
             return false;

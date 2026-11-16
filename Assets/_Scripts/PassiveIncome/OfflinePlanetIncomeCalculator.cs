@@ -7,7 +7,8 @@ public static class OfflinePlanetIncomeCalculator
         GameDataSave save,
         MetaUpgradeEffects effects,
         out double moneyPerSec,
-        out string error)
+        out string error,
+        bool? permanentBooster = null)
     {
         moneyPerSec = 0d;
         error = null;
@@ -34,16 +35,7 @@ public static class OfflinePlanetIncomeCalculator
             return false;
         }
 
-        double booster = save.BoosterMultiplier;
-
-        if (!IsFinite(booster) || booster < 0d)
-        {
-            error = "Invalid BoosterMultiplier.";
-            return false;
-        }
-
-        if (booster == 0d)
-            booster = 1d;
+        double booster = (permanentBooster ?? save.IsBoosterPurchased) ? 2d : 1d;
 
         double total = 0d;
 

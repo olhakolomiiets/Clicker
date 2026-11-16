@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,77 +7,69 @@ namespace Samples.Purchasing.IAP5.Demo
     [RequireComponent(typeof(Button))]
     public class ProductPurchaseButtonHelper : MonoBehaviour
     {
-        public PaywallManager paywallManager;
-
         public string productId;
-        public bool consumePurchase = true;
+        public TextMeshProUGUI priceText;
 
-        public Text titleText;
-        public Text descriptionText;
-        public Text priceText;
+        private Button m_Button;
+        private PaywallManager m_RegisteredPaywall;
+
+        void Awake()
+        {
+            m_Button = GetComponent<Button>();
+        }
 
         void Start()
         {
-            ConfigureButton();
-        }
-
-        void ConfigureButton()
-        {
-            var button = GetComponent<Button>();
-
-            if (button)
+            // When a scene starts directly, the paywall may awaken after this button's OnEnable.
+            if (m_RegisteredPaywall == null)
             {
-                button.onClick.AddListener(PurchaseProduct);
+                RegisterWithPaywall();
+                UpdateText();
             }
-
-            if (string.IsNullOrEmpty(productId))
-            {
-                Debug.LogError("ProductPurchaseButtonHelper productId is empty");
-            }
-
-            if (paywallManager == null)
-            {
-                Debug.LogError("ProductPurchaseButtonHelper paywallManager is unassigned");
-            }
-        }
-
-        void PurchaseProduct()
-        {
-            paywallManager.InitiatePurchase(productId);
         }
 
         void OnEnable()
         {
-            paywallManager?.RegisterButton(this);
-
+            m_Button.onClick.AddListener(PurchaseProduct);
+            RegisterWithPaywall();
             UpdateText();
         }
 
         void OnDisable()
         {
-            paywallManager?.UnregisterButton(this);
+            if (m_Button != null)
+                m_Button.onClick.RemoveListener(PurchaseProduct);
+
+            if (m_RegisteredPaywall != null)
+                m_RegisteredPaywall.UnregisterButton(this);
+
+            m_RegisteredPaywall = null;
+        }
+
+        void RegisterWithPaywall()
+        {
+            m_RegisteredPaywall = PaywallManager.Instance;
+            if (m_RegisteredPaywall != null)
+                m_RegisteredPaywall.RegisterButton(this);
+        }
+
+        void PurchaseProduct()
+        {
+            PaywallManager manager = PaywallManager.Instance;
+            if (manager != null && !string.IsNullOrWhiteSpace(productId))
+                manager.InitiatePurchase(productId);
         }
 
         internal void UpdateText()
         {
-            var product = paywallManager?.FindProduct(productId);
-            if (product != null)
-            {
-                if (titleText != null)
-                {
-                    titleText.text = product.metadata.localizedTitle;
-                }
+            PaywallManager manager = PaywallManager.Instance;
+            var product = manager != null ? manager.FindProduct(productId) : null;
+            string localizedPrice = product?.metadata?.localizedPriceString;
 
-                if (descriptionText != null)
-                {
-                    descriptionText.text = product.metadata.localizedDescription;
-                }
+            if (priceText != null)
+                priceText.text = string.IsNullOrWhiteSpace(localizedPrice) ? "—" : localizedPrice;
 
-                if (priceText != null)
-                {
-                    priceText.text = product.metadata.localizedPriceString;
-                }
-            }
+            m_Button.interactable = manager != null && manager.CanInitiatePurchase(productId);
         }
     }
 }

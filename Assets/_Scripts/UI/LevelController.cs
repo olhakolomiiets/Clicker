@@ -64,8 +64,21 @@ public class LevelController : MonoBehaviour
 
     private void Start()
     {
-        level = SceneManager.GetActiveScene().buildIndex + 1;
-        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! LevelController /// Start /// Scene Index: " + level);
+        if (!LastSceneLoader.TryGetSceneId(
+                gameObject.scene.name,
+                out int sceneId))
+        {
+            Debug.LogError(
+                $"[LevelController] Unknown scene: {gameObject.scene.name}",
+                this
+            );
+
+            return;
+        }
+
+        level = sceneId + 1;
+
+        Debug.Log("!!!!!!!!!!!!-------------!!!!!!!!!! " + "LevelController /// Start /// Level: " + level);
 
         UpdateLevelButtons();
         UpdateBuyButtons();
@@ -73,7 +86,6 @@ public class LevelController : MonoBehaviour
         if (_moneyChecker == null)
             _moneyChecker = StartCoroutine(CheckMoneyRoutine());
     }
-
     private IEnumerator CheckMoneyRoutine()
     {
         yield return new WaitUntil(() => data != null && generalData != null);
@@ -188,17 +200,29 @@ public class LevelController : MonoBehaviour
         if (generalData == null)
             return;
 
+        string sceneName = LastSceneLoader.GetSceneName(sceneIndex);
+
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            Debug.LogError(
+                $"[LevelController] Unknown scene ID: {sceneIndex}",
+                this
+            );
+
+            return;
+        }
+
         bool isFree = sceneIndex < FreeScenesCount;
-        bool isUnlocked = isFree || generalData.ActivePlanet > sceneIndex;
+        bool isUnlocked =
+            isFree || generalData.ActivePlanet > sceneIndex;
 
         if (isUnlocked)
         {
-            SceneManager.LoadScene(sceneIndex);
-            PlayerPrefs.SetInt("SavedScene", sceneIndex);
+            SceneManager.LoadScene(sceneName);
 
             Debug.Log(
-                "LevelController /// LoadSceene /// Scene Index: " +
-                sceneIndex
+                "LevelController /// LoadSceene /// Scene: " +
+                sceneName
             );
         }
         else

@@ -38,7 +38,7 @@ public class Interstitial : MonoBehaviour
             return;
         }
 
-        if (PlayerPrefs.GetInt("adsRemoved") == 0)
+        if (!SaveSystem.HasRemovedAds)
         {
             if ((Time.time - lastAdTime) > (float)delayBetweenAds)
             {
@@ -51,6 +51,9 @@ public class Interstitial : MonoBehaviour
     }
     public void ShowInterstitialAd()
     {
+        if (SaveSystem.HasRemovedAds)
+            return;
+
         _adController.ShowAd();
 
         FirebaseAnalytics.LogEvent(name: "interstitial_ad_showed");

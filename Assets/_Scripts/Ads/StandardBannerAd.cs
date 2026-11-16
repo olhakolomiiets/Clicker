@@ -8,7 +8,7 @@ public class StandardBannerAd : MonoBehaviour
 
     private void OnEnable()
     {
-        if (PlayerPrefs.GetInt("adsRemoved") == 0)
+        if (!SaveSystem.HasRemovedAds)
         {
             _adController.LoadAd();
         }

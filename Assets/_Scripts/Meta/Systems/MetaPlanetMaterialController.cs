@@ -7,6 +7,10 @@ public class MetaPlanetMaterialController : MonoBehaviour
     [SerializeField] private string controllerId = "PlanetMaterials";
     [SerializeField] private MetaPlanetMaterialData data;
 
+    [SerializeField] private MetaGameRules _metaGameRules;
+    [SerializeField] private GameManager _gameManager;
+    private const int DefaultMaterialIndex = 3; // Mat4
+
     [Header("Targets")]
     [SerializeField] private List<MeshRenderer> largeRenderers = new();
     [SerializeField] private List<MeshRenderer> smallRenderers = new();
@@ -19,11 +23,34 @@ public class MetaPlanetMaterialController : MonoBehaviour
 
     public event Action OnMaterialSelected;
 
+    public IReadOnlyList<PlanetMaterialVariant> Materials => data != null && data.Materials != null
+        ? data.Materials
+        : Array.Empty<PlanetMaterialVariant>();
+
     private void Start()
     {
         InitStateIfNeeded();
         LoadFromES3();
+
+        bool defaultUnlockedNow = false;
+
+        if (IsValidIndex(DefaultMaterialIndex) &&
+            !state[DefaultMaterialIndex].isBought)
+        {
+            state[DefaultMaterialIndex].isBought = true;
+            defaultUnlockedNow = true;
+        }
+
         ApplyVisualStateFromFlags();
+
+        if (activeMaterialId < 0 && IsValidIndex(DefaultMaterialIndex))
+        {
+            SelectMaterial(DefaultMaterialIndex);
+        }
+        else if (defaultUnlockedNow)
+        {
+            SaveToES3();
+        }
     }
 
     private void InitStateIfNeeded()
@@ -43,12 +70,45 @@ public class MetaPlanetMaterialController : MonoBehaviour
             state.Add(new PlanetMaterialSaveData());
     }
 
-    public void BuyMaterial(int index)
+    public bool BuyMaterial(int index)
     {
-        if (!IsValidIndex(index)) return;
+        if (!IsValidIndex(index))
+            return false;
+
+        if (state[index].isBought)
+        {
+            SelectMaterial(index);
+            return true;
+        }
+
+        double price = data.Materials[index].Price;
+
+        if (double.IsNaN(price) ||
+            double.IsInfinity(price) ||
+            price < 0d)
+        {
+            Debug.LogWarning(
+                $"[MetaPlanetMaterialController] Invalid material price: {price}");
+            return false;
+        }
+
+        if (_metaGameRules == null || _gameManager == null)
+        {
+            Debug.LogError(
+                "[MetaPlanetMaterialController] GameRules or GameManager is missing");
+            return false;
+        }
+
+        if (!_metaGameRules.TryHandleVariantItem(price))
+            return false;
 
         state[index].isBought = true;
         SelectMaterial(index);
+
+        _gameManager.SaveGeneralGameData();
+        PlayerPrefs.Save();
+
+        return true;
     }
 
     public void SelectMaterial(int index)

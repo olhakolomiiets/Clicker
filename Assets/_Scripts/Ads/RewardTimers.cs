@@ -20,8 +20,7 @@ public class RewardTimers : MonoBehaviour
     [SerializeField] private List<ItemData> _creationItemsDataList;
 
     private DateTime endTime;
-    private DateTime startTime;
-    private int _boosterTime;
+    private IEnumerator _boosterTimerRoutine;
     private int timeLeft;
     private bool isTimeSaved = true;
     public bool isBoosterTimerActive;
@@ -37,6 +36,9 @@ public class RewardTimers : MonoBehaviour
     {
         _rewardsManager.OnRewardReceived.AddListener(StartMeteorCoroutine);
         _rewardsManager.OnEarningBoosterReward += SetBoosterTimer;
+
+        if (isBoosterTimerActive && !isTimeSaved)
+            StartBoosterTimer();
     }
 
     void Start()
@@ -106,26 +108,46 @@ public class RewardTimers : MonoBehaviour
 
     private void SetBoosterTimer(int time, bool isReward)
     {
-        DateTime now = DateTime.Now;
-        int day = now.Day;
-        int hour = now.Hour;
-        int minute = now.Minute;
-        int second = now.Second;
-
-        startTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-
         if (isReward)
             timeLeft += time;
         else
             timeLeft = time;
 
+        if (timeLeft <= 0)
+        {
+            StopBoosterTimer();
+            DisableCoinsBooster();
+            return;
+        }
+
+        DateTime now = DateTime.Now;
+        DateTime startTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
         endTime = startTime.AddSeconds(timeLeft);
 
-        _boosterTimer.SetActive(true);
-        OnSetBoosterTimer?.Invoke();
+        isTimeSaved = false;
         isBoosterTimerActive = true;
+        _boosterTimer.SetActive(true);
+        StartBoosterTimer();
+        if (isBoosterTimerActive)
+            OnSetBoosterTimer?.Invoke();
+    }
 
-        StartCoroutine(UpdateCoinsBoosterTimer());
+    private void StartBoosterTimer()
+    {
+        if (_boosterTimerRoutine != null)
+            return;
+
+        _boosterTimerRoutine = UpdateCoinsBoosterTimer();
+        StartCoroutine(_boosterTimerRoutine);
+    }
+
+    private void StopBoosterTimer()
+    {
+        if (_boosterTimerRoutine == null)
+            return;
+
+        StopCoroutine(_boosterTimerRoutine);
+        _boosterTimerRoutine = null;
     }
 
     IEnumerator UpdateCoinsBoosterTimer()
@@ -134,15 +156,15 @@ public class RewardTimers : MonoBehaviour
         {
             TimeSpan timeRemaining = endTime - DateTime.Now;
 
-            _timerTxt.text = string.Format("{0:D2}:{1:D2}", timeRemaining.Minutes, timeRemaining.Seconds);
-
-            timeLeft = (int)timeRemaining.TotalSeconds;
-
             if (timeRemaining.Ticks <= 0)
             {
+                _boosterTimerRoutine = null;
                 DisableCoinsBooster();
                 yield break;
             }
+
+            timeLeft = (int)timeRemaining.TotalSeconds;
+            _timerTxt.text = string.Format("{0:D2}:{1:D2}", timeRemaining.Minutes, timeRemaining.Seconds);
 
             yield return new WaitForSeconds(1f);
         }
@@ -150,48 +172,51 @@ public class RewardTimers : MonoBehaviour
 
     private void DisableCoinsBooster()
     {
+        timeLeft = 0;
+        if (!isBoosterTimerActive)
+            return;
+
         isBoosterTimerActive = false;
-        OnEndBoosterTimer?.Invoke();
         _boosterTimer.SetActive(false);
+        OnEndBoosterTimer?.Invoke();
     }
 
     private void SaveTimerState()
     {
+        timeLeft = isBoosterTimerActive ? Math.Max(0, (int)(endTime - DateTime.Now).TotalSeconds) : 0;
         PlayerPrefs.SetInt("BoosterTimeRemaining", timeLeft);
         isTimeSaved = true;
-        StopCoroutine(UpdateCoinsBoosterTimer());
+        StopBoosterTimer();
+        if (timeLeft == 0)
+            DisableCoinsBooster();
     }
 
     private void LoadTimerState()
     {
-        if (PlayerPrefs.HasKey("BoosterTimeRemaining"))
-        {
-            _boosterTime = PlayerPrefs.GetInt("BoosterTimeRemaining");
-
-            _boosterTimer.SetActive(true);
-            SetBoosterTimer(_boosterTime, false);
-
-            isTimeSaved = false;
-        }
+        isTimeSaved = false;
+        SetBoosterTimer(PlayerPrefs.GetInt("BoosterTimeRemaining", 0), false);
     }
 
     private void OnApplicationPause(bool pauseStatus)
     {
         if (pauseStatus)
         {
-            SaveTimerState();
+            if (!isTimeSaved)
+                SaveTimerState();
             Debug.Log("Reward Timers /// OnApplicationPause() /// Save");
         }
         else
         {
             if (isTimeSaved)
                 LoadTimerState();
-                Debug.Log("Reward Timers /// OnApplicationPause() /// Load");
+            Debug.Log("Reward Timers /// OnApplicationPause() /// Load");
         }
     }
 
     private void OnDisable()
     {
-        _rewardsManager.OnCoinsRewardReceived.RemoveListener(StartMeteorCoroutine);
+        _rewardsManager.OnRewardReceived.RemoveListener(StartMeteorCoroutine);
+        _rewardsManager.OnEarningBoosterReward -= SetBoosterTimer;
+        StopBoosterTimer();
     }
 }

@@ -94,7 +94,6 @@ namespace PlanetBuilder.Messages.Tutorial
         [Header("Scene Transition")]
         [SerializeField] private PlanetLoadingScreen _planetLoadingScreen;
         [SerializeField] private string _firstPlanetSceneName = "PlanetLevel1";
-        [SerializeField] private int _firstPlanetSceneIndex = 0;
 
         [Header("Typing")]
         [Min(0f)]
@@ -3157,19 +3156,26 @@ namespace PlanetBuilder.Messages.Tutorial
             PlayerPrefs.DeleteKey(TutorialStageKey);
             PlayerPrefs.Save();
 
-            if (!string.IsNullOrEmpty(_firstPlanetSceneName) && Application.CanStreamedLevelBeLoaded(_firstPlanetSceneName))
+            if (!string.IsNullOrEmpty(_firstPlanetSceneName) &&
+                Application.CanStreamedLevelBeLoaded(_firstPlanetSceneName))
             {
-                if (_planetLoadingScreen != null)
-                    _planetLoadingScreen.LoadBuiltInScene(_firstPlanetSceneName, waitForFirstCycle: false);
+                if (PlanetLoadingScreen.Instance != null)
+                {
+                    PlanetLoadingScreen.Instance.LoadBuiltInScene(
+                        _firstPlanetSceneName,
+                        waitForFirstCycle: false);
+                }
                 else
+                {
                     SceneManager.LoadScene(_firstPlanetSceneName);
+                }
+
                 return;
             }
 
-            if (Application.CanStreamedLevelBeLoaded(_firstPlanetSceneIndex))
-                SceneManager.LoadScene(_firstPlanetSceneIndex);
-            else
-                Debug.LogWarning("Meta Planet tutorial completed, but the first planet scene is not available in Build Settings.", this);
+            Debug.LogWarning(
+                "Meta Planet tutorial completed, but the first planet scene is not available in Build Settings.",
+                this);
         }
 
         private void ShowBlocker()

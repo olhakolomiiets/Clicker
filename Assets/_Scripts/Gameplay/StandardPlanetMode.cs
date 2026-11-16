@@ -27,7 +27,7 @@ public class StandardPlanetMode : MonoBehaviour, IPlanetMode
         PrepareGameData();
         PrepareUI();
 
-        _gameRules.PrepareGameData(_gameData, _generalGameData);
+        _gameRules.PrepareGameData(_gameData, _generalGameData, _rewardTimers);
     }
 
     public void UpdateData()
@@ -50,6 +50,13 @@ public class StandardPlanetMode : MonoBehaviour, IPlanetMode
     public string Save()
     {
         return _gameData.GetSaveData();
+    }
+
+    internal bool HasInitializedIapData => _gameData != null;
+
+    public void ApplySavedIapMoney(double money)
+    {
+        _gameData.Money = money;
     }
 
     private void PrepareGameData()

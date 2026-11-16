@@ -8,9 +8,9 @@ public class MetaPlanetCurrencyExchange : MonoBehaviour
     public class PlanetSettings
     {
         public int planetId;
-        public double baseIncomePerSecond = 1;
-        public double baseDiamondPrice = 1800;
+        public double minDiamondPrice = 100d;
         public Sprite currencyIcon;
+        public Sprite planetIcon;
     }
 
     public struct ExchangeQuote
@@ -34,8 +34,6 @@ public class MetaPlanetCurrencyExchange : MonoBehaviour
     [Header("Planet currencies")]
     [SerializeField] private List<PlanetSettings> planets = new List<PlanetSettings>();
 
-    [Header("Exchange settings")]
-    [SerializeField, Range(1f, 2f)] private float inflationPower = 1.15f;
     private readonly Dictionary<int, double> _openRates = new();
     private bool _isOpen;
     private bool isInitialized;
@@ -124,6 +122,14 @@ public class MetaPlanetCurrencyExchange : MonoBehaviour
         return settings != null ? settings.currencyIcon : null;
     }
 
+    public Sprite GetPlanetIcon(int planetId)
+    {
+        PlanetSettings settings = planets.Find(
+            p => p != null && p.planetId == planetId);
+
+        return settings != null ? settings.planetIcon : null;
+    }
+
     public ExchangeResult TryExchange(ExchangeQuote approvedQuote, int diamonds, Func<int, double, int, bool> commitTransaction, out double spentCurrency)
     {
         spentCurrency = 0d;
@@ -164,24 +170,31 @@ public class MetaPlanetCurrencyExchange : MonoBehaviour
 
     private double CalculatePrice(PlanetSettings settings, double incomePerSecond)
     {
-        double growth = Math.Max(1d, incomePerSecond / settings.baseIncomePerSecond);
-
-        return Math.Ceiling(settings.baseDiamondPrice * Math.Pow(growth, inflationPower));
+        return Math.Ceiling(
+            Math.Max(settings.minDiamondPrice, incomePerSecond * 60d)
+        );
     }
 
     private void ValidateConfiguration()
     {
-        if (float.IsNaN(inflationPower) || float.IsInfinity(inflationPower) || inflationPower < 1f || inflationPower > 2f || planets == null || planets.Count == 0)
+        if (planets == null || planets.Count == 0)
         {
-            throw new InvalidOperationException("Exchange Inspector configuration is invalid.");
+            throw new InvalidOperationException(
+                "Exchange Inspector configuration is invalid."
+            );
         }
 
         var knownIds = new HashSet<int>();
+
         foreach (PlanetSettings settings in planets)
         {
-            if (settings == null || !knownIds.Add(settings.planetId) || !IsValidPrice(settings.baseIncomePerSecond) || !IsValidPrice(settings.baseDiamondPrice))
+            if (settings == null ||
+                !knownIds.Add(settings.planetId) ||
+                !IsValidPrice(settings.minDiamondPrice))
             {
-                throw new InvalidOperationException("Planet exchange configuration is invalid.");
+                throw new InvalidOperationException(
+                    "Planet exchange configuration is invalid."
+                );
             }
         }
     }

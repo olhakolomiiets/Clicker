@@ -108,6 +108,7 @@ public class MetaPlanetMode : MonoBehaviour, IPlanetMode
 
         _currencyExchange.OpenExchange();
         _exchangeEffects.Rebuild(_exchangeCatalog.MetaUpgradeConfigs);
+        bool hasPurchasedCoinsBooster = SaveSystem.HasPurchasedCoinsBooster;
 
 
         foreach (int planetId in GetExchangeAvailablePlanetIds())
@@ -118,7 +119,13 @@ public class MetaPlanetMode : MonoBehaviour, IPlanetMode
                 continue;
             }
 
-            if (!OfflinePlanetIncomeCalculator.TryCalculate(entry, planetSave, _exchangeEffects, out double moneyPerSecond, out error))
+            if (!OfflinePlanetIncomeCalculator.TryCalculate(
+                    entry,
+                    planetSave,
+                    _exchangeEffects,
+                    out double moneyPerSecond,
+                    out error,
+                    permanentBooster: hasPurchasedCoinsBooster))
             {
                 Debug.LogWarning($"[CurrencyExchange] Planet {planetId}: {error}");
                 continue;
@@ -127,7 +134,6 @@ public class MetaPlanetMode : MonoBehaviour, IPlanetMode
             if (_currencyExchange.SetRate(planetId, moneyPerSecond))
                 availablePlanets.Add(planetId);
         }
-
 
         return availablePlanets;
     }

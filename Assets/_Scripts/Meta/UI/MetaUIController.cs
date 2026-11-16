@@ -9,6 +9,7 @@ using UnityEngine.UI;
 using PlanetBuilder.Messages;
 using TMPro;
 using System.Collections.Generic;
+using Lean.Localization;
 
 public class MetaUIController : MonoBehaviour
 {
@@ -288,7 +289,17 @@ public class MetaUIController : MonoBehaviour
         var options = new List<TMP_Dropdown.OptionData>();
 
         foreach (int planetId in _exchangePlanetIds)
-            options.Add(new TMP_Dropdown.OptionData($"Planet {planetId}"));
+        {
+            Sprite icon = _exchangeCurrencyController != null
+                ? _exchangeCurrencyController.GetPlanetIcon(planetId)
+                : null;
+
+            options.Add(new TMP_Dropdown.OptionData(
+                $"Planet {planetId}")
+            {
+                image = icon
+            });
+        }
 
         if (options.Count == 0)
             options.Add(new TMP_Dropdown.OptionData("No available planets"));
@@ -367,6 +378,23 @@ public class MetaUIController : MonoBehaviour
             _exchangePlanetBalanceCurrencyIcon.enabled = icon != null;
         }
     }
+
+    private void SetExchangeStatus(string key, string fallback = "")
+    {
+        var localized = _exchangeStatusText.GetComponent<LeanLocalizedTextMeshProUGUI>();
+
+        if (localized == null)
+        {
+            _exchangeStatusText.text = string.IsNullOrEmpty(key)
+                ? fallback
+                : LeanLocalization.GetTranslationText(key, key);
+            return;
+        }
+
+        localized.FallbackText = fallback;
+        localized.TranslationName = key;
+        localized.UpdateLocalization();
+    }
     private void RefreshExchangePreview()
     {
         UpdateExchangeCurrencyIcons(-1);
@@ -374,7 +402,7 @@ public class MetaUIController : MonoBehaviour
         _exchangePlanetBalanceText.text = "—";
         _exchangeDiamondPriceText.text = "—";
         _exchangeTotalCostText.text = "—";
-        _exchangeStatusText.text = "";
+        SetExchangeStatus("exchange_hint");
 
         if (_exchangePlanetIds.Count == 0)
         {
@@ -391,7 +419,7 @@ public class MetaUIController : MonoBehaviour
 
         if (!_exchangeMode.TryGetCurrencyExchangeQuote(planetId, out MetaPlanetCurrencyExchange.ExchangeQuote quote, out double planetMoney, out string error))
         {
-            _exchangeStatusText.text = error;
+            SetExchangeStatus("", error);
             return;
         }
 
@@ -402,7 +430,7 @@ public class MetaUIController : MonoBehaviour
 
         if (!int.TryParse(_exchangeAmountInput.text, out int diamonds) || diamonds <= 0)
         {
-            _exchangeStatusText.text = "Enter a valid diamond amount.";
+            SetExchangeStatus("exchange_enter_amount_error");
             return;
         }
 
@@ -418,7 +446,7 @@ public class MetaUIController : MonoBehaviour
         _exchangeButton.interactable = planetMoney >= cost;
 
         if (!_exchangeButton.interactable)
-            _exchangeStatusText.text = "Not enough planet currency.";
+            SetExchangeStatus("exchange_not_enough_coins");
     }
 
     public void ConfirmExchange()
@@ -427,7 +455,10 @@ public class MetaUIController : MonoBehaviour
             return;
 
         if (!int.TryParse(_exchangeAmountInput.text, out int diamonds) || diamonds <= 0)
+        {
+            SetExchangeStatus("exchange_enter_amount_error");
             return;
+        }
 
         int index = _exchangePlanetDropdown.value;
 
@@ -438,7 +469,7 @@ public class MetaUIController : MonoBehaviour
 
         if (!_exchangeMode.TryGetCurrencyExchangeQuote(planetId, out MetaPlanetCurrencyExchange.ExchangeQuote quote, out _, out string error))
         {
-            _exchangeStatusText.text = error;
+            SetExchangeStatus("", error);
             return;
         }
 
@@ -446,10 +477,19 @@ public class MetaUIController : MonoBehaviour
 
         RefreshExchangePreview();
 
-        _exchangeStatusText.text =
-            result == MetaPlanetCurrencyExchange.ExchangeResult.Success
-                ? "Exchange successful."
-                : error ?? result.ToString();
+        if (result == MetaPlanetCurrencyExchange.ExchangeResult.Success)
+        {
+            SetExchangeStatus("exchange_success");
+        }
+        else if (result == MetaPlanetCurrencyExchange.ExchangeResult.WalletRejected &&
+                 error == "Not enough planet currency.")
+        {
+            SetExchangeStatus("exchange_not_enough_coins");
+        }
+        else
+        {
+            SetExchangeStatus("", error ?? result.ToString());
+        }
     }
 
 

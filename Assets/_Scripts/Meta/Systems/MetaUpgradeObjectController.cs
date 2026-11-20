@@ -26,15 +26,15 @@ public class MetaUpgradeObjectController : MonoBehaviour
     public void PrepareVariantObject(Sprite icon, string translationText)
     {
         _itemImage.sprite = icon;
-        _itemTitle.text = translationText;
         _translationText = translationText;
+        UpdateLanguage();
     }
 
     public void PrepareUpgradeObject(Sprite icon, string translationText)
     {
         _itemImage.sprite = icon;
-        _itemTitle.text = translationText;
         _translationText = translationText;
+        UpdateLanguage();
     }
 
     private void OnEnable()
@@ -72,6 +72,18 @@ public class MetaUpgradeObjectController : MonoBehaviour
     }
     public void UpdateLanguage()
     {
+        if (!string.IsNullOrEmpty(_translationText))
+        {
+            string key = _translationText switch
+            {
+                "Aquarium" => "meta_upgrade_aquarium",
+                "UpgradeHouse_2" => "meta_upgrade_drone_tree",
+                "UpgradeHouse_3" => "meta_upgrade_ships",
+                _ => _translationText
+            };
+            _itemTitle.text = LeanLocalization.GetTranslationText(key, _translationText);
+        }
+
         SetBuyPrice(_currentBuyPrice);
     }
 

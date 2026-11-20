@@ -18,29 +18,26 @@ public class MetaObjectController : MonoBehaviour
 
     public event Action OnObjectAddButtonClicked;
 
-    private void Awake()
-    {
-        _buyButton.onClick.AddListener(HandleBuyButton);
-        //ToggleBuyButton(false);
-    }
     public void PrepareVariantObject(Sprite icon, string translationText)
     {
         _itemImage.sprite = icon;
-        _itemTitle.text = translationText;
         _translationText = translationText;
+        UpdateLanguage();
     }
 
 
     public void PrepareUpgradeObject(Sprite icon, string translationText)
     {
         _itemImage.sprite = icon;
-        _itemTitle.text = translationText;
         _translationText = translationText;
+        UpdateLanguage();
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        //_itemTitle.text = LeanLocalization.GetTranslationText(_translationText);
+        _buyButton.onClick.AddListener(HandleBuyButton);
+        LeanLocalization.OnLocalizationChanged += UpdateLanguage;
+        UpdateLanguage();
     }
 
     private void HandleBuyButton()
@@ -64,11 +61,22 @@ public class MetaObjectController : MonoBehaviour
 
     public void UpdateLanguage()
     {
-        //_itemTitle.text = LeanLocalization.GetTranslationText(_translationText);
+        if (string.IsNullOrEmpty(_translationText))
+            return;
+
+        string key = _translationText switch
+        {
+            "Decorations" => "meta_category_decorations",
+            "Large Weird Stuff" => "meta_category_large_weird_stuff",
+            "Transport" => "meta_category_transport",
+            _ => _translationText
+        };
+        _itemTitle.text = LeanLocalization.GetTranslationText(key, _translationText);
     }
 
     private void OnDisable()
     {
+        LeanLocalization.OnLocalizationChanged -= UpdateLanguage;
         _buyButton.onClick.RemoveListener(HandleBuyButton);
     }
 }

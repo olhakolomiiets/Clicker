@@ -8,9 +8,11 @@ public class MetaUpgradeObjectController : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _itemTitle;
     [SerializeField] private Button _buyButton;
+    [SerializeField] private Image _diamondIcon;
     [SerializeField] private TextMeshProUGUI _buyButtonText;
     [SerializeField] private Image _itemImage;
 
+    private double _currentBuyPrice;
     private string _translationText;
 
     public GameObject BuyButtonGameObject => _buyButton != null ? _buyButton.gameObject : null;
@@ -19,7 +21,6 @@ public class MetaUpgradeObjectController : MonoBehaviour
 
     private void Awake()
     {
-        _buyButton.onClick.AddListener(HandleBuyButton);
         ToggleBuyButton(false);
     }
     public void PrepareVariantObject(Sprite icon, string translationText)
@@ -29,7 +30,6 @@ public class MetaUpgradeObjectController : MonoBehaviour
         _translationText = translationText;
     }
 
-
     public void PrepareUpgradeObject(Sprite icon, string translationText)
     {
         _itemImage.sprite = icon;
@@ -37,9 +37,11 @@ public class MetaUpgradeObjectController : MonoBehaviour
         _translationText = translationText;
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        //_itemTitle.text = LeanLocalization.GetTranslationText(_translationText);
+        _buyButton.onClick.AddListener(HandleBuyButton);
+        LeanLocalization.OnLocalizationChanged += UpdateLanguage;
+        UpdateLanguage();
     }
 
     private void HandleBuyButton()
@@ -49,9 +51,15 @@ public class MetaUpgradeObjectController : MonoBehaviour
 
     public void SetBuyPrice(double price)
     {
-        _buyButtonText.text = price == 0d
-            ? "ADD"
-            : $"ADD {price:G}";
+        _currentBuyPrice = price;
+
+        bool hasPrice = price > 0d;
+
+        _diamondIcon.gameObject.SetActive(hasPrice);
+
+        _buyButtonText.text = hasPrice
+            ? $"{price:G}"
+            : LeanLocalization.GetTranslationText("upgrade_add", "Add");
     }
 
     public void ToggleBuyButton(bool val)
@@ -62,14 +70,14 @@ public class MetaUpgradeObjectController : MonoBehaviour
         _buyButton.gameObject.SetActive(val);
         _buyButton.interactable = val;
     }
-
     public void UpdateLanguage()
     {
-        //_itemTitle.text = LeanLocalization.GetTranslationText(_translationText);
+        SetBuyPrice(_currentBuyPrice);
     }
 
     private void OnDisable()
     {
+        LeanLocalization.OnLocalizationChanged -= UpdateLanguage;
         _buyButton.onClick.RemoveListener(HandleBuyButton);
     }
 }

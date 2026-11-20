@@ -11,6 +11,7 @@ public class UpgradePanelUI : MonoBehaviour
     public Button UpgradeButton;
 
     private MetaUpgradeItemController ctrl;
+    private bool _tutorialPreview;
 
     private DragRotateGPT _planetRotator;
 
@@ -33,14 +34,21 @@ public class UpgradePanelUI : MonoBehaviour
     }
 
 
-    public void Open(MetaUpgradeItemController controller)
+    public void Open(MetaUpgradeItemController controller) => Open(controller, tutorialPreview: false);
+
+    internal void OpenForTutorial(MetaUpgradeItemController controller) => Open(controller, tutorialPreview: true);
+
+    private void Open(MetaUpgradeItemController controller, bool tutorialPreview)
     {
         ctrl = controller;
+        _tutorialPreview = tutorialPreview;
         Refresh();
         gameObject.SetActive(true);
         _planetRotator.enabled = false;
         UpgradeButton.onClick.RemoveAllListeners();
-        UpgradeButton.onClick.AddListener(OnUpgradeClicked);
+
+        if (!_tutorialPreview)
+            UpgradeButton.onClick.AddListener(OnUpgradeClicked);
     }
 
     public void UpdateState(int index)
@@ -91,7 +99,7 @@ public class UpgradePanelUI : MonoBehaviour
             );
 
             CostText.text = next.UpgradeCost.ToString();
-            UpgradeButton.interactable = ctrl.CanUpgrade();
+            UpgradeButton.interactable = !_tutorialPreview && ctrl.CanUpgrade();
         }
         else
         {
@@ -110,7 +118,21 @@ public class UpgradePanelUI : MonoBehaviour
 
     public void Close()
     {
-        _planetRotator.enabled = true;
+        if (_tutorialPreview)
+            return;
+
+        if (_planetRotator != null)
+            _planetRotator.enabled = true;
+
         gameObject.SetActive(false);
+    }
+
+    internal void CloseTutorialPreview()
+    {
+        if (!_tutorialPreview)
+            return;
+
+        _tutorialPreview = false;
+        Close();
     }
 }

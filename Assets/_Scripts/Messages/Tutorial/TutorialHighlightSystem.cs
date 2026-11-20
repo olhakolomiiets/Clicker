@@ -121,6 +121,12 @@ namespace PlanetBuilder.Messages.Tutorial
             return true;
         }
 
+        internal void HideIfShowing(TutorialStepData step)
+        {
+            if (step != null && ReferenceEquals(_step, step))
+                Hide();
+        }
+
         public void Hide()
         {
             if (_highlightImage != null)

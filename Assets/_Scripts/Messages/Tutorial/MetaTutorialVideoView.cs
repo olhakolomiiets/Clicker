@@ -77,7 +77,7 @@ namespace PlanetBuilder.Messages.Tutorial
 
             if (_videoPlayer != null && _videoPlayer.clip != null)
             {
-                _videoPlayer.isLooping = false;
+                _videoPlayer.isLooping = true;
                 _videoPlayer.Play();
             }
             else

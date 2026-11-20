@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using PlanetBuilder.Messages;
+using PlanetBuilder.Messages.Tutorial;
 
 public class DragRotateGPT : MonoBehaviour
 {
@@ -43,6 +45,8 @@ public class DragRotateGPT : MonoBehaviour
     // ƒл€ сохранени€ позиции камеры при анимации
     private Vector3 savedCamPos;
     private bool hasSavedCamPos;
+    private TutorialInteractionOverlay _tutorialOverlay;
+    private bool _waitForTutorialRelease;
 
     void Start()
     {
@@ -57,6 +61,26 @@ public class DragRotateGPT : MonoBehaviour
 
     void Update()
     {
+        if (_tutorialOverlay == null && MessageManager.Instance != null)
+            _tutorialOverlay = MessageManager.Instance.GetComponentInChildren<TutorialInteractionOverlay>(true);
+
+        if (_tutorialOverlay != null && _tutorialOverlay.IsBlockingMetaPlanetInput)
+        {
+            isDragging = false;
+            currentDragRotationSpeed = 0f;
+            currentAutoRotationSpeed = 0f;
+            _waitForTutorialRelease = true;
+            return;
+        }
+
+        if (_waitForTutorialRelease)
+        {
+            if (Input.touchCount > 0 || Input.GetMouseButton(0))
+                return;
+
+            _waitForTutorialRelease = false;
+        }
+
         // ≈сли не происходит автоматическа€ анимаци€ зума, обрабатываем пользовательский ввод
         if (!isAutoZooming)
         {

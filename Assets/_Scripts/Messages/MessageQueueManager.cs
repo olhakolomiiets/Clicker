@@ -73,6 +73,11 @@ namespace PlanetBuilder.Messages
             _messages.Clear();
         }
 
+        internal void RemoveWhere(Predicate<MessageData> matches)
+        {
+            _messages.RemoveWhere(entry => matches(entry.Message));
+        }
+
         private bool ContainsId(string messageId)
         {
             if (string.IsNullOrEmpty(messageId))
@@ -99,6 +104,8 @@ namespace PlanetBuilder.Messages
 
             for (int i = 0; i < _expiredMessages.Count; i++)
                 _messages.Remove(_expiredMessages[i]);
+
+            _expiredMessages.Clear();
         }
 
         private sealed class QueuedMessageComparer : IComparer<QueuedMessage>

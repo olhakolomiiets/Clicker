@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Firebase.Analytics;
+using PlanetBuilder.Messages.Tutorial;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Samples.Purchasing.IAP5.Demo;
@@ -32,7 +33,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PassiveIncomeChestController _passiveIncomeChestController;
 
     private bool _iapGameContextReady;
-    private bool _iapApplicationPaused;
+    private static bool _iapApplicationPaused;
 
     public enum IapGrantResult
     {
@@ -84,6 +85,10 @@ public class GameManager : MonoBehaviour
         }
 
         LoadGeneralGameData();
+
+        // Scene loads restore rewards; only process startup captures offline time here.
+        if (!_iapApplicationPaused && _observedOfflineReturnUtc == DateTime.MinValue)
+            PrepareOfflinePlanetRewards();
 
         _generalGameData.MetaUpgradeEffects = new MetaUpgradeEffects();
         _generalGameData.MetaUpgradeEffects.Rebuild(_metaUpgradeConfigs);
@@ -177,13 +182,19 @@ public class GameManager : MonoBehaviour
             standardMode.TryActivatePassiveIncome();
         }
 
-        if (LastSceneLoader.TryGetSceneId(gameObject.scene.name, out int sceneId))
+        string sceneName = gameObject.scene.name;
+        if (LastSceneLoader.TryGetSceneId(sceneName, out int sceneId))
         {
+            bool shouldSave = sceneName == "PlanetLevel1" && MetaPlanetTutorialController.ConfirmFirstPlanetArrival();
+
             if (!PlayerPrefs.HasKey("SavedScene") || PlayerPrefs.GetInt("SavedScene") != sceneId)
             {
                 PlayerPrefs.SetInt("SavedScene", sceneId);
-                PlayerPrefs.Save();
+                shouldSave = true;
             }
+
+            if (shouldSave)
+                PlayerPrefs.Save();
         }
 
         // Journal recovery can finish after the shop's OnEnable.
@@ -465,6 +476,7 @@ public class GameManager : MonoBehaviour
     {
         _observedOfflineExitTime = null;
         _observedOfflineReturnUtc = DateTime.MinValue;
+        _iapApplicationPaused = false;
     }
 
     private DateTime ObserveOfflineReturnUtc()
@@ -679,8 +691,14 @@ public class GameManager : MonoBehaviour
 
     public void SaveGame()
     {
+        if (TrySavePlanetSnapshot())
+            _isGameSaved = true;
+    }
+
+    internal bool TrySavePlanetSnapshot()
+    {
         if (_planetMode == null)
-            return;
+            return false;
 
         List<string> dataToSave = new()
         {
@@ -688,8 +706,7 @@ public class GameManager : MonoBehaviour
         };
 
         _saveSystem.SaveThePlanet(dataToSave);
-
-        _isGameSaved = true;
+        return true;
     }
 
     public void LoadSavedData()
@@ -701,6 +718,11 @@ public class GameManager : MonoBehaviour
 
         if (data.Count > 0)
             _planetMode.Load(data[0]);
+        else if (gameObject.scene.name == "PlanetLevel1" && _planetMode is StandardPlanetMode standardMode)
+        {
+            // Apply the starting SmallTree through the same visual path as a saved planet.
+            standardMode.Load(string.Empty);
+        }
 
         _isGameSaved = false;
     }
@@ -729,7 +751,10 @@ public class GameManager : MonoBehaviour
             $"LastCalculated={_generalGameData.LastCalculatedExitTime} | " +
             $"Pending={_generalGameData.PendingOfflineSeconds}s"
         );
+    }
 
+    private void PrepareOfflinePlanetRewards()
+    {
         if (CaptureOfflinePlanetRewards(ObserveOfflineReturnUtc()))
         {
             SaveGeneralGameData();
@@ -750,6 +775,10 @@ public class GameManager : MonoBehaviour
 
     private void OnApplicationPause(bool pauseStatus)
     {
+        if (_generalGameData == null || _planetMode == null ||
+            pauseStatus == _iapApplicationPaused)
+            return;
+
         if (SaveSystem.IsIapRecoveryRequired)
         {
             UnregisterIapGameContext();
@@ -782,9 +811,10 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (_isGameSaved)
+            if (_iapApplicationPaused)
             {
                 LoadGeneralGameData();
+                PrepareOfflinePlanetRewards();
                 LoadSavedData();
                 Debug.Log("GameManager /// OnApplicationPause /// Load");
 
@@ -801,6 +831,12 @@ public class GameManager : MonoBehaviour
                 PaywallManager.Instance?.RegisterGameContext(this);
             }
         }
+    }
+
+    private void OnApplicationQuit()
+    {
+        // Keep the original background timestamp when quitting after a pause.
+        OnApplicationPause(true);
     }
 
     private void OnDisable()

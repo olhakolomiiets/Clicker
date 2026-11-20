@@ -15,11 +15,15 @@ public class PassiveIncomeChestController : MonoBehaviour
     private string _planetKey;
 
     private GameObject _activeChest;
+    private PassiveIncomePop _activeChestPop;
     private string _activeRewardId;
     private int _activeSpawnIndex = -1;
     private int _activePrefabIndex = -1;
 
     private bool _initialized;
+
+    internal PassiveIncomePop AvailableChest =>
+        isActiveAndEnabled && _activeChestPop != null && _activeChestPop.IsAvailable ? _activeChestPop : null;
 
     public void Initialize(GeneralGameData generalData, string planetKey)
     {
@@ -165,6 +169,7 @@ public class PassiveIncomeChestController : MonoBehaviour
             oldClick.enabled = false;
 
         _activeChest = instance;
+        _activeChestPop = pop;
         _activeRewardId = rewardId;
         _activeSpawnIndex = spawnIndex;
         _activePrefabIndex = prefabIndex;
@@ -201,6 +206,7 @@ public class PassiveIncomeChestController : MonoBehaviour
             Destroy(_activeChest);
 
         _activeChest = null;
+        _activeChestPop = null;
         _activeRewardId = null;
         _activeSpawnIndex = -1;
         _activePrefabIndex = -1;

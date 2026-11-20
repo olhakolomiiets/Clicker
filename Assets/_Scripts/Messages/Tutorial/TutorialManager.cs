@@ -29,6 +29,7 @@ namespace PlanetBuilder.Messages.Tutorial
         [SerializeField] private TutorialHighlightSystem _highlightSystem;
 
         private int _currentStepIndex = -1;
+        private object _configurationOwner;
         private Button _targetButton;
         private TutorialTargetClickRelay _targetClickRelay;
 
@@ -48,7 +49,8 @@ namespace PlanetBuilder.Messages.Tutorial
             List<TutorialStepData> steps,
             string progressKey,
             string completedKey,
-            bool startAutomatically = false)
+            bool startAutomatically = false,
+            object owner = null)
         {
             if (IsRunning)
             {
@@ -59,6 +61,7 @@ namespace PlanetBuilder.Messages.Tutorial
             _steps = steps ?? new List<TutorialStepData>();
             _progressKey = progressKey;
             _completedKey = completedKey;
+            _configurationOwner = owner;
             _startAutomatically = startAutomatically;
         }
 
@@ -196,6 +199,19 @@ namespace PlanetBuilder.Messages.Tutorial
         public void CancelTutorial()
         {
             CleanupActiveTutorial();
+        }
+
+        internal void ReleaseConfiguration(string progressKey, object owner = null)
+        {
+            if (_progressKey != progressKey || !ReferenceEquals(_configurationOwner, owner))
+                return;
+
+            if (IsRunning)
+                CleanupActiveTutorial(closeCurrentMessage: false);
+
+            _steps.Clear();
+            _currentStepIndex = -1;
+            _configurationOwner = null;
         }
 
         public void NotifyConditionCompleted(TutorialCompletionCondition condition)
@@ -370,8 +386,9 @@ namespace PlanetBuilder.Messages.Tutorial
                 return false;
             }
 
-            bool showDimming = step.StepId?.StartsWith("MetaPlanet.", StringComparison.Ordinal) != true;
-            if (_interactionOverlay.Show(step.TargetUI, !step.DisableInteractionCutout, showDimming))
+            bool showDimming = step.StepId?.StartsWith("MetaPlanet.", StringComparison.Ordinal) != true &&
+                               _configurationOwner is not PlanetTutorialController;
+            if (_interactionOverlay.Show(step.TargetUI, !step.DisableInteractionCutout, showDimming, owner: this))
                 return true;
 
             StopWithWarning($"Tutorial step '{step.StepId}' could not configure its interaction overlay.");
@@ -381,7 +398,7 @@ namespace PlanetBuilder.Messages.Tutorial
         private void HideInteractionOverlay()
         {
             if (_interactionOverlay != null)
-                _interactionOverlay.Hide();
+                _interactionOverlay.HideOwnedBy(this);
         }
 
         private bool TryShowHighlight(TutorialStepData step)
@@ -409,7 +426,7 @@ namespace PlanetBuilder.Messages.Tutorial
             TutorialHighlightSystem highlightSystem = GetHighlightSystem();
 
             if (highlightSystem != null)
-                highlightSystem.Hide();
+                highlightSystem.HideIfShowing(CurrentStep);
         }
 
         private TutorialHighlightSystem GetHighlightSystem()
@@ -470,13 +487,13 @@ namespace PlanetBuilder.Messages.Tutorial
             Debug.LogWarning(message, this);
         }
 
-        private void CleanupActiveTutorial()
+        private void CleanupActiveTutorial(bool closeCurrentMessage = true)
         {
             DisconnectTargetUI();
             HideInteractionOverlay();
             HideHighlight();
 
-            if (IsRunning)
+            if (IsRunning && closeCurrentMessage)
             {
                 MessageManager messageManager = MessageManager.Instance;
 
@@ -501,6 +518,7 @@ namespace PlanetBuilder.Messages.Tutorial
             return new MessageData
             {
                 Id = $"Tutorial.{step.StepId}",
+                Owner = _configurationOwner,
                 Text = step.MessageText,
                 SpeakerId = step.SpeakerId,
                 CharacterMood = step.CharacterMood,

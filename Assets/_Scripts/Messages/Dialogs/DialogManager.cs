@@ -1,5 +1,6 @@
 using System;
 using PlanetBuilder.Messages;
+using PlanetBuilder.Messages.Tutorial;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,11 @@ namespace PlanetBuilder.Messages.Dialogs
     public class DialogManager : MonoBehaviour
     {
         [SerializeField] private Button _nextButton;
+        private Button _overlayButton;
+        [SerializeField] private TutorialInteractionOverlay _interactionOverlay;
+
+        private const float MetaNextCooldown = 0.3f;
+        private float _lastMetaNextTime = float.NegativeInfinity;
 
         [Header("Message")]
         [SerializeField] private int _priority = 100;
@@ -23,8 +29,28 @@ namespace PlanetBuilder.Messages.Dialogs
         public DialogData ActiveDialog => _activeDialog;
         public int CurrentLineIndex => _currentLineIndex;
 
+        internal bool IsMetaDialog => _activeDialog?.Owner is MetaPlanetTutorialController;
+
+        private bool IsBlockingMetaDialog => IsMetaDialog &&
+            _interactionOverlay != null &&
+            _interactionOverlay.IsBlockingMetaDialogOwnedBy(_activeDialog.Owner);
+
+        private bool CanAdvanceOverlayDialog
+        {
+            get
+            {
+                if (!isActiveAndEnabled || !IsBlockingMetaDialog)
+                    return false;
+
+                MessageData message = MessageManager.Instance?.GetCurrentMessage(MessageChannel.Dialog);
+                return message != null && ReferenceEquals(message.Owner, _activeDialog) &&
+                    message.Id == GetCurrentMessageId();
+            }
+        }
+
         public event Action<DialogData> OnDialogStarted;
         public event Action<DialogData> OnDialogCompleted;
+        public event Action<DialogData> OnDialogCancelled;
         public event Action<DialogLine> OnLineShown;
 
         public void SetTypingSettings(
@@ -39,14 +65,40 @@ namespace PlanetBuilder.Messages.Dialogs
 
         private void OnEnable()
         {
+            if (_interactionOverlay == null)
+                _interactionOverlay = GetComponentInChildren<TutorialInteractionOverlay>(true);
+
+            _overlayButton = _interactionOverlay != null ? _interactionOverlay.GetComponent<Button>() : null;
+            if (_overlayButton != null)
+                _overlayButton.interactable = false;
+
             if (_nextButton != null)
                 _nextButton.onClick.AddListener(ShowNext);
 
             SubscribeToMessages(MessageManager.Instance);
         }
 
+        private void LateUpdate()
+        {
+            if (_overlayButton != null)
+                _overlayButton.interactable = CanAdvanceOverlayDialog &&
+                    Time.unscaledTime - _lastMetaNextTime >= MetaNextCooldown;
+        }
+
+        internal void ShowNextFromOverlay()
+        {
+            if (_overlayButton != null && _overlayButton.isActiveAndEnabled &&
+                _overlayButton.IsInteractable() && CanAdvanceOverlayDialog)
+            {
+                ShowNext();
+            }
+        }
+
         private void OnDisable()
         {
+            if (_overlayButton != null)
+                _overlayButton.interactable = false;
+
             if (_nextButton != null)
                 _nextButton.onClick.RemoveListener(ShowNext);
 
@@ -91,7 +143,13 @@ namespace PlanetBuilder.Messages.Dialogs
             _activeDialog = dialog;
             _currentLineIndex = 0;
             messageManager.SetDialogOpen(true);
+            if (!ReferenceEquals(_activeDialog, dialog))
+                return false;
+
             OnDialogStarted?.Invoke(dialog);
+            if (!ReferenceEquals(_activeDialog, dialog))
+                return false;
+
             ShowCurrentLine(messageManager);
             return true;
         }
@@ -103,31 +161,38 @@ namespace PlanetBuilder.Messages.Dialogs
 
             MessageManager messageManager = MessageManager.Instance;
 
-            if (messageManager != null)
+            if (messageManager != null &&
+                ReferenceEquals(messageManager.GetCurrentMessage(MessageChannel.Dialog)?.Owner, _activeDialog))
+            {
+                if (IsMetaDialog)
+                {
+                    if (Time.unscaledTime - _lastMetaNextTime < MetaNextCooldown)
+                        return;
+
+                    _lastMetaNextTime = Time.unscaledTime;
+                }
+
                 messageManager.AdvanceCurrentMessage(MessageChannel.Dialog);
+            }
         }
 
         public void CancelDialog()
         {
-            if (!IsRunning)
+            DialogData cancelledDialog = _activeDialog;
+            if (cancelledDialog == null)
                 return;
-
-            MessageManager messageManager = MessageManager.Instance;
-            string currentMessageId = GetCurrentMessageId();
 
             _activeDialog = null;
             _currentLineIndex = -1;
 
+            MessageManager messageManager = MessageManager.Instance;
             if (messageManager != null)
+            {
                 messageManager.SetDialogOpen(false);
+                messageManager.DiscardMessagesOwnedBy(MessageChannel.Dialog, cancelledDialog);
+            }
 
-            if (messageManager == null)
-                return;
-
-            MessageData currentMessage = messageManager.GetCurrentMessage(MessageChannel.Dialog);
-
-            if (currentMessage != null && currentMessage.Id == currentMessageId)
-                messageManager.CloseCurrentMessage(MessageChannel.Dialog);
+            OnDialogCancelled?.Invoke(cancelledDialog);
         }
 
         private void HandleMessageClosed(MessageData message)
@@ -142,6 +207,7 @@ namespace PlanetBuilder.Messages.Dialogs
             if (!IsRunning ||
                 message == null ||
                 message.Channel != MessageChannel.Dialog ||
+                !ReferenceEquals(message.Owner, _activeDialog) ||
                 message.Id != GetCurrentMessageId())
             {
                 return;
@@ -175,6 +241,7 @@ namespace PlanetBuilder.Messages.Dialogs
                 CharacterMood = line.CharacterMood,
                 Type = MessageType.Dialog,
                 Channel = MessageChannel.Dialog,
+                Owner = _activeDialog,
                 VideoView = _activeDialog.VideoView,
                 Priority = _priority,
                 CanInterrupt = false,

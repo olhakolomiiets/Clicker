@@ -26,6 +26,7 @@ public class PlanetSkinCardUI : MonoBehaviour
     {
         actionButton.onClick.RemoveListener(OnActionClicked);
         LeanLocalization.OnLocalizationChanged -= Refresh;
+        MessageManager.Instance?.DiscardMessagesOwnedBy(MessageChannel.Toast, this);
     }
 
     public void Bind(MetaPlanetMaterialController controller, int index)
@@ -76,11 +77,13 @@ public class PlanetSkinCardUI : MonoBehaviour
             MessageManager.Instance?.ShowMessage(new MessageData
             {
                 Id = "PlanetSkins.PurchaseFailed",
+                Owner = this,
                 Text = LeanLocalization.GetTranslationText(
                     "Skin purchase failed", "Unable to purchase the skin. Check your diamond balance."),
                 Type = MessageType.Toast,
                 Channel = MessageChannel.Toast,
                 DisplayDuration = 2f,
+                Lifetime = 2f,
                 CanDisplayOverModal = true,
                 CanDisplayOverShop = true
             });

@@ -28,6 +28,11 @@ public class PassiveIncomePop : MonoBehaviour
 
     private PassiveIncomeChestController _chestController;
 
+    internal bool IsAvailable =>
+        isActiveAndEnabled && !isPlaying &&
+        visual != null && visual.gameObject.activeInHierarchy && currencyBurst != null &&
+        clickCollider != null && clickCollider.enabled && clickCollider.gameObject.activeInHierarchy;
+
     public void InitializeChest(PassiveIncomeChestController controller)
     {
         _chestController = controller;

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using PlanetBuilder.Messages;
+using PlanetBuilder.Messages.Dialogs;
 
 namespace PlanetBuilder.Messages.Tutorial
 {
@@ -22,6 +23,7 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private readonly Vector3[] _targetWorldCorners = new Vector3[4];
 
+        private object _owner;
         private GameObject _targetUI;
         private RectTransform _targetRectTransform;
         private Canvas _overlayCanvas;
@@ -30,9 +32,19 @@ namespace PlanetBuilder.Messages.Tutorial
         private bool _isVisible;
         private bool _cutoutEnabled = true;
         private bool _fullDimLogWritten;
+        private bool _restoreShieldCulling;
+        private bool _savedShieldCulling;
 
         public bool IsBlockingRaycasts => _canvasGroup != null && _canvasGroup.blocksRaycasts;
         public GameObject CurrentTargetUI => _targetUI;
+
+        public bool IsBlockingMetaPlanetInput => _isVisible && IsBlockingRaycasts &&
+            (_owner is MetaPlanetTutorialController ||
+             (_owner is TutorialManager manager &&
+              manager.CurrentStep?.StepId?.StartsWith("MetaPlanet.", System.StringComparison.Ordinal) == true));
+
+        internal bool IsBlockingMetaDialogOwnedBy(object owner) =>
+            IsBlockingMetaPlanetInput && _targetUI == null && ReferenceEquals(_owner, owner);
 
         private void Awake()
         {
@@ -66,7 +78,7 @@ namespace PlanetBuilder.Messages.Tutorial
             return Show(targetUI, allowCutout, showDimming: true);
         }
 
-        internal bool Show(GameObject targetUI, bool allowCutout, bool showDimming)
+        internal bool Show(GameObject targetUI, bool allowCutout, bool showDimming, object owner = null)
         {
             Debug.Log(
                 $"[MetaTutorialTrace] TutorialInteractionOverlay.Show ENTER target={GetTransformPath(targetUI != null ? targetUI.transform : null)} active={(targetUI != null && targetUI.activeInHierarchy)} allowCutout={allowCutout}",
@@ -98,6 +110,15 @@ namespace PlanetBuilder.Messages.Tutorial
             _cutoutEnabled = allowCutout;
             _fullDimLogWritten = false;
             _isVisible = true;
+            _owner = owner;
+
+            if (IsBlockingMetaPlanetInput)
+            {
+                _savedShieldCulling = _raycastShield.canvasRenderer.cullTransparentMesh;
+                _restoreShieldCulling = true;
+                // Transparent shields must remain in GraphicRaycaster results.
+                _raycastShield.canvasRenderer.cullTransparentMesh = false;
+            }
 
             RefreshLayout();
             Debug.Log("[MetaTutorialTrace] TutorialInteractionOverlay.Show OK", this);
@@ -120,12 +141,23 @@ namespace PlanetBuilder.Messages.Tutorial
                 _canvasGroup.blocksRaycasts = false;
             }
 
+            if (_restoreShieldCulling && _raycastShield != null)
+                _raycastShield.canvasRenderer.cullTransparentMesh = _savedShieldCulling;
+
+            _restoreShieldCulling = false;
+            _owner = null;
             _targetUI = null;
             _targetRectTransform = null;
             _targetCanvas = null;
             _cutoutEnabled = true;
             _fullDimLogWritten = false;
             _isVisible = false;
+        }
+
+        internal void HideOwnedBy(object owner)
+        {
+            if (ReferenceEquals(_owner, owner))
+                Hide();
         }
 
         public void ClearTarget()
@@ -136,7 +168,19 @@ namespace PlanetBuilder.Messages.Tutorial
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (!_isVisible || _targetUI == null || _targetRectTransform == null)
+            if (!_isVisible)
+                return;
+
+            // The root Button receives this event too; only this handler routes it.
+            if (_targetUI == null)
+            {
+                if (eventData.button == PointerEventData.InputButton.Left)
+                    GetComponentInParent<DialogManager>()?.ShowNextFromOverlay();
+
+                return;
+            }
+
+            if (_targetRectTransform == null)
                 return;
 
             GameObject activeTarget = _targetUI;
@@ -194,7 +238,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 Debug.Log("[MetaTutorialTrace] TutorialInteractionOverlay TargetUIClicked sent via ExecuteEvents", this);
         }
 
-        private static Button FindTargetButton(GameObject targetUI)
+        private Button FindTargetButton(GameObject targetUI)
         {
             if (targetUI == null)
                 return null;
@@ -206,7 +250,7 @@ namespace PlanetBuilder.Messages.Tutorial
 
             button = targetUI.GetComponentInParent<Button>();
 
-            if (button != null)
+            if (button != null && button.gameObject != gameObject)
                 return button;
 
             return targetUI.GetComponentInChildren<Button>(true);

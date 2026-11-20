@@ -29,6 +29,8 @@ namespace PlanetBuilder.Messages
         public float ReminderInterval;
         public int MaxShows;
 
+        internal bool UseToastView { get; set; }
+        internal object Owner { get; set; }
         internal VideoDialogView VideoView { get; set; }
 
         public MessageData()
@@ -56,6 +58,8 @@ namespace PlanetBuilder.Messages
             ReminderCount = source.ReminderCount;
             ReminderInterval = source.ReminderInterval;
             MaxShows = source.MaxShows;
+            UseToastView = source.UseToastView;
+            Owner = source.Owner;
             VideoView = source.VideoView;
         }
 

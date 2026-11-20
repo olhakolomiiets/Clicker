@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using Lean.Localization;
 using PlanetBuilder.Messages.Characters;
 using PlanetBuilder.Messages.Dialogs;
 using PlanetBuilder.Messages.Tutorial;
+using PlanetBuilder.Messages.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace PlanetBuilder.Messages.Hints
 {
@@ -15,6 +18,14 @@ namespace PlanetBuilder.Messages.Hints
         private const string UpgradeMenuIntroShownKey = "PostTutorialHint.UpgradeMenuIntro.Shown";
         private const string ProfessorSpeakerId = "1";
         private const string UpgradeMenuIntroId = "PostTutorialHint.UpgradeMenuIntro";
+        private const string PassiveIncomeChestId = "PostTutorialHint.PassiveIncomeChest";
+        private const string PassiveIncomeChestTextKey = "post_tutorial_hint_passive_income_chest";
+        private const string UnlockAvailableTextKey = "post_tutorial_hint_unlock_available";
+        private const string AutomationAvailableTextKey = "post_tutorial_hint_automation_available";
+        private const string BuyMoreObjectTextKey = "post_tutorial_hint_buy_more_object";
+        private const string UpgradeMenuIntroTextKey = "post_tutorial_hint_upgrade_menu_intro";
+        private const string PassiveIncomeChestFallbackText =
+            "Где-то на этой планете спрятан сундук с сокровищами! Найди его и забери награду!";
 
         private const float BuyMoreObjectDelay = 60f;
         private const string UpgradeMenuIntroText =
@@ -32,7 +43,14 @@ namespace PlanetBuilder.Messages.Hints
             UnlockAvailable,
             AutomationAvailable,
             BuyMoreObject,
-            UpgradeMenuIntro
+            UpgradeMenuIntro,
+            PassiveIncomeChest
+        }
+
+        private enum PassiveIncomeChestDisplayMode
+        {
+            Timed,
+            UntilFound
         }
 
         private sealed class ReminderCandidate
@@ -45,14 +63,23 @@ namespace PlanetBuilder.Messages.Hints
             public bool TriggeredByMenuOpen;
             public bool Shown;
             public bool DisplayConsumed;
+            public int ShownItemCount;
+            public double ShownPrice;
+            public PassiveIncomePop Chest;
         }
 
         private static PostTutorialHintController _instance;
 
         [Header("Post-Tutorial Hints")]
         [SerializeField, Min(0f)] private float _globalCooldown = 60f;
+        [SerializeField, Min(0.1f)] private float _normalHintDisplayDuration = 6f;
         [SerializeField, Min(0f)] private float _upgradeMenuIntroDelay = 60f;
         [SerializeField] private string _planetScenePrefix = "PlanetLevel";
+
+        [Header("Passive Income Chest Hint")]
+        [SerializeField] private PassiveIncomeChestDisplayMode _passiveIncomeChestDisplayMode =
+            PassiveIncomeChestDisplayMode.Timed;
+        [SerializeField, Min(0.1f)] private float _passiveIncomeChestTimedDuration = 10f;
 
         [Header("Existing Message Infrastructure")]
         [SerializeField] private TutorialManager _tutorialManager;
@@ -60,16 +87,18 @@ namespace PlanetBuilder.Messages.Hints
         [SerializeField] private TutorialHighlightSystem _highlightSystem;
 
         private readonly List<ReminderCandidate> _candidates = new();
+        private readonly Dictionary<ReminderType, int> _nextTextVariants = new();
         private MessageManager _messageManager;
         private MessageDisplayValidator _displayValidator;
         private GameRules _gameRules;
         private GameUI _gameUI;
         private UIController _uiController;
+        private PassiveIncome _passiveIncome;
+        private PassiveIncomePop _lastShownChest;
         private ReminderCandidate _activeCandidate;
         private TutorialStepData _activeHighlightStep;
         private float _lastHintShownAt = float.NegativeInfinity;
         private string _lastBlockReason;
-        private int _selectedShopTab = -1;
         private bool _isInitialized;
         private bool _didInitialGameplaySync;
         private bool _isApplicationPaused;
@@ -135,7 +164,10 @@ namespace PlanetBuilder.Messages.Hints
             UnsubscribeFromUI();
             UnsubscribeFromGameplay();
             UnsubscribeFromMessageManager();
-            HideHighlight();
+
+            CancelActiveReminder("controller disabled");
+            _isInitialized = false;
+            _didInitialGameplaySync = false;
         }
 
         private void OnDestroy()
@@ -197,13 +229,14 @@ namespace PlanetBuilder.Messages.Hints
             _isSceneTransitioning = false;
             CancelActiveReminder("scene changed");
             _candidates.Clear();
-            _selectedShopTab = -1;
             _didInitialGameplaySync = false;
             UnsubscribeFromUI();
             UnsubscribeFromGameplay();
             _uiController = null;
             _gameUI = null;
             _gameRules = null;
+            _passiveIncome = null;
+            _lastShownChest = null;
             ResolveSceneReferences();
             SubscribeToGameplay();
             SetBlockReason(null);
@@ -217,24 +250,31 @@ namespace PlanetBuilder.Messages.Hints
             _isSceneTransitioning = true;
             CancelActiveReminder("scene unloading");
             _candidates.Clear();
-            _selectedShopTab = -1;
             _didInitialGameplaySync = false;
             UnsubscribeFromUI();
             UnsubscribeFromGameplay();
             _uiController = null;
             _gameUI = null;
             _gameRules = null;
+            _passiveIncome = null;
+            _lastShownChest = null;
         }
 
-        private void HandleShopOpened()
+        private void HandleShopVisibilityChanged()
         {
             ResolveSceneReferencesIfNeeded();
+            ValidateActiveCandidate();
+
+            if (_activeCandidate?.Type == ReminderType.UnlockAvailable)
+                RefreshUnlockHighlight(_activeCandidate);
+
             RetryReadyCandidates();
         }
 
         private void HandleShopTabSelected(int tabIndex)
         {
-            _selectedShopTab = tabIndex;
+            if (_activeCandidate?.Type == ReminderType.UnlockAvailable)
+                ValidateActiveCandidate();
 
             if (tabIndex == 1)
             {
@@ -245,7 +285,7 @@ namespace PlanetBuilder.Messages.Hints
 
             ReminderCandidate pendingUpgrade = FindCandidate(ReminderType.UpgradeMenuIntro, -1);
 
-            if (pendingUpgrade != null && pendingUpgrade.TriggeredByMenuOpen)
+            if (pendingUpgrade != null && pendingUpgrade != _activeCandidate && pendingUpgrade.TriggeredByMenuOpen)
             {
                 _candidates.Remove(pendingUpgrade);
                 LogTransition("UpgradeMenuIntro pending menu-open candidate cancelled: upgrade menu closed");
@@ -295,7 +335,6 @@ namespace PlanetBuilder.Messages.Hints
             candidate.Ready = true;
             candidate.TimerStarted = false;
             candidate.EligibleElapsed = 0f;
-            HideHighlight();
 
             LogTransition("UpgradeMenuIntro triggered by early menu open");
             RetryReadyCandidates();
@@ -303,7 +342,13 @@ namespace PlanetBuilder.Messages.Hints
 
         private void HandleMessageShown(MessageData message)
         {
-            ReminderCandidate candidate = FindCandidate(message != null ? message.Id : null);
+            if (message == null || message.Channel != MessageChannel.Hint ||
+                !ReferenceEquals(message.Owner, this))
+            {
+                return;
+            }
+
+            ReminderCandidate candidate = FindCandidate(message.Id);
 
             if (candidate == null)
                 return;
@@ -312,6 +357,9 @@ namespace PlanetBuilder.Messages.Hints
             candidate.Shown = true;
             _lastHintShownAt = Time.unscaledTime;
             SetBlockReason(null);
+
+            if (candidate.Type == ReminderType.UnlockAvailable)
+                RefreshUnlockHighlight(candidate);
 
             if (candidate.Type == ReminderType.UpgradeMenuIntro)
             {
@@ -325,8 +373,20 @@ namespace PlanetBuilder.Messages.Hints
             }
             else
             {
+                AdvanceTextVariant(candidate.Type, message);
                 candidate.DisplayConsumed = true;
                 candidate.Ready = false;
+
+                if (candidate.Type == ReminderType.PassiveIncomeChest)
+                {
+                    _lastShownChest = candidate.Chest;
+                }
+                else if (candidate.Type == ReminderType.BuyMoreObject)
+                {
+                    candidate.ShownItemCount = _gameRules.GetItemCount(candidate.Index);
+                    candidate.ShownPrice = _gameRules.GetItemUpgradeCost(candidate.Index);
+                }
+
                 LogTransition($"{GetCandidateLabel(candidate)} shown index={candidate.Index}");
             }
         }
@@ -335,8 +395,16 @@ namespace PlanetBuilder.Messages.Hints
         {
             if (_activeCandidate == null ||
                 message == null ||
+                message.Channel != MessageChannel.Hint ||
+                !ReferenceEquals(message.Owner, this) ||
                 message.Id != GetCandidateId(_activeCandidate))
             {
+                return;
+            }
+
+            if (_displayValidator.IsTutorialRunning || _displayValidator.IsDialogOpen)
+            {
+                CancelActiveReminder("mandatory tutorial or dialog started");
                 return;
             }
 
@@ -344,7 +412,11 @@ namespace PlanetBuilder.Messages.Hints
             _activeCandidate = null;
             HideHighlight();
 
-            if (closedCandidate.Type != ReminderType.UpgradeMenuIntro)
+            if (closedCandidate.Type == ReminderType.PassiveIncomeChest)
+            {
+                _candidates.Remove(closedCandidate);
+            }
+            else if (closedCandidate.Type != ReminderType.UpgradeMenuIntro)
             {
                 closedCandidate.DisplayConsumed = true;
                 closedCandidate.Ready = false;
@@ -471,6 +543,7 @@ namespace PlanetBuilder.Messages.Hints
             _uiController = FindFirstObjectByType<UIController>();
             _gameUI = FindFirstObjectByType<GameUI>();
             _gameRules = FindFirstObjectByType<GameRules>();
+            _passiveIncome = FindFirstObjectByType<PassiveIncome>();
             SubscribeToUI();
             SubscribeToGameplay();
         }
@@ -499,8 +572,10 @@ namespace PlanetBuilder.Messages.Hints
         {
             if (_uiController != null)
             {
-                _uiController.OnShopOpened -= HandleShopOpened;
-                _uiController.OnShopOpened += HandleShopOpened;
+                _uiController.OnShopOpened -= HandleShopVisibilityChanged;
+                _uiController.OnShopOpened += HandleShopVisibilityChanged;
+                _uiController.OnShopClosed -= HandleShopVisibilityChanged;
+                _uiController.OnShopClosed += HandleShopVisibilityChanged;
                 _uiController.OnShopTabSelected -= HandleShopTabSelected;
                 _uiController.OnShopTabSelected += HandleShopTabSelected;
             }
@@ -516,7 +591,8 @@ namespace PlanetBuilder.Messages.Hints
         {
             if (_uiController != null)
             {
-                _uiController.OnShopOpened -= HandleShopOpened;
+                _uiController.OnShopOpened -= HandleShopVisibilityChanged;
+                _uiController.OnShopClosed -= HandleShopVisibilityChanged;
                 _uiController.OnShopTabSelected -= HandleShopTabSelected;
             }
 
@@ -619,7 +695,7 @@ namespace PlanetBuilder.Messages.Hints
             return _gameRules != null &&
                    _gameRules.IsPrepared &&
                    !_gameRules.IsItemOwned(index) &&
-                   _gameRules.CurrentMoney >= _gameRules.GetItemUpgradeCost(index);
+                   _gameRules.CurrentMoney > _gameRules.GetItemUpgradeCost(index);
         }
 
         private bool IsAutomationEligible(int index)
@@ -629,15 +705,18 @@ namespace PlanetBuilder.Messages.Hints
                    _gameRules.IsItemOwned(index) &&
                    !_gameRules.IsManagerPurchased(index) &&
                    !_gameRules.IsItemPremium(index) &&
-                   _gameRules.CurrentMoney > _gameRules.GetManagerPrice(index);
+                   _gameRules.CurrentMoney >= _gameRules.GetManagerPrice(index);
         }
 
         private bool IsBuyMoreEligible(int index)
         {
-            return _gameRules != null &&
-                   _gameRules.IsPrepared &&
-                   _gameRules.IsItemOwned(index) &&
-                   _gameRules.CurrentMoney >= _gameRules.GetItemUpgradeCost(index);
+            if (_gameRules == null || !_gameRules.IsPrepared || !_gameRules.IsItemOwned(index))
+                return false;
+
+            GameObject itemTarget = _gameUI != null ? _gameUI.GetCreationItemVisualTarget(index) : null;
+            return _gameRules.CurrentMoney >= _gameRules.GetItemUpgradeCost(index) &&
+                   (itemTarget == null || !itemTarget.TryGetComponent(out ItemController item) ||
+                    _gameRules.GetItemCount(index) < item.CreationPurchaseLimit);
         }
 
         private void AdvanceCandidates()
@@ -712,13 +791,34 @@ namespace PlanetBuilder.Messages.Hints
                    TryResolveUpgradeTarget(out _);
         }
 
+        private PassiveIncomePop GetAvailablePassiveIncomeChest()
+        {
+            return _passiveIncome != null && _passiveIncome.gameObject.scene == SceneManager.GetActiveScene()
+                ? _passiveIncome.AvailableChest
+                : null;
+        }
+
+        private void SyncPassiveIncomeChestCandidate()
+        {
+            if (!_planetTutorialCompleted || _activeCandidate?.Type == ReminderType.PassiveIncomeChest)
+                return;
+
+            PassiveIncomePop chest = GetAvailablePassiveIncomeChest();
+            if (chest == null || chest == _lastShownChest)
+                return;
+
+            ReminderCandidate candidate = GetOrCreateCandidate(ReminderType.PassiveIncomeChest, -1);
+            candidate.Chest = chest;
+            candidate.Ready = true;
+        }
+
         private bool IsCandidateStillEligible(ReminderCandidate candidate)
         {
-            if (candidate == _activeCandidate && candidate.Shown)
-                return true;
-
             switch (candidate.Type)
             {
+                case ReminderType.PassiveIncomeChest:
+                    return candidate.Chest != null && candidate.Chest == GetAvailablePassiveIncomeChest() &&
+                           (candidate == _activeCandidate || candidate.Chest != _lastShownChest);
                 case ReminderType.UnlockAvailable:
                     return IsItemUnlockEligible(candidate.Index);
                 case ReminderType.AutomationAvailable:
@@ -726,7 +826,8 @@ namespace PlanetBuilder.Messages.Hints
                 case ReminderType.BuyMoreObject:
                     return IsBuyMoreEligible(candidate.Index);
                 case ReminderType.UpgradeMenuIntro:
-                    return PlayerPrefs.GetInt(UpgradeMenuIntroShownKey, 0) != 1 &&
+                    bool isCurrentDisplay = candidate == _activeCandidate && candidate.Shown;
+                    return (isCurrentDisplay || PlayerPrefs.GetInt(UpgradeMenuIntroShownKey, 0) != 1) &&
                            (!candidate.TriggeredByMenuOpen || IsUpgradeMenuOpen());
                 default:
                     return false;
@@ -735,74 +836,81 @@ namespace PlanetBuilder.Messages.Hints
 
         private void TryShowBestCandidate()
         {
+            if (_isApplicationPaused || !_hasApplicationFocus || !IsSuitablePlanetScene())
+                return;
+
+            SyncPassiveIncomeChestCandidate();
+
             if (_activeCandidate != null)
                 return;
 
-            ReminderCandidate best = null;
-
-            for (int i = 0; i < _candidates.Count; i++)
-            {
-                ReminderCandidate candidate = _candidates[i];
-
-                if (!candidate.Ready || !IsCandidateStillEligible(candidate))
-                    continue;
-
-                if (best == null || CompareCandidates(candidate, best) < 0)
-                    best = candidate;
-            }
-
-            if (best != null)
-                TryShowCandidate(best);
-        }
-
-        private void TryShowCandidate(ReminderCandidate candidate)
-        {
-            bool allowShopOpen = candidate.Type != ReminderType.UpgradeMenuIntro || candidate.TriggeredByMenuOpen;
-
-            if (!TryResolveTarget(candidate, out GameObject target))
-            {
-                SetBlockReason(GetTargetBlockReason(candidate));
-                return;
-            }
-
-            string blocker = GetBlockReason(target, allowShopOpen, true);
-
+            string blocker = GetCommonBlockReason(true);
             if (!string.IsNullOrEmpty(blocker))
             {
                 SetBlockReason(blocker);
                 return;
             }
 
-            if (_messageManager == null ||
-                _displayValidator == null ||
-                !CanUseGlobalCooldown())
+            for (int i = 0; i < _candidates.Count; i++)
             {
-                SetBlockReason("global cooldown");
+                ReminderCandidate candidate = _candidates[i];
+                if (!candidate.Ready || !IsCandidateStillEligible(candidate) ||
+                    !TryPrepareCandidate(candidate, out MessageData message))
+                {
+                    continue;
+                }
+
+                if (!_messageManager.TryShowMessageImmediately(message))
+                {
+                    HideHighlight();
+                    SetBlockReason("hint not shown");
+                }
+
+                // Keep the candidate ready and recheck its eligibility on the next attempt.
                 return;
             }
+        }
 
-            MessageData message = CreateMessage(candidate, allowShopOpen);
+        private bool TryPrepareCandidate(ReminderCandidate candidate, out MessageData message)
+        {
+            message = null;
+            bool isUnlockHint = candidate.Type == ReminderType.UnlockAvailable;
+            if (isUnlockHint && IsCreationTabOpen())
+                return false;
+
+            GameObject target = null;
+            if (!isUnlockHint && !TryResolveTarget(candidate, out target))
+            {
+                SetBlockReason(GetTargetBlockReason(candidate));
+                return false;
+            }
+
+            bool allowShopOpen = candidate.Type != ReminderType.PassiveIncomeChest &&
+                                 (candidate.Type != ReminderType.UpgradeMenuIntro || candidate.TriggeredByMenuOpen);
+            message = CreateMessage(candidate, allowShopOpen);
 
             if (_messageManager.IsMessageActiveOrQueued(message.Id))
-                return;
+                return false;
 
-            if (!_displayValidator.CanDisplay(message))
+            if (!_messageManager.CanDisplay(message))
             {
-                SetBlockReason("validator rejected hint");
-                return;
+                SetBlockReason("message blocked or ToastView busy");
+                return false;
             }
 
-            if (!TryShowHighlight(candidate, target))
-                return;
+            return isUnlockHint || candidate.Type == ReminderType.PassiveIncomeChest ||
+                   TryShowHighlight(candidate, target);
+        }
 
-            if (!_messageManager.TryShowMessageImmediately(message))
-            {
-                HideHighlight();
-                SetBlockReason("hint not shown");
-                return;
-            }
+        private void RefreshUnlockHighlight(ReminderCandidate candidate)
+        {
+            GameObject target = IsShopOpen()
+                ? _uiController?.CreationButtonTarget
+                : _uiController?.ToggleButtonTarget;
 
-            // The immediate API never queues. OnMessageShown remains the factual display confirmation.
+            HideHighlight();
+            if (IsUsableButton(target))
+                TryShowHighlight(candidate, target);
         }
 
         private bool TryShowHighlight(ReminderCandidate candidate, GameObject target)
@@ -816,12 +924,15 @@ namespace PlanetBuilder.Messages.Hints
             }
 
             _activeHighlightStep = CreateHighlightStep(candidate);
+            _activeHighlightStep.TargetUI = target;
 
             if (_highlightSystem == null ||
                 !_highlightSystem.Show(target, _activeHighlightStep))
             {
                 _activeHighlightStep = null;
-                SetBlockReason("highlight unavailable");
+                if (candidate.Type != ReminderType.UnlockAvailable)
+                    SetBlockReason("highlight unavailable");
+
                 return false;
             }
 
@@ -831,17 +942,29 @@ namespace PlanetBuilder.Messages.Hints
 
         private MessageData CreateMessage(ReminderCandidate candidate, bool allowShopOpen)
         {
+            bool isChestHint = candidate.Type == ReminderType.PassiveIncomeChest;
+            float displayDuration = Mathf.Max(0.1f, _normalHintDisplayDuration);
+
+            if (isChestHint)
+            {
+                displayDuration = _passiveIncomeChestDisplayMode == PassiveIncomeChestDisplayMode.UntilFound
+                    ? 0f
+                    : Mathf.Max(0.1f, _passiveIncomeChestTimedDuration);
+            }
+
             return new MessageData
             {
                 Id = GetCandidateId(candidate),
+                Owner = this,
                 Text = GetCandidateText(candidate.Type),
                 SpeakerId = ProfessorSpeakerId,
                 CharacterMood = CharacterMood.Thinking,
-                Type = MessageType.Tutorial,
+                Type = MessageType.Hint,
                 Channel = MessageChannel.Hint,
+                UseToastView = true,
                 Priority = GetPriority(candidate.Type),
-                DisplayDuration = 6f,
-                Lifetime = 6f,
+                DisplayDuration = displayDuration,
+                Lifetime = isChestHint ? 0f : displayDuration,
                 CanInterrupt = false,
                 CanDisplayOverModal = false,
                 CanDisplayOverShop = allowShopOpen,
@@ -853,19 +976,44 @@ namespace PlanetBuilder.Messages.Hints
 
         private void ValidateActiveCandidate()
         {
-            if (_activeCandidate == null)
+            ReminderCandidate candidate = _activeCandidate;
+            if (candidate == null)
                 return;
 
-            if (!IsSuitablePlanetScene() ||
-                !IsCandidateStillEligible(_activeCandidate) ||
-                !TryResolveTarget(_activeCandidate, out GameObject target) ||
-                !string.IsNullOrEmpty(GetBlockReason(
-                    target,
-                    _activeCandidate.Type != ReminderType.UpgradeMenuIntro || _activeCandidate.TriggeredByMenuOpen,
-                    false)))
+            if (candidate.Type == ReminderType.BuyMoreObject &&
+                _gameRules != null && _gameRules.IsPrepared &&
+                (candidate.ShownItemCount != _gameRules.GetItemCount(candidate.Index) ||
+                 candidate.ShownPrice != _gameRules.GetItemUpgradeCost(candidate.Index)))
             {
-                CancelActiveReminder("target or blocker became invalid");
+                CancelActiveReminder("next copy changed");
+                RefreshBuyMoreCandidate(candidate.Index);
+                return;
             }
+
+            bool isUnlockHint = candidate.Type == ReminderType.UnlockAvailable;
+            GameObject target = null;
+
+            if (!IsSuitablePlanetScene() ||
+                !string.IsNullOrEmpty(GetCommonBlockReason(false)) ||
+                !IsCandidateStillEligible(candidate) ||
+                (!isUnlockHint && !TryResolveTarget(candidate, out target)))
+            {
+                CancelActiveReminder("purchase, target or blocker became invalid");
+                return;
+            }
+
+            if (isUnlockHint)
+            {
+                if (IsCreationTabOpen())
+                    CloseCandidateMessage(candidate);
+                else if (_isHighlightVisible && !IsUsableButton(_activeHighlightStep.TargetUI))
+                    HideHighlight();
+
+                return;
+            }
+
+            if (_isHighlightVisible && _activeHighlightStep.TargetUI != target && !TryShowHighlight(candidate, target))
+                CancelActiveReminder("highlight target became invalid");
         }
 
         private void RetryReadyCandidates()
@@ -903,8 +1051,7 @@ namespace PlanetBuilder.Messages.Hints
             _candidates.Remove(completed);
             _activeCandidate = null;
 
-            if (_messageManager != null)
-                _messageManager.CloseCurrentMessage(MessageChannel.Hint);
+            CloseCandidateMessage(completed);
 
             LogTransition($"{GetCandidateLabel(completed)} completed index={completed.Index}: {reason}");
             _isMessageCloseRequested = false;
@@ -924,11 +1071,17 @@ namespace PlanetBuilder.Messages.Hints
             _candidates.Remove(cancelled);
             _activeCandidate = null;
 
-            if (_messageManager != null)
-                _messageManager.CloseCurrentMessage(MessageChannel.Hint);
+            CloseCandidateMessage(cancelled);
 
             LogTransition($"{GetCandidateLabel(cancelled)} cancelled index={cancelled.Index}: {reason}");
             _isMessageCloseRequested = false;
+        }
+
+        private void CloseCandidateMessage(ReminderCandidate candidate)
+        {
+            MessageData current = _messageManager?.GetCurrentMessage(MessageChannel.Hint);
+            if (ReferenceEquals(current?.Owner, this) && current.Id == GetCandidateId(candidate))
+                _messageManager.CloseCurrentMessage(MessageChannel.Hint);
         }
 
         private void RemoveCandidate(ReminderType type, int index, bool preserveActive)
@@ -961,6 +1114,7 @@ namespace PlanetBuilder.Messages.Hints
                 Index = index
             };
             _candidates.Add(candidate);
+            _candidates.Sort(CompareCandidates);
             LogTransition($"{GetCandidateLabel(candidate)} candidate created index={index}");
             return candidate;
         }
@@ -994,84 +1148,83 @@ namespace PlanetBuilder.Messages.Hints
         {
             target = null;
 
+            if (candidate.Type == ReminderType.PassiveIncomeChest)
+            {
+                return !_displayValidator.IsShopOpen &&
+                       (_uiController == null || (!_uiController.IsShopDisplayed && !_uiController.isLevelsDisplayed));
+            }
+
+            if (candidate.Type == ReminderType.UpgradeMenuIntro)
+            {
+                if (candidate.TriggeredByMenuOpen)
+                    return IsUpgradeMenuOpen();
+
+                return _uiController != null && !_uiController.IsShopDisplayed &&
+                       !_displayValidator.IsShopOpen && TryResolveUpgradeTarget(out target) &&
+                       IsUsableButton(target);
+            }
+
             if (_gameUI == null || _uiController == null)
                 return false;
 
             switch (candidate.Type)
             {
-                case ReminderType.UpgradeMenuIntro:
-                    target = _uiController.UpgradeButtonTarget;
-                    return target != null && target.activeInHierarchy &&
-                           (!candidate.TriggeredByMenuOpen || IsUpgradeMenuOpen());
-                case ReminderType.UnlockAvailable:
-                    if (!IsCreationTabOpen())
-                        return false;
-                    target = _gameUI.GetCreationProgressButtonTarget(candidate.Index);
-                    return target != null && target.activeInHierarchy;
                 case ReminderType.AutomationAvailable:
                     if (IsManagerPanelOpen(candidate.Index))
                         target = _gameUI.GetManagerBuyButtonTarget(candidate.Index);
                     else if (IsCreationTabOpen())
                         target = _gameUI.GetManagerButtonTarget(candidate.Index);
-                    return target != null && target.activeInHierarchy;
+                    return IsUsableButton(target);
                 case ReminderType.BuyMoreObject:
                     if (!IsCreationTabOpen())
                         return false;
                     target = _gameUI.GetCreationBuyButtonTarget(candidate.Index);
-                    return target != null && target.activeInHierarchy;
+                    return IsUsableButton(target);
                 default:
                     return false;
             }
         }
 
+        private static bool IsUsableButton(GameObject target)
+        {
+            return target != null && target.TryGetComponent(out Button button) &&
+                   button.isActiveAndEnabled && button.IsInteractable();
+        }
+
         private string GetTargetBlockReason(ReminderCandidate candidate)
         {
-            if (candidate.Type == ReminderType.UpgradeMenuIntro && candidate.TriggeredByMenuOpen)
-                return "upgrade target missing or inactive";
+            if (candidate.Type == ReminderType.PassiveIncomeChest)
+                return "shop or planet levels panel open";
 
-            return candidate.Type == ReminderType.UpgradeMenuIntro
-                ? "upgrade target missing or inactive"
-                : "target unavailable: required shop tab or panel is closed";
+            if (candidate.Type != ReminderType.UpgradeMenuIntro)
+                return "purchase target or required shop tab unavailable";
+
+            return candidate.TriggeredByMenuOpen ? "upgrade menu closed" : "upgrade button unavailable or shop open";
+        }
+
+        private bool IsShopOpen()
+        {
+            return _uiController != null ? _uiController.IsShopDisplayed : _displayValidator.IsShopOpen;
         }
 
         private bool IsCreationTabOpen()
         {
             return _uiController != null &&
                    _uiController.IsShopDisplayed &&
-                   _selectedShopTab == 0;
+                   _uiController.SelectedShopTab == 0;
         }
 
         private bool IsUpgradeMenuOpen()
         {
             return _uiController != null &&
                    _uiController.IsShopDisplayed &&
-                   _selectedShopTab == 1;
+                   _uiController.SelectedShopTab == 1;
         }
 
         private bool IsManagerPanelOpen(int index)
         {
             GameObject target = _gameUI != null ? _gameUI.GetManagerBuyButtonTarget(index) : null;
             return target != null && target.activeInHierarchy;
-        }
-
-        private string GetBlockReason(GameObject target, bool allowShopOpen, bool includeCooldown)
-        {
-            string commonBlocker = GetCommonBlockReason(includeCooldown);
-
-            if (!string.IsNullOrEmpty(commonBlocker))
-                return commonBlocker;
-
-            if (target == null || !target.activeInHierarchy)
-                return "target missing or inactive";
-
-            if (_displayValidator != null &&
-                _displayValidator.IsShopOpen &&
-                !allowShopOpen)
-            {
-                return "shop open";
-            }
-
-            return null;
         }
 
         private string GetCommonBlockReason(bool includeCooldown)
@@ -1172,14 +1325,13 @@ namespace PlanetBuilder.Messages.Hints
 
         private void HideHighlight()
         {
-            if (!_isHighlightVisible && _highlightSystem == null)
-                return;
-
-            if (_highlightSystem != null)
-                _highlightSystem.Hide();
-
             if (_isHighlightVisible)
+            {
+                if (_highlightSystem != null)
+                    _highlightSystem.HideIfShowing(_activeHighlightStep);
+
                 LogTransition("highlight cleanup");
+            }
 
             _activeHighlightStep = null;
             _isHighlightVisible = false;
@@ -1199,6 +1351,8 @@ namespace PlanetBuilder.Messages.Hints
         {
             switch (type)
             {
+                case ReminderType.PassiveIncomeChest:
+                    return 0;
                 case ReminderType.UnlockAvailable:
                     return 1;
                 case ReminderType.AutomationAvailable:
@@ -1217,25 +1371,59 @@ namespace PlanetBuilder.Messages.Hints
             return candidate != null ? candidate.Type.ToString() : "Reminder";
         }
 
-        private static string GetCandidateText(ReminderType type)
+        private string GetCandidateText(ReminderType type)
         {
             switch (type)
             {
+                case ReminderType.PassiveIncomeChest:
+                    return GetVariantText(type, PassiveIncomeChestTextKey, PassiveIncomeChestFallbackText);
                 case ReminderType.UnlockAvailable:
-                    return UnlockAvailableText;
+                    return GetVariantText(type, UnlockAvailableTextKey, UnlockAvailableText);
                 case ReminderType.AutomationAvailable:
-                    return AutomationAvailableText;
+                    return GetVariantText(type, AutomationAvailableTextKey, AutomationAvailableText);
                 case ReminderType.BuyMoreObject:
-                    return BuyMoreObjectText;
+                    return GetVariantText(type, BuyMoreObjectTextKey, BuyMoreObjectText);
                 default:
-                    return UpgradeMenuIntroText;
+                    return GetLocalizedText(UpgradeMenuIntroTextKey, UpgradeMenuIntroText);
             }
+        }
+
+        private string GetVariantText(ReminderType type, string baseKey, string fallback)
+        {
+            _nextTextVariants.TryGetValue(type, out int variant);
+            string key = variant == 0 ? baseKey : $"{baseKey}_{variant + 1}";
+            return GetLocalizedText(key, fallback);
+        }
+
+        private void AdvanceTextVariant(ReminderType type, MessageData message)
+        {
+            foreach (ToastView view in FindObjectsByType<ToastView>(FindObjectsSortMode.None))
+            {
+                MessageData shown = view.DisplayedMessage;
+                if (!view.isActiveAndEnabled || shown == null ||
+                    !ReferenceEquals(shown.Owner, this) || shown.Id != message.Id)
+                {
+                    continue;
+                }
+
+                _nextTextVariants.TryGetValue(type, out int variant);
+                _nextTextVariants[type] = (variant + 1) % 3;
+                return;
+            }
+        }
+
+        private static string GetLocalizedText(string key, string fallback)
+        {
+            string text = LeanLocalization.GetTranslationText(key, fallback);
+            return string.IsNullOrWhiteSpace(text) ? fallback : text;
         }
 
         private static string GetCandidateId(ReminderCandidate candidate)
         {
             switch (candidate.Type)
             {
+                case ReminderType.PassiveIncomeChest:
+                    return PassiveIncomeChestId;
                 case ReminderType.UnlockAvailable:
                     return $"PostTutorialHint.UnlockAvailable.{candidate.Index}";
                 case ReminderType.AutomationAvailable:

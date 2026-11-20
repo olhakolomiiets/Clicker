@@ -161,7 +161,7 @@ public class MetaPlanetManager : MonoBehaviour
         {
             _variantObjectsList[i].SetItemCount(_variants[i].ItemCount, _variantItemDataList[i].Quantity);
 
-            _variantObjectsList[i].DisableBuyPanel(_variants[i].ItemCount >= 0 && _variants[i].ItemCount < _variantItemDataList[i].Quantity);
+            _variantObjectsList[i].DisableBuyPanel(_variants[i].CanAddObject(_variantItemDataList[i].Quantity));
         }
 
         for (int i = 0; i < _upgradeObjectsList.Count; i++)

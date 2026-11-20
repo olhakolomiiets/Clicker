@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
+[RequireComponent(typeof(PlanetObject))]
 public class MetaUpgradeItemController : MonoBehaviour
 {
     public enum UpgradeVisualMode
@@ -198,6 +199,9 @@ public class MetaUpgradeItemController : MonoBehaviour
         SaveToES3();
 
         _metaGameRules.SendDataUpdate();
+
+        if (objectPlaceRotator != null)
+            objectPlaceRotator.AddToNeedToShowList(GetComponent<PlanetObject>());
     }
 
     public void BuildInstance()

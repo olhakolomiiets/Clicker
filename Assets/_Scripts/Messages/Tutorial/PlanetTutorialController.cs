@@ -8,6 +8,7 @@ using PlanetBuilder.Messages.Characters;
 using PlanetBuilder.Messages.Dialogs;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace PlanetBuilder.Messages.Tutorial
@@ -89,7 +90,7 @@ namespace PlanetBuilder.Messages.Tutorial
         [SerializeField] private UIController _uiController;
         [SerializeField] private GameRules _gameRules;
         [SerializeField] private GameUI _gameUI;
-        [SerializeField] private GameManager _gameManager; // reserved for future save hooks; not required.
+        [SerializeField] private GameManager _gameManager;
 
         [Header("Characters")]
         [SerializeField] private string _contractorSpeakerId = "1";
@@ -97,6 +98,9 @@ namespace PlanetBuilder.Messages.Tutorial
         [Header("Typing")]
         [Min(0f)]
         [SerializeField] private float _typingSpeed = 30f;
+        [Header("SmallTree Dialog")]
+        [Min(0f)]
+        [SerializeField] private float _smallTreeBoughtDialogDelay = 3f;
 
         private PlanetTutorialStage _currentStage;
         private bool _isRunning;
@@ -110,6 +114,7 @@ namespace PlanetBuilder.Messages.Tutorial
         private bool _isEarnPhaseActive;
         private double _earnTargetMoney;
         private bool _smallTreeFirstEarnShown;
+        private bool _isWaitingForSmallTreeMoney;
         private bool _isWaitingForManagerMoney;
         private bool _isEarlyManagerDialogActive;
 
@@ -117,6 +122,7 @@ namespace PlanetBuilder.Messages.Tutorial
         private Coroutine _dialogRetryCoroutine;
         private Coroutine _stepCompletedCoroutine;
         private Coroutine _deferredStageAdvanceCoroutine;
+        private Coroutine _buyTargetRetryCoroutine;
         private Coroutine _managerTargetRetryCoroutine;
         private bool _isStartingManagerTutorialFlow;
 
@@ -137,14 +143,14 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void OnEnable()
         {
-            // Subscribe() is deferred until references are resolved in InitializeWhenReady(),
-            // because the Messages/Tutorial managers persist from PlanetMeta and are resolved
-            // at runtime (they are not present in the PlanetLevel1 scene file).
             _initializationCoroutine = StartCoroutine(InitializeWhenReady());
         }
 
         private void OnDisable()
         {
+            bool hadSession = _isSubscribed || _ownsTutorialSession;
+            Unsubscribe();
+
             if (_initializationCoroutine != null)
             {
                 StopCoroutine(_initializationCoroutine);
@@ -154,25 +160,37 @@ namespace PlanetBuilder.Messages.Tutorial
             StopDialogRetry();
             StopStepCompletedCallback();
             StopDeferredStageAdvanceCoroutine();
+            StopBuyTargetRetry();
             StopManagerTargetRetry();
             StopTargetPolish();
 
-            if (_ownsTutorialSession)
-            {
-                HideBlocker();
-
-                if (_tutorialManager != null)
-                    _tutorialManager.CancelTutorial();
-
-                _ownsTutorialSession = false;
-            }
-
             _isRunning = false;
             _isEarnPhaseActive = false;
+            _isWaitingForSmallTreeMoney = false;
             _isWaitingForManagerMoney = false;
             _isEarlyManagerDialogActive = false;
-            SetConversationViewsTopPlacement(false, null, "controller disabled");
-            Unsubscribe();
+            _ownsTutorialSession = false;
+            _tutorialStepCompleted = null;
+            HideBlocker();
+
+            if (hadSession)
+            {
+                if (_dialogManager != null && ReferenceEquals(_dialogManager.ActiveDialog?.Owner, this))
+                    _dialogManager.CancelDialog();
+
+                if (_tutorialManager != null)
+                    _tutorialManager.ReleaseConfiguration(CurrentStepIdKey, owner: this);
+
+                MessageManager messageManager = MessageManager.Instance;
+                if (messageManager != null)
+                {
+                    messageManager.DiscardMessagesOwnedBy(MessageChannel.Tutorial, this);
+                    messageManager.ResetConversationViewsTopPlacement(this);
+                }
+            }
+
+            _dialogCallbacks.Clear();
+            _nonBlockingDialogIds.Clear();
         }
 
         private void OnValidate()
@@ -203,6 +221,8 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private IEnumerator InitializeWhenReady()
         {
+            yield return null;
+
             if (IsCompleted())
             {
                 _initializationCoroutine = null;
@@ -217,7 +237,7 @@ namespace PlanetBuilder.Messages.Tutorial
             {
                 ResolveReferences();
 
-                if (HasRequiredReferences() && (_gameRules == null || _gameRules.IsPrepared))
+                if (HasRequiredReferences() && _gameRules.IsPrepared && HasLocalEventSystem())
                     break;
 
                 waited += Time.unscaledDeltaTime;
@@ -233,9 +253,15 @@ namespace PlanetBuilder.Messages.Tutorial
                 yield break;
             }
 
-            if (_gameRules != null && !_gameRules.IsPrepared)
+            if (!_gameRules.IsPrepared)
             {
                 Debug.LogWarning("[PlanetTutorialTrace] run skipped: GameRules not prepared after wait", this);
+                yield break;
+            }
+
+            if (!HasLocalEventSystem())
+            {
+                Debug.LogWarning("[PlanetTutorialTrace] run skipped: local EventSystem not ready after wait", this);
                 yield break;
             }
 
@@ -266,15 +292,16 @@ namespace PlanetBuilder.Messages.Tutorial
                 return;
             }
 
-            if (!HasRequiredReferences())
+            if (!HasRequiredReferences() || !_gameRules.IsPrepared)
             {
-                Debug.LogWarning("[PlanetTutorialTrace] run skipped: required references are missing", this);
+                Debug.LogWarning("[PlanetTutorialTrace] run skipped: required references are missing or not prepared", this);
                 return;
             }
 
             _isRunning = true;
             _ownsTutorialSession = true;
-            _currentStage = LoadStage();
+            ClearMissingPurchaseFlags();
+            _currentStage = GetPurchaseRecoveryStage(LoadStage());
             Debug.Log($"[PlanetTutorialTrace] run stage={_currentStage}", this);
             StartStage(_currentStage);
         }
@@ -292,6 +319,27 @@ namespace PlanetBuilder.Messages.Tutorial
 
         public void CompleteTutorial()
         {
+            if (IsCompleted() || _gameRules == null || !_gameRules.IsPrepared)
+                return;
+
+            PlanetTutorialStage resumeStage = GetPurchaseRecoveryStage(PlanetTutorialStage.BuySmallTreeManager);
+            if (resumeStage != PlanetTutorialStage.BuySmallTreeManager || !_gameRules.IsManagerPurchased(SmallTreeIndex))
+            {
+                ClearMissingPurchaseFlags();
+                AdvanceToStage(resumeStage);
+                return;
+            }
+
+            // Retry the snapshot if a purchase checkpoint was missing or could not be saved.
+            if ((PlayerPrefs.GetInt(SmallTreeBoughtKey, 0) != 1 ||
+                 PlayerPrefs.GetInt(BigTreeBoughtKey, 0) != 1 ||
+                 PlayerPrefs.GetInt(SmallTreeManagerBoughtKey, 0) != 1) &&
+                !TrySavePurchaseCheckpoint())
+            {
+                ShowManagerBoughtDialog();
+                return;
+            }
+
             PlayerPrefs.SetInt(CompletedKey, 1);
             PlayerPrefs.DeleteKey(CurrentStepIdKey);
             PlayerPrefs.Save();
@@ -316,6 +364,8 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void StartStage(PlanetTutorialStage stage)
         {
+            StopBuyTargetRetry();
+            _isWaitingForSmallTreeMoney = false;
             StopTargetPolish();
             _isRunning = true;
             _ownsTutorialSession = true;
@@ -438,15 +488,21 @@ namespace PlanetBuilder.Messages.Tutorial
         {
             EnsureShopOpenOnCreationTab();
 
-            if (PlayerPrefs.GetInt(SmallTreeBoughtKey, 0) == 1 ||
-                (_gameRules != null && _gameRules.GetItemCount(SmallTreeIndex) >= 2))
+            if (HasSecondSmallTree())
             {
                 Debug.Log("[PlanetTutorialTrace] BuySmallTree skipped: another SmallTree already bought", this);
                 AdvanceToStage(PlanetTutorialStage.BuyBigTree);
                 return;
             }
 
-            GameObject target = _gameUI != null ? _gameUI.GetCreationBuyButtonTarget(SmallTreeIndex) : null;
+            if (GetCurrentMoney() < GetSmallTreeUpgradeCost())
+            {
+                _smallTreeFirstEarnShown = PlayerPrefs.GetInt(CoinsEarnedFromSmallTreeKey, 0) == 1;
+                _isWaitingForSmallTreeMoney = true;
+                return;
+            }
+
+            GameObject target = GetTreePurchaseTarget(PlanetTutorialStage.BuySmallTree);
 
             string hint = LeanLocalization.GetTranslationText(BuySmallTreeHintKey, BuySmallTreeHintKey);
             if (!StartBuyStep(StepIdBuySmallTree, hint, target, SmallTreeIndex))
@@ -491,8 +547,6 @@ namespace PlanetBuilder.Messages.Tutorial
 
             CompleteManualStep();
             ShowBlocker();
-            if (_interactionOverlay != null && _interactionOverlay.TryGetComponent(out CanvasGroup blocker))
-                blocker.alpha = 0f;
 
             StopDialogRetry();
             _dialogRetryCoroutine = StartCoroutine(ShowTreeBoughtWhenPlaced(tree, stage, dialogId, dialogKey, completed));
@@ -501,15 +555,31 @@ namespace PlanetBuilder.Messages.Tutorial
         private IEnumerator ShowTreeBoughtWhenPlaced(
             PlanetObject tree, PlanetTutorialStage stage, string dialogId, string dialogKey, Action completed)
         {
-            // Purchase confirmation precedes the rotation that activates the tree.
+            // Ждём появления купленного объекта.
             yield return new WaitUntil(() => !_isRunning || _currentStage != stage ||
                 tree == null || tree.gameObject.activeInHierarchy);
+
+            if (!_isRunning || _currentStage != stage)
+            {
+                _dialogRetryCoroutine = null;
+                yield break;
+            }
+
+            // Дополнительная задержка только для SmallTree.
+            if (tree != null &&
+                stage == PlanetTutorialStage.BuySmallTree &&
+                _smallTreeBoughtDialogDelay > 0f)
+            {
+                yield return new WaitForSecondsRealtime(_smallTreeBoughtDialogDelay);
+            }
+
             _dialogRetryCoroutine = null;
 
             if (!_isRunning || _currentStage != stage)
                 yield break;
 
             HideBlocker();
+
             if (tree == null)
             {
                 string treeName = stage == PlanetTutorialStage.BuySmallTree ? "SmallTree" : "BigTree";
@@ -527,8 +597,7 @@ namespace PlanetBuilder.Messages.Tutorial
         // ================================================================
         private void StepBuyBigTree()
         {
-            bool alreadyOwned = PlayerPrefs.GetInt(BigTreeBoughtKey, 0) == 1 ||
-                                (_gameRules != null && _gameRules.IsItemOwned(BigTreeIndex));
+            bool alreadyOwned = _gameRules != null && _gameRules.IsItemOwned(BigTreeIndex);
             if (!alreadyOwned && GetCurrentMoney() < GetBigTreeFirstCost())
             {
                 SetConversationViewsTopPlacement(false, null, "waiting for BigTree money");
@@ -546,7 +615,7 @@ namespace PlanetBuilder.Messages.Tutorial
 
             // A new (unowned) Creation type is acquired through the progress button's first click,
             // which routes to GameRules.PurchaseItemFirstTime -> OnItemFirstPurchaseConfirmed.
-            GameObject target = _gameUI != null ? _gameUI.GetCreationProgressButtonTarget(BigTreeIndex) : null;
+            GameObject target = GetTreePurchaseTarget(PlanetTutorialStage.BuyBigTree);
 
             string hint = LeanLocalization.GetTranslationText(BuyBigTreeHintKey, BuyBigTreeHintKey);
             if (!StartBuyStep(StepIdBuyBigTree, hint, target, BigTreeIndex))
@@ -572,8 +641,7 @@ namespace PlanetBuilder.Messages.Tutorial
         // ================================================================
         private void StepBuySmallTreeManager()
         {
-            if (PlayerPrefs.GetInt(SmallTreeManagerBoughtKey, 0) == 1 ||
-                (_gameRules != null && _gameRules.IsManagerPurchased(SmallTreeIndex)))
+            if (_gameRules != null && _gameRules.IsManagerPurchased(SmallTreeIndex))
             {
                 _isWaitingForManagerMoney = false;
                 EnsureShopOpenOnCreationTab();
@@ -610,7 +678,7 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void StartManagerTutorialFlow()
         {
-            if (_isStartingManagerTutorialFlow)
+            if (_isStartingManagerTutorialFlow || _gameRules.IsManagerPurchased(SmallTreeIndex))
                 return;
 
             _isStartingManagerTutorialFlow = true;
@@ -800,16 +868,13 @@ namespace PlanetBuilder.Messages.Tutorial
         // ================================================================
         private bool StartBuyStep(string stepId, string hint, GameObject target, int itemIndex)
         {
-            if (target == null)
+            if (target == null || !target.activeInHierarchy)
             {
-                Debug.LogWarning($"[PlanetTutorialTrace] {stepId}: target missing; advancing to avoid deadlock", this);
-
-                if (stepId == StepIdBuySmallTree)
-                    AdvanceToStage(PlanetTutorialStage.BuyBigTree);
-                else if (stepId == StepIdBuyBigTree)
-                    AdvanceToStage(PlanetTutorialStage.BuySmallTreeManager);
-                else
-                    CompleteTutorial();
+                if (_buyTargetRetryCoroutine == null)
+                {
+                    Debug.LogWarning($"[PlanetTutorialTrace] {stepId}: purchase target unavailable; waiting for it", this);
+                    _buyTargetRetryCoroutine = StartCoroutine(RetryBuyTargetRoutine(_currentStage));
+                }
 
                 return false;
             }
@@ -824,6 +889,46 @@ namespace PlanetBuilder.Messages.Tutorial
 
             StartHighlightStep(stepId, hint, target, CharacterMood.Thinking);
             return true;
+        }
+
+        private GameObject GetTreePurchaseTarget(PlanetTutorialStage stage)
+        {
+            if (_gameUI == null)
+                return null;
+
+            return stage == PlanetTutorialStage.BuySmallTree
+                ? _gameUI.GetCreationBuyButtonTarget(SmallTreeIndex)
+                : _gameUI.GetCreationProgressButtonTarget(BigTreeIndex);
+        }
+
+        private IEnumerator RetryBuyTargetRoutine(PlanetTutorialStage stage)
+        {
+            yield return new WaitUntil(() =>
+            {
+                if (!_isRunning || _currentStage != stage)
+                    return true;
+
+                GameObject target = GetTreePurchaseTarget(stage);
+                return target != null && target.activeInHierarchy;
+            });
+
+            _buyTargetRetryCoroutine = null;
+            if (!_isRunning || _currentStage != stage)
+                yield break;
+
+            if (stage == PlanetTutorialStage.BuySmallTree)
+                StepBuySmallTree();
+            else
+                StepBuyBigTree();
+        }
+
+        private void StopBuyTargetRetry()
+        {
+            if (_buyTargetRetryCoroutine == null)
+                return;
+
+            StopCoroutine(_buyTargetRetryCoroutine);
+            _buyTargetRetryCoroutine = null;
         }
 
         // ================================================================
@@ -868,7 +973,8 @@ namespace PlanetBuilder.Messages.Tutorial
             _tutorialManager.Configure(
                 new List<TutorialStepData> { stepData },
                 CurrentStepIdKey,
-                $"{TutorialActionsCompletedKey}.{stepId}");
+                $"{TutorialActionsCompletedKey}.{stepId}",
+                owner: this);
 
             _tutorialManager.RestartTutorial();
             Debug.Log($"[PlanetTutorialTrace] step started stepId={stepId} target={(target != null ? target.name : "null")}", this);
@@ -917,7 +1023,12 @@ namespace PlanetBuilder.Messages.Tutorial
         {
             SetConversationViewsTopPlacement(ShouldUseTopPlacement(), dialogId, "ShowBlockingDialog");
             _dialogCallbacks[dialogId] = completed;
-            RequestDialog(new DialogData { DialogId = dialogId, ListDialogLine = new List<DialogLine>(lines) });
+            RequestDialog(new DialogData
+            {
+                DialogId = dialogId,
+                ListDialogLine = new List<DialogLine>(lines),
+                Owner = this
+            });
         }
 
         private DialogLine Line(string text, CharacterMood mood, string speakerId = null)
@@ -985,17 +1096,26 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void HandleDialogCompleted(DialogData dialog)
         {
-            if (dialog == null)
-                return;
-
-            if (!_nonBlockingDialogIds.Remove(dialog.DialogId))
-                HideBlocker();
-
-            if (!_dialogCallbacks.TryGetValue(dialog.DialogId, out Action callback))
+            if (!ReferenceEquals(dialog?.Owner, this) || !_dialogCallbacks.TryGetValue(dialog.DialogId, out Action callback))
                 return;
 
             _dialogCallbacks.Remove(dialog.DialogId);
+            if (!_nonBlockingDialogIds.Remove(dialog.DialogId))
+                HideBlocker();
+
             callback?.Invoke();
+        }
+
+        private void HandleDialogCancelled(DialogData dialog)
+        {
+            if (!ReferenceEquals(dialog.Owner, this) || !_dialogCallbacks.Remove(dialog.DialogId))
+                return;
+
+            StopDialogRetry();
+            if (!_nonBlockingDialogIds.Remove(dialog.DialogId))
+                HideBlocker();
+
+            MessageManager.Instance?.ResetConversationViewsTopPlacement(this);
         }
 
         private void ShowFirstEarnMessage(string text)
@@ -1018,6 +1138,7 @@ namespace PlanetBuilder.Messages.Tutorial
             if (messageManager.TryShowMessageImmediately(new MessageData
             {
                 Id = FirstEarnMessageId,
+                Owner = this,
                 Text = text,
                 SpeakerId = _contractorSpeakerId,
                 CharacterMood = CharacterMood.Happy,
@@ -1037,7 +1158,7 @@ namespace PlanetBuilder.Messages.Tutorial
 
             void HandleFirstEarnMessageClosed(MessageData message)
             {
-                if (message.Id != FirstEarnMessageId)
+                if (message.Id != FirstEarnMessageId || !ReferenceEquals(message.Owner, this))
                     return;
 
                 messageManager.OnMessageClosed -= HandleFirstEarnMessageClosed;
@@ -1057,39 +1178,16 @@ namespace PlanetBuilder.Messages.Tutorial
             }
         }
 
-        private void ShowToast(string text)
-        {
-            MessageManager messageManager = MessageManager.Instance;
-
-            if (messageManager == null)
-            {
-                Debug.Log($"[PlanetTutorialTrace] {text}", this);
-                return;
-            }
-
-            messageManager.ShowMessage(new MessageData
-            {
-                Id = "PlanetTutorial.Toast",
-                Text = text,
-                Type = MessageType.Toast,
-                Channel = MessageChannel.Toast,
-                Priority = 100,
-                DisplayDuration = 1.5f,
-                CanInterrupt = true,
-                CanDisplayOverModal = true
-            });
-        }
-
         private void ShowBlocker()
         {
             if (_interactionOverlay != null)
-                _interactionOverlay.Show(null);
+                _interactionOverlay.Show(null, allowCutout: true, showDimming: false, owner: this);
         }
 
         private void HideBlocker()
         {
             if (_interactionOverlay != null)
-                _interactionOverlay.Hide();
+                _interactionOverlay.HideOwnedBy(this);
         }
 
         private void SetConversationViewsTopPlacement(bool useTopPlacement, string stepId = null, string reason = null)
@@ -1102,7 +1200,7 @@ namespace PlanetBuilder.Messages.Tutorial
             if (useTopPlacement && _uiController != null && _uiController.isDisplayed)
                 messageManager.SetShopOpen(false);
 
-            messageManager.SetConversationViewsTopPlacement(useTopPlacement, stepId, reason);
+            messageManager.SetConversationViewsTopPlacement(useTopPlacement, stepId, reason, owner: this);
         }
 
         private bool ShouldUseTopPlacement()
@@ -1166,7 +1264,14 @@ namespace PlanetBuilder.Messages.Tutorial
             if (income <= 0d)
                 return;
 
-            if (index == SmallTreeIndex && !_smallTreeFirstEarnShown)
+            if (index == SmallTreeIndex &&
+                !_smallTreeFirstEarnShown &&
+                _isRunning &&
+                _isEarnPhaseActive &&
+                _currentStage == PlanetTutorialStage.EarnCoinsSmallTree &&
+                _tutorialManager != null &&
+                _tutorialManager.IsRunning &&
+                _tutorialManager.CurrentStep?.StepId == StepIdEarnCoins)
             {
                 _smallTreeFirstEarnShown = true;
                 SaveFlag(CoinsEarnedFromSmallTreeKey);
@@ -1176,10 +1281,7 @@ namespace PlanetBuilder.Messages.Tutorial
 
                 string text = LeanLocalization.GetTranslationText(EarnedFirstToastKey, EarnedFirstToastKey);
 
-                if (_currentStage == PlanetTutorialStage.EarnCoinsSmallTree && _isEarnPhaseActive)
-                    ShowFirstEarnMessage(text);
-                else
-                    ShowToast(text);
+                ShowFirstEarnMessage(text);
 
                 Debug.Log("[PlanetTutorialTrace] first coins earned from SmallTree", this);
             }
@@ -1204,13 +1306,21 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void HandleGameDataUpdated()
         {
+            if (_isRunning && _isWaitingForSmallTreeMoney &&
+                _currentStage == PlanetTutorialStage.BuySmallTree &&
+                GetCurrentMoney() >= GetSmallTreeUpgradeCost())
+            {
+                _isWaitingForSmallTreeMoney = false;
+                StepBuySmallTree();
+            }
+
             if (_isRunning && _currentStage == PlanetTutorialStage.BuyBigTree &&
                 _gameRules != null && !_gameRules.IsItemOwned(BigTreeIndex))
             {
                 double money = GetCurrentMoney();
                 double cost = GetBigTreeFirstCost();
                 bool isStepRunning = _tutorialManager != null && _tutorialManager.IsRunning;
-                if (!isStepRunning && money >= cost)
+                if (!isStepRunning && _buyTargetRetryCoroutine == null && money >= cost)
                 {
                     StepBuyBigTree();
                 }
@@ -1306,8 +1416,8 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void HandleItemFirstPurchaseConfirmed(int index)
         {
-            if (index == BigTreeIndex)
-                SaveFlag(BigTreeBoughtKey);
+            if (_isRunning && index == BigTreeIndex)
+                TrySavePurchaseCheckpoint(BigTreeBoughtKey);
 
             TutorialStepData current = _tutorialManager != null ? _tutorialManager.CurrentStep : null;
 
@@ -1317,8 +1427,8 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void HandleItemUpgradedConfirmed(int index)
         {
-            if (index == SmallTreeIndex)
-                SaveFlag(SmallTreeBoughtKey);
+            if (_isRunning && index == SmallTreeIndex && _gameRules.GetItemCount(index) == 2)
+                TrySavePurchaseCheckpoint(SmallTreeBoughtKey);
 
             TutorialStepData current = _tutorialManager != null ? _tutorialManager.CurrentStep : null;
 
@@ -1331,7 +1441,8 @@ namespace PlanetBuilder.Messages.Tutorial
             if (index != SmallTreeIndex)
                 return;
 
-            SaveFlag(SmallTreeManagerBoughtKey);
+            if (_isRunning)
+                TrySavePurchaseCheckpoint(SmallTreeManagerBoughtKey);
 
             if (_isRunning && _currentStage == PlanetTutorialStage.BuySmallTreeManager)
                 HandleManagerBought();
@@ -1346,7 +1457,10 @@ namespace PlanetBuilder.Messages.Tutorial
                 return;
 
             if (_dialogManager != null)
+            {
                 _dialogManager.OnDialogCompleted += HandleDialogCompleted;
+                _dialogManager.OnDialogCancelled += HandleDialogCancelled;
+            }
 
             if (_tutorialManager != null)
             {
@@ -1381,7 +1495,10 @@ namespace PlanetBuilder.Messages.Tutorial
                 return;
 
             if (_dialogManager != null)
+            {
                 _dialogManager.OnDialogCompleted -= HandleDialogCompleted;
+                _dialogManager.OnDialogCancelled -= HandleDialogCancelled;
+            }
 
             if (_tutorialManager != null)
             {
@@ -1758,37 +1875,17 @@ namespace PlanetBuilder.Messages.Tutorial
         // ================================================================
         // Helpers
         // ================================================================
-        /// <summary>
-        /// Fills any unset serialized references at runtime. The Messages/Tutorial infrastructure
-        /// (MessageManager, DialogManager, TutorialManager and the message views) lives on a
-        /// DontDestroyOnLoad "MetaPlanetTutorial" GameObject in PlanetMeta and persists into
-        /// PlanetLevel1 in the build flow (Meta -> PlanetLevel1 via SceneManager.LoadScene). It is
-        /// therefore absent from the PlanetLevel1 scene file and must be located at runtime instead
-        /// of through the Inspector. Planet-side objects (UIController, GameRules, GameUI) live in
-        /// the PlanetLevel1 scene and are resolved by type as well, so no manual wiring is required.
-        /// </summary>
         private void ResolveReferences()
         {
             MessageManager messageManager = MessageManager.Instance;
 
-            if (_tutorialManager == null)
+            if (messageManager != null)
             {
-                _tutorialManager = messageManager != null
-                    ? messageManager.GetComponent<TutorialManager>()
-                    : null;
-
-                if (_tutorialManager == null)
-                    _tutorialManager = FindFirstObjectByType<TutorialManager>();
-            }
-
-            if (_dialogManager == null && messageManager != null)
+                _tutorialManager = messageManager.GetComponent<TutorialManager>();
                 _dialogManager = messageManager.GetComponent<DialogManager>();
-
-            if (_interactionOverlay == null)
-                _interactionOverlay = FindFirstObjectByType<TutorialInteractionOverlay>();
-
-            if (_highlightSystem == null && _interactionOverlay != null)
-                _highlightSystem = _interactionOverlay.GetComponent<TutorialHighlightSystem>();
+                _interactionOverlay = messageManager.GetComponentInChildren<TutorialInteractionOverlay>(true);
+                _highlightSystem = messageManager.GetComponentInChildren<TutorialHighlightSystem>(true);
+            }
 
             if (_uiController == null)
                 _uiController = FindFirstObjectByType<UIController>();
@@ -1798,6 +1895,19 @@ namespace PlanetBuilder.Messages.Tutorial
 
             if (_gameUI == null)
                 _gameUI = FindFirstObjectByType<GameUI>();
+
+            if (_gameManager == null)
+                _gameManager = FindFirstObjectByType<GameManager>();
+        }
+
+        private bool HasLocalEventSystem()
+        {
+            EventSystem eventSystem = EventSystem.current;
+            return eventSystem != null &&
+                   eventSystem.isActiveAndEnabled &&
+                   eventSystem.gameObject.scene == gameObject.scene &&
+                   eventSystem.currentInputModule != null &&
+                   eventSystem.currentInputModule.isActiveAndEnabled;
         }
 
         private static string GetComponentName(Component component) =>
@@ -1828,6 +1938,12 @@ namespace PlanetBuilder.Messages.Tutorial
                 ok = false;
             }
 
+            if (_highlightSystem == null)
+            {
+                Debug.LogWarning("[PlanetTutorialTrace] missing TutorialHighlightSystem", this);
+                ok = false;
+            }
+
             if (_uiController == null)
             {
                 Debug.LogWarning("[PlanetTutorialTrace] missing UIController", this);
@@ -1846,6 +1962,12 @@ namespace PlanetBuilder.Messages.Tutorial
                 ok = false;
             }
 
+            if (_gameManager == null || _gameManager.gameObject.scene != gameObject.scene)
+            {
+                Debug.LogWarning("[PlanetTutorialTrace] missing local GameManager", this);
+                ok = false;
+            }
+
             return ok;
         }
 
@@ -1860,6 +1982,52 @@ namespace PlanetBuilder.Messages.Tutorial
             }
 
             return (PlanetTutorialStage)value;
+        }
+
+        private bool HasSecondSmallTree() => _gameRules.GetItemCount(SmallTreeIndex) >= 2;
+
+        private PlanetTutorialStage GetPurchaseRecoveryStage(PlanetTutorialStage stage)
+        {
+            if (stage > PlanetTutorialStage.BuySmallTree && !HasSecondSmallTree())
+                return PlanetTutorialStage.BuySmallTree;
+
+            if (stage > PlanetTutorialStage.BuyBigTree && !_gameRules.IsItemOwned(BigTreeIndex))
+                return PlanetTutorialStage.BuyBigTree;
+
+            return stage;
+        }
+
+        private void ClearMissingPurchaseFlags()
+        {
+            if (!HasSecondSmallTree())
+                PlayerPrefs.DeleteKey(SmallTreeBoughtKey);
+
+            if (!_gameRules.IsItemOwned(BigTreeIndex))
+                PlayerPrefs.DeleteKey(BigTreeBoughtKey);
+
+            if (!_gameRules.IsManagerPurchased(SmallTreeIndex))
+                PlayerPrefs.DeleteKey(SmallTreeManagerBoughtKey);
+        }
+
+        private bool TrySavePurchaseCheckpoint(string flagKey = null)
+        {
+            try
+            {
+                if (_gameManager == null || !_gameManager.TrySavePlanetSnapshot())
+                    return false;
+
+                PlayerPrefs.Save();
+
+                if (flagKey != null)
+                    SaveFlag(flagKey);
+
+                return true;
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception, this);
+                return false;
+            }
         }
 
         private void SaveStage(PlanetTutorialStage stage)

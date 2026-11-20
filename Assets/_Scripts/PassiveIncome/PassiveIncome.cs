@@ -46,6 +46,11 @@ public class PassiveIncome : MonoBehaviour
     [Header("Passive Income Chest")]
     [SerializeField] private PassiveIncomeChestController _chestController;
 
+    internal PassiveIncomePop AvailableChest =>
+        isActiveAndEnabled && passiveIncomeWind != null && !passiveIncomeWind.activeSelf && _chestController != null
+            ? _chestController.AvailableChest
+            : null;
+
     #endregion
 
     #region EVENTS & ACTIONS

@@ -49,7 +49,7 @@ public class PurchaseManager : MonoBehaviour
     public void NoAds()
     {
         PlayerPrefs.SetInt(SaveSystem.AdsRemovedKey, 1);
-        _noAdsButton.SetActive(false);  
+        _noAdsButton.SetActive(false);
         ApplyNoAds();
         FirebaseAnalytics.LogEvent(name: "no_ads_purchased");
     }
@@ -121,14 +121,10 @@ public class PurchaseManager : MonoBehaviour
 
         return productId switch
         {
-            "com.planetclicker.diamonds.small" or "com.planetclicker.diamonds.medium"
-                or "com.planetclicker.diamonds.large" => true,
-            "com.planetclicker.coins.1p.small" or "com.planetclicker.coins.1p.medium"
-                or "com.planetclicker.coins.1p.large" => sceneName == "PlanetLevel1",
-            "com.planetclicker.coins.2p.small" or "com.planetclicker.coins.2p.medium"
-                or "com.planetclicker.coins.2p.large" => sceneName == "PlanetLevel3",
-            "com.planetclicker.coins.3p.small" or "com.planetclicker.coins.3p.medium"
-                or "com.planetclicker.coins.3p.large" => sceneName == "PlanetLevel4",
+            "com.planetclicker.diamonds.mini" or "com.planetclicker.diamonds.small" or "com.planetclicker.diamonds.medium" or "com.planetclicker.diamonds.large" => true,
+            "com.planetclicker.coins.1p.small" or "com.planetclicker.coins.1p.medium" or "com.planetclicker.coins.1p.large" => sceneName == "PlanetLevel1",
+            "com.planetclicker.coins.2p.small" or "com.planetclicker.coins.2p.medium" or "com.planetclicker.coins.2p.large" => sceneName == "PlanetLevel3",
+            "com.planetclicker.coins.3p.small" or "com.planetclicker.coins.3p.medium" or "com.planetclicker.coins.3p.large" => sceneName == "PlanetLevel4",
             "com.planetclicker.starterpack.v2" => sceneName == "PlanetLevel1" && !HasPurchased("StarterPackPurchased"),
             "com.planetclicker.specialoffer.v2" => sceneName == "PlanetLevel1" && !HasPurchased("SpecialOfferPurchased"),
             "com.planetclicker.noads" => sceneName != "PlanetLevel1" && !HasNoAds(),

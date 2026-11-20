@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6218543173468349722}
   - component: {fileID: 3346439842342362807}
   - component: {fileID: 4780571805445130206}
-  - component: {fileID: 6277300758868192762}
   m_Layer: 5
   m_Name: SettingsBtn
   m_TagString: Untagged
@@ -147,25 +146,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
---- !u!114 &6277300758868192762
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 269350828563146938}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfb54f1d79cf09c49a1f6a6e86f53923, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _audioMixer: {fileID: 24100000, guid: 201d03ab875c5ef47aba8b8ec746b9dc, type: 2}
-  _musicGroupName: Music
-  _defaultAudioMixedSnapshot: {fileID: 24500006, guid: 201d03ab875c5ef47aba8b8ec746b9dc, type: 2}
-  _mutedAudioMixerSnapshot: {fileID: 2050853557629163886, guid: 201d03ab875c5ef47aba8b8ec746b9dc, type: 2}
-  _soundOffIcon: {fileID: 1565705650, guid: 04fff96dfc723e749933be1dbd3b2424, type: 3}
-  _soundOnIcon: {fileID: 1830500508, guid: 04fff96dfc723e749933be1dbd3b2424, type: 3}
-  _buttonIconImage: {fileID: 0}
 --- !u!1 &581060128980138256
 GameObject:
   m_ObjectHideFlags: 0
@@ -178,7 +158,6 @@ GameObject:
   - component: {fileID: 5871970070424962797}
   - component: {fileID: 1042137694496542669}
   - component: {fileID: 1560760754926588757}
-  - component: {fileID: 1575115420449289968}
   m_Layer: 5
   m_Name: MetaPkanetBtn
   m_TagString: Untagged
@@ -290,9 +269,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+        m_TargetAssemblyTypeName: LevelController, Assembly-CSharp
+        m_MethodName: LoadSceene
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -313,25 +292,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
---- !u!114 &1575115420449289968
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 581060128980138256}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfb54f1d79cf09c49a1f6a6e86f53923, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _audioMixer: {fileID: 24100000, guid: 201d03ab875c5ef47aba8b8ec746b9dc, type: 2}
-  _musicGroupName: Music
-  _defaultAudioMixedSnapshot: {fileID: 24500006, guid: 201d03ab875c5ef47aba8b8ec746b9dc, type: 2}
-  _mutedAudioMixerSnapshot: {fileID: 2050853557629163886, guid: 201d03ab875c5ef47aba8b8ec746b9dc, type: 2}
-  _soundOffIcon: {fileID: 1565705650, guid: 04fff96dfc723e749933be1dbd3b2424, type: 3}
-  _soundOnIcon: {fileID: 1830500508, guid: 04fff96dfc723e749933be1dbd3b2424, type: 3}
-  _buttonIconImage: {fileID: 0}
 --- !u!1 &589786583172411093
 GameObject:
   m_ObjectHideFlags: 0
@@ -672,10 +632,10 @@ MonoBehaviour:
     - rid: 1135082211351724039
       type: {class: MMF_Image, ns: MoreMountains.Feedbacks, asm: MoreMountains.Tools}
       data:
-        Active: 1
+        Active: 0
         UniqueID: 144604151
         Label: Image
-        OriginalLabel: 
+        OriginalLabel: Image
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -750,7 +710,7 @@ MonoBehaviour:
         ModifyColor: 1
         ColorOverTime:
           serializedVersion: 2
-          key0: {r: 0.105882354, g: 0.6784314, b: 0.9137255, a: 1}
+          key0: {r: 1, g: 1, b: 1, a: 1}
           key1: {r: 0.105882354, g: 0.59607846, b: 0.9137255, a: 1}
           key2: {r: 0, g: 0, b: 0, a: 0}
           key3: {r: 0, g: 0, b: 0, a: 0}
@@ -814,7 +774,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 20309716
         Label: Sound
-        OriginalLabel: 
+        OriginalLabel: Sound
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -939,7 +899,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 663343598
         Label: Haptic Clip
-        OriginalLabel: 
+        OriginalLabel: Haptic Clip
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -2778,7 +2738,6 @@ GameObject:
   - component: {fileID: 8207006189024602370}
   - component: {fileID: 5891706936243899138}
   - component: {fileID: 8583019058778997699}
-  - component: {fileID: 4540125252228600549}
   m_Layer: 5
   m_Name: MetaPkanetSkinBtn
   m_TagString: Untagged
@@ -2913,25 +2872,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
---- !u!114 &4540125252228600549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4682067463396179716}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfb54f1d79cf09c49a1f6a6e86f53923, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _audioMixer: {fileID: 24100000, guid: 201d03ab875c5ef47aba8b8ec746b9dc, type: 2}
-  _musicGroupName: Music
-  _defaultAudioMixedSnapshot: {fileID: 24500006, guid: 201d03ab875c5ef47aba8b8ec746b9dc, type: 2}
-  _mutedAudioMixerSnapshot: {fileID: 2050853557629163886, guid: 201d03ab875c5ef47aba8b8ec746b9dc, type: 2}
-  _soundOffIcon: {fileID: 1565705650, guid: 04fff96dfc723e749933be1dbd3b2424, type: 3}
-  _soundOnIcon: {fileID: 1830500508, guid: 04fff96dfc723e749933be1dbd3b2424, type: 3}
-  _buttonIconImage: {fileID: 0}
 --- !u!1 &5278408188798950481
 GameObject:
   m_ObjectHideFlags: 0
@@ -3160,10 +3100,10 @@ MonoBehaviour:
     - rid: 1135082211351724039
       type: {class: MMF_Image, ns: MoreMountains.Feedbacks, asm: MoreMountains.Tools}
       data:
-        Active: 1
+        Active: 0
         UniqueID: 144604151
         Label: Image
-        OriginalLabel: 
+        OriginalLabel: Image
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -3302,7 +3242,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 20309716
         Label: Sound
-        OriginalLabel: 
+        OriginalLabel: Sound
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -3427,7 +3367,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: -626127832
         Label: Haptic Clip
-        OriginalLabel: 
+        OriginalLabel: Haptic Clip
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -4426,7 +4366,7 @@ MonoBehaviour:
     - rid: 1135082211351724039
       type: {class: MMF_Image, ns: MoreMountains.Feedbacks, asm: MoreMountains.Tools}
       data:
-        Active: 1
+        Active: 0
         UniqueID: 144604151
         Label: Image
         OriginalLabel: 
@@ -5218,7 +5158,7 @@ MonoBehaviour:
     - rid: 1135082211351724039
       type: {class: MMF_Image, ns: MoreMountains.Feedbacks, asm: MoreMountains.Tools}
       data:
-        Active: 1
+        Active: 0
         UniqueID: 144604151
         Label: Image
         OriginalLabel: 

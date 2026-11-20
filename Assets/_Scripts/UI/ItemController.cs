@@ -31,6 +31,7 @@ public class ItemController : MonoBehaviour
     public bool isWorking => _progressButton.IsEnabled == false;
     public GameObject ProgressButtonTarget => _progressButton != null ? _progressButton.gameObject : null;
     public GameObject BuyButtonTarget => _buyButton != null ? _buyButton.gameObject : null;
+    internal int CreationPurchaseLimit => _maxItems;
     private void Awake()
     {
         _progressButton.OnButtonClicked.AddListener(HandleFirstClick);

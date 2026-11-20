@@ -24,6 +24,7 @@ namespace PlanetBuilder.Messages.UI
         private bool _hasDefaultPlacement;
 
         protected TMP_Text MessageText => _messageText;
+        protected virtual string DefaultSpeakerId => null;
 
         internal MessageData DisplayedMessage { get; private set; }
 
@@ -77,7 +78,9 @@ namespace PlanetBuilder.Messages.UI
                 _messageText.text = data.Text;
 
             if (_portraitController != null)
-                _portraitController.ShowCharacter(data.SpeakerId, data.CharacterMood);
+                _portraitController.ShowCharacter(
+                    string.IsNullOrEmpty(data.SpeakerId) ? DefaultSpeakerId : data.SpeakerId,
+                    data.CharacterMood);
 
             gameObject.SetActive(true);
         }

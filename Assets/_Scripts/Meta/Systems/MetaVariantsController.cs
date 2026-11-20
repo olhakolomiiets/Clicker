@@ -25,6 +25,9 @@ public class MetaVariantsController : MonoBehaviour
     [SerializeField] private MetaObjectPlaceRotator objectPlaceRotator;
     private DragRotateGPT _planetRotator;
 
+    private bool _firstTutorialAdd;
+    private bool _firstTutorialAddQueued;
+
     private GeneralGameData gameData;
     private MetaGameRules _metaGameRules;
 
@@ -262,8 +265,33 @@ public class MetaVariantsController : MonoBehaviour
 
     #region OBJECT ACTIVATOR
 
+    internal void SetFirstTutorialAdd(bool enabled)
+    {
+        _firstTutorialAdd = enabled;
+        _firstTutorialAddQueued = false;
+    }
+
+    internal bool CanAddObject(int maxCount)
+    {
+        return _firstTutorialAdd
+            ? !_firstTutorialAddQueued && items.Count > 0 && !items[0].isActive
+            : itemCount >= 0 && itemCount < maxCount;
+    }
+
     public void ActivateNextObject()
     {
+        if (_firstTutorialAdd)
+        {
+            if (!CanAddObject(objectsToActivate.Count) || objectsToActivate.Count == 0)
+                return;
+
+            // A saved cursor can already point past an interrupted first placement.
+            _firstTutorialAddQueued = true;
+            itemCount = Mathf.Max(itemCount, 1);
+            objectPlaceRotator.AddToNeedToShowList(objectsToActivate[0]);
+            return;
+        }
+
         if (itemCount < objectsToActivate.Count)
         {
             objectPlaceRotator.AddToNeedToShowList(objectsToActivate[itemCount]);

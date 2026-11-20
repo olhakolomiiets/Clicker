@@ -22,7 +22,6 @@ public static class MetaPlanetTutorialSceneIntegrator
     private const string RootName = "MetaPlanetTutorial";
     private const string ViewCanvasName = "TutorialMessageCanvas";
 
-    [MenuItem("Tools/Planet Builder/Integrate Meta Planet Tutorial Scene")]
     public static void Integrate()
     {
         Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);

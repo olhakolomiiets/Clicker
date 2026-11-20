@@ -10,6 +10,7 @@ namespace PlanetBuilder.Messages.Dialogs
     {
         public string DialogId;
         public List<DialogLine> ListDialogLine = new();
+        internal object Owner { get; set; }
         internal VideoDialogView VideoView { get; set; }
     }
 

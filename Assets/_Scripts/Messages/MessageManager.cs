@@ -38,8 +38,10 @@ namespace PlanetBuilder.Messages
         [SerializeField] private ToastView _toastView;
         [SerializeField] private TutorialView _tutorialView;
 
+        private object _conversationPlacementOwner;
         private float _nextCooldownCleanupTime;
         private bool _isProcessingDeferredMessages;
+        private MessageData _toastViewOwner;
 
         public static MessageManager Instance
         {
@@ -149,7 +151,8 @@ namespace PlanetBuilder.Messages
             if (_activeMessages.TryGetValue(message.Channel, out ActiveMessage activeMessage))
             {
                 if (activeMessage.Message.CanInterrupt &&
-                    message.Priority > activeMessage.Message.Priority)
+                    message.Priority > activeMessage.Message.Priority &&
+                    CanUseToastView(message, activeMessage.Message))
                 {
                     DisplayInterruptingMessage(message, submittedAt);
                 }
@@ -194,11 +197,24 @@ namespace PlanetBuilder.Messages
 
         public void SetConversationViewsTopPlacement(bool useTopPlacement, string stepId = null, string reason = null)
         {
+            SetConversationViewsTopPlacement(useTopPlacement, stepId, reason, owner: null);
+        }
+
+        internal void SetConversationViewsTopPlacement(bool useTopPlacement, string stepId, string reason, object owner)
+        {
+            _conversationPlacementOwner = useTopPlacement ? owner : null;
+
             if (_messageView != null)
                 _messageView.SetTopPlacement(useTopPlacement, stepId, reason);
 
             if (_tutorialView != null)
                 _tutorialView.SetTopPlacement(useTopPlacement, stepId, reason);
+        }
+
+        internal void ResetConversationViewsTopPlacement(object owner)
+        {
+            if (ReferenceEquals(_conversationPlacementOwner, owner))
+                SetConversationViewsTopPlacement(false, reason: "controller disabled");
         }
 
         internal void SetConversationPortraitsHidden(bool hidden)
@@ -228,11 +244,30 @@ namespace PlanetBuilder.Messages
         public void SetTutorialRunning(bool isRunning)
         {
             _displayValidator.SetTutorialRunning(isRunning);
+            if (isRunning)
+                CloseIncompatibleNotifications();
         }
 
         public void SetDialogOpen(bool isOpen)
         {
             _displayValidator.SetDialogOpen(isOpen);
+            if (isOpen)
+                CloseIncompatibleNotifications();
+        }
+
+        private void CloseIncompatibleNotifications()
+        {
+            CloseIfIncompatible(MessageChannel.Hint);
+            CloseIfIncompatible(MessageChannel.Toast);
+
+            void CloseIfIncompatible(MessageChannel channel)
+            {
+                if (_activeMessages.TryGetValue(channel, out ActiveMessage active) &&
+                    !_displayValidator.CanDisplay(active.Message))
+                {
+                    CloseCurrentMessage(channel, showNextMessages: false);
+                }
+            }
         }
 
         public bool IsMessageActiveOrQueued(string id)
@@ -264,6 +299,51 @@ namespace PlanetBuilder.Messages
                 CloseCurrentMessage(Channels[i], false);
 
             TryShowQueuedMessages(Time.unscaledTime);
+        }
+
+        internal void DiscardMessages(MessageChannel channel, string idPrefix)
+        {
+            DiscardMessages(channel, message =>
+                message.Id?.StartsWith(idPrefix, StringComparison.Ordinal) == true);
+        }
+
+        internal void DiscardMessagesOwnedBy(MessageChannel channel, object owner)
+        {
+            if (owner != null)
+                DiscardMessages(channel, message => ReferenceEquals(message.Owner, owner));
+        }
+
+        private void DiscardMessages(MessageChannel channel, Predicate<MessageData> matches)
+        {
+            bool Matches(MessageData message) => message.Channel == channel && matches(message);
+
+            _queueManager.RemoveWhere(Matches);
+
+            for (int i = _deferredMessages.Count - 1; i >= 0; i--)
+            {
+                MessageData message = _deferredMessages[i].Message;
+                if (!Matches(message))
+                    continue;
+
+                _deferredMessages.RemoveAt(i);
+                _deferredMessageIds.Remove(message.Id);
+            }
+
+            for (int i = _scheduledReminders.Count - 1; i >= 0; i--)
+            {
+                MessageData message = _scheduledReminders[i].Message;
+                if (!Matches(message))
+                    continue;
+
+                _scheduledReminders.RemoveAt(i);
+                _scheduledReminderIds.Remove(message.Id);
+            }
+
+            if (_activeMessages.TryGetValue(channel, out ActiveMessage activeMessage) &&
+                Matches(activeMessage.Message))
+            {
+                CloseCurrentMessage(channel, false);
+            }
         }
 
         private void AddDeferredMessage(MessageData message, float submittedAt)
@@ -363,6 +443,8 @@ namespace PlanetBuilder.Messages
 
             _activeMessages.Remove(channel);
             HideView(activeMessage.Message);
+            if (ReferenceEquals(_toastViewOwner, activeMessage.Message))
+                _toastViewOwner = null;
 
             float closedAt = Time.unscaledTime;
 
@@ -400,8 +482,16 @@ namespace PlanetBuilder.Messages
             if (closeTime > 0f && currentTime >= closeTime)
                 return;
 
+            bool usesToastView = UsesToastView(message);
+            if (usesToastView)
+                _toastViewOwner = message;
+
             _activeMessages[message.Channel] = new ActiveMessage(message, submittedAt, closeTime);
             _analyticsService.TrackShown(message, currentTime);
+
+            // Analytics callbacks can close the message before the view is shown.
+            if (usesToastView && !ReferenceEquals(_toastViewOwner, message))
+                return;
 
             ShowView(message);
             OnMessageShown?.Invoke(message.CreateSnapshot());
@@ -410,7 +500,6 @@ namespace PlanetBuilder.Messages
         private void ShowView(MessageData message)
         {
             BaseMessageView view = GetView(message);
-
             if (view != null)
                 view.Show(message);
         }
@@ -439,7 +528,7 @@ namespace PlanetBuilder.Messages
                 case MessageType.Dialog:
                     return (BaseMessageView)message.VideoView ?? _messageView;
                 case MessageType.Hint:
-                    return _characterBubbleView;
+                    return message.UseToastView ? _toastView : _characterBubbleView;
                 case MessageType.Toast:
                     return _toastView;
                 default:
@@ -447,16 +536,34 @@ namespace PlanetBuilder.Messages
             }
         }
 
-        private bool CanDisplay(MessageData message)
+        internal bool CanDisplay(MessageData message)
         {
             return !_activeMessages.ContainsKey(message.Channel) &&
                    !_reservedChannels.Contains(message.Channel) &&
-                   _displayValidator.CanDisplay(message);
+                   _displayValidator.CanDisplay(message) &&
+                   CanUseToastView(message);
+        }
+
+        private bool UsesToastView(MessageData message)
+        {
+            return _toastView != null && GetView(message) == _toastView;
+        }
+
+        private bool CanUseToastView(MessageData message, MessageData replacing = null)
+        {
+            return !UsesToastView(message) ||
+                   _toastViewOwner == null ||
+                   ReferenceEquals(_toastViewOwner, replacing);
         }
 
         private void DisplayInterruptingMessage(MessageData message, float submittedAt)
         {
             _reservedChannels.Add(message.Channel);
+            // OnMessageClosed can submit a message on the other channel before the replacement is shown.
+            bool reservesToastView = UsesToastView(message);
+            if (reservesToastView)
+                _toastViewOwner = message;
+
             bool hasMessageId = !string.IsNullOrEmpty(message.Id);
 
             if (hasMessageId)
@@ -473,6 +580,11 @@ namespace PlanetBuilder.Messages
                     _reservedMessageIds.Remove(message.Id);
 
                 _reservedChannels.Remove(message.Channel);
+                if (reservesToastView && ReferenceEquals(_toastViewOwner, message) &&
+                    !_activeMessages.ContainsKey(message.Channel))
+                {
+                    _toastViewOwner = null;
+                }
             }
 
             ProcessDeferredMessages();

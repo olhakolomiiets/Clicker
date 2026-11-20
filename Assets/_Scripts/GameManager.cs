@@ -435,6 +435,7 @@ public class GameManager : MonoBehaviour
     {
         return productId switch
         {
+            "com.planetclicker.diamonds.mini" => new IapReward(diamonds: 25),
             "com.planetclicker.diamonds.small" => new IapReward(diamonds: 100),
             "com.planetclicker.diamonds.medium" => new IapReward(diamonds: 250),
             "com.planetclicker.diamonds.large" => new IapReward(diamonds: 600),
@@ -447,19 +448,15 @@ public class GameManager : MonoBehaviour
             "com.planetclicker.coins.3p.small" => new IapReward(planetKey: LikesSaveKey, money: 900000),
             "com.planetclicker.coins.3p.medium" => new IapReward(planetKey: LikesSaveKey, money: 3150000),
             "com.planetclicker.coins.3p.large" => new IapReward(planetKey: LikesSaveKey, money: 6300000),
-            "com.planetclicker.starterpack.v2" => new IapReward(
-                diamonds: 150, planetKey: GearsSaveKey, money: 3600, starterPackPurchased: true),
-            "com.planetclicker.specialoffer.v2" => new IapReward(
-                diamonds: 50, planetKey: GearsSaveKey, money: 1200, specialOfferPurchased: true, adsRemoved: true),
+            "com.planetclicker.starterpack.v2" => new IapReward(diamonds: 150, planetKey: GearsSaveKey, money: 3600, starterPackPurchased: true),
+            "com.planetclicker.specialoffer.v2" => new IapReward(diamonds: 50, planetKey: GearsSaveKey, money: 1200, specialOfferPurchased: true, adsRemoved: true),
             "com.planetclicker.noads" => new IapReward(adsRemoved: true),
             "com.planetclicker.coinsbooster" => new IapReward(coinsBoosterPurchased: true),
             "com.planetclicker.diamondspack50" => new IapReward(diamonds: 50),
             "com.planetclicker.diamondspack100" => new IapReward(diamonds: 100),
             "com.planetclicker.diamondspack300" => new IapReward(diamonds: 300),
-            "com.planetclicker.starterpack" => new IapReward(
-                diamonds: 50, planetKey: GearsSaveKey, money: 50000, starterPackPurchased: true),
-            "com.planetclicker.specialoffer" => new IapReward(
-                diamonds: 50, planetKey: GearsSaveKey, money: 50000, specialOfferPurchased: true, adsRemoved: true),
+            "com.planetclicker.starterpack" => new IapReward(diamonds: 50, planetKey: GearsSaveKey, money: 50000, starterPackPurchased: true),
+            "com.planetclicker.specialoffer" => new IapReward(diamonds: 50, planetKey: GearsSaveKey, money: 50000, specialOfferPurchased: true, adsRemoved: true),
             _ => null
         };
     }

@@ -22,6 +22,8 @@ public class PassiveIncomePop : MonoBehaviour
 
     [SerializeField] private float squashScale = 0.9f;
     [SerializeField] private float growScale = 1.3f;
+    [SerializeField, Min(0f)]
+    private float _currencyBurstDelay = 1f;
 
     private Vector3 originalScale;
     private bool isPlaying;
@@ -96,9 +98,7 @@ public class PassiveIncomePop : MonoBehaviour
         );
 
         currencyBurst.Play(true);
-
-        yield return new WaitUntil(() => !currencyBurst.IsAlive(true));
-
+        yield return new WaitForSeconds(_currencyBurstDelay);
         _chestController?.HandleChestClick();
     }
 

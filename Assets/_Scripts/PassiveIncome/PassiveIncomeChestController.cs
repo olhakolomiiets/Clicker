@@ -139,9 +139,13 @@ public class PassiveIncomeChestController : MonoBehaviour
         Transform point = _spawnPoints[spawnIndex];
         GameObject prefab = _chestPrefabs[prefabIndex];
 
+        // GameObject instance = Instantiate(prefab, point);
+        // instance.transform.localPosition = Vector3.zero;
+        // instance.transform.localRotation = Quaternion.identity;
+
         GameObject instance = Instantiate(prefab, point);
-        instance.transform.localPosition = Vector3.zero;
-        instance.transform.localRotation = Quaternion.identity;
+        instance.transform.localPosition = prefab.transform.localPosition;
+        instance.transform.localRotation = prefab.transform.localRotation;
 
         Collider collider = instance.GetComponentInChildren<Collider>();
 

@@ -11,6 +11,7 @@ public class OfflinePlanetRewardData
     public double MoneyX1;
     public double MoneyX2;
     public double MoneyX3;
+    public double DiamondsX1;
 
     public string LastCalculatedExitTime;
 }

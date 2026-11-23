@@ -963,6 +963,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 TargetUI = target,
                 CompletionCondition = completionCondition,
                 SpeakerId = _contractorSpeakerId,
+                Usage = MessageUsage.PlanetTutorial,
                 CharacterMood = mood,
                 EnableHighlight = target != null && !usesRuntimePolish,
                 EnablePulse = target != null && !usesRuntimePolish,
@@ -1026,6 +1027,7 @@ namespace PlanetBuilder.Messages.Tutorial
             RequestDialog(new DialogData
             {
                 DialogId = dialogId,
+                Usage = MessageUsage.PlanetTutorial,
                 ListDialogLine = new List<DialogLine>(lines),
                 Owner = this
             });
@@ -1141,6 +1143,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 Owner = this,
                 Text = text,
                 SpeakerId = _contractorSpeakerId,
+                Usage = MessageUsage.PlanetTutorial,
                 CharacterMood = CharacterMood.Happy,
                 Type = MessageType.Tutorial,
                 Channel = MessageChannel.Tutorial,

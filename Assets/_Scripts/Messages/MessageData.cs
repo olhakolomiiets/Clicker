@@ -4,6 +4,19 @@ using PlanetBuilder.Messages.UI;
 
 namespace PlanetBuilder.Messages
 {
+    public enum MessageUsage
+    {
+        Unspecified = 0,
+        MetaPlanetTutorial = 1,
+        PlanetTutorial = 2,
+        NormalHint = 3,
+        AdsX2Messages = 4,
+        AdsDiamondsMessages = 5,
+        MetaVisitMessages = 6,
+        MetaArrivalMessages = 7,
+        StoreMessages = 8
+    }
+
     [Serializable]
     public class MessageData
     {
@@ -11,6 +24,7 @@ namespace PlanetBuilder.Messages
         public string Text;
         public string SpeakerId;
         public CharacterMood CharacterMood;
+        public MessageUsage Usage;
         public MessageType Type;
         public MessageChannel Channel;
         public int Priority;
@@ -43,6 +57,7 @@ namespace PlanetBuilder.Messages
             Text = source.Text;
             SpeakerId = source.SpeakerId;
             CharacterMood = source.CharacterMood;
+            Usage = source.Usage;
             Type = source.Type;
             Channel = source.Channel;
             Priority = source.Priority;

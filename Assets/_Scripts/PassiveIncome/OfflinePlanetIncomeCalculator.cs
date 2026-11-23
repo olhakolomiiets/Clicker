@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public static class OfflinePlanetIncomeCalculator
@@ -106,6 +107,84 @@ public static class OfflinePlanetIncomeCalculator
         }
 
         moneyPerSec = total;
+        return true;
+    }
+
+    public static bool TryCalculateDiamonds(
+        OfflinePlanetEntry planet,
+        GameDataSave save,
+        MetaUpgradeEffects effects,
+        int offlineSeconds,
+        out double diamonds,
+        out string error)
+    {
+        diamonds = 0d;
+        error = null;
+
+        if (planet == null || planet.Items == null ||
+            planet.Items.Count == 0 || effects == null || offlineSeconds < 0 ||
+            save.ItemCount == null || save.ItemCount.Count != planet.Items.Count ||
+            (save.Managers != null && save.Managers.Count != planet.Items.Count))
+        {
+            error = "Invalid premium income input.";
+            return false;
+        }
+
+        double total = 0d;
+        for (int i = 0; i < planet.Items.Count; i++)
+        {
+            ItemData item = planet.Items[i];
+            if (item == null)
+            {
+                error = $"Missing ItemData at index {i}.";
+                return false;
+            }
+
+            if (!item.IsPremium)
+                continue;
+
+            int count = save.ItemCount[i];
+            if (count < 0)
+            {
+                error = $"Invalid premium count at index {i}.";
+                return false;
+            }
+
+            // Missing legacy manager data does not establish automation ownership.
+            if (count == 0 || save.Managers == null || !save.Managers[i])
+                continue;
+
+            double incomeMultiplier = effects.GetIncomeMultiplier(item);
+            double timeMultiplier = effects.GetTimeMultiplier(item);
+            if (item.ItemDiamondsIncome < 0 ||
+                !IsFinite(item.Delay) || item.Delay <= 0f ||
+                !IsFinite(incomeMultiplier) || incomeMultiplier <= 0d ||
+                !IsFinite(timeMultiplier) || timeMultiplier <= 0d)
+            {
+                error = $"Invalid premium configuration at index {i}.";
+                return false;
+            }
+
+            float effectiveDelay = Mathf.Max(0.1f,
+                (float)(item.Delay * timeMultiplier));
+            if (float.IsNaN(effectiveDelay) || float.IsInfinity(effectiveDelay))
+            {
+                error = $"Invalid premium delay at index {i}.";
+                return false;
+            }
+
+            double cycles = Math.Floor(offlineSeconds / (double)effectiveDelay);
+            double incomePerCycle =
+                (double)item.ItemDiamondsIncome * count * incomeMultiplier;
+            total += cycles * incomePerCycle;
+            if (!IsFinite(total) || total < 0d)
+            {
+                error = $"Premium income overflow at index {i}.";
+                return false;
+            }
+        }
+
+        diamonds = total;
         return true;
     }
 

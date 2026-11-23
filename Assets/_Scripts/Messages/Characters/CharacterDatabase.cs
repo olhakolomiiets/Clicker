@@ -9,6 +9,19 @@ namespace PlanetBuilder.Messages.Characters
     {
         [SerializeField] private List<CharacterData> _characters = new();
 
+        [Header("Message Usage Portraits")]
+        [SerializeField] private List<CharacterUsagePortrait> _usagePortraits = new()
+        {
+            new(MessageUsage.MetaPlanetTutorial),
+            new(MessageUsage.PlanetTutorial),
+            new(MessageUsage.NormalHint),
+            new(MessageUsage.AdsX2Messages),
+            new(MessageUsage.AdsDiamondsMessages),
+            new(MessageUsage.MetaVisitMessages),
+            new(MessageUsage.MetaArrivalMessages),
+            new(MessageUsage.StoreMessages),
+        };
+
         private readonly Dictionary<string, CharacterData> _charactersById = new();
         private bool _isInitialized;
 
@@ -22,6 +35,21 @@ namespace PlanetBuilder.Messages.Characters
 
             EnsureInitialized();
             return _charactersById.TryGetValue(speakerId, out character);
+        }
+
+        public GameObject GetUsagePortraitPrefab(MessageUsage usage)
+        {
+            if (usage == MessageUsage.Unspecified || _usagePortraits == null)
+                return null;
+
+            for (int i = 0; i < _usagePortraits.Count; i++)
+            {
+                CharacterUsagePortrait portrait = _usagePortraits[i];
+                if (portrait != null && portrait.Usage == usage && portrait.Prefab != null)
+                    return portrait.Prefab;
+            }
+
+            return null;
         }
 
         private void OnEnable()
@@ -61,6 +89,21 @@ namespace PlanetBuilder.Messages.Characters
             }
 
             _isInitialized = true;
+        }
+    }
+
+    [Serializable]
+    public class CharacterUsagePortrait
+    {
+        [SerializeField] private MessageUsage _usage;
+        [SerializeField] private GameObject _prefab;
+
+        public MessageUsage Usage => _usage;
+        public GameObject Prefab => _prefab;
+
+        public CharacterUsagePortrait(MessageUsage usage)
+        {
+            _usage = usage;
         }
     }
 

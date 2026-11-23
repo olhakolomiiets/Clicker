@@ -41,6 +41,7 @@ public class MetaUIController : MonoBehaviour
     }
     public GameObject VariantTabButtonGameObject => _variantButton != null ? _variantButton.gameObject : null;
     public GameObject UpgradeTabButtonGameObject => _upgradeButton != null ? _upgradeButton.gameObject : null;
+    public GameObject ShopButtonTarget => _shopButton != null ? _shopButton.gameObject : null;
 
     [Header("Upgrade")]
     [SerializeField] private RectTransform _upgradeItemsParent;
@@ -74,7 +75,9 @@ public class MetaUIController : MonoBehaviour
     [SerializeField] private TMP_Dropdown _exchangePlanetDropdown;
     [SerializeField] private TMP_Text _exchangePlanetBalanceText;
     [SerializeField] private TMP_Text _exchangeDiamondPriceText;
-    [SerializeField] private TMP_InputField _exchangeAmountInput;
+    [SerializeField] private Button _exchangeDecreaseButton;
+    [SerializeField] private Button _exchangeIncreaseButton;
+    [SerializeField] private TMP_Text _exchangeDiamondsAmountText;
     [SerializeField] private TMP_Text _exchangeTotalCostText;
     [SerializeField] private TMP_Text _exchangeStatusText;
     [SerializeField] private Button _exchangeButton;
@@ -86,11 +89,21 @@ public class MetaUIController : MonoBehaviour
 
     private readonly List<int> _exchangePlanetIds = new();
     private bool _exchangeRotationWasEnabled;
+    private int _exchangeDiamondsAmount = 1;
 
 
     public bool IsUpgradeTabOpen => isDisplayed && _currentShopTabIndex == 1;
 
     public event Action OnStorePanelDisplayed;
+
+    private void OnEnable()
+    {
+        if (_exchangeDecreaseButton != null)
+            _exchangeDecreaseButton.onClick.AddListener(DecreaseExchangeAmount);
+
+        if (_exchangeIncreaseButton != null)
+            _exchangeIncreaseButton.onClick.AddListener(IncreaseExchangeAmount);
+    }
 
     private void Start()
     {
@@ -100,6 +113,12 @@ public class MetaUIController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (_exchangeDecreaseButton != null)
+            _exchangeDecreaseButton.onClick.RemoveListener(DecreaseExchangeAmount);
+
+        if (_exchangeIncreaseButton != null)
+            _exchangeIncreaseButton.onClick.RemoveListener(IncreaseExchangeAmount);
+
         CloseExchangePanel();
         SetShopOpen(false);
     }
@@ -271,7 +290,8 @@ public class MetaUIController : MonoBehaviour
     public void OpenExchangePanel()
     {
         if (_exchangePanel == null || _exchangeMode == null ||
-            _exchangePlanetDropdown == null || _exchangeAmountInput == null ||
+            _exchangePlanetDropdown == null || _exchangeDecreaseButton == null ||
+            _exchangeIncreaseButton == null || _exchangeDiamondsAmountText == null ||
             _exchangeButton == null || _exchangePlanetBalanceText == null ||
             _exchangeDiamondPriceText == null || _exchangeTotalCostText == null ||
             _exchangeStatusText == null)
@@ -310,7 +330,7 @@ public class MetaUIController : MonoBehaviour
         _exchangePlanetDropdown.RefreshShownValue();
         _exchangePlanetDropdown.interactable = _exchangePlanetIds.Count > 0;
 
-        _exchangeAmountInput.SetTextWithoutNotify("1");
+        _exchangeDiamondsAmount = 1;
 
         _exchangeRotationWasEnabled =
             _planetRotator != null && _planetRotator.enabled;
@@ -349,8 +369,21 @@ public class MetaUIController : MonoBehaviour
         RefreshExchangePreview();
     }
 
-    public void ChangeExchangeAmount(string value)
+    private void DecreaseExchangeAmount()
     {
+        if (_exchangePanel == null || !_exchangePanel.activeSelf || _exchangeDiamondsAmount <= 1)
+            return;
+
+        _exchangeDiamondsAmount--;
+        RefreshExchangePreview();
+    }
+
+    private void IncreaseExchangeAmount()
+    {
+        if (_exchangePanel == null || !_exchangePanel.activeSelf || _exchangeDiamondsAmount == int.MaxValue)
+            return;
+
+        _exchangeDiamondsAmount++;
         RefreshExchangePreview();
     }
 
@@ -397,6 +430,10 @@ public class MetaUIController : MonoBehaviour
     }
     private void RefreshExchangePreview()
     {
+        _exchangeDiamondsAmountText.text = _exchangeDiamondsAmount.ToString();
+        _exchangeDecreaseButton.interactable = _exchangeDiamondsAmount > 1;
+        _exchangeIncreaseButton.interactable = _exchangeDiamondsAmount < int.MaxValue;
+
         UpdateExchangeCurrencyIcons(-1);
         _exchangeButton.interactable = false;
         _exchangePlanetBalanceText.text = "—";
@@ -428,7 +465,9 @@ public class MetaUIController : MonoBehaviour
         _exchangePlanetBalanceText.text = planetMoney.ToString("N0");
         _exchangeDiamondPriceText.text = quote.pricePerDiamond.ToString("N0");
 
-        if (!int.TryParse(_exchangeAmountInput.text, out int diamonds) || diamonds <= 0)
+        int diamonds = _exchangeDiamondsAmount;
+
+        if (diamonds <= 0)
         {
             SetExchangeStatus("exchange_enter_amount_error");
             return;
@@ -454,7 +493,9 @@ public class MetaUIController : MonoBehaviour
         if (_exchangePanel == null || !_exchangePanel.activeSelf || !_exchangeButton.interactable || _exchangePlanetIds.Count == 0)
             return;
 
-        if (!int.TryParse(_exchangeAmountInput.text, out int diamonds) || diamonds <= 0)
+        int diamonds = _exchangeDiamondsAmount;
+
+        if (diamonds <= 0)
         {
             SetExchangeStatus("exchange_enter_amount_error");
             return;

@@ -522,6 +522,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 Text = step.MessageText,
                 SpeakerId = step.SpeakerId,
                 CharacterMood = step.CharacterMood,
+                Usage = step.Usage,
                 Type = MessageType.Tutorial,
                 Channel = MessageChannel.Tutorial,
                 Priority = _messagePriority,

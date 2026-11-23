@@ -59,6 +59,24 @@ public class RewardsManager : MonoBehaviour
 
     #endregion
 
+    public bool IsBoosterRewardAvailable => _boosterTime > 0 &&
+        IsRewardOfferAvailable(_boosterObj, _coinsObj, _diamondsObj);
+
+    public bool IsDiamondsRewardAvailable => _diamonds > 0f &&
+        IsRewardOfferAvailable(_diamondsObj, _coinsObj, _boosterObj);
+
+    private bool IsRewardOfferAvailable(GameObject offer, GameObject otherOffer, GameObject thirdOffer)
+    {
+        // Read the offer actually displayed by the UI, not the last requested reward type.
+        return isActiveAndEnabled && _adController != null && _adController.isActiveAndEnabled &&
+               _rewardTimer != null && _rewardTimer.isActiveAndEnabled &&
+               _meteor != null && _meteor.isActiveAndEnabled &&
+               _rewardButton != null && _rewardButton.isActiveAndEnabled && _rewardButton.IsInteractable() &&
+               offer != null && offer.activeInHierarchy &&
+               otherOffer != null && !otherOffer.activeInHierarchy &&
+               thirdOffer != null && !thirdOffer.activeInHierarchy;
+    }
+
     private void OnEnable()
     {
         _adController.OnUserEarnedRewardEvent.AddListener(SetRewardState);

@@ -98,9 +98,13 @@ public class PassiveIncomeChestController : MonoBehaviour
             r.PlanetKey == _planetKey &&
             !string.IsNullOrEmpty(r.RewardId) &&
             r.CreditedSeconds >= 60 &&
-            r.MoneyX1 > 0d &&
+            r.MoneyX1 >= 0d &&
             !double.IsNaN(r.MoneyX1) &&
-            !double.IsInfinity(r.MoneyX1));
+            !double.IsInfinity(r.MoneyX1) &&
+            r.DiamondsX1 >= 0d &&
+            !double.IsNaN(r.DiamondsX1) &&
+            !double.IsInfinity(r.DiamondsX1) &&
+            (r.MoneyX1 > 0d || r.DiamondsX1 > 0d));
 
         return reward != null;
     }

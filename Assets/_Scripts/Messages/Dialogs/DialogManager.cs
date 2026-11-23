@@ -239,6 +239,7 @@ namespace PlanetBuilder.Messages.Dialogs
                 Text = line.Text,
                 SpeakerId = line.SpeakerId,
                 CharacterMood = line.CharacterMood,
+                Usage = _activeDialog.Usage,
                 Type = MessageType.Dialog,
                 Channel = MessageChannel.Dialog,
                 Owner = _activeDialog,

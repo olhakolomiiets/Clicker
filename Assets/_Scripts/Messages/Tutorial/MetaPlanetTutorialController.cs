@@ -616,6 +616,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 TargetUI = boxProxyTarget,
                 CompletionCondition = TutorialCompletionCondition.TargetUIClicked,
                 SpeakerId = _contractorSpeakerId,
+                Usage = MessageUsage.MetaPlanetTutorial,
                 CharacterMood = CharacterMood.Thinking,
                 EnableHighlight = false,
                 EnablePulse = false,
@@ -908,6 +909,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 TargetUI = target,
                 CompletionCondition = TutorialCompletionCondition.TargetUIClicked,
                 SpeakerId = _contractorSpeakerId,
+                Usage = MessageUsage.MetaPlanetTutorial,
                 CharacterMood = CharacterMood.Thinking,
                 EnableHighlight = false,
                 EnablePulse = false,
@@ -1090,6 +1092,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 TargetUI = target,
                 CompletionCondition = TutorialCompletionCondition.Manual,
                 SpeakerId = _contractorSpeakerId,
+                Usage = MessageUsage.MetaPlanetTutorial,
                 CharacterMood = CharacterMood.Thinking,
                 EnableHighlight = false,
                 EnablePulse = false,
@@ -1216,6 +1219,7 @@ namespace PlanetBuilder.Messages.Tutorial
                         TargetUI = target,
                         CompletionCondition = TutorialCompletionCondition.TargetUIClicked,
                         SpeakerId = _contractorSpeakerId,
+                        Usage = MessageUsage.MetaPlanetTutorial,
                         CharacterMood = CharacterMood.Thinking,
                         EnableHighlight = false,
                         EnablePulse = false,
@@ -1315,6 +1319,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 TargetUI = target,
                 CompletionCondition = TutorialCompletionCondition.TargetUIClicked,
                 SpeakerId = _contractorSpeakerId,
+                Usage = MessageUsage.MetaPlanetTutorial,
                 CharacterMood = CharacterMood.Thinking,
                 EnableHighlight = false,
                 EnablePulse = false,
@@ -1363,6 +1368,7 @@ namespace PlanetBuilder.Messages.Tutorial
                 TargetUI = target,
                 CompletionCondition = TutorialCompletionCondition.Manual,
                 SpeakerId = _contractorSpeakerId,
+                Usage = MessageUsage.MetaPlanetTutorial,
                 CharacterMood = CharacterMood.Thinking,
                 EnableHighlight = false,
                 EnablePulse = false,
@@ -1414,6 +1420,7 @@ namespace PlanetBuilder.Messages.Tutorial
                         TargetUI = target,
                         CompletionCondition = condition,
                         SpeakerId = _contractorSpeakerId,
+                        Usage = MessageUsage.MetaPlanetTutorial,
                         CharacterMood = mood,
                         EnableHighlight = target != null,
                         EnablePulse = target != null,
@@ -1433,6 +1440,7 @@ namespace PlanetBuilder.Messages.Tutorial
             RequestDialog(new DialogData
             {
                 DialogId = dialogId,
+                Usage = MessageUsage.MetaPlanetTutorial,
                 ListDialogLine = new List<DialogLine>(lines),
                 Owner = this
             }, true);
@@ -1449,6 +1457,7 @@ namespace PlanetBuilder.Messages.Tutorial
             RequestDialog(new DialogData
             {
                 DialogId = dialogId,
+                Usage = MessageUsage.MetaPlanetTutorial,
                 ListDialogLine = new List<DialogLine>(lines),
                 Owner = this,
                 VideoView = videoView
@@ -2812,6 +2821,7 @@ namespace PlanetBuilder.Messages.Tutorial
             messageManager.ShowMessage(new MessageData
             {
                 Id = $"MetaPlanetTutorial.Toast.{text}",
+                Usage = MessageUsage.MetaPlanetTutorial,
                 Text = text,
                 Type = MessageType.Toast,
                 Channel = MessageChannel.Toast,

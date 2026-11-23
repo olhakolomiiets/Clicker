@@ -13,6 +13,8 @@ namespace PlanetBuilder.Messages.UI
         [Tooltip("Minimum and maximum Y anchors, respectively. X anchors come from the normal layout.")]
         [SerializeField] private Vector2 _topVerticalAnchors = new(0.75f, 0.95f);
         [SerializeField] private Vector2 _topAnchoredPosition = Vector2.zero;
+        [Tooltip("Vertical offset in UI units, applied only to top placement. Negative values move the view down.")]
+        [SerializeField, InspectorName("Top Placement Y Offset")] private float _topPlacementYOffset = 0f;
         [Tooltip("Added to the normal layout's Size Delta.")]
         [SerializeField] private Vector2 _topSizeDeltaOffset = Vector2.zero;
 
@@ -54,7 +56,7 @@ namespace PlanetBuilder.Messages.UI
             {
                 _rectTransform.anchorMin = new Vector2(_defaultAnchorMin.x, _topVerticalAnchors.x);
                 _rectTransform.anchorMax = new Vector2(_defaultAnchorMax.x, _topVerticalAnchors.y);
-                _rectTransform.anchoredPosition = _topAnchoredPosition;
+                _rectTransform.anchoredPosition = _topAnchoredPosition + new Vector2(0f, _topPlacementYOffset);
                 _rectTransform.sizeDelta = _defaultSizeDelta + _topSizeDeltaOffset;
                 Debug.Log($"[MetaTutorialTrace] Dialog rect after: {GetRectDescription()}", this);
                 return;
@@ -80,7 +82,8 @@ namespace PlanetBuilder.Messages.UI
             if (_portraitController != null)
                 _portraitController.ShowCharacter(
                     string.IsNullOrEmpty(data.SpeakerId) ? DefaultSpeakerId : data.SpeakerId,
-                    data.CharacterMood);
+                    data.CharacterMood,
+                    data.Usage);
 
             gameObject.SetActive(true);
         }

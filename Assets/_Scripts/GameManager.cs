@@ -542,6 +542,9 @@ public class GameManager : MonoBehaviour
                     existing.MoneyX1 < 0d ||
                     double.IsNaN(existing.MoneyX1) ||
                     double.IsInfinity(existing.MoneyX1) ||
+                    existing.DiamondsX1 < 0d ||
+                    double.IsNaN(existing.DiamondsX1) ||
+                    double.IsInfinity(existing.DiamondsX1) ||
                     !rewardKeys.Add(existing.PlanetKey))
                 {
                     Debug.LogError(
@@ -612,19 +615,21 @@ public class GameManager : MonoBehaviour
                         effects,
                         out double moneyPerSec,
                         out error,
-                        permanentBooster: permanentBooster))
+                        permanentBooster: permanentBooster) ||
+                    !OfflinePlanetIncomeCalculator.TryCalculateDiamonds(
+                        entry, planetSave, effects, addedSeconds,
+                        out double addedDiamonds, out error))
                 {
                     Debug.LogError(
                         $"[OfflinePlanetRewards] {entry.SaveKey}: {error}");
                     return false;
                 }
 
-                if (moneyPerSec <= 0d)
-                    continue;
-
                 double moneyX1 =
                     (reward?.MoneyX1 ?? 0d) +
                     addedSeconds * moneyPerSec;
+
+                double diamondsX1 = (reward?.DiamondsX1 ?? 0d) + addedDiamonds;
 
                 double moneyX2 = Math.Truncate(moneyX1) * 2d;
                 double moneyX3 = Math.Truncate(moneyX1) * 3d;
@@ -632,12 +637,18 @@ public class GameManager : MonoBehaviour
                 if (double.IsNaN(moneyX1) ||
                     double.IsInfinity(moneyX1) ||
                     double.IsInfinity(moneyX2) ||
-                    double.IsInfinity(moneyX3))
+                    double.IsInfinity(moneyX3) ||
+                    diamondsX1 < 0d ||
+                    double.IsNaN(diamondsX1) ||
+                    double.IsInfinity(diamondsX1))
                 {
                     Debug.LogError(
                         $"[OfflinePlanetRewards] Reward overflow: {entry.SaveKey}");
                     return false;
                 }
+
+                if (moneyX1 <= 0d && diamondsX1 <= 0d)
+                    continue;
 
                 if (reward == null)
                 {
@@ -654,6 +665,7 @@ public class GameManager : MonoBehaviour
                 reward.MoneyX1 = moneyX1;
                 reward.MoneyX2 = moneyX2;
                 reward.MoneyX3 = moneyX3;
+                reward.DiamondsX1 = diamondsX1;
                 reward.LastCalculatedExitTime = working.ExitTime;
 
                 Debug.Log(
@@ -694,7 +706,7 @@ public class GameManager : MonoBehaviour
 
     internal bool TrySavePlanetSnapshot()
     {
-        if (_planetMode == null)
+        if (_planetMode == null || SaveSystem.IsPassiveIncomeRecoveryRequired)
             return false;
 
         List<string> dataToSave = new()
@@ -726,6 +738,9 @@ public class GameManager : MonoBehaviour
 
     public void SaveGeneralGameData()
     {
+        if (SaveSystem.IsPassiveIncomeRecoveryRequired)
+            return;
+
         List<string> dataToSave = new()
         {
             _generalGameData.GetSaveData()
@@ -776,7 +791,7 @@ public class GameManager : MonoBehaviour
             pauseStatus == _iapApplicationPaused)
             return;
 
-        if (SaveSystem.IsIapRecoveryRequired)
+        if (SaveSystem.IsIapRecoveryRequired || SaveSystem.IsPassiveIncomeRecoveryRequired)
         {
             UnregisterIapGameContext();
             return;

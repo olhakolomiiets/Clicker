@@ -29,6 +29,15 @@ public class SaveSystem : MonoBehaviour
         ? s_AdsRemovedBeforeIapSaveFailure
         : PlayerPrefs.GetInt(AdsRemovedKey, 0) == 1;
 
+    private static bool s_passiveIncomeSaveFailed;
+    internal static bool IsPassiveIncomeRecoveryRequired => s_passiveIncomeSaveFailed;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetPassiveIncomeSaveState()
+    {
+        s_passiveIncomeSaveFailed = false;
+    }
+
     private static bool s_IapSaveFailed;
     private static bool s_AdsRemovedBeforeIapSaveFailure;
 
@@ -349,6 +358,9 @@ public class SaveSystem : MonoBehaviour
 
     private static void ThrowIfIapRecoveryRequired()
     {
+        if (s_passiveIncomeSaveFailed)
+            throw new InvalidOperationException("Passive income recovery requires a fresh application process.");
+
         if (IsIapRecoveryRequired)
             throw new InvalidOperationException("Pending IAP transaction recovery is required.");
     }
@@ -375,12 +387,21 @@ public class SaveSystem : MonoBehaviour
             })
         };
 
-        PlayerPrefs.SetString(
-            PassiveIncomeTransactionKey,
-            JsonUtility.ToJson(transaction)
-        );
+        try
+        {
+            PlayerPrefs.SetString(
+                PassiveIncomeTransactionKey,
+                JsonUtility.ToJson(transaction)
+            );
 
-        PlayerPrefs.Save();
+            PlayerPrefs.Save();
+        }
+        catch
+        {
+            // Do not retry PlayerPrefs writes after an uncertain storage failure.
+            s_passiveIncomeSaveFailed = true;
+            throw;
+        }
 
         RecoverPassiveIncomeTransaction();
     }
@@ -405,24 +426,35 @@ public class SaveSystem : MonoBehaviour
                 "Passive income transaction is invalid.");
         }
 
-        PlayerPrefs.SetString(
-            transaction.PlanetKey,
-            transaction.PlanetJson
-        );
+        try
+        {
+            PlayerPrefs.SetString(
+                transaction.PlanetKey,
+                transaction.PlanetJson
+            );
 
-        PlayerPrefs.SetString(
-            _saveGameKeyName,
-            transaction.GeneralJson
-        );
+            PlayerPrefs.SetString(
+                _saveGameKeyName,
+                transaction.GeneralJson
+            );
 
-        PlayerPrefs.Save();
+            PlayerPrefs.Save();
 
-        PlayerPrefs.DeleteKey(PassiveIncomeTransactionKey);
-        PlayerPrefs.Save();
+            PlayerPrefs.DeleteKey(PassiveIncomeTransactionKey);
+            PlayerPrefs.Save();
+        }
+        catch
+        {
+            s_passiveIncomeSaveFailed = true;
+            throw;
+        }
     }
 
     public void RecoverPendingTransactions()
     {
+        if (s_passiveIncomeSaveFailed)
+            throw new InvalidOperationException("Passive income recovery requires a fresh application process.");
+
         if (s_IapSaveFailed)
             throw new InvalidOperationException("IAP transaction recovery requires a fresh application process.");
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Lean.Localization;
+using PlanetBuilder.Loading;
 using PlanetBuilder.Messages.Characters;
 using PlanetBuilder.Messages.Dialogs;
 using PlanetBuilder.Messages.Tutorial;
@@ -36,6 +37,26 @@ namespace PlanetBuilder.Messages.Hints
             "Можно автоматизировать этот объект. Тогда он будет приносить доход без постоянных нажатий.";
         private const string BuyMoreObjectText =
             "У вас уже хватает средств. Купите ещё один объект, и доход будет расти быстрее.";
+
+        private const string EngagementMessageIdPrefix = "PostTutorialHint.Engagement.";
+
+        private enum EngagementCategory
+        {
+            AdsX2,
+            AdsDiamonds,
+            MetaVisit,
+            MetaArrival,
+            Store
+        }
+
+        private static readonly (string Prefix, int Count, MessageUsage Usage)[] EngagementMessages =
+        {
+            ("ADS_X2", 5, MessageUsage.AdsX2Messages),
+            ("ADS_DIAMONDS", 5, MessageUsage.AdsDiamondsMessages),
+            ("META_VISIT", 6, MessageUsage.MetaVisitMessages),
+            ("META_ARRIVAL", 3, MessageUsage.MetaArrivalMessages),
+            ("STORE", 11, MessageUsage.StoreMessages)
+        };
 
         private enum ReminderType
         {
@@ -81,6 +102,20 @@ namespace PlanetBuilder.Messages.Hints
             PassiveIncomeChestDisplayMode.Timed;
         [SerializeField, Min(0.1f)] private float _passiveIncomeChestTimedDuration = 10f;
 
+        [Header("Professor Engagement Messages (Seconds)")]
+        [SerializeField] private bool _enableEngagementMessages = true;
+        [SerializeField, Min(0f)] private float _firstMessageDelay = 90f;
+        [SerializeField, Min(0f)] private float _messageInterval = 240f;
+        [SerializeField, Min(0f)] private float _messageDisplayDuration = 10f;
+        [SerializeField, Min(0f)] private float _categoryCooldown = 600f;
+
+        [Header("Engagement Message Categories")]
+        [SerializeField] private bool _enableAdsX2Messages = true;
+        [SerializeField] private bool _enableAdsDiamondsMessages = true;
+        [SerializeField] private bool _enableMetaVisitMessages = true;
+        [SerializeField] private bool _enableMetaArrivalMessages = true;
+        [SerializeField] private bool _enableStoreMessages = true;
+
         [Header("Existing Message Infrastructure")]
         [SerializeField] private TutorialManager _tutorialManager;
         [SerializeField] private DialogManager _dialogManager;
@@ -88,6 +123,14 @@ namespace PlanetBuilder.Messages.Hints
 
         private readonly List<ReminderCandidate> _candidates = new();
         private readonly Dictionary<ReminderType, int> _nextTextVariants = new();
+        private readonly int[] _nextEngagementVariants = new int[EngagementMessages.Length];
+        private RewardsManager _rewardsManager;
+        private MetaUIController _metaUIController;
+        private MetaGameRules _metaGameRules;
+        private float _engagementElapsed;
+        private int _nextEngagementCategory;
+        private bool _hasShownEngagementMessage;
+        private bool _metaArrivalShown;
         private MessageManager _messageManager;
         private MessageDisplayValidator _displayValidator;
         private GameRules _gameRules;
@@ -165,6 +208,7 @@ namespace PlanetBuilder.Messages.Hints
             UnsubscribeFromGameplay();
             UnsubscribeFromMessageManager();
 
+            CloseEngagementMessage();
             CancelActiveReminder("controller disabled");
             _isInitialized = false;
             _didInitialGameplaySync = false;
@@ -185,6 +229,7 @@ namespace PlanetBuilder.Messages.Hints
 
             if (!IsSuitablePlanetScene())
             {
+                UpdateEngagementMessages();
                 SetBlockReason("not in a Planet scene");
                 return;
             }
@@ -206,6 +251,7 @@ namespace PlanetBuilder.Messages.Hints
             ValidateActiveCandidate();
             AdvanceCandidates();
             TryShowBestCandidate();
+            UpdateEngagementMessages();
         }
 
         private void OnApplicationPause(bool pauseStatus)
@@ -227,6 +273,10 @@ namespace PlanetBuilder.Messages.Hints
         private void HandleActiveSceneChanged(Scene previousScene, Scene nextScene)
         {
             _isSceneTransitioning = false;
+            CloseEngagementMessage();
+            _metaArrivalShown = false;
+            if (IsMetaPlanetScene())
+                _nextEngagementCategory = (int)EngagementCategory.MetaArrival;
             CancelActiveReminder("scene changed");
             _candidates.Clear();
             _didInitialGameplaySync = false;
@@ -248,6 +298,10 @@ namespace PlanetBuilder.Messages.Hints
                 return;
 
             _isSceneTransitioning = true;
+            CloseEngagementMessage();
+            _rewardsManager = null;
+            _metaUIController = null;
+            _metaGameRules = null;
             CancelActiveReminder("scene unloading");
             _candidates.Clear();
             _didInitialGameplaySync = false;
@@ -536,6 +590,10 @@ namespace PlanetBuilder.Messages.Hints
         {
             UnsubscribeFromUI();
             UnsubscribeFromGameplay();
+
+            _rewardsManager = FindFirstObjectByType<RewardsManager>(FindObjectsInactive.Include);
+            _metaUIController = FindFirstObjectByType<MetaUIController>();
+            _metaGameRules = FindFirstObjectByType<MetaGameRules>();
 
             if (!IsSuitablePlanetScene())
                 return;
@@ -957,6 +1015,7 @@ namespace PlanetBuilder.Messages.Hints
                 Id = GetCandidateId(candidate),
                 Owner = this,
                 Text = GetCandidateText(candidate.Type),
+                Usage = MessageUsage.NormalHint,
                 SpeakerId = ProfessorSpeakerId,
                 CharacterMood = CharacterMood.Thinking,
                 Type = MessageType.Hint,
@@ -1227,12 +1286,12 @@ namespace PlanetBuilder.Messages.Hints
             return target != null && target.activeInHierarchy;
         }
 
-        private string GetCommonBlockReason(bool includeCooldown)
+        private string GetCommonBlockReason(bool includeCooldown, bool engagement = false)
         {
             if (_isSceneTransitioning)
                 return "scene transition";
 
-            if (!_planetTutorialCompleted)
+            if (!engagement && !_planetTutorialCompleted)
                 return "Planet tutorial incomplete";
 
             if (_tutorialManager != null && _tutorialManager.IsRunning)
@@ -1267,7 +1326,8 @@ namespace PlanetBuilder.Messages.Hints
             MessageData currentHint = _messageManager.GetCurrentMessage(MessageChannel.Hint);
 
             if (currentHint != null &&
-                (_activeCandidate == null || currentHint.Id != GetCandidateId(_activeCandidate)))
+                (engagement ? !IsEngagementMessage(currentHint) :
+                    _activeCandidate == null || currentHint.Id != GetCandidateId(_activeCandidate)))
             {
                 return "another Hint message active";
             }
@@ -1276,6 +1336,155 @@ namespace PlanetBuilder.Messages.Hints
                 return "global cooldown";
 
             return null;
+        }
+
+        private void UpdateEngagementMessages()
+        {
+            bool isMetaPlanet = IsMetaPlanetScene();
+            if (isMetaPlanet && (_metaUIController == null || _metaGameRules == null))
+                ResolveSceneReferences();
+
+            bool sceneReady = isMetaPlanet
+                ? _metaUIController != null && _metaUIController.isActiveAndEnabled &&
+                  _metaGameRules != null && _metaGameRules.IsPrepared &&
+                  !MetaPlanetTutorialController.ShouldStartTutorial()
+                : IsSuitablePlanetScene() && _planetTutorialCompleted &&
+                  _gameRules != null && _gameRules.IsPrepared &&
+                  _uiController != null && _uiController.isActiveAndEnabled;
+
+            if (!_enableEngagementMessages || !sceneReady || Time.timeScale <= 0f ||
+                (PlanetLoadingScreen.Instance != null && PlanetLoadingScreen.Instance.IsShowing) ||
+                !string.IsNullOrEmpty(GetCommonBlockReason(false, engagement: true)) ||
+                _displayValidator.IsShopOpen ||
+                (_uiController != null && (_uiController.IsShopDisplayed || _uiController.isLevelsDisplayed)) ||
+                (_metaUIController != null && (_metaUIController.isDisplayed || _metaUIController.isLevelsDisplayed)))
+            {
+                CloseEngagementMessage();
+                return;
+            }
+
+            MessageData current = _messageManager.GetCurrentMessage(MessageChannel.Hint);
+            if (IsEngagementMessage(current))
+            {
+                for (int i = 0; i < EngagementMessages.Length; i++)
+                {
+                    if (current.Id == GetEngagementMessageId(i) &&
+                        !IsEngagementCategoryAvailable((EngagementCategory)i, isActive: true))
+                    {
+                        CloseEngagementMessage();
+                        break;
+                    }
+                }
+                return;
+            }
+
+            if (_messageManager.CurrentMessage != null || _messageDisplayDuration <= 0f)
+                return;
+
+            float delay = Mathf.Max(0f, _hasShownEngagementMessage ? _messageInterval : _firstMessageDelay);
+            // Only free gameplay advances this clock; scene changes keep the accumulated time.
+            _engagementElapsed = Mathf.Min(delay, _engagementElapsed + Time.unscaledDeltaTime);
+            if (_engagementElapsed < delay)
+                return;
+
+            for (int offset = 0; offset < EngagementMessages.Length; offset++)
+            {
+                int index = (_nextEngagementCategory + offset) % EngagementMessages.Length;
+                if (!IsEngagementCategoryAvailable((EngagementCategory)index))
+                    continue;
+
+                var definition = EngagementMessages[index];
+                string key = $"{definition.Prefix}_{_nextEngagementVariants[index] + 1:00}";
+                string text = GetLocalizedText(key, null);
+                if (string.IsNullOrWhiteSpace(text))
+                    continue;
+
+                MessageData message = new()
+                {
+                    Id = GetEngagementMessageId(index),
+                    Owner = this,
+                    Text = text,
+                    Usage = definition.Usage,
+                    SpeakerId = ProfessorSpeakerId,
+                    CharacterMood = CharacterMood.Thinking,
+                    Type = MessageType.Hint,
+                    Channel = MessageChannel.Hint,
+                    UseToastView = true,
+                    DisplayDuration = _messageDisplayDuration,
+                    Cooldown = Mathf.Max(0f, _categoryCooldown),
+                    CanInterrupt = false,
+                    CanDisplayOverModal = false,
+                    CanDisplayOverShop = false,
+                    UseTypingAnimation = true,
+                    TypingSpeed = 30f,
+                    CanSkipTyping = true
+                };
+
+                // The manager owns category cooldowns and the shared ToastView lock.
+                if (!_messageManager.TryShowMessageImmediately(message))
+                    continue;
+
+                _nextEngagementVariants[index] = (_nextEngagementVariants[index] + 1) % definition.Count;
+                _nextEngagementCategory = (index + 1) % EngagementMessages.Length;
+                _engagementElapsed = 0f;
+                _hasShownEngagementMessage = true;
+                if ((EngagementCategory)index == EngagementCategory.MetaArrival)
+                    _metaArrivalShown = true;
+                return;
+            }
+        }
+
+        private bool IsEngagementCategoryAvailable(EngagementCategory category, bool isActive = false)
+        {
+            bool isMetaPlanet = IsMetaPlanetScene();
+            switch (category)
+            {
+                case EngagementCategory.AdsX2:
+                    return _enableAdsX2Messages && !isMetaPlanet && IsSuitablePlanetScene() &&
+                           _rewardsManager != null && _rewardsManager.IsBoosterRewardAvailable;
+                case EngagementCategory.AdsDiamonds:
+                    return _enableAdsDiamondsMessages && !isMetaPlanet && IsSuitablePlanetScene() &&
+                           _rewardsManager != null && _rewardsManager.IsDiamondsRewardAvailable;
+                case EngagementCategory.MetaVisit:
+                    return _enableMetaVisitMessages && !isMetaPlanet && IsSuitablePlanetScene();
+                case EngagementCategory.MetaArrival:
+                    return _enableMetaArrivalMessages && isMetaPlanet && (!_metaArrivalShown || isActive);
+                case EngagementCategory.Store:
+                    return _enableStoreMessages && (isMetaPlanet
+                        ? _metaUIController != null && _metaUIController.isActiveAndEnabled &&
+                          IsUsableButton(_metaUIController.ToggleButtonGameObject) &&
+                          IsUsableButton(_metaUIController.ShopButtonTarget)
+                        : _uiController != null && _uiController.isActiveAndEnabled &&
+                          IsUsableButton(_uiController.ToggleButtonTarget) &&
+                          IsUsableButton(_uiController.ShopButtonTarget));
+                default:
+                    return false;
+            }
+        }
+
+        private bool IsEngagementMessage(MessageData message)
+        {
+            return ReferenceEquals(message?.Owner, this) &&
+                   message.Id?.StartsWith(EngagementMessageIdPrefix, StringComparison.Ordinal) == true;
+        }
+
+        private void CloseEngagementMessage()
+        {
+            if (_messageManager != null &&
+                IsEngagementMessage(_messageManager.GetCurrentMessage(MessageChannel.Hint)))
+            {
+                _messageManager.CloseCurrentMessage(MessageChannel.Hint);
+            }
+        }
+
+        private static string GetEngagementMessageId(int index)
+        {
+            return EngagementMessageIdPrefix + EngagementMessages[index].Prefix;
+        }
+
+        private static bool IsMetaPlanetScene()
+        {
+            return SceneManager.GetActiveScene().name == "PlanetMeta";
         }
 
         private bool CanUseGlobalCooldown()

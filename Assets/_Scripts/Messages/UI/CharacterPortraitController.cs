@@ -8,6 +8,8 @@ namespace PlanetBuilder.Messages.UI
     public class CharacterPortraitController : MonoBehaviour
     {
         [SerializeField] private CharacterDatabase _characterDatabase;
+        [Tooltip("Optional usage portraits. Character Database still supplies names and mood fallback.")]
+        [SerializeField] private CharacterDatabase _usagePortraitDatabase;
         [SerializeField] private Transform _portraitContainer;
         [SerializeField] private TMP_Text _characterNameText;
 
@@ -44,14 +46,24 @@ namespace PlanetBuilder.Messages.UI
 
         public void ShowCharacter(string speakerId, CharacterMood mood)
         {
-            if (_characterDatabase == null ||
-                !_characterDatabase.TryGetCharacter(speakerId, out CharacterData character))
-            {
-                Hide();
-                return;
-            }
+            ShowCharacter(speakerId, mood, MessageUsage.Unspecified);
+        }
 
-            GameObject portraitPrefab = character.GetPortraitPrefab(mood);
+        public void ShowCharacter(string speakerId, CharacterMood mood, MessageUsage usage)
+        {
+            CharacterData character = null;
+            if (_characterDatabase != null)
+                _characterDatabase.TryGetCharacter(speakerId, out character);
+
+            CharacterDatabase usageDatabase = _usagePortraitDatabase != null
+                ? _usagePortraitDatabase
+                : _characterDatabase;
+            GameObject portraitPrefab = usageDatabase != null
+                ? usageDatabase.GetUsagePortraitPrefab(usage)
+                : null;
+
+            if (portraitPrefab == null && character != null)
+                portraitPrefab = character.GetPortraitPrefab(mood);
 
             if (portraitPrefab == null)
             {
@@ -63,8 +75,9 @@ namespace PlanetBuilder.Messages.UI
 
             if (_characterNameText != null)
             {
-                _characterNameText.text = character.CharacterName;
-                _characterNameText.gameObject.SetActive(!string.IsNullOrEmpty(character.CharacterName));
+                string characterName = character != null ? character.CharacterName : string.Empty;
+                _characterNameText.text = characterName;
+                _characterNameText.gameObject.SetActive(!string.IsNullOrEmpty(characterName));
             }
         }
 

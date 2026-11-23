@@ -15,6 +15,7 @@ namespace PlanetBuilder.Messages.Tutorial
         [Header("Character")]
         public string SpeakerId;
         public CharacterMood CharacterMood;
+        public MessageUsage Usage;
 
         [Header("Highlight")]
         public bool EnableHighlight;

@@ -56,6 +56,7 @@ public class UIController : MonoBehaviour
     public GameObject CreationButtonTarget => _creationButton != null ? _creationButton.gameObject : null;
     public GameObject UpgradeButtonTarget => _upgradeButton != null ? _upgradeButton.gameObject : null;
     public bool IsShopDisplayed => isDisplayed;
+    public GameObject ShopButtonTarget => _shopButton != null ? _shopButton.gameObject : null;
     public int SelectedShopTab { get; private set; } = -1;
 
     private void Start()

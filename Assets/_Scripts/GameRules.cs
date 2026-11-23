@@ -531,6 +531,7 @@ public class GameRules : MonoBehaviour
             !_currentGeneralData.OfflinePlanetRewardsEnabled ||
             _currentGeneralData.OfflinePlanetRewards == null ||
             _savePassiveIncomeReward == null ||
+            SaveSystem.IsPassiveIncomeRecoveryRequired ||
             string.IsNullOrEmpty(planetKey) ||
             string.IsNullOrEmpty(rewardId))
             return false;
@@ -557,9 +558,15 @@ public class GameRules : MonoBehaviour
                         multiplier == 2 ? reward.MoneyX2 :
                                           reward.MoneyX3;
 
-        if (income <= 0d ||
+        double diamondReward = reward.DiamondsX1;
+
+        if (income < 0d ||
             double.IsNaN(income) ||
             double.IsInfinity(income) ||
+            diamondReward < 0d ||
+            double.IsNaN(diamondReward) ||
+            double.IsInfinity(diamondReward) ||
+            (income == 0d && diamondReward == 0d) ||
             double.IsNaN(diamondCost) ||
             double.IsInfinity(diamondCost))
             return false;
@@ -586,16 +593,26 @@ public class GameRules : MonoBehaviour
 
         double newMoney = oldMoney + income;
         double newScore = oldScore + income;
+        double diamondsAfterCost = oldDiamonds - diamondCost;
+        double newDiamonds = diamondsAfterCost + diamondReward;
 
         if (double.IsNaN(newMoney) ||
             double.IsInfinity(newMoney) ||
             double.IsNaN(newScore) ||
-            double.IsInfinity(newScore))
+            double.IsInfinity(newScore) ||
+            oldDiamonds < 0d ||
+            double.IsNaN(oldDiamonds) ||
+            double.IsInfinity(oldDiamonds) ||
+            newDiamonds < 0d ||
+            double.IsNaN(newDiamonds) ||
+            double.IsInfinity(newDiamonds) ||
+            (diamondCost > 0d && diamondsAfterCost >= oldDiamonds) ||
+            (diamondReward > 0d && newDiamonds <= diamondsAfterCost))
             return false;
 
         _currentGameData.Money = newMoney;
         _currentGeneralData.TotalScore = newScore;
-        _currentGeneralData.Diamonds -= diamondCost;
+        _currentGeneralData.Diamonds = newDiamonds;
 
         rewards.RemoveAt(rewardIndex);
 

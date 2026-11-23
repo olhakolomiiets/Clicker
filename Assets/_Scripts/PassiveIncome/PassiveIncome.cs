@@ -28,6 +28,7 @@ public class PassiveIncome : MonoBehaviour
     public GameObject passiveIncomeWind;
     [SerializeField] private TextMeshProUGUI _timeAwayTxt;
     [SerializeField] private TextMeshProUGUI _passiveIncomeTxt;
+    [SerializeField] private TMP_Text _passiveDiamondsTxt;
     [SerializeField] private TextMeshProUGUI _maxTimeAwayTxt;
 
     [Header("Passive Income X2")]
@@ -265,7 +266,8 @@ public class PassiveIncome : MonoBehaviour
         int timeAfterExit,
         double passiveIncome,
         double? savedX2 = null,
-        double? savedX3 = null)
+        double? savedX3 = null,
+        double diamondsX1 = 0d)
     {
         _2xPassiveIncome = savedX2 ?? Math.Truncate(passiveIncome) * 2d;
 
@@ -278,6 +280,7 @@ public class PassiveIncome : MonoBehaviour
             _3xPassiveIncomePrice
         );
 
+        UpdateDiamondsRewardUI(diamondsX1);
         passiveIncomeWind.SetActive(true);
 
         _3xButtonReward.interactable = _currentGeneralData.Diamonds >= _3xPassiveIncomePrice;
@@ -300,6 +303,12 @@ public class PassiveIncome : MonoBehaviour
             _2xPassiveIncomeTxt.text = _2xPassiveIncome.ToString();
             _3xPassiveIncomeTxt.text = _3xPassiveIncome.ToString();
         }
+    }
+
+    private void UpdateDiamondsRewardUI(double diamondsX1)
+    {
+        if (_passiveDiamondsTxt != null)
+            _passiveDiamondsTxt.text = diamondsX1.ToString("0.##");
     }
 
     string AbbreviateNumber(double number)
@@ -434,7 +443,8 @@ public class PassiveIncome : MonoBehaviour
         _openedPlanetKey = planetKey;
         _openedRewardId = rewardId;
 
-        PreparePassiveIncomeUI(reward.CreditedSeconds, reward.MoneyX1, reward.MoneyX2, reward.MoneyX3);
+        PreparePassiveIncomeUI(reward.CreditedSeconds, reward.MoneyX1,
+            reward.MoneyX2, reward.MoneyX3, reward.DiamondsX1);
     }
 
     private double GetExtraTimePrice()

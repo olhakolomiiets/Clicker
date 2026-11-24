@@ -13,23 +13,25 @@ MonoBehaviour:
   m_Name: UpgradeHouse_3
   m_EditorClassIdentifier: 
   ItemName: UpgradeHouse_3
-  Price: 15
-  BoxPrefab: {fileID: 1260304274863700, guid: babc560d97e31f545955e639ef5e9f91, type: 3}
-  LevelPrefabs: []
+  Price: 40
+  BoxPrefab: {fileID: 4367971442797446198, guid: 675e876b5477cbd4d828b898ddb65f64, type: 3}
+  LevelPrefabs:
+  - {fileID: 4367971442797446198, guid: c27f9d6b548d8334780e2323c95cbc1c, type: 3}
+  - {fileID: 4367971442797446198, guid: 35817080383b6ee4797c49704772356d, type: 3}
   Icon: {fileID: -525611509, guid: 04fff96dfc723e749933be1dbd3b2424, type: 3}
   Upgrades:
   - LevelName: Level 1
-    UpgradeCost: 1
+    UpgradeCost: 40
     BonusValue: 1.5
     BonusDescription: "Ships income \xD71.5"
     ItemIcon: {fileID: 21300000, guid: 6f7b36cd103e93148a9f9bee17edd38d, type: 3}
   - LevelName: Level 2
-    UpgradeCost: 2
+    UpgradeCost: 80
     BonusValue: 2
     BonusDescription: "Ships income \xD72"
     ItemIcon: {fileID: 21300000, guid: eab7441ccc0bc524b8a885e7620db569, type: 3}
   - LevelName: Level 3
-    UpgradeCost: 3
+    UpgradeCost: 160
     BonusValue: 3
     BonusDescription: "Ships income \xD73"
     ItemIcon: {fileID: 21300000, guid: 5d0427dbb2596d04b9ce3ac1b226f9d5, type: 3}

@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using Lean.Localization;
+using MoreMountains.Feedbacks;
 using PlanetBuilder.Loading;
 using PlanetBuilder.Messages.Dialogs;
 using PlanetBuilder.Messages.Tutorial;
@@ -19,6 +21,12 @@ namespace PlanetBuilder.Messages
         [SerializeField] private GameUI _gameUI;
         [SerializeField] private UIController _uiController;
 
+        [Header("Optional Next Planet Purchase")]
+        [SerializeField] private LevelController _levelController;
+        [SerializeField] private GameRules _gameRules;
+        [SerializeField] private GameObject _contractWindow;
+        [SerializeField] private MMF_Player _purchaseFeedbacks;
+
         [Header("Completion Video")]
         [SerializeField] private MetaTutorialVideoView _videoView;
         [SerializeField] private VideoClip _videoClip;
@@ -36,6 +44,11 @@ namespace PlanetBuilder.Messages
         private string _confirmedTargetSceneName;
         private bool _showing;
         private bool _transitionRequested;
+        private bool _purchaseInProgress;
+        private bool _purchaseConfirmed;
+        private bool _purchaseSucceeded;
+        private Coroutine _purchaseVideoRoutine;
+        private readonly WaitForSecondsRealtime _purchaseRetryDelay = new(0.1f);
 
         private void OnEnable()
         {
@@ -46,6 +59,12 @@ namespace PlanetBuilder.Messages
 
         private void OnDisable()
         {
+            if (_gameRules != null)
+                _gameRules.OnPlanetPurchasedConfirmed -= HandlePlanetPurchasedConfirmed;
+            if (_purchaseVideoRoutine != null)
+                StopCoroutine(_purchaseVideoRoutine);
+            _purchaseVideoRoutine = null;
+            _purchaseInProgress = false;
             if (_dialogManager != null)
             {
                 _dialogManager.OnDialogCompleted -= HandleDialogCompleted;
@@ -123,9 +142,95 @@ namespace PlanetBuilder.Messages
             (_metaTutorialController != null && _metaTutorialController.isActiveAndEnabled &&
              MetaPlanetTutorialController.ShouldStartTutorial());
 
+        public void PurchaseAndShowCompletionVideo()
+        {
+            if (!isActiveAndEnabled || _showing || _transitionRequested || _purchaseInProgress ||
+                _purchaseSucceeded || _purchaseVideoRoutine != null)
+            {
+                return;
+            }
+            if (!HasConfiguration() || _levelController == null || _gameRules == null ||
+                _contractWindow == null || _purchaseFeedbacks == null ||
+                _levelController.gameObject.scene != gameObject.scene ||
+                _gameRules.gameObject.scene != gameObject.scene || _contractWindow.scene != gameObject.scene ||
+                _purchaseFeedbacks.gameObject.scene != gameObject.scene ||
+                transform.IsChildOf(_contractWindow.transform) || _videoView.transform.IsChildOf(_contractWindow.transform))
+            {
+                Debug.LogWarning("[PlanetCompletion] Assign the purchase LevelController, GameRules, ContractWindow and feedback player.", this);
+                return;
+            }
+            if (!_gameRules.IsPrepared || !CanStart() || !HasDialogTranslations())
+                return;
+
+            if (string.IsNullOrWhiteSpace(_targetSceneName) ||
+                !Application.CanStreamedLevelBeLoaded(_targetSceneName) ||
+                !LastSceneLoader.TryGetSceneId(_targetSceneName, out _) ||
+                !Application.CanStreamedLevelBeLoaded(FallbackSceneName) ||
+                !_gameManager.CanAccessPlanetScene(FallbackSceneName))
+            {
+                Debug.LogWarning("[PlanetCompletion] Configure a built-in target scene and an accessible PlanetMeta fallback before purchasing.", this);
+                return;
+            }
+
+            _purchaseConfirmed = false;
+            _purchaseInProgress = true;
+            GameRules purchaseRules = _gameRules;
+            purchaseRules.OnPlanetPurchasedConfirmed += HandlePlanetPurchasedConfirmed;
+            try
+            {
+                _levelController.PurchaseNextPlanet();
+            }
+            finally
+            {
+                purchaseRules.OnPlanetPurchasedConfirmed -= HandlePlanetPurchasedConfirmed;
+                _purchaseInProgress = false;
+            }
+            if (!_purchaseConfirmed || !isActiveAndEnabled)
+                return;
+
+            _purchaseSucceeded = true;
+            _purchaseVideoRoutine = StartCoroutine(ShowAfterPlanetPurchase());
+        }
+
+        private void HandlePlanetPurchasedConfirmed()
+        {
+            if (_purchaseInProgress)
+                _purchaseConfirmed = true;
+        }
+
+        private IEnumerator ShowAfterPlanetPurchase()
+        {
+            // Let the remaining Button.onClick callbacks, including PlayFeedbacks, execute first.
+            yield return null;
+            while (_purchaseFeedbacks != null && _purchaseFeedbacks.IsPlaying)
+                yield return _purchaseRetryDelay;
+            if (_contractWindow != null)
+                _contractWindow.SetActive(false);
+            if (_uiController.IsShopDisplayed)
+                _uiController.ToggleUpgradeStorePanel();
+            if (_uiController.isLevelsDisplayed)
+                _uiController.ToggleLevelsPanel();
+
+            while (isActiveAndEnabled && !_showing && !_transitionRequested)
+            {
+                MessageDisplayValidator validator = _messageManager.DisplayValidator;
+                if (_gameManager.IsPlanetCompletionReady && Time.timeScale > 0f && !_loadingScreen.IsShowing &&
+                    !validator.IsModalWindowOpen && !validator.IsAdvertisementOpen && !validator.IsDialogOpen &&
+                    !_dialogManager.IsRunning && !_messageManager.HasActiveMessages && !IsTutorialActive())
+                {
+                    break;
+                }
+                yield return _purchaseRetryDelay;
+            }
+
+            _purchaseVideoRoutine = null;
+            if (isActiveAndEnabled && !_showing && !_transitionRequested)
+                ShowCompletionVideo();
+        }
+
         public void ShowCompletionVideo()
         {
-            if (!isActiveAndEnabled || _showing || _transitionRequested)
+            if (!isActiveAndEnabled || _showing || _transitionRequested || _purchaseInProgress || _purchaseVideoRoutine != null)
                 return;
             if (!HasConfiguration())
             {
@@ -156,7 +261,7 @@ namespace PlanetBuilder.Messages
             return true;
         }
 
-        private bool TryShow()
+        private bool HasDialogTranslations()
         {
             if (string.IsNullOrWhiteSpace(LeanLocalization.GetTranslationText(_finalButtonTextKey, null)))
                 return false;
@@ -165,6 +270,13 @@ namespace PlanetBuilder.Messages
                 if (string.IsNullOrWhiteSpace(LeanLocalization.GetTranslationText(_dialogTextKeys[i], null)))
                     return false;
             }
+            return true;
+        }
+
+        private bool TryShow()
+        {
+            if (!HasDialogTranslations())
+                return false;
 
             if (_uiController.IsShopDisplayed)
                 _uiController.ToggleUpgradeStorePanel();

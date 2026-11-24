@@ -529,17 +529,17 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 9070192895218055687}
-        m_TargetAssemblyTypeName: LevelController, Assembly-CSharp
-        m_MethodName: PurchaseNextPlanet
-        m_Mode: 1
+      - m_Target: {fileID: 5794742194957468397}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 9075391286007206525}
         m_TargetAssemblyTypeName: MoreMountains.Feedbacks.MMF_Player, MoreMountains.Feedbacks
@@ -612,10 +612,10 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2590800442477108305}
+  - {fileID: 2930977328783505468}
   - {fileID: 1370037066785485753}
   - {fileID: 6798258118322454532}
   - {fileID: 6794176171099495302}
-  - {fileID: 2930977328783505468}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -756,7 +756,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 450, y: -705}
+  m_AnchoredPosition: {x: 450, y: -702.5}
   m_SizeDelta: {x: 800, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &840330056503041150
@@ -840,7 +840,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 720138474612902531}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 9070192895218055687}
+        m_TargetAssemblyTypeName: LevelController, Assembly-CSharp
+        m_MethodName: PurchaseNextPlanet
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 9075391286007206525}
+        m_TargetAssemblyTypeName: MoreMountains.Feedbacks.MMF_Player, MoreMountains.Tools
+        m_MethodName: PlayFeedbacks
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1715772112618880137
 GameObject:
   m_ObjectHideFlags: 0
@@ -1174,6 +1198,7 @@ GameObject:
   - component: {fileID: 7285873524891895344}
   - component: {fileID: 1091421952652987220}
   - component: {fileID: 4221655277533577023}
+  - component: {fileID: 4514564095055390129}
   m_Layer: 0
   m_Name: Description
   m_TagString: Untagged
@@ -1197,8 +1222,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 450, y: -270}
-  m_SizeDelta: {x: 800, y: 160}
+  m_AnchoredPosition: {x: 450, y: -302.5}
+  m_SizeDelta: {x: 800, y: 240}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1091421952652987220
 CanvasRenderer:
@@ -1234,7 +1259,7 @@ MonoBehaviour:
     \u0441\u0430\u043C\u043E\u0441\u0442\u043E\u044F\u0442\u0435\u043B\u044C\u043D\u043E
     \u043F\u043E\u0441\u043B\u0435 \u0441\u0434\u0430\u0447\u0438 \u0437\u0430\u043A\u0430\u0437\u0447\u0438\u043A\u0443."
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8afb3979b7c678a49b59504c9e1bcfde, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ae14cbade3195b247ac6ace4333e1f92, type: 2}
   m_sharedMaterial: {fileID: 3927734787073598451, guid: 8afb3979b7c678a49b59504c9e1bcfde, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1301,9 +1326,27 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4514564095055390129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1900116490731335907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbf51be86e70d7941bd40914206e4ddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization.TMP::Lean.Localization.LeanLocalizedTextMeshProUGUI
+  translationName: 
+  FallbackText: "\u041E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u0440\u0435\u0437\u0435\u0440\u0432,
+    \u0447\u0442\u043E\u0431\u044B \u0446\u0438\u0432\u0438\u043B\u0438\u0437\u0430\u0446\u0438\u044F
+    \u043C\u043E\u0433\u043B\u0430 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043E\u0432\u0430\u0442\u044C
+    \u0441\u0430\u043C\u043E\u0441\u0442\u043E\u044F\u0442\u0435\u043B\u044C\u043D\u043E
+    \u043F\u043E\u0441\u043B\u0435 \u0441\u0434\u0430\u0447\u0438 \u0437\u0430\u043A\u0430\u0437\u0447\u0438\u043A\u0443."
 --- !u!1 &1940133919476493269
 GameObject:
   m_ObjectHideFlags: 0
@@ -1338,7 +1381,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 450, y: -853.3333}
+  m_AnchoredPosition: {x: 450, y: -832.5}
   m_SizeDelta: {x: 800, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3784484403797360197
@@ -1709,9 +1752,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u0425\u043E\u0447\u0435\u0448 \u0431\u0456\u043B\u044C\u0448\u0435 \u043F\u043B\u0430\u043D\u0435\u0442?
-    \u0417\u0433\u0430\u0434\u0430\u0439 \u043F\u0440\u043E \u0446\u0435 \u0443 \u0441\u0432\u043E\u0454\u043C\u0443
-    5-\u0437\u0456\u0440\u043A\u043E\u0432\u043E\u043C\u0443 \u0432\u0456\u0434\u0433\u0443\u043A\u0443!"
+  m_text: "\u0425\u043E\u0447\u0435\u0448\u044C \u0431\u043E\u043B\u044C\u0448\u0435
+    \u043F\u043B\u0430\u043D\u0435\u0442? \u0423\u043F\u043E\u043C\u044F\u043D\u0438
+    \u043E\u0431 \u044D\u0442\u043E\u043C \u0432 \u0441\u0432\u043E\u0451\u043C 5-\u0437\u0432\u0451\u0437\u0434\u043E\u0447\u043D\u043E\u043C
+    \u043E\u0442\u0437\u044B\u0432\u0435!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ae14cbade3195b247ac6ace4333e1f92, type: 2}
   m_sharedMaterial: {fileID: -5326044434080925310, guid: ae14cbade3195b247ac6ace4333e1f92, type: 2}
@@ -2196,6 +2240,7 @@ GameObject:
   - component: {fileID: 259143840236502056}
   - component: {fileID: 4426923721740718507}
   - component: {fileID: 5515473765561377839}
+  - component: {fileID: 6976186788141949590}
   m_Layer: 0
   m_Name: DepositTitle
   m_TagString: Untagged
@@ -2219,8 +2264,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 450, y: -423.3333}
-  m_SizeDelta: {x: 800, y: 80}
+  m_AnchoredPosition: {x: 450, y: -467.5}
+  m_SizeDelta: {x: 800, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4426923721740718507
 CanvasRenderer:
@@ -2252,7 +2297,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u0413\u0430\u0440\u0430\u043D\u0442\u0438\u0439\u043D\u044B\u0439 \u0434\u0435\u043F\u043E\u0437\u0438\u0442"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8afb3979b7c678a49b59504c9e1bcfde, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ae14cbade3195b247ac6ace4333e1f92, type: 2}
   m_sharedMaterial: {fileID: 3927734787073598451, guid: 8afb3979b7c678a49b59504c9e1bcfde, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2319,9 +2364,24 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6976186788141949590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3121314774899768047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbf51be86e70d7941bd40914206e4ddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization.TMP::Lean.Localization.LeanLocalizedTextMeshProUGUI
+  translationName: SecurityDeposit
+  FallbackText: "\u0413\u0430\u0440\u0430\u043D\u0442\u0438\u0439\u043D\u044B\u0439
+    \u0434\u0435\u043F\u043E\u0437\u0438\u0442"
 --- !u!1 &3164315530970895797
 GameObject:
   m_ObjectHideFlags: 0
@@ -2387,7 +2447,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 40M
+  m_text: 70M
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7823175989fb3d24c80da9f3995165b7, type: 2}
   m_sharedMaterial: {fileID: -5994891515699580281, guid: 7823175989fb3d24c80da9f3995165b7, type: 2}
@@ -3348,7 +3408,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 450, y: -546.6666}
+  m_AnchoredPosition: {x: 450, y: -562.5}
   m_SizeDelta: {x: 800, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2001472682984345593
@@ -3500,17 +3560,17 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 9070192895218055687}
-        m_TargetAssemblyTypeName: LevelController, Assembly-CSharp
-        m_MethodName: PurchaseNextPlanet
-        m_Mode: 1
+      - m_Target: {fileID: 5794742194957468397}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 9075391286007206525}
         m_TargetAssemblyTypeName: MoreMountains.Feedbacks.MMF_Player, MoreMountains.Feedbacks
@@ -3910,7 +3970,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 1190.025}
+  m_AnchoredPosition: {x: 0, y: 1065.0001}
   m_SizeDelta: {x: 0, y: 2105.025}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &6411112847348116927
@@ -4175,7 +4235,6 @@ GameObject:
   - component: {fileID: 6798258118322454532}
   - component: {fileID: 1174155233109736238}
   - component: {fileID: 3526882205218025495}
-  - component: {fileID: 2690134331159264228}
   - component: {fileID: 8503709770464756260}
   m_Layer: 5
   m_Name: LevelInfo
@@ -4225,7 +4284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.49019608}
+  m_Color: {r: 0.28235295, g: 0.47058824, b: 0.77254903, a: 0.88235295}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4242,32 +4301,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2690134331159264228
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4168202296129749643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 15
-    m_Right: 15
-    m_Top: 20
-    m_Bottom: 10
-  m_ChildAlignment: 7
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!225 &8503709770464756260
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4788,10 +4821,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6798258118322454532}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 340, y: 160}
+  m_SizeDelta: {x: 360, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4233360350416496556
 CanvasRenderer:
@@ -4812,16 +4845,17 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "You\u2019ve gathered enough coins to add a new object"
+  m_text: "\u0422\u044B \u043C\u043E\u0436\u0435\u0448\u044C \u0434\u043E\u0431\u0430\u0432\u0438\u0442\u044C
+    \u043D\u043E\u0432\u044B\u0439 \u043E\u0431\u044C\u0435\u043A\u0442"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ae14cbade3195b247ac6ace4333e1f92, type: 2}
   m_sharedMaterial: {fileID: -5326044434080925310, guid: ae14cbade3195b247ac6ace4333e1f92, type: 2}
@@ -4830,8 +4864,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4293519849
-  m_fontColor: {r: 0.9150943, g: 0.9150943, b: 0.9150943, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4848,20 +4882,20 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 31.35
-  m_fontSizeBase: 24
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 16
+  m_fontSizeMax: 52
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 4096
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
   m_wordSpacing: 0
-  m_lineSpacing: 40
+  m_lineSpacing: 0
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -4871,7 +4905,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -4887,7 +4921,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: -0.00024414062, z: 0, w: 23.54541}
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -5161,11 +5195,11 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 0.88235295}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.88235295}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.88235295}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.88235295}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.88235295}
+    m_NormalColor: {r: 0.28235295, g: 0.47058824, b: 0.77254903, a: 0.88235295}
+    m_HighlightedColor: {r: 0.28235295, g: 0.47058824, b: 0.77254903, a: 0.88235295}
+    m_PressedColor: {r: 0.13203098, g: 0.33333313, b: 0.6509434, a: 0.88235295}
+    m_SelectedColor: {r: 0.28235295, g: 0.47058824, b: 0.77254903, a: 0.88235295}
+    m_DisabledColor: {r: 0.44705883, g: 0.61960787, b: 0.8980392, a: 0.88235295}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -5377,7 +5411,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u0417\u0430\u043B\u0438\u0448\u0438\u0442\u0438 \u0432\u0456\u0434\u0433\u0443\u043A"
+  m_text: "\u041E\u0441\u0442\u0430\u0432\u0438\u0442\u044C \u043E\u0442\u0437\u044B\u0432"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7823175989fb3d24c80da9f3995165b7, type: 2}
   m_sharedMaterial: {fileID: -5994891515699580281, guid: 7823175989fb3d24c80da9f3995165b7, type: 2}
@@ -5404,7 +5438,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 31.6
+  m_fontSize: 34.35
   m_fontSizeBase: 52
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5474,6 +5508,7 @@ GameObject:
   - component: {fileID: 3825754092468404198}
   - component: {fileID: 7426844934031226642}
   - component: {fileID: 4986336413227892099}
+  - component: {fileID: 5009826331568591095}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -5531,7 +5566,7 @@ MonoBehaviour:
   m_text: "\u0412\u043D\u0435\u0441\u0442\u0438 \u0434\u0435\u043F\u043E\u0437\u0438\u0442
     \u0438 \u0441\u0434\u0430\u0442\u044C \u043F\u043B\u0430\u043D\u0435\u0442\u0443"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7823175989fb3d24c80da9f3995165b7, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 84c67c9a10e969b478698f4f289562dd, type: 2}
   m_sharedMaterial: {fileID: -5994891515699580281, guid: 7823175989fb3d24c80da9f3995165b7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -5598,9 +5633,24 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5009826331568591095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5903982385357766878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbf51be86e70d7941bd40914206e4ddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization.TMP::Lean.Localization.LeanLocalizedTextMeshProUGUI
+  translationName: PayDeposit
+  FallbackText: "\u0412\u043D\u0435\u0441\u0442\u0438 \u0434\u0435\u043F\u043E\u0437\u0438\u0442
+    \u0438 \u0441\u0434\u0430\u0442\u044C \u043F\u043B\u0430\u043D\u0435\u0442\u0443"
 --- !u!1 &6077553456855987367
 GameObject:
   m_ObjectHideFlags: 0
@@ -6013,6 +6063,7 @@ GameObject:
   - component: {fileID: 943634184047211605}
   - component: {fileID: 2197419810390411034}
   - component: {fileID: 4982080422895587521}
+  - component: {fileID: 6447602982383090898}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -6036,7 +6087,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 450, y: -106.666664}
+  m_AnchoredPosition: {x: 450, y: -117.5}
   m_SizeDelta: {x: 800, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &943634184047211605
@@ -6067,9 +6118,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u0413\u0430\u0440\u0430\u043D\u0442\u0438\u044F \u0430\u0432\u0442\u043E\u043D\u043E\u043C\u0438\u0438"
+  m_text: "\u041F\u043B\u0430\u043D\u0435\u0442\u0430 \u0433\u043E\u0442\u043E\u0432\u0430!"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7823175989fb3d24c80da9f3995165b7, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 84c67c9a10e969b478698f4f289562dd, type: 2}
   m_sharedMaterial: {fileID: -5994891515699580281, guid: 7823175989fb3d24c80da9f3995165b7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -6136,7 +6187,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &4982080422895587521
@@ -6154,6 +6205,20 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &6447602982383090898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6377341973659850884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbf51be86e70d7941bd40914206e4ddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeanLocalization.TMP::Lean.Localization.LeanLocalizedTextMeshProUGUI
+  translationName: ContractTitle
+  FallbackText: "\u0413\u0430\u0440\u0430\u043D\u0442\u0438\u044F \u0430\u0432\u0442\u043E\u043D\u043E\u043C\u0438\u0438"
 --- !u!1 &6684505647972791465
 GameObject:
   m_ObjectHideFlags: 0
@@ -7294,7 +7359,6 @@ GameObject:
   - component: {fileID: 1911839675728205128}
   - component: {fileID: 6996040648738290622}
   - component: {fileID: 2138703222585989271}
-  - component: {fileID: 3501311639357490437}
   - component: {fileID: 8287725069335869661}
   m_Layer: 0
   m_Name: ContractView
@@ -7366,23 +7430,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3501311639357490437
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8028127327159959213}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c708f5073f790d04eacb1b2b8e66e1e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlanetBuilder.Messages.Tutorial.MetaTutorialModalView
-  _titleText: {fileID: 2197419810390411034}
-  _descriptionText: {fileID: 4221655277533577023}
-  _rewardText: {fileID: 8479819905606884028}
-  _buttonText: {fileID: 4986336413227892099}
-  _button: {fileID: 5805218668643758239}
 --- !u!114 &8287725069335869661
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7398,8 +7445,8 @@ MonoBehaviour:
   m_Padding:
     m_Left: 0
     m_Right: 0
-    m_Top: 40
-    m_Bottom: 10
+    m_Top: 60
+    m_Bottom: 40
   m_ChildAlignment: 4
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
@@ -7549,7 +7596,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 20M
+  m_text: 40M
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7823175989fb3d24c80da9f3995165b7, type: 2}
   m_sharedMaterial: {fileID: -5994891515699580281, guid: 7823175989fb3d24c80da9f3995165b7, type: 2}
@@ -7772,7 +7819,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.49019608}
+  m_Color: {r: 0.28235295, g: 0.47058824, b: 0.77254903, a: 0.88235295}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

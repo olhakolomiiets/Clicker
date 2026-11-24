@@ -16,6 +16,7 @@ public class GameRules : MonoBehaviour
     public event Action<int, GameData, GeneralGameData> OnUpdateData, OnPerformAction, OnUpdateUpgradeData;
     public event Action<GeneralGameData, GameData> OnUpdateGameData;
     public event Action OnDataUpdated, OnRewardRecived;
+    public event Action OnPlanetPurchasedConfirmed;
     public event Action<int, int> OnManagerAvailability, OnManagerNonAvailability, OnItemNotReadyToBuy, OnItemReadyToBuy;
 
     public double CurrentMoney => _currentGameData != null ? _currentGameData.Money : 0d;
@@ -866,5 +867,6 @@ public class GameRules : MonoBehaviour
         Debug.Log($"New planet unlocked: {_currentGeneralData.ActivePlanet}");
 
         SendDataUpdate();
+        OnPlanetPurchasedConfirmed?.Invoke();
     }
 }

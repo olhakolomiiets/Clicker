@@ -21,6 +21,11 @@ namespace PlanetBuilder.Messages.Hints
         private const string UpgradeMenuIntroId = "PostTutorialHint.UpgradeMenuIntro";
         private const string PassiveIncomeChestId = "PostTutorialHint.PassiveIncomeChest";
         private const string PassiveIncomeChestTextKey = "post_tutorial_hint_passive_income_chest";
+        private const string PassiveIncomeChestNextTextVariantKey = "PostTutorialHint.PassiveIncomeChest.NextTextVariant";
+        private static readonly int[] PassiveIncomeChestStoryNumbers =
+        {
+            1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+        };
         private const string UnlockAvailableTextKey = "post_tutorial_hint_unlock_available";
         private const string AutomationAvailableTextKey = "post_tutorial_hint_automation_available";
         private const string BuyMoreObjectTextKey = "post_tutorial_hint_buy_more_object";
@@ -404,8 +409,11 @@ namespace PlanetBuilder.Messages.Hints
 
             ReminderCandidate candidate = FindCandidate(message.Id);
 
-            if (candidate == null)
+            if (candidate == null ||
+                (candidate.Type == ReminderType.PassiveIncomeChest && candidate.DisplayConsumed))
+            {
                 return;
+            }
 
             _activeCandidate = candidate;
             candidate.Shown = true;
@@ -567,6 +575,8 @@ namespace PlanetBuilder.Messages.Hints
                 _highlightSystem = _messageManager.GetComponentInChildren<TutorialHighlightSystem>(true);
 
             _displayValidator = _messageManager.DisplayValidator;
+            _nextTextVariants[ReminderType.PassiveIncomeChest] =
+                Mathf.Max(0, PlayerPrefs.GetInt(PassiveIncomeChestNextTextVariantKey, 0)) % PassiveIncomeChestStoryNumbers.Length;
             SubscribeToMessageManager();
             ResolveSceneReferences();
             SubscribeToGameplay();
@@ -1600,7 +1610,9 @@ namespace PlanetBuilder.Messages.Hints
         private string GetVariantText(ReminderType type, string baseKey, string fallback)
         {
             _nextTextVariants.TryGetValue(type, out int variant);
-            string key = variant == 0 ? baseKey : $"{baseKey}_{variant + 1}";
+            string key = type == ReminderType.PassiveIncomeChest
+                ? $"{baseKey}_story_{PassiveIncomeChestStoryNumbers[variant]:00}"
+                : variant == 0 ? baseKey : $"{baseKey}_{variant + 1}";
             return GetLocalizedText(key, fallback);
         }
 
@@ -1616,7 +1628,13 @@ namespace PlanetBuilder.Messages.Hints
                 }
 
                 _nextTextVariants.TryGetValue(type, out int variant);
-                _nextTextVariants[type] = (variant + 1) % 3;
+                int variantCount = type == ReminderType.PassiveIncomeChest ? PassiveIncomeChestStoryNumbers.Length : 3;
+                _nextTextVariants[type] = (variant + 1) % variantCount;
+                if (type == ReminderType.PassiveIncomeChest)
+                {
+                    PlayerPrefs.SetInt(PassiveIncomeChestNextTextVariantKey, _nextTextVariants[type]);
+                    PlayerPrefs.Save();
+                }
                 return;
             }
         }

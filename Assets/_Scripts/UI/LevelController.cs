@@ -195,6 +195,12 @@ public class LevelController : MonoBehaviour
         UpdateBuyButtons();
     }
 
+    internal static bool IsSceneUnlocked(int sceneId, GeneralGameData generalData)
+    {
+        return generalData != null && LastSceneLoader.GetSceneName(sceneId) != null &&
+            (sceneId < FreeScenesCount || generalData.ActivePlanet > sceneId);
+    }
+
     public void LoadSceene(int sceneIndex)
     {
         if (generalData == null)
@@ -212,11 +218,7 @@ public class LevelController : MonoBehaviour
             return;
         }
 
-        bool isFree = sceneIndex < FreeScenesCount;
-        bool isUnlocked =
-            isFree || generalData.ActivePlanet > sceneIndex;
-
-        if (isUnlocked)
+        if (IsSceneUnlocked(sceneIndex, generalData))
         {
             SceneManager.LoadScene(sceneName);
 

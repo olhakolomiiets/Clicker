@@ -25,6 +25,14 @@ public class GameManager : MonoBehaviour
 
     private bool _isGameSaved = true;
 
+    internal bool IsPlanetDataRestored { get; private set; }
+    internal event Action OnPlanetDataRestored;
+    internal bool IsPlanetCompletionReady => IsPlanetDataRestored &&
+        !_iapApplicationPaused && isActiveAndEnabled && _planetMode is StandardPlanetMode &&
+        !SaveSystem.IsIapRecoveryRequired && !SaveSystem.IsPassiveIncomeRecoveryRequired;
+    internal bool PlanetCompletionVideoConfirmed =>
+        _planetMode is StandardPlanetMode mode && mode.PlanetCompletionVideoConfirmed;
+
     [SerializeField] private OfflinePlanetCatalog _offlinePlanetCatalog;
     private static string _observedOfflineExitTime;
     private static DateTime _observedOfflineReturnUtc;
@@ -73,6 +81,7 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
+        IsPlanetDataRestored = false;
         _iapGameContextReady = false;
         _generalGameData = new GeneralGameData();
 
@@ -720,6 +729,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadSavedData()
     {
+        IsPlanetDataRestored = false;
         if (_planetMode == null)
             return;
 
@@ -734,6 +744,39 @@ public class GameManager : MonoBehaviour
         }
 
         _isGameSaved = false;
+        IsPlanetDataRestored = true;
+        OnPlanetDataRestored?.Invoke();
+    }
+
+    internal bool CanAccessPlanetScene(string sceneName)
+    {
+        return LastSceneLoader.TryGetSceneId(sceneName, out int sceneId) &&
+            LevelController.IsSceneUnlocked(sceneId, _generalGameData);
+    }
+
+    internal bool TryConfirmPlanetCompletion()
+    {
+        if (!IsPlanetCompletionReady || _saveSystem == null || _generalGameData == null ||
+            SaveSystem.IsPassiveIncomeRecoveryRequired || SaveSystem.IsIapRecoveryRequired)
+        {
+            return false;
+        }
+
+        StandardPlanetMode mode = (StandardPlanetMode)_planetMode;
+        bool previousConfirmation = mode.PlanetCompletionVideoConfirmed;
+        mode.PlanetCompletionVideoConfirmed = true;
+        try
+        {
+            // Reuse the existing journal that durably saves both snapshots together.
+            SavePassiveIncomeReward();
+            return true;
+        }
+        catch (Exception exception)
+        {
+            mode.PlanetCompletionVideoConfirmed = previousConfirmation;
+            Debug.LogException(exception, this);
+            return false;
+        }
     }
 
     public void SaveGeneralGameData()
@@ -853,6 +896,7 @@ public class GameManager : MonoBehaviour
 
     private void OnDisable()
     {
+        IsPlanetDataRestored = false;
         UnregisterIapGameContext();
 
         if (_planetMode != null && _purchaseManager != null)

@@ -9,6 +9,23 @@ public class ObjectPlaceRotator : MonoBehaviour
     private DragRotateGPT dragRotateGPT;
     [SerializeField] private List<PlanetObject> needToShowList = new();
     public bool isRotating = false;
+    private int _activeAppearances;
+    private readonly List<PlanetObject> _purchaseVisuals = new();
+    internal bool IsProcessingPurchase
+    {
+        get
+        {
+            if (isRotating || needToShowList.Count > 0 || _activeAppearances > 0)
+                return true;
+
+            for (int i = 0; i < _purchaseVisuals.Count; i++)
+            {
+                if (_purchaseVisuals[i] != null && _purchaseVisuals[i].IsPurchaseEffectPlaying)
+                    return true;
+            }
+            return false;
+        }
+    }
     [SerializeField] private UIController _uiController;
 
     private void Start()
@@ -69,36 +86,52 @@ public class ObjectPlaceRotator : MonoBehaviour
 
     private IEnumerator RotateToTargetRotation(Transform targetObjectTransform)
     {
-        var cameraTransformPositionWithCorrect = cameraTransform.position + Vector3.up * 120f;
-
-        Vector3 a = cameraTransformPositionWithCorrect - transform.position;
-        Vector3 b = targetObjectTransform.position - transform.position;
-
-        // Calculate the rotation needed to align vector b with vector a
-        Quaternion targetRotation = Quaternion.FromToRotation(b, a) * transform.rotation;
-
-        // Add degrees rotation on the axises
-        targetRotation *= Quaternion.Euler(0f, 0f, 0f);
-
-        float duration = 1f;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
+        _activeAppearances++;
+        try
         {
-            float interpolationFactor = Mathf.Clamp01(elapsed / duration);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, interpolationFactor);
+            var cameraTransformPositionWithCorrect = cameraTransform.position + Vector3.up * 120f;
 
-            elapsed += Time.deltaTime;
-            yield return null;
+            Vector3 a = cameraTransformPositionWithCorrect - transform.position;
+            Vector3 b = targetObjectTransform.position - transform.position;
+
+            // Calculate the rotation needed to align vector b with vector a
+            Quaternion targetRotation = Quaternion.FromToRotation(b, a) * transform.rotation;
+
+            // Add degrees rotation on the axises
+            targetRotation *= Quaternion.Euler(0f, 0f, 0f);
+
+            float duration = 1f;
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                float interpolationFactor = Mathf.Clamp01(elapsed / duration);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, interpolationFactor);
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            transform.rotation = targetRotation;
+
+            targetObjectTransform.gameObject.SetActive(true);
+            PlanetObject planetObject = targetObjectTransform.GetComponent<PlanetObject>();
+            planetObject.MakeSFX();
+            for (int i = _purchaseVisuals.Count - 1; i >= 0; i--)
+            {
+                if (_purchaseVisuals[i] == null || !_purchaseVisuals[i].IsPurchaseEffectPlaying)
+                    _purchaseVisuals.RemoveAt(i);
+            }
+            if (!_purchaseVisuals.Contains(planetObject))
+                _purchaseVisuals.Add(planetObject);
+
+            yield return new WaitForSecondsRealtime(1f);
+
+            Debug.Log("Rotation completed!");
         }
-
-        transform.rotation = targetRotation;
-
-        targetObjectTransform.gameObject.SetActive(true);
-        targetObjectTransform.GetComponent<PlanetObject>().MakeSFX();
-
-        yield return new WaitForSecondsRealtime(1f);
-
-        Debug.Log("Rotation completed!");
+        finally
+        {
+            _activeAppearances--;
+        }
     }
 }

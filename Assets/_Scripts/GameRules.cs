@@ -38,6 +38,39 @@ public class GameRules : MonoBehaviour
     /// <summary>True when at least one object of the given Creation index is owned.</summary>
     public bool IsItemOwned(int index) => GetItemCount(index) > 0;
 
+    /// <summary>True when every coin Creation category has reached its configured purchase limit.</summary>
+    public bool AreAllCoinItemsPurchased()
+    {
+        if (_currentGameData == null ||
+            _currentGameData.ItemDataList == null ||
+            _currentGameData.ItemCount == null ||
+            _currentGameData.ItemDataList.Count != _currentGameData.ItemCount.Count)
+        {
+            return false;
+        }
+
+        bool hasCoinCategory = false;
+
+        for (int i = 0; i < _currentGameData.ItemDataList.Count; i++)
+        {
+            ItemData itemData = _currentGameData.ItemDataList[i];
+            if (itemData == null)
+                return false;
+
+            if (itemData.IsPremium)
+                continue;
+
+            hasCoinCategory = true;
+            if (itemData.MaxCountIncrement <= 0 ||
+                _currentGameData.ItemCount[i] < itemData.MaxCountIncrement)
+            {
+                return false;
+            }
+        }
+
+        return hasCoinCategory;
+    }
+
     /// <summary>True when the automation manager for the given Creation index is purchased.</summary>
     public bool IsManagerPurchased(int index)
     {

@@ -88,6 +88,19 @@ public class GameUI : MonoBehaviour
 
     public int CreationItemCount => _uiCreationItemsList.Count;
 
+    internal bool IsAnyManagerPanelOpen
+    {
+        get
+        {
+            for (int i = 0; i < _managerControllers.Count; i++)
+            {
+                if (_managerControllers[i] != null && _managerControllers[i].IsManagerPanelOpen)
+                    return true;
+            }
+            return false;
+        }
+    }
+
     /// <summary>Tutorial helper: returns the coin balance panel GameObject (may be null).</summary>
     public GameObject GetCoinsBalanceTarget() => _coins != null ? _coins.gameObject : null;
 

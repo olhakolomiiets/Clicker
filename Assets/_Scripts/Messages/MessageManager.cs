@@ -38,6 +38,7 @@ namespace PlanetBuilder.Messages
         [SerializeField] private ToastView _toastView;
         [SerializeField] private TutorialView _tutorialView;
 
+        private readonly HashSet<object> _conversationPortraitHideOwners = new();
         private object _conversationPlacementOwner;
         private float _nextCooldownCleanupTime;
         private bool _isProcessingDeferredMessages;
@@ -57,6 +58,7 @@ namespace PlanetBuilder.Messages
         public static bool HasInstance => Instance != null;
 
         public MessageData CurrentMessage => GetHighestPriorityActiveMessage()?.CreateSnapshot();
+        internal bool HasActiveMessages => _activeMessages.Count > 0;
         public MessageQueueManager QueueManager => _queueManager;
         public MessageDisplayValidator DisplayValidator => _displayValidator;
         public MessageAnalyticsService AnalyticsService => _analyticsService;
@@ -219,6 +221,20 @@ namespace PlanetBuilder.Messages
 
         internal void SetConversationPortraitsHidden(bool hidden)
         {
+            SetConversationPortraitsHidden(hidden, this);
+        }
+
+        internal void SetConversationPortraitsHidden(bool hidden, object owner)
+        {
+            if (owner == null)
+                return;
+
+            if (hidden)
+                _conversationPortraitHideOwners.Add(owner);
+            else
+                _conversationPortraitHideOwners.Remove(owner);
+
+            hidden = _conversationPortraitHideOwners.Count > 0;
             if (_messageView != null)
                 _messageView.SetPortraitHidden(hidden);
 

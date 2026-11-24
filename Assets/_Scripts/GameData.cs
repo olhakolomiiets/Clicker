@@ -22,6 +22,7 @@ public class GameData
     public List<double> ItemIncomePerSec = new();
     public double BoosterMultiplier { get; set; }
     public bool IsBoosterPurchased { get; set; }
+    public bool PlanetCompletionVideoConfirmed { get; set; }
 
     public List<UpgradeItemData> UpgradeItemDataList = new();
     public int IsManagerPurchased;
@@ -44,6 +45,7 @@ public class GameData
         ItemMaxCountHelper = data.ItemMaxCountHelper;
         IsManagerPurchased = data.IsManagerPurchased;
         IsBoosterPurchased = data.IsBoosterPurchased;
+        PlanetCompletionVideoConfirmed = data.PlanetCompletionVideoConfirmed;
         PassiveIncomeChestSpawnPointIndex = Mathf.Max(0, data.PassiveIncomeChestSpawnPointIndex);
         PassiveIncomeChestPrefabIndex = Mathf.Max(0, data.PassiveIncomeChestPrefabIndex);
 
@@ -63,6 +65,7 @@ public class GameData
             ItemMaxCountHelper = ItemMaxCountHelper,
             IsManagerPurchased = IsManagerPurchased,
             IsBoosterPurchased = IsBoosterPurchased,
+            PlanetCompletionVideoConfirmed = PlanetCompletionVideoConfirmed,
             PassiveIncomeChestSpawnPointIndex = PassiveIncomeChestSpawnPointIndex,
             PassiveIncomeChestPrefabIndex = PassiveIncomeChestPrefabIndex,
         });
@@ -81,6 +84,7 @@ public struct GameDataSave
     public List<int> ItemMaxCountHelper;
     public int IsManagerPurchased;
     public bool IsBoosterPurchased;
+    public bool PlanetCompletionVideoConfirmed;
     public int PassiveIncomeChestSpawnPointIndex;
     public int PassiveIncomeChestPrefabIndex;
 }

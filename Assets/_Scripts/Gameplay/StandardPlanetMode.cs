@@ -53,6 +53,11 @@ public class StandardPlanetMode : MonoBehaviour, IPlanetMode
     }
 
     internal bool HasInitializedIapData => _gameData != null;
+    internal bool PlanetCompletionVideoConfirmed
+    {
+        get => _gameData != null && _gameData.PlanetCompletionVideoConfirmed;
+        set => _gameData.PlanetCompletionVideoConfirmed = value;
+    }
 
     public void ApplySavedIapMoney(double money)
     {

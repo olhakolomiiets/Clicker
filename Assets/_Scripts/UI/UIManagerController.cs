@@ -23,6 +23,9 @@ public class UIManagerController : MonoBehaviour
         ? _buyButton.ButtonTarget
         : null;
 
+    // This is the window root toggled by ToggleManagerPanel, not its nested purchase button.
+    internal bool IsManagerPanelOpen => _buyButton != null && _buyButton.gameObject.activeInHierarchy;
+
     private void Awake()
     {
         _buyManagersPanel = GameObject.FindGameObjectWithTag("ManagersPanel");

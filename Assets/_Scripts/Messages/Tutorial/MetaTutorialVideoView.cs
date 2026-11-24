@@ -22,13 +22,28 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private const string StartWorkTextKey = "meta_tutorial_step11_contract_button";
 
+        private VideoClip _inspectorVideoClip;
+        private bool _hasInspectorVideoClip;
+        private string _dialogId;
+        private string _finalButtonTextKey;
+        private MessageManager _modalMessageManager;
         private Action _onVideoCompleted;
         private Action _onCompleted;
+        private Func<bool> _tryConfirm;
         private bool _canSkip;
+        private bool _loopUntilConfirmed;
         private bool _videoCompleted;
         private bool _dialogCompleted;
 
         internal VideoDialogView DialogView => _videoDialogView;
+        internal bool IsConfigured => enabled && _videoPlayer != null && _videoPlayer.enabled &&
+            _skipButton != null && _skipButtonText != null &&
+            _videoDialogView != null && _videoDialogView.enabled;
+
+        internal void SetConfirmationHandler(Func<bool> tryConfirm)
+        {
+            _tryConfirm = tryConfirm;
+        }
 
         private void OnEnable()
         {
@@ -55,6 +70,8 @@ namespace PlanetBuilder.Messages.Tutorial
             {
                 _videoPlayer.loopPointReached -= HandleVideoFinished;
                 _videoPlayer.Stop();
+                if (_hasInspectorVideoClip)
+                    _videoPlayer.clip = _inspectorVideoClip;
             }
 
             if (_videoDialogView != null && _videoDialogView.gameObject.activeSelf)
@@ -63,30 +80,87 @@ namespace PlanetBuilder.Messages.Tutorial
             SetModalOpen(false);
             _onVideoCompleted = null;
             _onCompleted = null;
+            _tryConfirm = null;
+            _loopUntilConfirmed = false;
+            _dialogId = null;
+            _finalButtonTextKey = null;
         }
 
         public void Show(bool canSkip, Action onVideoCompleted, Action onCompleted)
         {
+            CacheInspectorVideoClip();
+            Show(_inspectorVideoClip, "MetaPlanetTutorial.FirstOrder", StartWorkTextKey,
+                canSkip, onVideoCompleted, onCompleted);
+        }
+
+        public void Show(
+            VideoClip videoClip,
+            string dialogId,
+            string finalButtonTextKey,
+            bool canSkip,
+            Action onVideoCompleted,
+            Action onCompleted)
+        {
+            Show(videoClip, dialogId, finalButtonTextKey, canSkip,
+                onVideoCompleted, onCompleted, loopUntilConfirmed: false);
+        }
+
+        public void Show(
+            VideoClip videoClip,
+            string dialogId,
+            string finalButtonTextKey,
+            bool canSkip,
+            Action onVideoCompleted,
+            Action onCompleted,
+            bool loopUntilConfirmed)
+        {
+            if (string.IsNullOrEmpty(dialogId) || string.IsNullOrEmpty(finalButtonTextKey))
+            {
+                Debug.LogWarning("Video view requires a dialog ID and a final button localization key.", this);
+                return;
+            }
+
+            CacheInspectorVideoClip();
+            _dialogId = dialogId;
+            _finalButtonTextKey = finalButtonTextKey;
             _canSkip = canSkip;
+            _loopUntilConfirmed = loopUntilConfirmed;
+            _tryConfirm = null;
             _videoCompleted = false;
             _dialogCompleted = false;
             _onVideoCompleted = onVideoCompleted;
             _onCompleted = onCompleted;
+
+            if (_videoPlayer != null)
+            {
+                _videoPlayer.Stop();
+                _videoPlayer.clip = videoClip;
+                _videoPlayer.isLooping = _loopUntilConfirmed;
+            }
+
             gameObject.SetActive(true);
             RefreshButton();
 
             if (_videoPlayer != null && _videoPlayer.clip != null)
             {
-                _videoPlayer.isLooping = true;
                 _videoPlayer.Play();
             }
             else
                 HandleVideoFinished(_videoPlayer);
         }
 
+        private void CacheInspectorVideoClip()
+        {
+            if (_hasInspectorVideoClip || _videoPlayer == null)
+                return;
+
+            _inspectorVideoClip = _videoPlayer.clip;
+            _hasInspectorVideoClip = true;
+        }
+
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (_dialogCompleted)
+            if (_dialogCompleted || string.IsNullOrEmpty(_dialogId))
                 return;
 
             MessageManager messageManager = MessageManager.Instance;
@@ -94,13 +168,19 @@ namespace PlanetBuilder.Messages.Tutorial
                 ? messageManager.GetComponent<DialogManager>()
                 : null;
 
-            if (dialogManager != null &&
-                dialogManager.ActiveDialog?.DialogId == "MetaPlanetTutorial.FirstOrder")
+            DialogData activeDialog = dialogManager != null ? dialogManager.ActiveDialog : null;
+            if (_videoDialogView != null && activeDialog != null &&
+                activeDialog.DialogId == _dialogId && activeDialog.VideoView == _videoDialogView)
+            {
                 dialogManager.ShowNext();
+            }
         }
 
         public void SetDialogCompleted()
         {
+            if (!isActiveAndEnabled)
+                return;
+
             _dialogCompleted = true;
             RefreshButton();
         }
@@ -131,11 +211,14 @@ namespace PlanetBuilder.Messages.Tutorial
 
             _videoCompleted = true;
 
-            if (_videoPlayer != null)
+            if (_videoPlayer != null && !_loopUntilConfirmed)
                 _videoPlayer.Pause();
 
-            _onVideoCompleted?.Invoke();
-            RefreshButton();
+            Action videoCompleted = _onVideoCompleted;
+            _onVideoCompleted = null;
+            videoCompleted?.Invoke();
+            if (isActiveAndEnabled)
+                RefreshButton();
         }
 
         private void RefreshButton()
@@ -148,7 +231,7 @@ namespace PlanetBuilder.Messages.Tutorial
             _skipButton.gameObject.SetActive(buttonVisible);
 
             if (_skipButtonText != null)
-                _skipButtonText.text = T(_videoCompleted ? StartWorkTextKey : _skipTextKey);
+                _skipButtonText.text = T(_videoCompleted ? _finalButtonTextKey : _skipTextKey);
         }
 
         private static string T(string key)
@@ -159,6 +242,9 @@ namespace PlanetBuilder.Messages.Tutorial
         private void Complete()
         {
             if (!_videoCompleted || !_dialogCompleted)
+                return;
+
+            if (_tryConfirm != null && !_tryConfirm())
                 return;
 
             Action completed = _onCompleted;
@@ -172,13 +258,22 @@ namespace PlanetBuilder.Messages.Tutorial
 
         private void SetModalOpen(bool isOpen)
         {
-            MessageManager messageManager = MessageManager.Instance;
+            MessageManager messageManager = isOpen ? MessageManager.Instance : _modalMessageManager;
+            if (messageManager == null)
+                return;
 
-            if (messageManager != null)
+            if (isOpen)
             {
-                messageManager.SetModalWindowOpen(isOpen);
-                messageManager.SetConversationPortraitsHidden(isOpen);
+                _modalMessageManager = messageManager;
+                messageManager.RegisterModalWindow(this);
             }
+            else
+            {
+                _modalMessageManager = null;
+                messageManager.UnregisterModalWindow(this);
+            }
+
+            messageManager.SetConversationPortraitsHidden(isOpen, this);
         }
     }
 }

@@ -33,6 +33,7 @@ public class MetaPlanetCurrencyExchange : MonoBehaviour
 
     [Header("Planet currencies")]
     [SerializeField] private List<PlanetSettings> planets = new List<PlanetSettings>();
+    [SerializeField, Min(0f)] private float _inflationMultiplier = 180f;
 
     private readonly Dictionary<int, double> _openRates = new();
     private bool _isOpen;
@@ -171,7 +172,7 @@ public class MetaPlanetCurrencyExchange : MonoBehaviour
     private double CalculatePrice(PlanetSettings settings, double incomePerSecond)
     {
         return Math.Ceiling(
-            Math.Max(settings.minDiamondPrice, incomePerSecond * 60d)
+            Math.Max(settings.minDiamondPrice, incomePerSecond * _inflationMultiplier)
         );
     }
 

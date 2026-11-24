@@ -7,6 +7,8 @@ public class PlanetObject : MonoBehaviour
 {
     public event Action OnTutorialStepCompleted;
     public SFXType _sfx;
+    private GameObject _purchaseEffect;
+    internal bool IsPurchaseEffectPlaying => _purchaseEffect != null && _purchaseEffect.activeInHierarchy;
     public enum SFXType
     {
         Ray,
@@ -72,6 +74,7 @@ public class PlanetObject : MonoBehaviour
 
         if (sfx != null)
         {
+            _purchaseEffect = sfx;
             sfx.transform.parent = null;
             sfx.transform.localScale = new Vector3(1, 1, 1);
             sfx.transform.SetParent(this.transform);
@@ -87,5 +90,7 @@ public class PlanetObject : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
         sfx.SetActive(false);
+        if (_purchaseEffect == sfx)
+            _purchaseEffect = null;
     }
 }

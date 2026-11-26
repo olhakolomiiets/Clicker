@@ -16,4 +16,7 @@ public class PassiveIncomeData : ScriptableObject
 
     [field: SerializeField]
     public double ExtraTimePriceMultiplier { get; set; }
+
+    [field: SerializeField, Min(0f)]
+    public double PassiveDiamondsMultiplier { get; set; } = 0.25d;
 }

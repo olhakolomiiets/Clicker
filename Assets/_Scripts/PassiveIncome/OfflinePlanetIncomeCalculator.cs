@@ -116,13 +116,15 @@ public static class OfflinePlanetIncomeCalculator
         MetaUpgradeEffects effects,
         int offlineSeconds,
         out double diamonds,
-        out string error)
+        out string error,
+        double passiveDiamondsMultiplier = 1d)
     {
         diamonds = 0d;
         error = null;
 
         if (planet == null || planet.Items == null ||
             planet.Items.Count == 0 || effects == null || offlineSeconds < 0 ||
+            !IsFinite(passiveDiamondsMultiplier) || passiveDiamondsMultiplier < 0d ||
             save.ItemCount == null || save.ItemCount.Count != planet.Items.Count ||
             (save.Managers != null && save.Managers.Count != planet.Items.Count))
         {
@@ -184,7 +186,16 @@ public static class OfflinePlanetIncomeCalculator
             }
         }
 
-        diamonds = total;
+        double scaledDiamonds = total * passiveDiamondsMultiplier;
+        if (!IsFinite(scaledDiamonds))
+        {
+            error = "Passive premium income overflow.";
+            return false;
+        }
+
+        diamonds = total > 0d
+            ? Math.Max(1d, Math.Floor(scaledDiamonds))
+            : 0d;
         return true;
     }
 

@@ -502,6 +502,7 @@ public class GameManager : MonoBehaviour
     private bool CaptureOfflinePlanetRewards(DateTime utcNow)
     {
         if (_offlinePlanetCatalog == null ||
+            _offlinePlanetCatalog.PassiveIncomeConfig == null ||
             _offlinePlanetCatalog.Planets == null ||
             _offlinePlanetCatalog.Planets.Count == 0 ||
             _offlinePlanetCatalog.MetaUpgradeConfigs == null ||
@@ -627,7 +628,8 @@ public class GameManager : MonoBehaviour
                         permanentBooster: permanentBooster) ||
                     !OfflinePlanetIncomeCalculator.TryCalculateDiamonds(
                         entry, planetSave, effects, addedSeconds,
-                        out double addedDiamonds, out error))
+                        out double addedDiamonds, out error,
+                        _offlinePlanetCatalog.PassiveIncomeConfig.PassiveDiamondsMultiplier))
                 {
                     Debug.LogError(
                         $"[OfflinePlanetRewards] {entry.SaveKey}: {error}");

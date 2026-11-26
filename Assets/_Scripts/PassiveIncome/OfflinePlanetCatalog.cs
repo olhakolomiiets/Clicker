@@ -10,6 +10,9 @@ public class OfflinePlanetCatalog : ScriptableObject
     public List<OfflinePlanetEntry> Planets = new();
 
     public List<MetaUpgradeItemData> MetaUpgradeConfigs = new();
+
+    [field: SerializeField]
+    public PassiveIncomeData PassiveIncomeConfig { get; private set; }
 }
 
 [Serializable]

@@ -53380,8 +53380,16 @@ MonoBehaviour:
   _videoView: {fileID: 901752469}
   _videoClip: {fileID: 32900000, guid: fd9da93e21adbc146825a36476bd2538, type: 3}
   _dialogTextKeys:
-  - planet_completion_level1_dialog_01
-  - planet_completion_level1_dialog_02
+  - planet_completion_level3_dialog_01
+  - planet_completion_level3_dialog_02
+  - planet_completion_level3_dialog_03
+  - planet_completion_level3_dialog_04
+  - planet_completion_level3_dialog_05
+  - planet_completion_level3_dialog_06
+  - planet_completion_level3_dialog_07
+  - planet_completion_level3_dialog_08
+  - planet_completion_level3_dialog_09
+  - planet_completion_level3_dialog_10
   _finalButtonTextKey: meta_tutorial_step11_contract_button
 --- !u!4 &525062220
 Transform:
@@ -133384,6 +133392,14 @@ PrefabInstance:
     - target: {fileID: 5285862829911137713, guid: c44d9333402955f4b941d34802bd301d, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5526373098436408592, guid: c44d9333402955f4b941d34802bd301d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 772766151}
+    - target: {fileID: 5526373098436408592, guid: c44d9333402955f4b941d34802bd301d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: GetExtraTimeForPassiveIncome
       objectReference: {fileID: 0}
     - target: {fileID: 5538403599559765650, guid: c44d9333402955f4b941d34802bd301d, type: 3}
       propertyPath: m_AnchorMax.y
